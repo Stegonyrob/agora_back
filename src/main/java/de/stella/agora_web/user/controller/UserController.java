@@ -19,11 +19,10 @@ import de.stella.agora_web.user.services.IUserService;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @RestController
-@RequestMapping(path = "/users")
+@RequestMapping(path = "${api-endpoint}/users")
 public class UserController {
 
   @Autowired
@@ -31,40 +30,39 @@ public class UserController {
 
   @GetMapping
   public ResponseEntity<List<User>> getAllUsers() {
-      return ResponseEntity.ok(userService.findAll());
+    return ResponseEntity.ok(userService.findAll());
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<User> getUserById(@PathVariable Long id) {
-      return userService.findById(id)
-              .map(ResponseEntity::ok)
-              .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    return userService.findById(id)
+        .map(ResponseEntity::ok)
+        .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
   @PostMapping
   public ResponseEntity<User> createUser(@RequestBody User user) {
-      return ResponseEntity.ok(userService.save(user));
+    return ResponseEntity.ok(userService.save(user));
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-      return userService.findById(id)
-              .map(user -> {
-                 updateUser(user, updatedUser);
-                 return ResponseEntity.ok(userService.save(user));
-              })
-              .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    return userService.findById(id)
+        .map(user -> {
+          updateUser(user, updatedUser);
+          return ResponseEntity.ok(userService.save(user));
+        })
+        .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
   private Object updateUser(User user, User updatedUser) {
-  return userService.update(user, updatedUser == null ? null : updatedUser);
-}
-
-@DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-      userService.deleteById(id);
-      return ResponseEntity.noContent().build();
+    return userService.update(user, updatedUser == null ? null : updatedUser);
   }
 
- 
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    userService.deleteById(id);
+    return ResponseEntity.noContent().build();
+  }
+
 }

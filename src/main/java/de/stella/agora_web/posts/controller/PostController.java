@@ -1,7 +1,7 @@
 package de.stella.agora_web.posts.controller;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,14 +25,13 @@ public class PostController {
 
     private final IPostService postService;
 
-    @Autowired
     public PostController(IPostService postService) {
         this.postService = postService;
     }
 
-    @PostMapping("/create") 
+    @PostMapping("/create")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Post> createPost(@RequestBody PostDTO  postDTO) {
+    public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO) {
         Post post = postService.createPost(postDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
