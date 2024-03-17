@@ -29,7 +29,6 @@ public class SecurityConfiguration {
     @Value("${api-endpoint}")
     String endpoint;
 
-   
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -41,41 +40,54 @@ public class SecurityConfiguration {
                         .logoutUrl(endpoint + "/logout")
                         .deleteCookies("JSESSIONID"))
                 .authorizeHttpRequests(auth -> auth
+
                         // Permitir el acceso a todos los posts para usuarios registrados
                         .requestMatchers(HttpMethod.GET, endpoint + "/posts/**").authenticated()
                         // Permitir el acceso a la creación de posts solo para usuarios registrados
                         .requestMatchers(HttpMethod.POST, endpoint + "/posts").authenticated()
-                        // Permitir el acceso a la actualización y eliminación de posts solo para usuarios con rol ADMIN
+                        // Permitir el acceso a la actualización y eliminación de posts solo para
+                        // usuarios con rol ADMIN
                         .requestMatchers(HttpMethod.PUT, endpoint + "/posts/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, endpoint + "/posts/**").hasRole("ADMIN")
+
                         // Permitir el acceso a todas las respuestas para usuarios registrados
                         .requestMatchers(HttpMethod.GET, endpoint + "/replies/**").authenticated()
                         // Permitir el acceso a la creación de respuestas solo para usuarios registrados
                         .requestMatchers(HttpMethod.POST, endpoint + "/replies").authenticated()
-                        // Permitir el acceso a la actualización y eliminación de respuestas solo para usuarios con rol ADMIN
+                        // Permitir el acceso a la actualización y eliminación de respuestas solo para
+                        // usuarios con rol ADMIN
                         .requestMatchers(HttpMethod.PUT, endpoint + "/replies/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, endpoint + "/replies/**").hasRole("ADMIN")
+
                         // Permitir el acceso a todas las tags para usuarios registrados
                         .requestMatchers(HttpMethod.GET, endpoint + "/tags/**").authenticated()
                         // Permitir el acceso a la creación de tags solo para usuarios registrados
                         .requestMatchers(HttpMethod.POST, endpoint + "/tags").authenticated()
-                        // Permitir el acceso a la actualización y eliminación de tags solo para usuarios con rol ADMIN
+                        // Permitir el acceso a la actualización y eliminación de tags solo para
+                        // usuarios con rol ADMIN
                         .requestMatchers(HttpMethod.PUT, endpoint + "/tags/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, endpoint + "/tags/**").hasRole("ADMIN")
+
                         // Permitir el registro de usuarios para todos
                         .requestMatchers(HttpMethod.POST, endpoint + "/users/register").permitAll()
+                        // Permitir el edicion de ususario para todos los roles
+                        .requestMatchers(HttpMethod.PUT, endpoint + "/users").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.GET, endpoint + "/users").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, endpoint + "/users").hasAnyRole("ADMIN", "USER")
+
                         // Permitir el acceso a la autenticación para todos los roles
                         .requestMatchers(HttpMethod.GET, endpoint + "/login").hasAnyRole("ADMIN", "USER")
+
                         // Requerir autenticación para todas las demás rutas
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
-
         http.headers(header -> header.frameOptions(frame -> frame.sameOrigin()));
         return http.build();
     }
+
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -87,6 +99,7 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -103,10 +116,10 @@ public class SecurityConfiguration {
                 .build();
 
         UserDetails user = User.builder()
-            .username("user")
-            .password("$2a$12$8LegtLQWe717tIPvZeivjuqKnaAs5.bm0Q05.5GrAmcKzXw2NjoUO")
-            .roles("USER")
-            .build();
+                .username("user")
+                .password("$2a$12$8LegtLQWe717tIPvZeivjuqKnaAs5.bm0Q05.5GrAmcKzXw2NjoUO")
+                .roles("USER")
+                .build();
 
         Collection<UserDetails> users = new ArrayList<>();
 
