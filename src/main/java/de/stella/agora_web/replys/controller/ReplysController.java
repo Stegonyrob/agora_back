@@ -3,6 +3,7 @@ package de.stella.agora_web.replys.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +43,13 @@ public class ReplysController {
     public ResponseEntity<Reply> store(@RequestBody ReplyDTO replyDTO) {
         Reply reply = replyService.save(replyDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(reply);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        replyService.deleteReply(id);
+        return ResponseEntity.noContent().build();
+
     }
 
 }
