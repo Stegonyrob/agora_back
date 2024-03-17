@@ -1,7 +1,7 @@
 package de.stella.agora_web.posts.services.impl;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.posts.controller.dto.PostDTO;
@@ -10,14 +10,11 @@ import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.posts.services.IPostService;
 import de.stella.agora_web.user.model.User;
 
-
-
 @Service
 public class PostServiceImpl implements IPostService {
 
     private final PostRepository postRepository;
 
-    @Autowired
     public PostServiceImpl(PostRepository postRepository) {
         this.postRepository = postRepository;
     }

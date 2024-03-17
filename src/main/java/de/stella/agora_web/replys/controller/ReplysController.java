@@ -38,4 +38,10 @@ public class ReplysController {
         return ResponseEntity.status(HttpStatus.OK).body(reply);
     }
 
+    @PostMapping("/store")
+    public ResponseEntity<Reply> store(@RequestBody ReplyDTO replyDTO) {
+        Reply reply = replyService.save(replyDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(reply);
+    }
+
 }
