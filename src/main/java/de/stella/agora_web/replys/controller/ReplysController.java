@@ -53,7 +53,7 @@ public class ReplysController {
 
     }
 
-    @PutMapping("path/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Reply> update(@PathVariable("id") Long id, @RequestBody ReplyDTO replyDTO) {
         Reply reply = replyService.updateReply(id, replyDTO);
         return ResponseEntity.accepted().body(reply);
