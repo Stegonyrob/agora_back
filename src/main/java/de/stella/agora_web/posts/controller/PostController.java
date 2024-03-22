@@ -29,7 +29,7 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping("/create")
+    @PostMapping("")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO) {
         Post post = postService.createPost(postDTO);

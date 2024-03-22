@@ -5,8 +5,6 @@ import java.util.Optional;
 
 import de.stella.agora_web.user.model.User;
 
-
-
 public interface IUserService {
 
   List<User> findAll();
@@ -22,5 +20,7 @@ public interface IUserService {
   boolean checkUserRole(String username, String role);
 
   Object update(User user, User updatedUser);
+
+  List<User> getAll();
 
 }

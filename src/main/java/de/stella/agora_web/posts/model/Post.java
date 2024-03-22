@@ -2,6 +2,7 @@ package de.stella.agora_web.posts.model;
 
 import java.time.LocalDateTime;
 
+import de.stella.agora_web.replys.model.Reply;
 import de.stella.agora_web.user.model.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,4 +35,7 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User author;
+    @ManyToOne
+    @JoinColumn(name = "reply_id")
+    private Reply reply_id;
 }

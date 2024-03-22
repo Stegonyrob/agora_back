@@ -18,6 +18,11 @@ public class UserServiceImpl implements IUserService {
     private IUserDAO userDAO;
 
     @Override
+    public List<User> getAll() {
+        return userDAO.findAll();
+    }
+
+    @Override
     public List<User> findAll() {
         return userDAO.findAll();
     }

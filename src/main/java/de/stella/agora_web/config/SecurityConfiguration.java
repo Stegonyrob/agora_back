@@ -26,108 +26,125 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    @Value("${api-endpoint}")
-    String endpoint;
+        @Value("${api-endpoint}")
+        String endpoint;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-                .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
-                .formLogin(form -> form.disable())
-                .logout(out -> out
-                        .logoutUrl(endpoint + "/logout")
-                        .deleteCookies("JSESSIONID"))
-                .authorizeHttpRequests(auth -> auth
+                http
+                                .cors(Customizer.withDefaults())
+                                .csrf(csrf -> csrf.disable())
+                                .formLogin(form -> form.disable())
+                                .logout(out -> out
+                                                .logoutUrl(endpoint + "/logout")
+                                                .deleteCookies("JSESSIONID"))
+                                .authorizeHttpRequests(auth -> auth
 
-                        // Permitir el acceso a todos los posts para usuarios registrados
-                        .requestMatchers(HttpMethod.GET, endpoint + "/posts/**").authenticated()
-                        // Permitir el acceso a la creación de posts solo para usuarios registrados
-                        .requestMatchers(HttpMethod.POST, endpoint + "/posts").authenticated()
-                        // Permitir el acceso a la actualización y eliminación de posts solo para
-                        // usuarios con rol ADMIN
-                        .requestMatchers(HttpMethod.PUT, endpoint + "/posts/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, endpoint + "/posts/**").hasRole("ADMIN")
+                                                // Permitir el acceso a todos los posts para usuarios registrados
+                                                .requestMatchers(HttpMethod.GET, endpoint + "/posts/**").permitAll()
+                                                // Permitir el acceso a la creación de posts solo para usuarios
+                                                // registrados
+                                                .requestMatchers(HttpMethod.POST, endpoint + "/posts/**").permitAll()
+                                                // Permitir el acceso a la actualización y eliminación de posts solo
+                                                // para
+                                                // usuarios con rol ADMIN
+                                                .requestMatchers(HttpMethod.PUT, endpoint + "/posts/**")
+                                                .permitAll()
+                                                .requestMatchers(HttpMethod.DELETE, endpoint + "/posts/**")
+                                                .permitAll()
 
-                        // Permitir el acceso a todas las respuestas para usuarios registrados
-                        .requestMatchers(HttpMethod.GET, endpoint + "/replies/**").authenticated()
-                        // Permitir el acceso a la creación de respuestas solo para usuarios registrados
-                        .requestMatchers(HttpMethod.POST, endpoint + "/replies").authenticated()
-                        // Permitir el acceso a la actualización y eliminación de respuestas solo para
-                        // usuarios con rol ADMIN
-                        .requestMatchers(HttpMethod.PUT, endpoint + "/replies/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, endpoint + "/replies/**").hasRole("ADMIN")
+                                                // Permitir el acceso a todas las respuestas para usuarios registrados
+                                                .requestMatchers(HttpMethod.GET, endpoint + "/replies/**")
+                                                .permitAll()
+                                                // Permitir el acceso a la creación de respuestas solo para usuarios
+                                                // registrados
+                                                .requestMatchers(HttpMethod.POST, endpoint + "/replies").permitAll()
+                                                // Permitir el acceso a la actualización y eliminación de respuestas
+                                                // solo para
+                                                // usuarios con rol ADMIN
+                                                .requestMatchers(HttpMethod.PUT, endpoint + "/replies/**")
+                                                .permitAll()
+                                                .requestMatchers(HttpMethod.DELETE, endpoint + "/replies/**")
+                                                .permitAll()
 
-                        // Permitir el acceso a todas las tags para usuarios registrados
-                        .requestMatchers(HttpMethod.GET, endpoint + "/tags/**").authenticated()
-                        // Permitir el acceso a la creación de tags solo para usuarios registrados
-                        .requestMatchers(HttpMethod.POST, endpoint + "/tags").authenticated()
-                        // Permitir el acceso a la actualización y eliminación de tags solo para
-                        // usuarios con rol ADMIN
-                        .requestMatchers(HttpMethod.PUT, endpoint + "/tags/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, endpoint + "/tags/**").hasRole("ADMIN")
+                                                // Permitir el acceso a todas las tags para usuarios registrados
+                                                .requestMatchers(HttpMethod.GET, endpoint + "/tags/**").permitAll()
+                                                // Permitir el acceso a la creación de tags solo para usuarios
+                                                // registrados
+                                                .requestMatchers(HttpMethod.POST, endpoint + "/tags").permitAll()
+                                                // Permitir el acceso a la actualización y eliminación de tags solo para
+                                                // usuarios con rol ADMIN
+                                                .requestMatchers(HttpMethod.PUT, endpoint + "/tags/**").permitAll()
+                                                .requestMatchers(HttpMethod.DELETE, endpoint + "/tags/**")
+                                                .permitAll()
 
-                        // Permitir el registro de usuarios para todos
-                        .requestMatchers(HttpMethod.POST, endpoint + "/users/register").permitAll()
-                        // Permitir el edicion de ususario para todos los roles
-                        .requestMatchers(HttpMethod.PUT, endpoint + "/users").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.GET, endpoint + "/users").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.DELETE, endpoint + "/users").hasAnyRole("ADMIN", "USER")
+                                                // Permitir el registro de usuarios para todos
+                                                .requestMatchers(HttpMethod.POST, endpoint + "/users/register")
+                                                .permitAll()
+                                                // Permitir el edicion de ususario para todos los roles
+                                                .requestMatchers(HttpMethod.PUT, endpoint + "/users")
+                                                .permitAll()
+                                                .requestMatchers(HttpMethod.GET, endpoint + "/users")
+                                                .permitAll()
+                                                .requestMatchers(HttpMethod.DELETE, endpoint + "/users")
+                                                .permitAll()
 
-                        // Permitir el acceso a la autenticación para todos los roles
-                        .requestMatchers(HttpMethod.GET, endpoint + "/login").hasAnyRole("ADMIN", "USER")
+                                                // Permitir el acceso a la autenticación para todos los roles
+                                                .requestMatchers(HttpMethod.GET, endpoint + "/login")
+                                                .permitAll()
 
-                        // Requerir autenticación para todas las demás rutas
-                        .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+                                                // Requerir autenticación para todas las demás rutas
+                                                .anyRequest().permitAll())
+                                .httpBasic(Customizer.withDefaults())
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
-        http.headers(header -> header.frameOptions(frame -> frame.sameOrigin()));
-        return http.build();
-    }
+                http.headers(header -> header.frameOptions(frame -> frame.sameOrigin()));
+                return http.build();
+        }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(
-                Arrays.asList("http://localhost:5173", "http://localhost:5174", "http://localhost:8080"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+        @Bean
+        CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowCredentials(true);
+                configuration.setAllowedOrigins(
+                                Arrays.asList("http://localhost:5173", "http://localhost:5174",
+                                                "http://localhost:8080"));
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+                configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
+                return source;
+        }
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
+        @Bean
+        public InMemoryUserDetailsManager userDetailsService() {
 
-        // The builder will ensure the passwords are encoded before saving in memory
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password("$2a$12$8LegtLQWe717tIPvZeivjuqKnaAs5.bm0Q05.5GrAmcKzXw2NjoUO")
-                .roles("ADMIN")
-                .build();
+                // The builder will ensure the passwords are encoded before saving in memory
+                UserDetails admin = User.builder()
+                                .username("admin")
+                                .password("$2a$12$8LegtLQWe717tIPvZeivjuqKnaAs5.bm0Q05.5GrAmcKzXw2NjoUO")
+                                .roles("ADMIN")
+                                .build();
 
-        UserDetails user = User.builder()
-                .username("user")
-                .password("$2a$12$8LegtLQWe717tIPvZeivjuqKnaAs5.bm0Q05.5GrAmcKzXw2NjoUO")
-                .roles("USER")
-                .build();
+                UserDetails user = User.builder()
+                                .username("user")
+                                .password("$2a$12$8LegtLQWe717tIPvZeivjuqKnaAs5.bm0Q05.5GrAmcKzXw2NjoUO")
+                                .roles("USER")
+                                .build();
 
-        Collection<UserDetails> users = new ArrayList<>();
+                Collection<UserDetails> users = new ArrayList<>();
 
-        users.add(admin);
-        users.add(user);
+                users.add(admin);
+                users.add(user);
 
-        return new InMemoryUserDetailsManager(users);
-    }
+                return new InMemoryUserDetailsManager(users);
+        }
 
 }
