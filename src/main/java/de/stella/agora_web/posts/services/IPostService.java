@@ -33,4 +33,5 @@ public interface IPostService {
     Post update(PostDTO postDTO, Long id);
     Post createPost(PostDTO postDTO);
     Post getById(@NonNull Long id);
+    List<Post> findPostsByUserId(Long userId);
 }

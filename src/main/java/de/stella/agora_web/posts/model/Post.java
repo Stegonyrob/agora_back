@@ -2,27 +2,27 @@ package de.stella.agora_web.posts.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import de.stella.agora_web.replys.model.Reply;
 import de.stella.agora_web.user.model.User;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
-@Setter
 @Getter
+@Setter
+
 @Entity(name = "Post")
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
+@RequiredArgsConstructor
 @Table(name = "posts")
 public class Post {
     @Id
@@ -33,9 +33,11 @@ public class Post {
     private LocalDateTime creationDate = LocalDateTime.now();
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User author;
-    @ManyToOne
     @JoinColumn(name = "reply_id")
     private Reply reply_id;
+
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "user_id")
+@JsonBackReference
+private User user;
 }

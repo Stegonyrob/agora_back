@@ -82,4 +82,10 @@ public class PostServiceImpl implements IPostService {
     public Post createPost(PostDTO postDTO) {
         throw new UnsupportedOperationException("Unimplemented method 'createPost'");
     }
+
+    @Override
+    public List<Post> findPostsByUserId(Long userId) {
+        // Assuming PostRepository has a method to find posts by user ID
+        return postRepository.findByUserId(userId);
+    }
 }

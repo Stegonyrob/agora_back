@@ -1,48 +1,69 @@
 package de.stella.agora_web.user.model;
 
-import jakarta.persistence.*;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import de.stella.agora_web.posts.model.Post;
+import de.stella.agora_web.roles.model.Role;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 
-import java.util.List;
-import java.util.Set;
-
-import de.stella.agora_web.posts.model.Post;
-import de.stella.agora_web.roles.model.Role;
-
-
     @Getter
     @Setter
-    @Entity
-    @Table(name="users")
-    public class User {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
+    
+@Entity
+@Table (name = "users")
+public class User {
 
-        private String username;
-        private String password;
-        private int age;
-        private String name;
-        private String lastname;
-        private String email;
-        private int phone;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)    
+    @Column (name = "id_user")
+    private Long id;
+    private String username;
+    private String password;
+    private String email;
 
-        @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-        private List<Post> posts;
-
-        // @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-        // private List<Reply> replies;
-
-        @ManyToMany(fetch = FetchType.LAZY)
-        @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id") )
-        private Set<Role> roles;
+   
+    public User() {
     }
 
+    public User(Long id, String username, String password, Set<Role> roles) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
 
+    public boolean hasRole(String role) {
+        return false;
+       
+    }
+
+@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+@JsonManagedReference
+private Set<Post> posts;
+
+@ManyToMany(fetch = FetchType.LAZY)
+@JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+@JsonManagedReference
+private Set<Role> roles;
+
+
+
+
+}
 
 
