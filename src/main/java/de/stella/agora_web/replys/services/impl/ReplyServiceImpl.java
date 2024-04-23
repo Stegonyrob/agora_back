@@ -55,7 +55,7 @@ public class ReplyServiceImpl implements IReplyService {
     }
 
     @Override
-    public Reply save(ReplyDTO replyDTO) {
+    public Reply save(@SuppressWarnings("rawtypes") ReplyDTO replyDTO) {
         Reply reply = new Reply();
         return replyRepository.save(reply);
     }

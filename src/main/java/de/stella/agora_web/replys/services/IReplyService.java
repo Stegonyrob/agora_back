@@ -19,6 +19,6 @@ public interface IReplyService {
 
     void deleteReply(Long id);
 
-    Reply save(ReplyDTO replyDTO);
+    Reply save(@SuppressWarnings("rawtypes") ReplyDTO replyDTO);
 
 }

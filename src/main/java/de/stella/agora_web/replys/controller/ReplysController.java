@@ -29,7 +29,7 @@ public class ReplysController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('USER','ADMIN')")
-    public ResponseEntity<Reply> createReply(@RequestBody ReplyDTO replyDTO) {
+    public ResponseEntity<Reply> createReply(@SuppressWarnings("rawtypes") @RequestBody ReplyDTO replyDTO) {
         Reply reply = replyService.createReply(replyDTO, null);
         return ResponseEntity.status(HttpStatus.CREATED).body(reply);
     }
@@ -41,7 +41,7 @@ public class ReplysController {
     }
 
     @PostMapping("/store")
-    public ResponseEntity<Reply> store(@RequestBody ReplyDTO replyDTO) {
+    public ResponseEntity<Reply> store(@SuppressWarnings("rawtypes") @RequestBody ReplyDTO replyDTO) {
         Reply reply = replyService.save(replyDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(reply);
     }
@@ -54,7 +54,7 @@ public class ReplysController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Reply> update(@PathVariable("id") Long id, @RequestBody ReplyDTO replyDTO) {
+    public ResponseEntity<Reply> update(@PathVariable("id") Long id, @SuppressWarnings("rawtypes") @RequestBody ReplyDTO replyDTO) {
         Reply reply = replyService.updateReply(id, replyDTO);
         return ResponseEntity.accepted().body(reply);
     }
