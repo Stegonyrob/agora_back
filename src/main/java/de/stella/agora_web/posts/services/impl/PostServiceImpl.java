@@ -1,6 +1,7 @@
 package de.stella.agora_web.posts.services.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -8,39 +9,63 @@ import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.posts.services.IPostService;
+import de.stella.agora_web.user.exceptions.UserNotFoundException;
 import de.stella.agora_web.user.model.User;
+import de.stella.agora_web.user.services.impl.UserServiceImpl;
+
+
 
 @Service
+
 public class PostServiceImpl implements IPostService {
 
+  
     private final PostRepository postRepository;
+    private final UserServiceImpl userService;
 
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository, UserServiceImpl userService) {
         this.postRepository = postRepository;
+        this.userService = userService;
     }
+
+  
 
     @Override
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
+  
 
     @Override
     public Post getPostById(Long id) {
         return postRepository.findById(id).orElse(null);
     }
 
+
+
+ 
+
     @Override
-    public Post createPost(@SuppressWarnings("rawtypes") PostDTO postDTO, User user) {
+    public Post createPost(PostDTO postDTO, Long userId) {
+        Optional<User> user = userService.findById(userId); // Use the injected instance here
+        if (!user.isPresent()) {
+            // Manejar el caso en que el usuario no se encuentra
+            throw new UserNotFoundException("User not found with ID: " + userId);
+        }
+
         Post post = new Post();
-        // Asignar valores de postDTO al post
+        post.setUser(user.get()); // Use user.get() to get the User object
+        post.setMessage(postDTO.getMessage());
+        post.setTitle(postDTO.getTitle());
+        post.setCreationDate(postDTO.getCreationDate());
         return postRepository.save(post);
     }
 
     @Override
-    public Post updatePost(Long id, @SuppressWarnings("rawtypes") PostDTO postDTO) {
+    public Post updatePost(Long id, PostDTO postDTO) {
         Post existingPost = postRepository.findById(id).orElse(null);
         if (existingPost != null) {
-            // Actualizar valores de existingPost con los datos de postDTO
+         
             return postRepository.save(existingPost);
         }
         return null;
@@ -57,7 +82,7 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Post save(@SuppressWarnings("rawtypes") PostDTO postDTO) {
+    public Post save( PostDTO postDTO) {
         Post post = new Post();
         // Asignar valores de postDTO al post
         return postRepository.save(post);
@@ -69,7 +94,7 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Post update(@SuppressWarnings("rawtypes") PostDTO postDTO, Long id) {
+    public Post update(PostDTO postDTO, Long id) {
         Post existingPost = postRepository.findById(id).orElse(null);
         if (existingPost != null) {
             // Actualizar valores de existingPost con los datos de postDTO
@@ -79,7 +104,7 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Post createPost(@SuppressWarnings("rawtypes") PostDTO postDTO) {
+    public Post createPost( PostDTO postDTO) {
         throw new UnsupportedOperationException("Unimplemented method 'createPost'");
     }
 

@@ -21,7 +21,7 @@ public class ReplyDAOImpl implements IReplyDAO {
         return ((IReplyDAO) userRepository).findByUsernameAndPassword(username, password);
     }
 
-    @SuppressWarnings("null")
+    @SuppressWarnings("")
     @Override
     public void deleteById(Long id) {
         userRepository.deleteById(id);

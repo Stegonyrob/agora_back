@@ -31,7 +31,7 @@ public class PostController {
 
     @PostMapping("")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Post> createPost(@SuppressWarnings("rawtypes") @RequestBody PostDTO postDTO) {
+    public ResponseEntity<Post> createPost( @RequestBody PostDTO postDTO) {
         Post post = postService.createPost(postDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
@@ -47,8 +47,8 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(post);
     }
 
-    @PostMapping("/store") // Ruta única para guardar un post
-    public ResponseEntity<Post> store(@SuppressWarnings("rawtypes") @RequestBody PostDTO postDTO) {
+    @PostMapping("/store") 
+    public ResponseEntity<Post> store( @RequestBody PostDTO postDTO) {
         Post post = postService.save(postDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
@@ -60,7 +60,7 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Post> update(@PathVariable("id") Long id, @SuppressWarnings("rawtypes") @RequestBody PostDTO postDTO) {
+    public ResponseEntity<Post> update(@PathVariable("id") Long id,  @RequestBody PostDTO postDTO) {
         Post post = postService.update(postDTO, id);
         return ResponseEntity.accepted().body(post);
     }

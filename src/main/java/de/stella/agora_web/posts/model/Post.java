@@ -36,8 +36,15 @@ public class Post {
     @JoinColumn(name = "reply_id")
     private Reply reply_id;
 
-@ManyToOne(fetch = FetchType.LAZY)
-@JoinColumn(name = "user_id")
-@JsonBackReference
-private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private User user;
+
+    public void setUser(User user2) {
+        this.user = user2;
+    }
+
+   
+
 }

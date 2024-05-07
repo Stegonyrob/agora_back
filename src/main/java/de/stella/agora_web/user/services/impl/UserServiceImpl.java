@@ -72,6 +72,11 @@ public class UserServiceImpl implements IUserService {
         return (List<User>) userDAO.findById(ids);
     }
 
+    public  Optional<User> findUserById(Long userId) {
+        return userDAO.findById(userId);
+
+
+    }
     
 
 }

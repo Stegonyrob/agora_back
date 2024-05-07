@@ -48,7 +48,7 @@ public class ReplyServiceImpl implements IReplyService {
         return null;
     }
 
-    @SuppressWarnings("null")
+    @SuppressWarnings("")
     @Override
     public void deleteReply(Long id) {
         replyRepository.deleteById(id);
