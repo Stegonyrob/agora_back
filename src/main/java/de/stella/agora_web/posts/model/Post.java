@@ -3,6 +3,7 @@ package de.stella.agora_web.posts.model;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.stella.agora_web.replys.model.Reply;
 import de.stella.agora_web.user.model.User;
@@ -20,7 +21,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-
 @Entity(name = "Post")
 @RequiredArgsConstructor
 @Table(name = "posts")
@@ -28,9 +28,23 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @JsonProperty("title")
     private String title;
+
+    @JsonProperty("message")
     private String message;
+
     private LocalDateTime creationDate = LocalDateTime.now();
+
+    public Post(Long id, String title, String message, LocalDateTime creationDate, Reply reply_id, User user) {
+        this.id = id;
+        this.title = title;
+        this.message = message;
+        this.creationDate = creationDate;
+        this.reply_id = reply_id;
+        this.user = user;
+    }
 
     @ManyToOne
     @JoinColumn(name = "reply_id")
@@ -44,7 +58,4 @@ public class Post {
     public void setUser(User user2) {
         this.user = user2;
     }
-
-   
-
 }

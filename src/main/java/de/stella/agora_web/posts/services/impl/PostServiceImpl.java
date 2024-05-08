@@ -13,13 +13,8 @@ import de.stella.agora_web.user.exceptions.UserNotFoundException;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.services.impl.UserServiceImpl;
 
-
-
 @Service
-
 public class PostServiceImpl implements IPostService {
-
-  
     private final PostRepository postRepository;
     private final UserServiceImpl userService;
 
@@ -28,33 +23,25 @@ public class PostServiceImpl implements IPostService {
         this.userService = userService;
     }
 
-  
-
     @Override
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
-  
 
     @Override
     public Post getPostById(Long id) {
         return postRepository.findById(id).orElse(null);
     }
 
-
-
- 
-
     @Override
     public Post createPost(PostDTO postDTO, Long userId) {
-        Optional<User> user = userService.findById(userId); // Use the injected instance here
+        Optional<User> user = userService.findById(userId);
         if (!user.isPresent()) {
-            // Manejar el caso en que el usuario no se encuentra
             throw new UserNotFoundException("User not found with ID: " + userId);
         }
 
         Post post = new Post();
-        post.setUser(user.get()); // Use user.get() to get the User object
+        post.setUser(user.get());
         post.setMessage(postDTO.getMessage());
         post.setTitle(postDTO.getTitle());
         post.setCreationDate(postDTO.getCreationDate());
@@ -65,7 +52,9 @@ public class PostServiceImpl implements IPostService {
     public Post updatePost(Long id, PostDTO postDTO) {
         Post existingPost = postRepository.findById(id).orElse(null);
         if (existingPost != null) {
-         
+            existingPost.setTitle(postDTO.getTitle());
+            existingPost.setMessage(postDTO.getMessage());
+          
             return postRepository.save(existingPost);
         }
         return null;
@@ -82,9 +71,11 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Post save( PostDTO postDTO) {
+    public Post save(PostDTO postDTO) {
         Post post = new Post();
-        // Asignar valores de postDTO al post
+        post.setTitle(postDTO.getTitle());
+        post.setMessage(postDTO.getMessage());
+  
         return postRepository.save(post);
     }
 
@@ -97,20 +88,17 @@ public class PostServiceImpl implements IPostService {
     public Post update(PostDTO postDTO, Long id) {
         Post existingPost = postRepository.findById(id).orElse(null);
         if (existingPost != null) {
-            // Actualizar valores de existingPost con los datos de postDTO
+            existingPost.setTitle(postDTO.getTitle());
+            existingPost.setMessage(postDTO.getMessage());
+        
             return postRepository.save(existingPost);
         }
         return null;
     }
 
     @Override
-    public Post createPost( PostDTO postDTO) {
-        throw new UnsupportedOperationException("Unimplemented method 'createPost'");
-    }
-
-    @Override
     public List<Post> findPostsByUserId(Long userId) {
-        // Assuming PostRepository has a method to find posts by user ID
+        
         return postRepository.findByUserId(userId);
     }
 }
