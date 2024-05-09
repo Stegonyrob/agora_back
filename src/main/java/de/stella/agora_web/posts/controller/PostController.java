@@ -32,7 +32,7 @@ public class PostController {
     @PostMapping("")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Post> createPost( @RequestBody PostDTO postDTO) {
-        Post post = postService.createPost(postDTO);
+        Post post = postService.createPost(postDTO, null);
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
 
