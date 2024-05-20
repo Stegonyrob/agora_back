@@ -2,6 +2,8 @@ package de.stella.agora_web.user.model;
 
 import java.util.Set;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import de.stella.agora_web.posts.model.Post;
@@ -60,6 +62,13 @@ private Set<Post> posts;
 @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 @JsonManagedReference
 private Set<Role> roles;
+
+
+public GrantedAuthority getRole() {
+
+    return getRole();
+   
+}
 
 
 
