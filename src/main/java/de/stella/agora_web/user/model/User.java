@@ -49,6 +49,7 @@ public class User {
         this.roles = roles;
     }
 
+
     public boolean hasRole(String role) {
         return false;
        
@@ -69,6 +70,19 @@ public GrantedAuthority getRole() {
     return getRole();
    
 }
+
+public User orElseThrow(Object object) {
+    return object == null ? null : this;
+}
+
+public boolean isPresent() {
+   return true;
+}
+
+public User get() {
+    return this;
+}
+
 
 
 

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,7 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import de.stella.agora_web.user.services.JpaUserDetailsService;
-
+@Import(JwtSecurityConfig.class)
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
@@ -27,6 +28,8 @@ public class SecurityConfiguration {
   String endpoint;
 
   JpaUserDetailsService jpaUserDetailsService;
+
+    private JwtSecurityConfig jwtSecurityConfig;
 
   public SecurityConfiguration(JpaUserDetailsService jpaUserDetailsService) {
     this.jpaUserDetailsService = jpaUserDetailsService;

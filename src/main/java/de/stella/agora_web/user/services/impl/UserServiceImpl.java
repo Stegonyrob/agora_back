@@ -29,7 +29,7 @@ public class UserServiceImpl implements IUserService {
         return userDAO.findById(id);
     }
 
-    public Optional<User> findByUsername(String username) {
+    public User findByUsername(String username) {
         return userDAO.findByUsername(username);
     }
 
@@ -50,7 +50,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public boolean checkUserRole(String username, String role) {
-        Optional<User> userOptional = userDAO.findByUsername(username);
+        User userOptional = userDAO.findByUsername(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             return user.hasRole(role);
