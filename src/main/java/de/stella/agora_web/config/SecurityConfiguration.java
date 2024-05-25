@@ -29,6 +29,7 @@ public class SecurityConfiguration {
 
   JpaUserDetailsService jpaUserDetailsService;
 
+    @SuppressWarnings("unused")
     private JwtSecurityConfig jwtSecurityConfig;
 
   public SecurityConfiguration(JpaUserDetailsService jpaUserDetailsService) {

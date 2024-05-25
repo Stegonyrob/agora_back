@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import de.stella.agora_web.user.controller.dto.UserDTO;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.persistence.IUserDAO;
 import de.stella.agora_web.user.services.IUserService;
@@ -75,6 +76,11 @@ public class UserServiceImpl implements IUserService {
     public  Optional<User> findUserById(Long userId) {
         return userDAO.findById(userId);
 
+
+    }
+
+    public User registerUser(UserDTO userDTO) {
+return userDAO.save(userDTO.toUser());
 
     }
     

@@ -35,17 +35,24 @@ public class User {
     @Column (name = "id_user")
     private Long id;
     private String username;
-    private String password;
+    private String firstName;
+    private String lastName;
+    private String nickname;
+    private String relationship;
     private String email;
-
+    private String password;
    
     public User() {
     }
-
-    public User(Long id, String username, String password, Set<Role> roles) {
+    public User(Long id, String username, String password, String firstName, String lastName, String nickname, String relationship, String email, Set<Role> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.nickname = nickname;
+        this.relationship = relationship;
+        this.email = email;
         this.roles = roles;
     }
 
@@ -82,10 +89,6 @@ public boolean isPresent() {
 public User get() {
     return this;
 }
-
-
-
-
 
 }
 
