@@ -12,13 +12,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.stella.agora_web.profiles.controller.dto.ProfileDTO;
+import de.stella.agora_web.profiles.model.Profile;
+import de.stella.agora_web.profiles.services.impl.ProfileServiceImpl;
+
 @RestController
 @RequestMapping(path = "${api-endpoint}")
 public class ProfileController {
     
-    ProfileService service;
+    ProfileServiceImpl service;
 
-    public ProfileController(ProfileService service) {
+    public ProfileController(ProfileServiceImpl service) {
         this.service = service;
     }
 

@@ -65,4 +65,9 @@ public class SecurityUser implements UserDetails {
         return true;
     }
 
+    public long getId() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getId'");
+    }
+
 }

@@ -57,12 +57,10 @@ public class Profile {
      Set<Reply> favorites;
 
 public void setFirstLastName(String firstLastName) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setFirstLastName'");
+return;
 }
 
 public void setSecondLastName(String secondLastName) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setSecondLastName'");
+return;
 }
 }

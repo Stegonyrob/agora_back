@@ -6,13 +6,17 @@ import java.util.Set;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import de.stella.agora_web.auth.SignUpDTO;
+import de.stella.agora_web.auth.TokenGenerator;
 import de.stella.agora_web.encryptations.EncoderFacade;
+import de.stella.agora_web.profiles.repository.ProfileRepository;
 import de.stella.agora_web.roles.model.Role;
 import de.stella.agora_web.roles.service.RoleService;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.repository.UserRepository;
+import lombok.AllArgsConstructor;
 
-
+@AllArgsConstructor
 @Service
 public class RegisterService {
 
@@ -29,7 +33,7 @@ public class RegisterService {
     }
 
   public String createUser(SignUpDTO signupDTO) {
-    User newUser = new User(signupDTO.getUsername(), signupDTO.getPassword()); 
+    User newUser = new User(null, signupDTO.getUsername(), signupDTO.getPassword(), null); 
 
     System.out.println(newUser.getId());
 

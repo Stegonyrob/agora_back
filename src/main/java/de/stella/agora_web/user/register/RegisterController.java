@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.stella.agora_web.auth.SignUpDTO;
+import de.stella.agora_web.auth.TokenGenerator;
+
 
 @RestController
 @RequestMapping(path = "${api-endpoint}")

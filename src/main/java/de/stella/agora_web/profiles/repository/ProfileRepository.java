@@ -15,4 +15,6 @@ public interface ProfileRepository extends JpaRepository<Profile, Long>{
     default List<Profile> findAll() {
         throw new UnsupportedOperationException("unsupported, please use findById or findByEmail instead");
     }
+
+    public void save(org.springframework.context.annotation.Profile newProfile);
 }
