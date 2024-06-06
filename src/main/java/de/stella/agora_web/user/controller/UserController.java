@@ -53,3 +53,14 @@ public class UserController {
     }
     
 }
+// @RestController como lo tiene mark revisar que metodo es el mas apropiado
+//     @RequestMapping("${api-endpoint}") 
+//     public class UserController { 
+//         @Autowired
+//         UserRepository userRepository; 
+  
+//         @GetMapping("/user/getById/{id}")
+//         @PreAuthorize("#user.id == #id") 
+//         public ResponseEntity<UserDTO> user(@AuthenticationPrincipal User user, @PathVariable String id) { 
+//             return ResponseEntity.ok(UserDTO.from(userRepository.findById(id).orElseThrow())); 
+//         }
