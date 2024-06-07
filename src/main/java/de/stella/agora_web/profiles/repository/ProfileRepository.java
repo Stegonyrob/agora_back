@@ -12,6 +12,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Long>{
     
     public Optional<Profile> findByEmail(String name);
 
+    @SuppressWarnings("null")
     default List<Profile> findAll() {
         throw new UnsupportedOperationException("unsupported, please use findById or findByEmail instead");
     }

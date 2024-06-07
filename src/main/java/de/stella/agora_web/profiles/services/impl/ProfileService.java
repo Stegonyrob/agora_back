@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.generics.IGenericGetService;
 import de.stella.agora_web.generics.IGenericUpdateService;
@@ -17,8 +18,11 @@ import de.stella.agora_web.profiles.repository.ProfileRepository;
 import de.stella.agora_web.replys.exceptions.ReplyNotFoundException;
 import de.stella.agora_web.replys.model.Reply;
 import de.stella.agora_web.replys.repository.ReplyRepository;
+import lombok.AllArgsConstructor;
 
-public class ProfileServiceImpl implements IGenericUpdateService<ProfileDTO, Profile>, IGenericGetService<Profile> {
+@Service
+@AllArgsConstructor
+public class ProfileService implements IGenericUpdateService<ProfileDTO, Profile>, IGenericGetService<Profile> {
 
     ProfileRepository repository;
     ReplyRepository replyRepository;
@@ -44,6 +48,7 @@ public class ProfileServiceImpl implements IGenericUpdateService<ProfileDTO, Pro
        profile.setFirstName(profileDTO.getFirstName());
        profile.setFirstLastName(profileDTO.getFirstLastName());
        profile.setSecondLastName(profileDTO.getSecondLastName());
+       profile.setEmail(profileDTO.getEmail());
        profile.setAddress(profileDTO.getAddress());
        profile.setNumberPhone(profileDTO.getNumberPhone());
        profile.setPostalCode(profileDTO.getPostalCode());
@@ -53,6 +58,7 @@ public class ProfileServiceImpl implements IGenericUpdateService<ProfileDTO, Pro
        return repository.save(profile);
     }
 
+
     @PreAuthorize("hasRole('USER')")
     public String updateFavorites(Long ReplyId) throws Exception {
         
@@ -61,7 +67,7 @@ public class ProfileServiceImpl implements IGenericUpdateService<ProfileDTO, Pro
         
         Profile updatingProfile = repository.findByEmail(auth.getName()).orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
 
-        Reply newReply = ReplyRepository.findById(ReplyId).orElseThrow(() -> new ReplyNotFoundException("Reply not found"));
+        Reply newReply = replyRepository.findById(ReplyId).orElseThrow(() -> new ReplyNotFoundException("Reply not found")); // Using the autowired instance
 
         Set<Reply> favoriteReplys = updatingProfile.getFavorites();
 
@@ -81,6 +87,5 @@ public class ProfileServiceImpl implements IGenericUpdateService<ProfileDTO, Pro
         
         return message;
     }
-    
     
 }

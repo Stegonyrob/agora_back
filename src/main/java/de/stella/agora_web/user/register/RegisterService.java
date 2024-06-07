@@ -1,14 +1,16 @@
 package de.stella.agora_web.user.register;
 
+
+
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.auth.SignUpDTO;
 import de.stella.agora_web.auth.TokenGenerator;
 import de.stella.agora_web.encryptations.EncoderFacade;
+import de.stella.agora_web.profiles.model.Profile;
 import de.stella.agora_web.profiles.repository.ProfileRepository;
 import de.stella.agora_web.roles.model.Role;
 import de.stella.agora_web.roles.service.RoleService;
@@ -16,8 +18,8 @@ import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 @Service
+@AllArgsConstructor
 public class RegisterService {
 
     UserRepository userRepository;
@@ -26,37 +28,29 @@ public class RegisterService {
     ProfileRepository profileRepository;
     TokenGenerator tokenGenerator;
 
-    public RegisterService(UserRepository userRepository, RoleService roleService, EncoderFacade encoder) {
-        this.userRepository = userRepository;
-        this.roleService = roleService;
-        this.encoder = encoder;
-    }
+    public String createUser(SignUpDTO signupDTO) {
 
-  public String createUser(SignUpDTO signupDTO) {
-    User newUser = new User(null, signupDTO.getUsername(), signupDTO.getPassword(), null); 
+        User newUser = new User(null, signupDTO.getUsername(), signupDTO.getPassword(), null); 
 
-    System.out.println(newUser.getId());
+        System.out.println(newUser.getId());
 
         String passwordDecoded = encoder.decode("base64", newUser.getPassword());
         String passwordEncoded = encoder.encode("bcrypt", passwordDecoded);
-
+        
         newUser.setPassword(passwordEncoded);
         assignDefaultRole(newUser);
 
         userRepository.save(newUser);
 
         User savedUser = userRepository.getReferenceById(newUser.getId().toString());
-        
-        // Creamos un perfil para el usuario que acabamos de crear.
-        // Esto es necesario para que el usuario pueda tener un perfil en la BD
-        // y poder ser autenticado posteriormente.
-        
+
         Profile newProfile = Profile.builder()
                 .id(savedUser.getId())
                 .user(savedUser)
                 .email(savedUser.getUsername())
                 .firstName("")
-                .lastName("")
+                .firstLastName("")
+                .secondLastName("")
                 .address("")
                 .postalCode("")
                 .numberPhone("")
