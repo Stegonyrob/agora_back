@@ -29,6 +29,7 @@ import lombok.Setter;
 @Table (name = "users")
 public class User {
 
+   
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)    
     @Column (name = "id_user")
@@ -67,6 +68,10 @@ public GrantedAuthority getRole() {
 
     return getRole();
    
+}
+
+public void setId(long long1) {
+ return;
 }
 
 

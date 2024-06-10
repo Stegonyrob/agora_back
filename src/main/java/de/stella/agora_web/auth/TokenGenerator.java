@@ -41,13 +41,12 @@ public class TokenGenerator {
         Instant now = Instant.now(); 
   
         // Crea los claims del token
-        JwtClaimsSet claimsSet = JwtClaimsSet.builder() 
-                .issuer("myApp")  // Emisor del token
-                .issuedAt(now) // Fecha de emisión
-                .expiresAt(now.plus(5, ChronoUnit.MINUTES)) // Fecha de expiración
-                .subject(Long.toString(securityUser.getId())) // Identificador del usuario
+         JwtClaimsSet claimsSet = JwtClaimsSet.builder() 
+                .issuer("myApp") 
+                .issuedAt(now) 
+                .expiresAt(now.plus(30, ChronoUnit.DAYS)) 
+                .subject(Long.toString(securityUser.getId())) 
                 .build(); 
-  
         // Codifica el token y lo devuelve
         return accessTokenEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue(); 
     } 

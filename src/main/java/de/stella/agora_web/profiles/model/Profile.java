@@ -83,6 +83,7 @@ public static class Builder {
     private String firstLastName;
     private String numberPhone;
 
+
     public Builder id(Long id) {
         this.id = id;
         return this;
@@ -143,6 +144,8 @@ public static class Builder {
         this.province = province;
         return this;
     }
+
+
 }
     public void toggleFavorite(Reply reply) {
         if (favorites.contains(reply)) {

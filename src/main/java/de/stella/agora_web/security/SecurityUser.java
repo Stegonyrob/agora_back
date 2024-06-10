@@ -12,6 +12,7 @@ import de.stella.agora_web.user.model.User;
 
 public class SecurityUser implements UserDetails {
 
+    private static final String id = null;
     User user;
 
     public SecurityUser(User user) {
@@ -65,9 +66,8 @@ public class SecurityUser implements UserDetails {
         return true;
     }
 
-    public long getId() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getId'");
+    public Long getId() {
+        return Long.parseLong(this.id);
     }
 
 }
