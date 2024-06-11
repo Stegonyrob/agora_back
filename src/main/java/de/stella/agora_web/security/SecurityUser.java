@@ -12,6 +12,7 @@ import de.stella.agora_web.user.model.User;
 
 public class SecurityUser implements UserDetails {
 
+    private static final String id = null;
     User user;
 
     public SecurityUser(User user) {
@@ -63,6 +64,10 @@ public class SecurityUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Long getId() {
+        return Long.parseLong(this.id);
     }
 
 }
