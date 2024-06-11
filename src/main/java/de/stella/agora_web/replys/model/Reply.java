@@ -57,6 +57,12 @@ public class Reply {
     private Post post;
  @ManyToMany(mappedBy = "favorites")
     private Set<Profile> favoritedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+
     // Constructor vacío para Hibernate
     public Reply() {
     }
