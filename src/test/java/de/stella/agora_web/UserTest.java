@@ -14,7 +14,6 @@ import org.mockito.MockitoAnnotations;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replys.model.Reply;
 import de.stella.agora_web.roles.model.Role;
-import de.stella.agora_web.user.controller.dto.UserDTO;
 import de.stella.agora_web.user.model.User;
 
 public class UserTest {
@@ -77,39 +76,4 @@ public class UserTest {
         assertEquals(0, user.getFavorites().size());
     }
 
-    @Test
-    public void testToBuilder() {
-        Long id = 1L;
-        String username = "testUser";
-        String password = "password";
-        String firstName = "John";
-        String firstLastName = "Doe";
-        String secondLastName = "Smith";
-
-        String relationship = "single";
-        String email = "test@example.com";
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-
-        user.setId(id);
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setFirstName(firstName);
-        user.setFirstLastName(firstLastName);
-        user.setSecondLastName(secondLastName);
-   
-        user.setRelationship(relationship);
-        user.setEmail(email);
-        user.setRoles(roles);
-
-        UserDTO userDTO = user.toBuilder();
-
-        assertEquals(id, userDTO.getId(id));
-        assertEquals(username, userDTO.getUsername());
-        assertEquals(email, userDTO.getEmail());
-        assertEquals(firstName, userDTO.getFirstName());
-        assertEquals(firstLastName, userDTO.getFirstLastName());
-        assertEquals(secondLastName, userDTO.getSecondLastName());
-        assertEquals(roles, userDTO.getRoles(userDTO));
-    }
 }

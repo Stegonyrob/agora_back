@@ -14,8 +14,13 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
+
+
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity(name = "Profile")
@@ -45,6 +50,8 @@ public class Profile {
         inverseJoinColumns = @JoinColumn(name = "reply_id")
     )
     private Set<Reply> favorites = new HashSet<>();
+
+    private String relationship;
 
     public void toggleFavorite(Reply reply) {
         if (favorites.contains(reply)) {
@@ -150,8 +157,7 @@ public class Profile {
         return new Profile.Builder();
     }
 
-    // Constructor vacío
-    public Profile() {}
+   
 
     // Constructor con parámetros
     public Profile(Long id, String email, String firstName, String firstLastName, String secondLastName, String address, String city, String province, String postalCode, String numberPhone) {
@@ -165,5 +171,17 @@ public class Profile {
         this.province = province;
         this.postalCode = postalCode;
         this.numberPhone = numberPhone;
+    }
+
+
+
+    public void setRelationship(String relationship) {
+        this.relationship = relationship;
+    }
+
+
+
+    public String getRelationship() {
+        return relationship;
     }
 }

@@ -20,51 +20,40 @@ public class UserDTO {
     private String secondLastName;
     private Set<Role> roles;
 
-    public UserDTO(String username, String firstName, String relationship, String email, String password, String confirmPassword) {
-        this.username = username;
-        this.firstName = firstName;
-     
-
-        this.relationship = relationship;
-        this.email = email;
-        this.password = password;
-        this.confirmPassword = confirmPassword;
+    public static UserDTO from(User user) {
+        return new UserDTO(user.getUsername(), user.getFirstName(), user.getRelationship(), user.getEmail(), user.getPassword(), null);
     }
+
     public User toUser() {
         User user = new User();
         user.setUsername(this.username);
         user.setFirstName(this.firstName);
         user.setFirstLastName(this.firstLastName);
         user.setSecondLastName(this.secondLastName);
-  
         user.setRelationship(this.relationship);
         user.setEmail(this.email);
         user.setPassword(this.password);
         return user;
     }
-    public static Object from(User orElseThrow) {
-        return orElseThrow;
-    }
-    public static UserDTO.UserDTOBuilder builder() {
-        return new UserDTO.UserDTOBuilder();
+
+    public UserDTO(String username, String firstName, String relationship, String email, String password, String confirmPassword) {
+        this.username = username;
+        this.firstName = firstName;
+        this.relationship = relationship;
+        this.email = email;
+        this.password = password;
     }
 
     public static class UserDTOBuilder {
         private String username;
         private String firstName;
-        private String nickname;
         private String relationship;
         private String email;
         private String password;
         private String confirmPassword;
-        private Long id;
         private String firstLastName;
         private String secondLastName;
-        private String address;
-        private String city;
-        private String province;
-        private String postalCode;
-        private String numberPhone;
+        private Long id;
         private Set<Role> roles;
 
         public UserDTOBuilder username(String username) {
@@ -74,12 +63,6 @@ public class UserDTO {
 
         public UserDTOBuilder firstName(String firstName) {
             this.firstName = firstName;
-            return this;
-        }
-
-
-        public UserDTOBuilder nickname(String nickname) {
-            this.nickname = nickname;
             return this;
         }
 
@@ -103,15 +86,6 @@ public class UserDTO {
             return this;
         }
 
-        public UserDTO build() {
-            return new UserDTO(username, firstName,  relationship, email, password, confirmPassword);
-        }
-
-        public UserDTOBuilder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
         public UserDTOBuilder firstLastName(String firstLastName) {
             this.firstLastName = firstLastName;
             return this;
@@ -122,28 +96,12 @@ public class UserDTO {
             return this;
         }
 
-        public UserDTOBuilder address(String address) {
-            this.address = address;
-            return this;
+        public UserDTO build() {
+            return new UserDTO(username, firstName, relationship, email, password, confirmPassword);
         }
 
-        public UserDTOBuilder city(String city) {
-            this.city = city;
-            return this;
-        }
-
-        public UserDTOBuilder province(String province) {
-            this.province = province;
-            return this;
-        }
-
-        public UserDTOBuilder postalCode(String postalCode) {
-            this.postalCode = postalCode;
-            return this;
-        }
-
-        public UserDTOBuilder numberPhone(String numberPhone) {
-            this.numberPhone = numberPhone;
+        public UserDTOBuilder id(Long id) {
+            this.id = id;
             return this;
         }
 
@@ -151,15 +109,9 @@ public class UserDTO {
             this.roles = roles;
             return this;
         }
-
     }
 
-	public Long getId(Long id) {
-        return id;
+    public static UserDTOBuilder builder() {
+        return new UserDTOBuilder();
     }
-    public Set<Role> getRoles(UserDTO userDTO) {
-        return userDTO.roles;
-    }
-
-   
 }

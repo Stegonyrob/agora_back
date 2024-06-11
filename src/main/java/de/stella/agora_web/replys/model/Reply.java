@@ -18,6 +18,9 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+
+
+
 @Entity(name = "Reply")
 @Table(name = "replys")
 @Getter

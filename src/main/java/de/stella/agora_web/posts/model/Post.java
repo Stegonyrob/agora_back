@@ -23,7 +23,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name = "Post")
-@RequiredArgsConstructor
+@RequiredArgsConstructor 
 @Table(name = "posts")
 public class Post {
     @Id

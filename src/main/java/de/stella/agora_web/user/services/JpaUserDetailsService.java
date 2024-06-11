@@ -15,6 +15,7 @@ import de.stella.agora_web.roles.model.Role;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.repository.UserRepository;
 
+
 @Service
 public class JpaUserDetailsService implements UserDetailsService {
 
@@ -27,7 +28,7 @@ public class JpaUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
-            .orElseThrow();
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return new org.springframework.security.core.userdetails.User(
             user.getUsername(),
@@ -43,4 +44,5 @@ public class JpaUserDetailsService implements UserDetailsService {
         }
         return authorities;
     }
+
 }
