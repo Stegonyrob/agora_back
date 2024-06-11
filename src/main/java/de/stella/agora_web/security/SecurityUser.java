@@ -8,12 +8,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import de.stella.agora_web.roles.model.Role;
-import de.stella.agora_web.user.model.User;
-
-public class SecurityUser implements UserDetails {
-
-    private static final String id = null;
-    User user;
+import de.stella.agora_web.user.model.User;public class SecurityUser implements UserDetails {
+    private final User user;
 
     public SecurityUser(User user) {
         this.user = user;
@@ -21,18 +17,10 @@ public class SecurityUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-
-        System.out.println("-------------------------");
-        System.out.println(user.getRoles());
-        System.out.println("-------------------------");
-
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role : user.getRoles()) {
-            System.out.println("User role : " + role.getName());
-            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getName());
-            authorities.add(authority);
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
         }
-
         return authorities;
     }
 
@@ -67,7 +55,6 @@ public class SecurityUser implements UserDetails {
     }
 
     public Long getId() {
-        return Long.parseLong(this.id);
+        return user.getId();
     }
-
 }

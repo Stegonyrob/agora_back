@@ -12,7 +12,6 @@ import de.stella.agora_web.user.repository.UserRepository;
 
 @Component
 public class UserDAOImpl implements IUserDAO {
-
     private final UserRepository userRepository;
 
     public UserDAOImpl(UserRepository userRepository) {
@@ -31,8 +30,8 @@ public class UserDAOImpl implements IUserDAO {
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(null);
+    public Optional<User> findByUsername(String username) {
+        return Optional.ofNullable(userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found")));
     }
 
     @Override
@@ -54,6 +53,7 @@ public class UserDAOImpl implements IUserDAO {
 
     @Override
     public User update(User user, User updatedUser) {
+        // Implement the update logic here
         return user;
     }
 
@@ -64,6 +64,17 @@ public class UserDAOImpl implements IUserDAO {
 
     @Override
     public User getLoggedInUser() {
-       return getLoggedInUser();
+        // Implement the logic to get the logged-in user
+        return null;
+    }
+
+    @Override
+    public List<User> findAllById(List<Long> ids) {
+        return userRepository.findAllById(ids);
+    }
+
+    @Override
+    public Optional<User> findUserById(Long userId) {
+        return userRepository.findById(userId);
     }
 }

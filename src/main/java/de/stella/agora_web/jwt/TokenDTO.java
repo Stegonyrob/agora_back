@@ -1,4 +1,4 @@
-package de.stella.agora_web.auth;
+package de.stella.agora_web.jwt;
 
 
 import lombok.Getter;

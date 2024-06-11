@@ -1,4 +1,4 @@
-package de.stella.agora_web.auth;
+package de.stella.agora_web.jwt;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -114,6 +114,18 @@ public class TokenGenerator {
         tokenDTO.setRefreshToken(refreshToken); 
   
         return tokenDTO; 
-    } 
+    }
+
+    public String createAccessToken(String username) {
+        JwtClaimsSet claimsSet = JwtClaimsSet.builder()
+                .issuer("myApp")
+                .issuedAt(Instant.now())
+                .expiresAt(Instant.now().plus(30, ChronoUnit.DAYS))
+                .subject(username)
+                .build();
+        return accessTokenEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
+    }
+ 
+    
   
 } 

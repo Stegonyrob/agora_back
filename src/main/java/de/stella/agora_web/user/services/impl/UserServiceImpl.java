@@ -9,15 +9,34 @@ import de.stella.agora_web.user.controller.dto.UserDTO;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.persistence.IUserDAO;
 import de.stella.agora_web.user.services.IUserService;
-
 @Service
 public class UserServiceImpl implements IUserService {
 
     private final IUserDAO userDAO;
 
-    
     public UserServiceImpl(IUserDAO userDAO) {
         this.userDAO = userDAO;
+    }
+
+    @Override
+    public Optional<User> findByUsernameAndPassword(String username, String password) {
+        return userDAO.findByUsernameAndPassword(username, password);
+    }
+    @Override
+    public Optional<User> findUserById(Long userId) {
+        return userDAO.findById(userId);
+    }
+
+    @Override
+    public User registerUser(UserDTO userDTO) {
+        User user = userDTO.toUser();
+        user.setPassword(encryptPassword(user.getPassword()));
+        return userDAO.save(user);
+    }
+
+    private String encryptPassword(String password) {
+        // Replace with your own encryption algorithm
+        return password;
     }
 
     @Override
@@ -28,10 +47,6 @@ public class UserServiceImpl implements IUserService {
     @Override
     public Optional<User> findById(Long id) {
         return userDAO.findById(id);
-    }
-
-    public User findByUsername(String username) {
-        return userDAO.findByUsername(username);
     }
 
     @Override
@@ -45,44 +60,34 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public Optional<User> findByUsernameAndPassword(String username, String password) {
-        return userDAO.findByUsernameAndPassword(username, password);
-    }
-
-    @Override
     public boolean checkUserRole(String username, String role) {
-        User userOptional = userDAO.findByUsername(username);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            return user.hasRole(role);
+        return findByUsernameAndPassword(username, "")
+                .map(user -> user.hasRole(role))
+                .orElse(false);
+    }
+    @Override
+    public User update(User user, User updatedUser) {
+        if (user == null || updatedUser == null) {
+            throw new IllegalArgumentException("User and updatedUser cannot be null");
         }
-        return false;
+        User mergedUser = new User();
+        return userDAO.save(mergedUser);
     }
 
     @Override
     public List<User> getAll() {
         return userDAO.findAll();
     }
+@Override
+public Optional<User> findByUsername(String username) {
+    return userDAO.findByUsername(username);
+}
 
     @Override
-    public User update(User user, User updatedUser) {
-        // Assuming 'userDAO' has a method to update a user
-        return userDAO.update(user, updatedUser);
-    }
     public List<User> getById(List<Long> ids) {
-        return (List<User>) userDAO.findById(ids);
+        return userDAO.findAllById(ids);
     }
-
-    public  Optional<User> findUserById(Long userId) {
-        return userDAO.findById(userId);
-
-
-    }
-
-    public User registerUser(UserDTO userDTO) {
-return userDAO.save(userDTO.toUser());
-
-    }
-    
-
 }
+
+
+

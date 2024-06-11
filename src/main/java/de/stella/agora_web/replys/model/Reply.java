@@ -2,10 +2,9 @@ package de.stella.agora_web.replys.model;
 
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.user.model.User;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,46 +13,49 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
+@Entity(name = "Reply")
+@Table(name = "replys")
+@Getter
+@Setter
+public class Reply {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", columnDefinition = "BIGINT")
+    private Long id;
+    
+    @Column(name = "title", length = 255)
+    private String title;
 
+    @Column(name = "message", columnDefinition = "TEXT")
+    private String message;
 
-    @Setter
-    @Getter
-    @Entity(name = "Reply")
-   
-   
-    @RequiredArgsConstructor
-    @ToString
-    @Table(name = "replys")
-    public class Reply {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
-         @JsonProperty("title")
-        private String title;
-        @JsonProperty("message")
-        private String message;
-        private LocalDateTime creationDate = LocalDateTime.now();
+    @Column(name = "creation_date", updatable = false)
+    private LocalDateTime creationDate;
 
-        
-        public Reply(Long id, String title, String message, LocalDateTime creationDate, User author, Post posts) {
-            this.id = id;
-            this.title = title;
-            this.message = message;
-            this.creationDate = creationDate;
-            this.author = author;
-            this.posts = posts;
-        }
+    @Column(name = "favorite")
+    private boolean favorite;
+    
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User author;
 
-        @ManyToOne
-        @JoinColumn(name = "user_id")
-        private User author;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
-        @ManyToOne
-        @JoinColumn(name = "post_id")
-        public Post  posts;
+    public Reply() {
     }
 
+    public Reply(String title, String message, User author, Post post, boolean favorite) {
+        this.favorite = favorite;
+        this.title = title;
+        this.message = message;
+        this.author = author;
+        this.post = post;
+    }
+
+    // getters and setters
+}

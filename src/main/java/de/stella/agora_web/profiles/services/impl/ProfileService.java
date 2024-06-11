@@ -28,7 +28,7 @@ public class ProfileService implements IGenericUpdateService<ProfileDTO, Profile
     ReplyRepository replyRepository;
 
     @PreAuthorize("hasRole('USER')")
-    public Profile getById(@NonNull Long id)throws Exception{
+    public Profile getById(@SuppressWarnings("null") @NonNull Long id)throws Exception{
         Profile profile = repository.findById(id).orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
 
         return profile;

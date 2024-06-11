@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.auth.SignUpDTO;
-import de.stella.agora_web.auth.TokenGenerator;
+import de.stella.agora_web.jwt.TokenGenerator;
 
 
 @RestController
