@@ -1,6 +1,8 @@
 package de.stella.agora_web.user.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -9,7 +11,6 @@ import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replys.model.Reply;
 import de.stella.agora_web.roles.model.Role;
 import de.stella.agora_web.user.controller.dto.UserDTO;
-import de.stella.agora_web.user.controller.dto.UserDTO.UserDTOBuilder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,6 +25,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Getter
 @Setter
 @Entity
@@ -34,20 +36,35 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_user")
     private Long id;
-
+    @Column(name = "username", columnDefinition = "VARCHAR(255)")
     private String username;
+    @Column (name = "first_name" , columnDefinition = "VARCHAR(255)")
     private String firstName;
-    private String nickname;
-    private String relationship;
-    private String email;
-    private String password;
+    @Column(name = "first_last_name", columnDefinition = "VARCHAR(255)")
     private String firstLastName;
+    @Column(name = "second_last_name", columnDefinition = "VARCHAR(255)")
     private String secondLastName;
+    @Column(name = "address", columnDefinition = "VARCHAR(255)")
     private String address;
+    @Column(name = "city", columnDefinition = "VARCHAR(255)")
     private String city;
+    @Column(name = "province", columnDefinition = "VARCHAR(255)")
     private String province;
+    @Column(name = "postal_code", columnDefinition = "VARCHAR(255)")
     private String postalCode;
+    @Column(name = "number_phone", columnDefinition = "INTEGER")
     private String numberPhone;
+    @Column(name = "relationship", columnDefinition = "VARCHAR(255)")
+    private String relationship;
+    @Column(name = "email", columnDefinition = "VARCHAR(255)")
+    private String email;
+    @Column(name = "password", columnDefinition = "VARCHAR(255)")
+    private String password;
+    
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<Reply> reply;
+    
     private Set<Reply> favorites;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
@@ -59,18 +76,20 @@ public class User {
     @JsonManagedReference
     private Set<Role> roles;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Reply> replys = new ArrayList<>();
+
     public User() {
         this.favorites = new HashSet<>();
     }
 
-    public User(Long id, String username, String password, String firstName, String lastName, String nickname, String relationship, String email, Set<Role> roles) {
+    public User(Long id, String username, String password, String firstName, String firstLastName, String secondLastName, String nickname, String relationship, String email, Set<Role> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.firstName = firstName;
-        this.firstLastName = lastName;
-        this.secondLastName = lastName;
-        this.nickname = nickname;
+        this.firstLastName = firstLastName;
+        this.secondLastName = secondLastName;
         this.relationship = relationship;
         this.email = email;
         this.roles = roles;
@@ -94,12 +113,11 @@ public class User {
     }
 
     public UserDTO toBuilder() {
-        return ((UserDTOBuilder) UserDTO.builder())
+        return UserDTO.builder()
                 .id(this.getId())
                 .username(this.getUsername())
                 .email(this.getEmail())
                 .firstName(this.getFirstName())
-             
                 .firstLastName(this.getFirstLastName())
                 .secondLastName(this.getSecondLastName())
                 .address(this.getAddress())
@@ -110,4 +128,5 @@ public class User {
                 .roles(this.getRoles())
                 .build();
     }
+
 }

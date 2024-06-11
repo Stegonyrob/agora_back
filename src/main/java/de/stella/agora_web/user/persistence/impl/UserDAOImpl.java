@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import de.stella.agora_web.user.controller.dto.UserDTO;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.persistence.IUserDAO;
 import de.stella.agora_web.user.repository.UserRepository;
@@ -77,4 +78,37 @@ public class UserDAOImpl implements IUserDAO {
     public Optional<User> findUserById(Long userId) {
         return userRepository.findById(userId);
     }
+
+    @Override
+    public User save(UserDTO userDTO) {
+        if (userDTO == null) {
+            throw new IllegalArgumentException("UserDTO cannot be null");
+        }
+
+        validateUserDTO(userDTO);
+        return null;
+
+    }
+
+
+    private void validateUserDTO(UserDTO userDTO) {
+        Objects.requireNonNull(userDTO, "UserDTO cannot be null");
+        validateUsername(userDTO.getUsername());
+        validatePassword(userDTO.getPassword());
+    }
+
+    private void validateUsername(String username) {
+        Objects.requireNonNull(username, "Username cannot be null");
+        if (username.isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        }
+    }
+
+    private void validatePassword(String password) {
+        Objects.requireNonNull(password, "Password cannot be null");
+        if (password.isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be empty");
+        }
+    }
+
 }

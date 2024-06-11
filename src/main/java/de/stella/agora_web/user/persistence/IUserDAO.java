@@ -3,6 +3,7 @@ package de.stella.agora_web.user.persistence;
 import java.util.List;
 import java.util.Optional;
 
+import de.stella.agora_web.user.controller.dto.UserDTO;
 import de.stella.agora_web.user.model.User;
 
 public interface IUserDAO {
@@ -16,5 +17,6 @@ public interface IUserDAO {
     Optional<User> findById(Long id);
     User getLoggedInUser();
     List<User> findAllById(List<Long> ids);
-    Optional<User> findUserById(Long userId); 
+    Optional<User> findUserById(Long userId);
+    User save(UserDTO user); 
 }

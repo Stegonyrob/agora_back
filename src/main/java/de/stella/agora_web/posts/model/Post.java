@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.stella.agora_web.replys.model.Reply;
 import de.stella.agora_web.user.model.User;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -30,11 +31,13 @@ public class Post {
     private Long id;
 
     @JsonProperty("title")
+    @Column(name = "title", columnDefinition = "VARCHAR(255)")
     private String title;
 
     @JsonProperty("message")
+    @Column(name = "message", columnDefinition = "TEXT")
     private String message;
-
+@Column(name = "creation_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime creationDate = LocalDateTime.now();
 
     public Post(Long id, String title, String message, LocalDateTime creationDate, Reply reply_id, User user) {

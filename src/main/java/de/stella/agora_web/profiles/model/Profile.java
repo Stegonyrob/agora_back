@@ -1,18 +1,33 @@
 package de.stella.agora_web.profiles.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import de.stella.agora_web.replys.model.Reply;
 import de.stella.agora_web.user.model.User;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Entity(name = "Profile")
+@Table(name = "profiles")
 public class Profile {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private User user;
+
     private String email;
     private String firstName;
     private String firstLastName;
@@ -22,7 +37,14 @@ public class Profile {
     private String province;
     private String postalCode;
     private String numberPhone;
-    private Set<Reply> favorites;
+
+    @ManyToMany
+    @JoinTable(
+        name = "profile_reply",
+        joinColumns = @JoinColumn(name = "profile_id"),
+        inverseJoinColumns = @JoinColumn(name = "reply_id")
+    )
+    private Set<Reply> favorites = new HashSet<>();
 
     public void toggleFavorite(Reply reply) {
         if (favorites.contains(reply)) {
@@ -44,7 +66,7 @@ public class Profile {
         private String province;
         private String postalCode;
         private String numberPhone;
-        private Set<Reply> favorites;
+        private Set<Reply> favorites = new HashSet<>();
 
         public Builder id(Long id) {
             this.id = id;
@@ -119,12 +141,29 @@ public class Profile {
             profile.setProvince(province);
             profile.setPostalCode(postalCode);
             profile.setNumberPhone(numberPhone);
-            profile.setFavorites(favorites);
+            profile.setFavorites(this.favorites);
             return profile;
         }
     }
 
     public static Profile.Builder builder() {
         return new Profile.Builder();
+    }
+
+    // Constructor vacío
+    public Profile() {}
+
+    // Constructor con parámetros
+    public Profile(Long id, String email, String firstName, String firstLastName, String secondLastName, String address, String city, String province, String postalCode, String numberPhone) {
+        this.id = id;
+        this.email = email;
+        this.firstName = firstName;
+        this.firstLastName = firstLastName;
+        this.secondLastName = secondLastName;
+        this.address = address;
+        this.city = city;
+        this.province = province;
+        this.postalCode = postalCode;
+        this.numberPhone = numberPhone;
     }
 }

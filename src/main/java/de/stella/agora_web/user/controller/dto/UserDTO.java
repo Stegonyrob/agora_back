@@ -12,18 +12,19 @@ import lombok.Setter;
 public class UserDTO {
     private String username;
     private String firstName;
-    private String lastName;
-    private String nickname;
     private String relationship;
     private String email;
     private String password;
     private String confirmPassword;
+    private String firstLastName;
+    private String secondLastName;
+    private Set<Role> roles;
 
-    public UserDTO(String username, String firstName, String lastName, String nickname, String relationship, String email, String password, String confirmPassword) {
+    public UserDTO(String username, String firstName, String relationship, String email, String password, String confirmPassword) {
         this.username = username;
         this.firstName = firstName;
-        this.lastName = lastName;
-        this.nickname = nickname;
+     
+
         this.relationship = relationship;
         this.email = email;
         this.password = password;
@@ -33,9 +34,9 @@ public class UserDTO {
         User user = new User();
         user.setUsername(this.username);
         user.setFirstName(this.firstName);
-        user.setFirstLastName(this.firstName);
-        user.setSecondLastName(this.lastName);
-        user.setNickname(this.nickname);
+        user.setFirstLastName(this.firstLastName);
+        user.setSecondLastName(this.secondLastName);
+  
         user.setRelationship(this.relationship);
         user.setEmail(this.email);
         user.setPassword(this.password);
@@ -103,7 +104,7 @@ public class UserDTO {
         }
 
         public UserDTO build() {
-            return new UserDTO(username, firstName, nickname, relationship, email, password, confirmPassword, address);
+            return new UserDTO(username, firstName,  relationship, email, password, confirmPassword);
         }
 
         public UserDTOBuilder id(Long id) {
@@ -151,6 +152,13 @@ public class UserDTO {
             return this;
         }
 
+    }
+
+	public Long getId(Long id) {
+        return id;
+    }
+    public Set<Role> getRoles(UserDTO userDTO) {
+        return userDTO.roles;
     }
 
    
