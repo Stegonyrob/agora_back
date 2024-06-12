@@ -1,26 +1,35 @@
 package de.stella.agora_web;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import de.stella.agora_web.profiles.model.Profile;
+import org.springframework.context.annotation.Profile;
 
 public class ProfileTest {
-    
-    @Test
-    public void testCreateProfile() {
-        Profile profile = new Profile();
-        assertNotNull(profile);
+
+    private Profile profile;
+
+    private Profile testProfile;
+
+    @BeforeEach
+    public void setUp() {
+        testProfile = new Profile();
     }
-    
+
     @Test
-    public void testSetAndGetEmail() {
-        Profile profile = new Profile();
-        profile.setEmail("example@example.com");
-        assertEquals("example@example.com", profile.getEmail());
+    public void testHasRole() {
+        assertEquals(true, testProfile.hasRole("Friend"));
     }
-    
-    //... otros tests para verificar las propiedades de la clase Profile...
+
+    @Test
+    public void testIsFavorite() {
+        assertEquals(false, testProfile.isFavorite());
+    }
+
+    @Test
+    public void testSetFavorite() {
+        testProfile.setFavorite(true);
+        assertEquals(true, testProfile.isFavorite());
+    }
 }

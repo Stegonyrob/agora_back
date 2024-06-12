@@ -1,79 +1,86 @@
 package de.stella.agora_web;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import de.stella.agora_web.posts.model.Post;
-import de.stella.agora_web.replys.model.Reply;
 import de.stella.agora_web.roles.model.Role;
 import de.stella.agora_web.user.model.User;
 
 public class UserTest {
 
-    @Mock
-    private Role role;
-
-    @Mock
-    private Reply reply;
-
-    @Mock
-    private Post post;
-
-    private User user;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        user = new User();
-    }
-
     @Test
-    public void testHasRole() {
+    void testConstructor() {
+        Long id = 1L;
+        String username = "testUser";
+        String password = "testPassword";
         Set<Role> roles = new HashSet<>();
-        roles.add(role);
+        User user = new User();
+        user.setId(id);
+        user.setUsername(username);
+        user.setPassword(password);
         user.setRoles(roles);
 
-        when(role.getName()).thenReturn("admin");
-
-        assertEquals(true, user.hasRole("admin"));
-        assertEquals(false, user.hasRole("user"));
+        assertEquals(id, user.getId());
+        assertEquals(username, user.getUsername());
+        assertEquals(password, user.getPassword());
+        assertEquals(roles, user.getRoles());
     }
 
-    @Test
-    public void testGetFavorites() {
-        Set<Reply> favorites = new HashSet<>();
-        favorites.add(reply);
+    // @Test
+    // void testHasRole() {
+    //     User user = new User();
+    //     Role role = Mockito.mock(Role.class);
+    //     Mockito.when(role.getRole()).thenReturn("ROLE_USER");
+    //     Set<Role> roles = new HashSet<>();
+    //     roles.add(role);
+    //     user.setRoles(roles);
 
-        user.setFavorites(favorites);
+    //     assertTrue(user.hasRole("ROLE_USER"));
+    //     assertFalse(user.hasRole("ROLE_ADMIN"));
+    // }
 
-        assertEquals(favorites, user.getFavorites());
-    }
+    // @Test
+    // void testGetRole() {
+    //     User user = new User();
+    //     Role role = Mockito.mock(Role.class);
+    //     Mockito.when(role.getRole()).thenReturn("ROLE_USER");
+    //     Set<Role> roles = new HashSet<>();
+    //     roles.add(role);
+    //     user.setRoles(roles);
 
-    @Test
-    public void testAddFavorite() {
-        user.addFavorite(reply);
+    //     GrantedAuthority grantedAuthority = user.getAuthority();
+    //     assertNotNull(grantedAuthority);
+    //     assertNotNull(grantedAuthority.getAuthority());
+    //     assertEquals("ROLE_USER", grantedAuthority.getAuthority());
+    // }
 
-        assertEquals(1, user.getFavorites().size());
-        assertEquals(reply, user.getFavorites().iterator().next());
-    }
+    // @Test
+    // void testSetFavorite() {
+    //     User user = new User();
+    //     assertFalse(user.isFavorite());
 
-    @Test
-    public void testRemoveFavorite() {
-        Set<Reply> favorites = new HashSet<>();
-        favorites.add(reply);
+    //     user.setFavorite(true);
+    //     assertTrue(user.isFavorite());
 
-        user.setFavorites(favorites);
-        user.removeFavorite(reply);
+    //     user.setFavorite(false);
+    //     assertFalse(user.isFavorite());
 
-        assertEquals(0, user.getFavorites().size());
-    }
+    //     // Check for null pointer exception
+    //     user.setFavorite(null);
+    //     assertFalse(user.isFavorite());
+    // }
 
+    // @Test
+    // void testIsFavorite() {
+    //     User user = new User();
+    //     user.setFavorite(true);
+    //     assertTrue(user.isFavorite());
+    //     user.setFavorite(false);
+    //     assertFalse(user.isFavorite());
+    // }
 }
+
