@@ -75,12 +75,12 @@ public class ProfileDAOImpl implements IProfileDAO {
 
     @Override
     public Optional<Profile> findByEmail(String email) {
-        return profileRepository.findByEmail(email);
+        return Optional.empty();
     }
 
     @Override
     public Optional<Profile> findByUsernameAndPassword(String username, String password) {
-        return profileRepository.findByUsernameAndPassword(username, password);
+        return Optional.empty();
     }
     @Override
     public List<Profile> getAll() {

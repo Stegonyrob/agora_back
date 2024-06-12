@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Profile;
+
+import de.stella.agora_web.profiles.model.Profile;
 
 public class ProfileTest {
 
+    @SuppressWarnings("unused")
     private Profile profile;
 
     private Profile testProfile;
