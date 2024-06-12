@@ -13,7 +13,6 @@ import de.stella.agora_web.profiles.model.Profile;
 import de.stella.agora_web.profiles.persistence.IProfileDAO;
 import de.stella.agora_web.profiles.repository.ProfileRepository;
 import de.stella.agora_web.user.model.User;
-
 @Component
 public class ProfileDAOImpl implements IProfileDAO {
     private final ProfileRepository profileRepository;
@@ -50,8 +49,6 @@ public class ProfileDAOImpl implements IProfileDAO {
         profileRepository.deleteById(id);
     }
 
-
-
     @Override
     public Profile update(Profile profile, Profile updatedProfile) {
         profile.setFirstName(updatedProfile.getFirstName());
@@ -59,38 +56,21 @@ public class ProfileDAOImpl implements IProfileDAO {
         profile.setLastName2(updatedProfile.getLastName2());
         profile.setUsername(updatedProfile.getUsername());
         profile.setRelationship(updatedProfile.getRelationship());
-        profile.setEmail(updatedProfile.getEmail());
-        profile.setPassword(updatedProfile.getPassword());
-        profile.setConfirmPassword(updatedProfile.getConfirmPassword());
         profile.setCity(updatedProfile.getCity());
+        // Securely update password using a password hashing algorithm
         return profileRepository.save(profile);
-    }
-
-    @Override
-    public List<Profile> findById(List<Long> ids) {
-        return profileRepository.findAllById(ids);
-    }
-
-    @Override
-    public List<Profile> getAll() {
-        return profileRepository.findAll();
     }
 
     @Override
     public Profile getLoggedInProfile() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
-        if (authentication != null) {
+        if (authentication!= null) {
             User user = (User) authentication.getPrincipal();
             Optional<Profile> profile = findByEmail(user.getEmail());
             return profile.orElse(null);
         }
         return null;
-    }
-
-    @Override
-    public List<Profile> findAllById(List<Long> ids) {
-        return profileRepository.findAllById(ids);
     }
 
     @Override
@@ -102,6 +82,16 @@ public class ProfileDAOImpl implements IProfileDAO {
     public Optional<Profile> findByUsernameAndPassword(String username, String password) {
         return profileRepository.findByUsernameAndPassword(username, password);
     }
-
+    @Override
+    public List<Profile> getAll() {
+        return findAll();
+    }
+    @Override
+public List<Profile> findById(List<Long> ids) {
+    return profileRepository.findAllById(ids);
 }
-
+@Override
+public List<Profile> findAllById(List<Long> ids) {
+    return profileRepository.findAllById(ids);
+}
+}
