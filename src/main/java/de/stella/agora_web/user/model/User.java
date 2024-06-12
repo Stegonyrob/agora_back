@@ -70,6 +70,16 @@ public GrantedAuthority getRole() {
    
 }
 
+public void setFavorite(boolean favorite) {
+    isFavorite = favorite;
+}
+
+private boolean isFavorite;
+
+public boolean isFavorite() {
+    return isFavorite;
+}
+
 
 
 
