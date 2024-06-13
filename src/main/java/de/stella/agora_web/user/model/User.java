@@ -2,9 +2,9 @@ package de.stella.agora_web.user.model;
 
 import java.util.Set;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.GrantedAuthority;
 
+import de.stella.agora_web.profiles.model.Profile;
 import de.stella.agora_web.roles.model.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

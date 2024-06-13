@@ -23,4 +23,3 @@ public interface IProfileService {
   List<Profile> getProfilesById(List<Long> ids);
   Optional<Profile> findProfileByUsername(String username);
 }
-
