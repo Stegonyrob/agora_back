@@ -14,7 +14,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -104,8 +103,8 @@ public class SecurityConfiguration {
             .requestMatchers(HttpMethod.GET, endpoint + "/users").permitAll()
             .requestMatchers(HttpMethod.DELETE, endpoint + "/users").permitAll()
             // Permitir el acceso a la autenticación para todos los roles
-            .requestMatchers(HttpMethod.GET, endpoint + "/login").permitAll()
             .requestMatchers(HttpMethod.POST, endpoint + "/login").permitAll()
+            .requestMatchers(HttpMethod.POST, endpoint + "/token").permitAll()
             // Requerir autenticación para todas las demás rutas
             .anyRequest().authenticated()
         )
