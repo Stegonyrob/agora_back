@@ -47,7 +47,7 @@ public class SecurityConfiguration {
   String endpoint;
 
   @Autowired
-    JWTtoUserConverter jwtToUserConverter; 
+  JWTtoUserConverter jwtToUserConverter; 
 
   @Autowired
   KeyUtils keyUtils; 
@@ -196,9 +196,9 @@ public class SecurityConfiguration {
     return source;
   }
 
-  @Bean
-  PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+  // @Bean
+  // PasswordEncoder passwordEncoder() {
+  //   return new BCryptPasswordEncoder();
+  // }
 }
 
