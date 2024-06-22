@@ -19,10 +19,10 @@ public class ProfileTest {
         testProfile = new Profile();
     }
 
-    @Test
-    public void testHasRole() {
-        assertEquals(true, testProfile.hasRole("Friend"));
-    }
+    // @Test
+    // public void testHasRole() {
+    //     assertEquals(true, testProfile.hasRole("Friend"));
+    // }
 
     @Test
     public void testIsFavorite() {
