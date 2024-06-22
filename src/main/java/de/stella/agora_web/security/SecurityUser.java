@@ -8,8 +8,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import de.stella.agora_web.roles.model.Role;
-import de.stella.agora_web.user.model.User;public class SecurityUser implements UserDetails {
-    private final User user;
+import de.stella.agora_web.user.model.User;
+
+public class SecurityUser implements UserDetails {
+    
+    User user;
 
     public SecurityUser(User user) {
         this.user = user;
@@ -17,10 +20,18 @@ import de.stella.agora_web.user.model.User;public class SecurityUser implements 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        for (Role role : user.getRoles()) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+
+        System.out.println("-------------------");
+        System.out.println(user.getRoles());
+        System.out.println("-------------------");
+
+        for (Role role : user.getRoles()){
+            System.out.println("User role: " + role.getName());
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getName());
+            authorities.add(authority);
         }
+
         return authorities;
     }
 
@@ -32,6 +43,10 @@ import de.stella.agora_web.user.model.User;public class SecurityUser implements 
     @Override
     public String getUsername() {
         return user.getUsername();
+    }
+
+    public Long getId() {
+        return user.getId();
     }
 
     @Override
@@ -54,7 +69,5 @@ import de.stella.agora_web.user.model.User;public class SecurityUser implements 
         return true;
     }
 
-    public Long getId() {
-        return user.getId();
-    }
+    
 }
