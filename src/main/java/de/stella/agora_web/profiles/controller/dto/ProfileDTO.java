@@ -18,4 +18,13 @@ public class ProfileDTO {
     private String confirmPassword;
     private String city;
 
+    public ProfileDTO(Object firstName2, Object lastName12, Object lastName22, Object relationship2, Object email2,
+            Object city2) {
+
+    }
+
+    public Long getUserId() {
+        return id;
+    }
+
 }

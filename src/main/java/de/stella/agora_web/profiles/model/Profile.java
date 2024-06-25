@@ -1,9 +1,12 @@
 package de.stella.agora_web.profiles.model;
 
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.stella.agora_web.avatar.module.Image;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replys.model.Reply;
 import de.stella.agora_web.user.model.User;
@@ -19,19 +22,25 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "profiles")
 @Getter
 @Setter
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Profile {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id_profile")
-  
   private Long id;
+
   private String firstName;
   private String lastName1;
   private String lastName2;
@@ -56,25 +65,21 @@ public class Profile {
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private User user;
 
-  public Profile() {
+  public boolean hasRole(String roleName) {
+    return getUser().getRoles().stream().anyMatch(role -> role.getName().equalsIgnoreCase(roleName));
   }
 
-  public Profile(Long id, String firstName, String lastName1, String lastName2, String username, String relationship,
-      String email, String password, String confirmPassword, String city) {
-    this.id = id;
-    this.firstName = firstName;
-    this.lastName1 = lastName1;
-    this.lastName2 = lastName2;
-    this.username = username;
-    this.relationship = relationship;
-    this.email = email;
-    this.password = password;
-    this.confirmPassword = confirmPassword;
-    this.city = city;
+  @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
+  private Set<Image> images;
+
+  public Optional<Set<Image>> getImages() {
+    return Optional.ofNullable(images);
   }
 
-  public boolean hasRole(String role) {
-    // Add the logic to check if the profile has the specified role
-    return false;
+  public void addImage(Image image) {
+    if (images == null) {
+      images = new HashSet<>();
+    }
+    images.add(image);
   }
 }

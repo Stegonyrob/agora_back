@@ -23,17 +23,16 @@ import lombok.Setter;
 @RequestMapping(path = "${api-endpoint}/users")
 public class UserController {
 
-     UserServiceImpl service;
+    UserServiceImpl service;
 
     public UserController(UserServiceImpl service) {
         this.service = service;
     }
 
     @GetMapping(path = "")
-    public List<User> index () {
+    public List<User> index() {
         return service.getAll();
     }
-
 
     @GetMapping("/{userId}")
     public ResponseEntity<User> getById(@PathVariable Long userId) {
@@ -45,11 +44,10 @@ public class UserController {
         }
     }
 
-
     @PostMapping(path = "")
     public ResponseEntity<User> create(@NonNull @RequestBody User user) {
         User newUser = service.save(user);
         return ResponseEntity.status(201).body(newUser);
     }
-    
+
 }

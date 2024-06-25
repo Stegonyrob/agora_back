@@ -3,6 +3,7 @@ package de.stella.agora_web.profiles.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,9 +54,7 @@ public class ProfileServiceImpl implements IProfileService {
     @Override
     @Transactional
     public boolean checkProfileUserRole(String username, String role) {
-        return profileDAO.findByUsername(username)
-                .map(profile -> profile.hasRole(role))
-                .orElse(false);
+        return profileDAO.findByUsername(username).map(profile -> profile.hasRole(role)).orElse(false);
     }
 
     @Override
@@ -78,14 +77,12 @@ public class ProfileServiceImpl implements IProfileService {
 
     @Transactional
     public Profile getById(Long id) {
-        return profileDAO.findById(id)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        return profileDAO.findById(id).orElseThrow(() -> new RuntimeException("Profile not found"));
     }
 
     @Transactional
     public Profile getByEmail(String email) {
-        return profileDAO.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        return profileDAO.findByEmail(email).orElseThrow(() -> new RuntimeException("Profile not found"));
     }
 
     @Transactional
@@ -114,27 +111,14 @@ public class ProfileServiceImpl implements IProfileService {
     @Override
     @Transactional
     public Profile registerProfile(ProfileDTO profileDTO) {
-        Profile profile = new Profile(
-            profileDTO.getId(),
-                profileDTO.getFirstName(),
-                profileDTO.getLastName1(),
-                profileDTO.getLastName2(),
-                profileDTO.getUsername(),
-                profileDTO.getRelationship(),
-                profileDTO.getEmail(),
-                profileDTO.getPassword(),
-                profileDTO.getConfirmPassword(),
-                profileDTO.getCity()
-        );
-        // Hash the password before saving
-        profile.setPassword(hashPassword(profileDTO.getPassword()));
-        return profileDAO.save(profile);
+        return profileDAO.save(new Profile());
     }
 
     private String hashPassword(String password) {
         // Implement password hashing logic here
-        return password; // Replace with actual hashed password
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
+
     @Override
     public List<Profile> getAllProfiles() {
         return profileDAO.findAll();
