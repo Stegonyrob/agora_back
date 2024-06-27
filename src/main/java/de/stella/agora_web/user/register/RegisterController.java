@@ -12,14 +12,14 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(path = "${api-endpoint}")
+@RequestMapping(path = "${api-endpoint}/all")
 public class RegisterController {
 
     RegisterService service;
 
     TokenGenerator tokenGenerator;
 
-    @PostMapping("/register")
+    @PostMapping("/users/register")
     public ResponseEntity<String> register(@RequestBody SignUpDTO signupDTO) {
 
         String message = service.createUser(signupDTO);

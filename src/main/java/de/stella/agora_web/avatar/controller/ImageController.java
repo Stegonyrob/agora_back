@@ -21,13 +21,13 @@ import de.stella.agora_web.avatar.service.storage.IStorageService;
 import de.stella.agora_web.messages.ResponseMessage;
 
 @RestController
-@RequestMapping(path = "${api-endpoint}")
+@RequestMapping(path = "${api-endpoint}/any")
 public class ImageController {
 
     @Autowired
     IStorageService service;
 
-    @PostMapping(path = "/admin/images/uploadImages/{id}")
+    @PostMapping(path = "/images/uploadImages/{id}")
     ResponseEntity<ResponseMessage> uploadImages(@PathVariable("id") @NonNull Long id,
             @RequestParam(name = "file", required = false) MultipartFile file,
             @RequestParam(name = "files", required = false) MultipartFile[] files) {
@@ -45,7 +45,7 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/admin/images/getAsResource/{filename:.+}")
+    @GetMapping("/images/getAsResource/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
 
@@ -60,7 +60,7 @@ public class ImageController {
         return ResponseEntity.ok().headers(headers).body(file);
     }
 
-    @DeleteMapping("/admin/images/{filename:.+}")
+    @DeleteMapping("/images/{filename:.+}")
     public ResponseEntity<ResponseMessage> deleteFile(@PathVariable String filename) {
         String message = "";
 

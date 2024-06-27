@@ -30,6 +30,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
+
 public class User {
 
     @Id
@@ -41,12 +42,12 @@ public class User {
 
     private String password;
 
-    private String email;
+    private String email; // Make sure this field is not null
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
-    
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Profile profile;
@@ -55,16 +56,18 @@ public class User {
         return roles.stream().anyMatch(r -> r.getName().equals(role));
     }
 
-    public User(Long id, String username, String password) { 
-        this.id = id; 
-        this.username = username; 
-        this.password = password; 
-    } 
+    public User(Long id, String username, String password, String email) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email; // Assign the email value here
+    }
 
-    public User( String userName, String password) { 
-        this.username = userName; 
-        this.password = password; 
-    } 
+    public User(String userName, String password, String email) {
+        this.username = userName;
+        this.password = password;
+        this.email = email; // Assign the email value here
+    }
 
     public GrantedAuthority getAuthority() {
         return null;

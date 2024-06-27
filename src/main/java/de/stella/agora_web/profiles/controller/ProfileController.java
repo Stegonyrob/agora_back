@@ -6,6 +6,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,7 @@ import de.stella.agora_web.profiles.model.Profile;
 import de.stella.agora_web.profiles.service.impl.ProfileServiceImpl;
 
 @RestController
-@RequestMapping(path = "${api-endpoint}")
+@RequestMapping(path = "${api-endpoint}/any/")
 public class ProfileController {
 
     ProfileServiceImpl service;
@@ -25,10 +26,10 @@ public class ProfileController {
         this.service = service;
     }
 
-    @PostAuthorize("returnObject.body.id == principal.id")
-    @GetMapping("/users/register/{id}")
-    public ResponseEntity<Profile> getProfileById(@PathVariable Long profileId) throws Exception {
-        Profile profile = service.getById(profileId);
+    @PostAuthorize("returnObject.body.user.id == principal.id")
+    @PostMapping("/users/profile/{id}")
+    public ResponseEntity<Profile> getProfileById(@RequestBody ProfileDTO profileDTO) throws Exception {
+        Profile profile = service.getById(profileDTO.getUserId());
         return ResponseEntity.ok(profile);
     }
 

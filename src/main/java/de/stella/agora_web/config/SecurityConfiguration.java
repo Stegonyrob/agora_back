@@ -5,10 +5,10 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -64,54 +64,10 @@ public class SecurityConfiguration {
   SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable()).formLogin(form -> form.disable())
         .logout(out -> out.logoutUrl(endpoint + "/logout").deleteCookies("JSESSIONID"))
-        .authorizeHttpRequests(auth -> auth
-            // Permitir el acceso a todos los posts para usuarios registrados
-            .requestMatchers(HttpMethod.GET, endpoint + "/posts/**").permitAll()
-            // Permitir el acceso a la creación de posts solo para usuarios
-            // registrados
-            .requestMatchers(HttpMethod.POST, endpoint + "/posts/**").permitAll()
-            // Permitir el acceso a la actualización y eliminación de posts solo
-            // para usuarios con rol ADMIN
-            .requestMatchers(HttpMethod.PUT, endpoint + "/posts/**").permitAll()
-            .requestMatchers(HttpMethod.DELETE, endpoint + "/posts/**").permitAll()
-            // Permitir el acceso a todas las respuestas para usuarios registrados
-            .requestMatchers(HttpMethod.GET, endpoint + "/replies/**").permitAll()
-            // Permitir el acceso a la creación de respuestas solo para usuarios
-            // registrados
-            .requestMatchers(HttpMethod.POST, endpoint + "/replies").permitAll()
-            // Permitir el acceso a la actualización y eliminación de respuestas
-            // solo para usuarios con rol ADMIN
-            .requestMatchers(HttpMethod.PUT, endpoint + "/replies/**").permitAll()
-            .requestMatchers(HttpMethod.DELETE, endpoint + "/replies/**").permitAll()
-            // Permitir el acceso a todas las tags para usuarios registrados
-            .requestMatchers(HttpMethod.GET, endpoint + "/tags/**").permitAll()
-            // Permitir el acceso a la creación de tags solo para usuarios
-            // registrados
-            .requestMatchers(HttpMethod.POST, endpoint + "/tags").permitAll()
-            // Permitir el acceso a la actualización y eliminación de tags solo para
-            // usuarios con rol ADMIN
-            .requestMatchers(HttpMethod.PUT, endpoint + "/tags/**").permitAll()
-            .requestMatchers(HttpMethod.DELETE, endpoint + "/tags/**").permitAll()
-            // Permitir el registro de usuarios para todos
-            .requestMatchers(HttpMethod.POST, endpoint + "/register").permitAll()
-            // Permitir el edicion de ususario para todos los roles
-            .requestMatchers(HttpMethod.PUT, endpoint + "/users").permitAll()
-            .requestMatchers(HttpMethod.GET, endpoint + "/users").permitAll()
-            .requestMatchers(HttpMethod.DELETE, endpoint + "/users").permitAll()
-            // Permitir el acceso a la autenticación para todos los roles
-            .requestMatchers(HttpMethod.POST, endpoint + "/login").permitAll()
-            .requestMatchers(HttpMethod.POST, endpoint + "/token").permitAll()
-            // Requerir autenticación para todas las demás rutas
-            .anyRequest().permitAll())
-
-        // .authorizeHttpRequests(auth ->
-        // auth.requestMatchers(PathRequest.toH2Console()).permitAll()
-        // .requestMatchers("/error").permitAll()
-        // .requestMatchers(endpoint + "/all/**").permitAll()
-        // .requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER")
-        // .requestMatchers(endpoint + "/admin/**")
-        // .hasRole("ADMIN").requestMatchers(endpoint + "/user/**").hasRole("USER")
-        // .anyRequest().authenticated())
+        .authorizeHttpRequests(auth -> auth.requestMatchers(PathRequest.toH2Console()).permitAll()
+            .requestMatchers("/error").permitAll().requestMatchers(endpoint + "/all/**").permitAll()
+            .requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER").requestMatchers(endpoint + "/admin/**")
+            .hasRole("ADMIN").requestMatchers(endpoint + "/user/**").hasRole("USER").anyRequest().permitAll())
 
         .userDetailsService(jpaUserDetailsService).httpBasic(basic -> basic.disable())
         .oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt) -> jwt.jwtAuthenticationConverter(jwtToUserConverter)))
