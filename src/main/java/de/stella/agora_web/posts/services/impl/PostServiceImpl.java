@@ -1,14 +1,18 @@
 package de.stella.agora_web.posts.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.posts.services.IPostService;
+import de.stella.agora_web.tags.module.Tag;
+import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.exceptions.UserNotFoundException;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.services.impl.UserServiceImpl;
@@ -17,6 +21,8 @@ import de.stella.agora_web.user.services.impl.UserServiceImpl;
 public class PostServiceImpl implements IPostService {
     private final PostRepository postRepository;
     private final UserServiceImpl userService;
+    @Autowired
+    private ITagService tagService;
 
     public PostServiceImpl(PostRepository postRepository, UserServiceImpl userService) {
         this.postRepository = postRepository;
@@ -45,6 +51,29 @@ public class PostServiceImpl implements IPostService {
         post.setMessage(postDTO.getMessage());
         post.setTitle(postDTO.getTitle());
         post.setCreationDate(postDTO.getCreationDate());
+
+        // Add tags from tag list
+        List<Tag> tags = new ArrayList<>();
+        for (String tagName : postDTO.getTags()) {
+            Tag tag = tagService.getTagByName(tagName);
+            if (tag == null) {
+                tag = tagService.createTag(tagName);
+            }
+            tags.add(tag);
+        }
+
+        // Add tags from hashtags in post message
+        List<String> hashtags = tagService.extractHashtags(post.getMessage());
+        for (String hashtag : hashtags) {
+            Tag tag = tagService.getTagByName(hashtag);
+            if (tag == null) {
+                tag = tagService.createTag(hashtag);
+            }
+            tags.add(tag);
+        }
+
+        post.setTags(tags);
+
         return postRepository.save(post);
     }
 
@@ -54,9 +83,35 @@ public class PostServiceImpl implements IPostService {
         if (existingPost != null) {
             existingPost.setTitle(postDTO.getTitle());
             existingPost.setMessage(postDTO.getMessage());
-          
+
+            // Remove existing tags
+            existingPost.getTags().clear();
+
+            // Add tags from tag list
+            List<Tag> tags = new ArrayList<>();
+            for (String tagName : postDTO.getTags()) {
+                Tag tag = tagService.getTagByName(tagName);
+                if (tag == null) {
+                    tag = tagService.createTag(tagName);
+                }
+                tags.add(tag);
+            }
+
+            // Add tags from hashtags in post message
+            List<String> hashtags = tagService.extractHashtags(postDTO.getMessage());
+            for (String hashtag : hashtags) {
+                Tag tag = tagService.getTagByName(hashtag);
+                if (tag == null) {
+                    tag = tagService.createTag(hashtag);
+                }
+                tags.add(tag);
+            }
+
+            existingPost.setTags(tags);
+
             return postRepository.save(existingPost);
         }
+
         return null;
     }
 
@@ -75,7 +130,7 @@ public class PostServiceImpl implements IPostService {
         Post post = new Post();
         post.setTitle(postDTO.getTitle());
         post.setMessage(postDTO.getMessage());
-  
+
         return postRepository.save(post);
     }
 
@@ -90,7 +145,7 @@ public class PostServiceImpl implements IPostService {
         if (existingPost != null) {
             existingPost.setTitle(postDTO.getTitle());
             existingPost.setMessage(postDTO.getMessage());
-        
+
             return postRepository.save(existingPost);
         }
         return null;
@@ -98,7 +153,7 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public List<Post> findPostsByUserId(Long userId) {
-        
+
         return postRepository.findByUserId(userId);
     }
 }

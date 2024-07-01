@@ -114,6 +114,7 @@ public class ProfileServiceImpl implements IProfileService {
         return profileDAO.save(new Profile());
     }
 
+    @SuppressWarnings("unused")
     private String hashPassword(String password) {
         // Implement password hashing logic here
         return BCrypt.hashpw(password, BCrypt.gensalt());

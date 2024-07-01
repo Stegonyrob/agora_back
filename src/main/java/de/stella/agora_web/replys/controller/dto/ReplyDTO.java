@@ -18,4 +18,18 @@ public class ReplyDTO<PostDTO> {
     private LocalDateTime creationDate;
     private List<PostDTO> post;
     private UserDTO user;
+
+    private List<String> tags;
+
+    public String[] getTags() {
+        return tags.toArray(new String[0]);
+    }
+
+    public Long getPostId() {
+        if (post == null || post.isEmpty()) {
+            return null;
+        }
+        PostDTO firstPost = post.get(0);
+        return ((UserDTO) firstPost).getId();
+    }
 }

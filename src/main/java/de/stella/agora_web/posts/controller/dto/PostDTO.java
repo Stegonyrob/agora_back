@@ -19,8 +19,6 @@ public class PostDTO {
 
     @SuppressWarnings("rawtypes")
     private List<ReplyDTO> replies;
-    // private TagDTO course;
-    // private UserDTO user;
 
     public Long getUserId() {
         return userId;
@@ -28,5 +26,14 @@ public class PostDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    private List<String> tags;
+
+    public String[] getTags() {
+        if (tags == null) {
+            return new String[0];
+        }
+        return tags.toArray(new String[0]);
     }
 }

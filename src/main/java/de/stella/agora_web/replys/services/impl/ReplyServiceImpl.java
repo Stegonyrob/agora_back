@@ -1,14 +1,19 @@
 package de.stella.agora_web.replys.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.replys.controller.dto.ReplyDTO;
 import de.stella.agora_web.replys.model.Reply;
 import de.stella.agora_web.replys.repository.ReplyRepository;
 import de.stella.agora_web.replys.services.IReplyService;
+import de.stella.agora_web.tags.module.Tag;
+import de.stella.agora_web.tags.repository.TagRepository;
+import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.model.User;
 
 @Service
@@ -16,6 +21,21 @@ public class ReplyServiceImpl implements IReplyService {
 
     @Autowired
     private ReplyRepository replyRepository; // Assuming you have a ReplyRepository
+
+    @SuppressWarnings("unused")
+    @Autowired
+    private ITagService tagService;
+
+    private Long postId;
+
+    private List<Tag> tags;
+
+    @Autowired
+    private PostRepository postRepository;
+
+    @SuppressWarnings("unused")
+    @Autowired
+    private TagRepository tagRepository;
 
     @Override
     public List<Reply> getAllReplys() {
@@ -28,22 +48,70 @@ public class ReplyServiceImpl implements IReplyService {
     }
 
     @Override
-    public Reply createReply(@SuppressWarnings("rawtypes") ReplyDTO replyDTO, User user) {
+    public Reply createReply(ReplyDTO replyDTO, User user) {
         Reply reply = new Reply();
-        // Assuming ReplyDTO has fields that can be mapped to Reply
-        // and User has a field that can be set to Reply
-        // Example: reply.setContent(replyDTO.getContent());
-        // reply.setUser(user);
+        reply.setPost(postRepository.findById(replyDTO.getPostId()).orElse(null));
+        reply.setUser(user);
+        reply.setMessage(replyDTO.getMessage());
+        reply.setCreationDate(replyDTO.getCreationDate());
+
+        // Add tags from tag list
+        List<Tag> tags = new ArrayList<>();
+        for (String tagName : replyDTO.getTags()) {
+            Tag tag = tagService.getTagByName(tagName);
+            if (tag == null) {
+                tag = tagService.createTag(tagName);
+            }
+            tags.add(tag);
+        }
+
+        // Add tags from hashtags in reply message
+        List<String> hashtags = tagService.extractHashtags(reply.getMessage());
+        for (String hashtag : hashtags) {
+            Tag tag = tagService.getTagByName(hashtag);
+            if (tag == null) {
+                tag = tagService.createTag(hashtag);
+            }
+            tags.add(tag);
+        }
+
+        reply.setTags(tags);
+
         return replyRepository.save(reply);
     }
 
     @Override
-    public Reply updateReply(Long id, @SuppressWarnings("rawtypes") ReplyDTO replyDTO) {
-        Reply reply = getReplyById(id);
-        if (reply != null) {
-            // Update the reply fields based on replyDTO
-            // Example: reply.setContent(replyDTO.getContent());
-            return replyRepository.save(reply);
+    public Reply updateReply(Long id, ReplyDTO replyDTO) {
+        Reply existingReply = replyRepository.findById(id).orElse(null);
+        if (existingReply != null) {
+            existingReply.setMessage(replyDTO.getMessage());
+
+            // Remove existing tags
+            existingReply.getTags().clear();
+
+            // Add tags from tag list
+            List<Tag> tags = new ArrayList<>();
+            for (String tagName : replyDTO.getTags()) {
+                Tag tag = tagService.getTagByName(tagName);
+                if (tag == null) {
+                    tag = tagService.createTag(tagName);
+                }
+                tags.add(tag);
+            }
+
+            // Add tags from hashtags in reply message
+            List<String> hashtags = tagService.extractHashtags(replyDTO.getMessage());
+            for (String hashtag : hashtags) {
+                Tag tag = tagService.getTagByName(hashtag);
+                if (tag == null) {
+                    tag = tagService.createTag(hashtag);
+                }
+                tags.add(tag);
+            }
+
+            existingReply.setTags(tags);
+
+            return replyRepository.save(existingReply);
         }
         return null;
     }

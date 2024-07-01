@@ -12,10 +12,16 @@ import de.stella.agora_web.profiles.model.Profile;
 @Repository
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
     boolean existsByUsername(String username);
+
     Optional<Profile> findByUsername(String username);
+
     Optional<Profile> findByUsernameAndPassword(String username, String password);
+
     void deleteByUsername(String username);
-    void deleteById(@SuppressWarnings("null") Long id);
+
+    void deleteById(Long id);
+
     Optional<Profile> findByEmail(String email);
+
     List<Profile> findAllByIdIn(Collection<Long> ids);
 }

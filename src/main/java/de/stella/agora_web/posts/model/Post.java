@@ -1,8 +1,10 @@
 package de.stella.agora_web.posts.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import de.stella.agora_web.replys.model.Reply;
+import de.stella.agora_web.tags.module.Tag;
 import de.stella.agora_web.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +13,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -43,7 +47,12 @@ public class Post {
     @JoinColumn(name = "reply_id")
     private Reply reply;
 
-    public Post() {}
+    @ManyToMany
+    @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private List<Tag> tags;
+
+    public Post() {
+    }
 
     public Post(Long id, String title, String message, LocalDateTime creationDate, User user, Reply reply) {
         this.id = id;

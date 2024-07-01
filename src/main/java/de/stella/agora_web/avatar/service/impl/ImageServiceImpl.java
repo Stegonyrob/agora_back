@@ -26,8 +26,11 @@ import de.stella.agora_web.utilities.Time;
 public class ImageServiceImpl implements IStorageService {
 
     private final Path rootLocation;
+    @SuppressWarnings("unused")
     private final ImageRepository imageRepository;
+    @SuppressWarnings("unused")
     private final ProfileRepository profileRepository;
+    @SuppressWarnings("unused")
     private final Time time;
 
     public ImageServiceImpl(ImageRepository imageRepository, ProfileRepository profileRepository, Time time,
