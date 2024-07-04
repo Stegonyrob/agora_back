@@ -68,13 +68,11 @@ public class SecurityConfiguration {
             .requestMatchers("/error").permitAll().requestMatchers(endpoint + "/all/**").permitAll()
             .requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER").requestMatchers(endpoint + "/admin/**")
             .hasRole("ADMIN").requestMatchers(endpoint + "/user/**").hasRole("USER").anyRequest().permitAll())
-
         .userDetailsService(jpaUserDetailsService).httpBasic(basic -> basic.disable())
-        .oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt) -> jwt.jwtAuthenticationConverter(jwtToUserConverter)))
-        .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .exceptionHandling(
-            (exceptions) -> exceptions.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
+        .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtToUserConverter)))
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+            .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
 
     http.headers(header -> header.frameOptions(frame -> frame.sameOrigin()));
 
@@ -141,7 +139,6 @@ public class SecurityConfiguration {
     source.registerCorsConfiguration(("/**"), configuration);
     return source;
   }
-
   // @Bean
   // PasswordEncoder passwordEncoder() {
   // return new BCryptPasswordEncoder();

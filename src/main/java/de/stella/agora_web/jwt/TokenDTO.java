@@ -1,15 +1,14 @@
 package de.stella.agora_web.jwt;
 
-
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class TokenDTO { 
-      
-    private Long userId; 
-    private String accessToken; 
-    private String refreshToken;    
-  
-} 
+public class TokenDTO {
+
+    private Long userId;
+    private String accessToken;
+    private String refreshToken;
+    private String role;
+}

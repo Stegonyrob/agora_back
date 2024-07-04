@@ -30,30 +30,34 @@ public class PostController {
     }
 
     @PostMapping("/admin/posts")
-    @PreAuthorize("hasRole('USER','ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO) {
         Post post = postService.createPost(postDTO, null);
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
 
     @GetMapping("/any/posts")
+    @PreAuthorize("hasRole('USER','ADMIN')")
     public List<Post> index() {
         return postService.getAllPosts();
     }
 
     @GetMapping("/any/posts/{id}")
+    @PreAuthorize("hasRole('USER','ADMIN')")
     public ResponseEntity<Post> show(@NonNull @PathVariable Long id) {
         Post post = postService.getById(id);
         return ResponseEntity.status(HttpStatus.OK).body(post);
     }
 
     @DeleteMapping("/admin/posts/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         postService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/admin/posts/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Post> update(@PathVariable Long id, @RequestBody PostDTO postDTO) {
         Post post = postService.update(postDTO, id);
         return ResponseEntity.accepted().body(post);
