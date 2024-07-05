@@ -20,7 +20,7 @@ import de.stella.agora_web.posts.services.IPostService;
 import lombok.NonNull;
 
 @RestController
-@RequestMapping(path = "${api-endpoint}/")
+@RequestMapping(path = "${api-endpoint}/any")
 public class PostController {
 
     private final IPostService postService;
@@ -29,34 +29,34 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping("/admin/posts")
+    @PostMapping("/posts")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO) {
         Post post = postService.createPost(postDTO, null);
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
 
-    @GetMapping("/any/posts")
+    @GetMapping("/posts")
     @PreAuthorize("hasRole('USER','ADMIN')")
     public List<Post> index() {
         return postService.getAllPosts();
     }
 
-    @GetMapping("/any/posts/{id}")
+    @GetMapping("/posts/{id}")
     @PreAuthorize("hasRole('USER','ADMIN')")
     public ResponseEntity<Post> show(@NonNull @PathVariable Long id) {
         Post post = postService.getById(id);
         return ResponseEntity.status(HttpStatus.OK).body(post);
     }
 
-    @DeleteMapping("/admin/posts/{id}")
+    @DeleteMapping("/posts/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         postService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/admin/posts/{id}")
+    @PutMapping("/posts/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Post> update(@PathVariable Long id, @RequestBody PostDTO postDTO) {
         Post post = postService.update(postDTO, id);
