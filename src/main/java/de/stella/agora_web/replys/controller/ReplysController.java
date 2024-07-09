@@ -18,7 +18,7 @@ import de.stella.agora_web.replys.services.IReplyService;
 import io.micrometer.common.lang.NonNull;
 
 @RestController
-@RequestMapping(path = "${api-endpoint}/any")
+@RequestMapping(path = "${api-endpoint}/all")
 public class ReplysController {
 
     private final IReplyService replyService;

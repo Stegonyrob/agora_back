@@ -19,7 +19,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     void deleteByUsername(String username);
 
-    void deleteById(Long id);
+    void deleteById(@SuppressWarnings("null") Long id);
 
     Optional<Profile> findByEmail(String email);
 

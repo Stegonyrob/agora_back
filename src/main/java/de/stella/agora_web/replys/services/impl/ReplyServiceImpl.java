@@ -20,15 +20,9 @@ import de.stella.agora_web.user.model.User;
 public class ReplyServiceImpl implements IReplyService {
 
     @Autowired
-    private ReplyRepository replyRepository; // Assuming you have a ReplyRepository
-
-    @SuppressWarnings("unused")
+    private ReplyRepository replyRepository;
     @Autowired
     private ITagService tagService;
-
-    private Long postId;
-
-    private List<Tag> tags;
 
     @Autowired
     private PostRepository postRepository;
@@ -48,7 +42,7 @@ public class ReplyServiceImpl implements IReplyService {
     }
 
     @Override
-    public Reply createReply(ReplyDTO replyDTO, User user) {
+    public Reply createReply(@SuppressWarnings("rawtypes") ReplyDTO replyDTO, User user) {
         Reply reply = new Reply();
         reply.setPost(postRepository.findById(replyDTO.getPostId()).orElse(null));
         reply.setUser(user);
@@ -81,7 +75,7 @@ public class ReplyServiceImpl implements IReplyService {
     }
 
     @Override
-    public Reply updateReply(Long id, ReplyDTO replyDTO) {
+    public Reply updateReply(Long id, @SuppressWarnings("rawtypes") ReplyDTO replyDTO) {
         Reply existingReply = replyRepository.findById(id).orElse(null);
         if (existingReply != null) {
             existingReply.setMessage(replyDTO.getMessage());

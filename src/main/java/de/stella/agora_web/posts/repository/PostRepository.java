@@ -12,8 +12,10 @@ import de.stella.agora_web.replys.model.Reply;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+    @SuppressWarnings("null")
     List<Post> findAll();
 
+    @SuppressWarnings("null")
     Optional<Post> findById(Long id);
 
     List<Post> findByUserId(Long userId);

@@ -20,7 +20,7 @@ import de.stella.agora_web.posts.services.IPostService;
 import lombok.NonNull;
 
 @RestController
-@RequestMapping(path = "${api-endpoint}/any")
+@RequestMapping(path = "${api-endpoint}")
 public class PostController {
 
     private final IPostService postService;
@@ -29,38 +29,45 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping("/posts")
+    @PostMapping("/any/posts")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO) {
         Post post = postService.createPost(postDTO, null);
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
 
-    @GetMapping("/posts")
-    @PreAuthorize("hasRole('USER','ADMIN')")
+    @GetMapping("/any/posts")
     public List<Post> index() {
         return postService.getAllPosts();
     }
 
-    @GetMapping("/posts/{id}")
-    @PreAuthorize("hasRole('USER','ADMIN')")
-    public ResponseEntity<Post> show(@NonNull @PathVariable Long id) {
+    @GetMapping("/any/posts/{id}")
+    public ResponseEntity<Post> show(@NonNull @PathVariable("id") Long id) {
         Post post = postService.getById(id);
         return ResponseEntity.status(HttpStatus.OK).body(post);
     }
 
-    @DeleteMapping("/posts/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/any/posts/store") // Ruta única para guardar un post
+    public ResponseEntity<Post> store(@RequestBody PostDTO postDTO) {
+        Post post = postService.save(postDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(post);
+    }
+
+    @DeleteMapping("/any/posts/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         postService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/posts/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Post> update(@PathVariable Long id, @RequestBody PostDTO postDTO) {
+    @PutMapping("/any/posts/{id}")
+    public ResponseEntity<Post> update(@PathVariable("id") Long id, @RequestBody PostDTO postDTO) {
         Post post = postService.update(postDTO, id);
         return ResponseEntity.accepted().body(post);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable Long userId) {
+        List<Post> posts = postService.findPostsByUserId(userId);
+        return ResponseEntity.ok(posts);
+    }
 }

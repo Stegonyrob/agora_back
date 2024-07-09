@@ -8,13 +8,23 @@ import lombok.NonNull;
 
 public interface IPostService {
     List<Post> getAllPosts();
+
     Post getPostById(Long id);
+
     Post updatePost(Long id, PostDTO postDTO);
+
     void deletePost(Long id);
+
     Post save(PostDTO postDTO);
+
     void deleteById(Long id);
+
     Post update(PostDTO postDTO, Long id);
+
     Post getById(@NonNull Long id);
+
     List<Post> findPostsByUserId(Long userId);
+
     Post createPost(PostDTO postDTO, Long userId);
+
 }

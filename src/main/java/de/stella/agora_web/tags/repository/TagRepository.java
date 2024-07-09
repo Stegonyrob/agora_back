@@ -11,10 +11,12 @@ import de.stella.agora_web.tags.module.Tag;
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Long> {
 
+    @SuppressWarnings("null")
     List<Tag> findAll();
 
     List<Tag> findByName(String name);
 
+    @SuppressWarnings("null")
     Optional<Tag> findById(Long id);
 
 }

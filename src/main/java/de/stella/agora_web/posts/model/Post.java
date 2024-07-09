@@ -3,6 +3,8 @@ package de.stella.agora_web.posts.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import de.stella.agora_web.replys.model.Reply;
 import de.stella.agora_web.tags.module.Tag;
 import de.stella.agora_web.user.model.User;
@@ -41,6 +43,7 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -61,5 +64,9 @@ public class Post {
         this.creationDate = creationDate;
         this.user = user;
         this.reply = reply;
+    }
+
+    public void setUser(User user2) {
+        this.user = user2;
     }
 }

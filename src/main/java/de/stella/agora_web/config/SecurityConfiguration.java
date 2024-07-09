@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,10 +39,10 @@ import de.stella.agora_web.auth.KeyUtils;
 import de.stella.agora_web.jwt.JWTtoUserConverter;
 import de.stella.agora_web.user.services.JpaUserDetailsService;
 
+@EnableMethodSecurity
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-
   @Value("${api-endpoint}")
   String endpoint;
 
@@ -54,25 +55,28 @@ public class SecurityConfiguration {
   @Autowired
   PasswordEncoder passwordEncoder;
 
-  JpaUserDetailsService jpaUserDetailsService;
+  JpaUserDetailsService jpaUserDetailService;
 
-  public SecurityConfiguration(JpaUserDetailsService jpaUserDetailsService) {
-    this.jpaUserDetailsService = jpaUserDetailsService;
+  public SecurityConfiguration(JpaUserDetailsService jpaUserDetailService) {
+    this.jpaUserDetailService = jpaUserDetailService;
   }
 
   @Bean
-  SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
     http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable()).formLogin(form -> form.disable())
-        .logout(out -> out.logoutUrl(endpoint + "/logout").deleteCookies("JSESSIONID"))
+        .logout(out -> out.logoutUrl(endpoint + "/logout"))
         .authorizeHttpRequests(auth -> auth.requestMatchers(PathRequest.toH2Console()).permitAll()
             .requestMatchers("/error").permitAll().requestMatchers(endpoint + "/all/**").permitAll()
             .requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER").requestMatchers(endpoint + "/admin/**")
-            .hasRole("ADMIN").requestMatchers(endpoint + "/user/**").hasRole("USER").anyRequest().permitAll())
-        .userDetailsService(jpaUserDetailsService).httpBasic(basic -> basic.disable())
-        .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtToUserConverter)))
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-            .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
+            .hasRole("ADMIN").requestMatchers(endpoint + "/user/**").hasRole("USER")
+            .requestMatchers(endpoint + "/imgs/**").permitAll().anyRequest().authenticated())
+        .userDetailsService(jpaUserDetailService).httpBasic(basic -> basic.disable())
+        .oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt) -> jwt.jwtAuthenticationConverter(jwtToUserConverter)))
+        .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .exceptionHandling(
+            (exceptions) -> exceptions.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
 
     http.headers(header -> header.frameOptions(frame -> frame.sameOrigin()));
 
@@ -121,7 +125,7 @@ public class SecurityConfiguration {
   DaoAuthenticationProvider daoAuthenticationProvider() {
     DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
     provider.setPasswordEncoder(passwordEncoder);
-    provider.setUserDetailsService(jpaUserDetailsService);
+    provider.setUserDetailsService(jpaUserDetailService);
     return provider;
   }
 
@@ -129,18 +133,13 @@ public class SecurityConfiguration {
   CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowCredentials(true);
-
-    configuration
-        .setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174", "http://localhost:8080"));
-
+    configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
     configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration(("/**"), configuration);
+    source.registerCorsConfiguration("/**", configuration);
+
     return source;
   }
-  // @Bean
-  // PasswordEncoder passwordEncoder() {
-  // return new BCryptPasswordEncoder();
-  // }
+
 }

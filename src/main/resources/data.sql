@@ -20,8 +20,8 @@ INSERT INTO images(id_image, image_name, profile_id) VALUES
   (default, 'img5', 4);
 
 -- Inserciones en la tabla 'roles'
-INSERT INTO roles (id_role, name) VALUES (default, 'ROLE_ADMIN');
-INSERT INTO roles (id_role, name) VALUES (default, 'ROLE_USER');
+INSERT INTO roles (id_role, name) VALUES (default, 'ADMIN');
+INSERT INTO roles (id_role, name) VALUES (default, 'USER');
 
 -- Asociación entre usuarios y roles
 INSERT INTO roles_users (role_id, user_id) VALUES (1, 1);

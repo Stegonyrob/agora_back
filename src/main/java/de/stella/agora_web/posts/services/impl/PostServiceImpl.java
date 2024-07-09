@@ -156,4 +156,5 @@ public class PostServiceImpl implements IPostService {
 
         return postRepository.findByUserId(userId);
     }
+
 }

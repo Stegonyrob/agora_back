@@ -11,7 +11,9 @@ import de.stella.agora_web.replys.model.Reply;
 @Repository
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
+    @SuppressWarnings("null")
     List<Reply> findAll();
 
+    @SuppressWarnings("null")
     Optional<Reply> findById(Long id);
 }
