@@ -1,6 +1,7 @@
 package de.stella.agora_web.generics;
+
 public interface IGenericUpdateService<T, R> {
 
-    R update(T type, Long id) throws Exception;
-    
+    R update(T type, Long id);
+
 }
