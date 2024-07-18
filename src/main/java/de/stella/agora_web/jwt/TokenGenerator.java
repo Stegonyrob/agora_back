@@ -1,12 +1,15 @@
 package de.stella.agora_web.jwt;
 
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -34,11 +37,11 @@ public class TokenGenerator {
 
         Instant now = Instant.now();
 
-        JwtClaimsSet claimsSet = JwtClaimsSet.builder().issuer("myApp").issuedAt(now)
-                .expiresAt(now.plus(30, ChronoUnit.DAYS)).subject(Long.toString(securityUser.getId()))
-                .claim("role", securityUser.getAuthorities().stream().map(authority -> authority.getAuthority())
-                        .collect(Collectors.joining(",")))
-                .build();
+        JwtClaimsSet claimsSet = JwtClaimsSet
+                .builder().issuer("http://localhost:8080").issuedAt(now).expiresAt(now.plus(5, ChronoUnit.MINUTES))
+                .subject(Long.toString(securityUser.getId())).claim("role", securityUser.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority).collect(Collectors.joining(",")))
+                .audience(Arrays.asList("AgoraApp")).build();
         return accessTokenEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
     }
 
@@ -47,18 +50,20 @@ public class TokenGenerator {
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
         Instant now = Instant.now();
 
-        JwtClaimsSet claimsSet = JwtClaimsSet.builder().issuer("myApp").issuedAt(now)
-                .expiresAt(now.plus(30, ChronoUnit.DAYS)).subject(Long.toString(securityUser.getId()))
-                .claim("role", securityUser.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.joining(",")))
-                .build();
-
+        JwtClaimsSet claimsSet = JwtClaimsSet
+                .builder().issuer("http://localhost:8080").issuedAt(now).expiresAt(now.plus(5, ChronoUnit.MINUTES))
+                .subject(Long.toString(securityUser.getId())).claim("role", securityUser.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority).collect(Collectors.joining(",")))
+                .audience(Arrays.asList("AgoraApp")).build();
         return refreshTokenEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
     }
 
     public TokenDTO createToken(Authentication authentication) {
 
-        SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+        if (!(authentication.getPrincipal() instanceof SecurityUser securityUser)) {
+            throw new BadCredentialsException(MessageFormat.format("principal {0} is not of User type",
+                    authentication.getPrincipal().getClass()));
+        }
         System.out.println(authentication.getPrincipal());
 
         TokenDTO tokenDTO = new TokenDTO();
@@ -88,12 +93,6 @@ public class TokenGenerator {
         tokenDTO.setRefreshToken(refreshToken);
 
         return tokenDTO;
-    }
-
-    public String createAccessToken(String username) {
-        JwtClaimsSet claimsSet = JwtClaimsSet.builder().issuer("myApp").issuedAt(Instant.now())
-                .expiresAt(Instant.now().plus(30, ChronoUnit.DAYS)).subject(username).build();
-        return accessTokenEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
     }
 
 }

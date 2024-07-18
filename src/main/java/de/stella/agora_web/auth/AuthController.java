@@ -17,9 +17,8 @@ import de.stella.agora_web.jwt.TokenDTO;
 import de.stella.agora_web.jwt.TokenGenerator;
 
 @RestController
-@RequestMapping("${api-endpoint}/all")
+@RequestMapping("${api-endpoint}")
 public class AuthController {
-
     @Autowired
     TokenGenerator tokenGenerator;
     @Autowired
@@ -28,7 +27,7 @@ public class AuthController {
     @Qualifier("jwtRefreshTokenAuthProvider")
     JwtAuthenticationProvider refreshTokenAuthProvider;
 
-    @PostMapping("/login")
+    @PostMapping("/all/login")
     public ResponseEntity<TokenDTO> login(@RequestBody LoginDTO loginDTO) {
         Authentication authentication = daoAuthenticationProvider.authenticate(
                 UsernamePasswordAuthenticationToken.unauthenticated(loginDTO.getUsername(), loginDTO.getPassword()));
@@ -37,10 +36,12 @@ public class AuthController {
         return ResponseEntity.ok(tokenGenerator.createToken(authentication));
     }
 
-    @PostMapping("/token")
-    public ResponseEntity<TokenDTO> token(@RequestBody TokenDTO tokenDTO) {
+    @PostMapping("/all/token")
+    public ResponseEntity<TokenDTO> token(@RequestBody RefreshTokenDTO tokenDTO) {
         Authentication authentication = refreshTokenAuthProvider
                 .authenticate(new BearerTokenAuthenticationToken(tokenDTO.getRefreshToken()));
+        // Jwt jwt = (Jwt) authentication.getCredentials();
+        // check if present in db and not revoked, etc
 
         return ResponseEntity.ok(tokenGenerator.createToken(authentication));
     }
