@@ -40,9 +40,8 @@ public class AuthController {
     public ResponseEntity<TokenDTO> token(@RequestBody RefreshTokenDTO tokenDTO) {
         Authentication authentication = refreshTokenAuthProvider
                 .authenticate(new BearerTokenAuthenticationToken(tokenDTO.getRefreshToken()));
-        // Jwt jwt = (Jwt) authentication.getCredentials();
-        // check if present in db and not revoked, etc
 
+        System.out.println(authentication);
         return ResponseEntity.ok(tokenGenerator.createToken(authentication));
     }
 }
