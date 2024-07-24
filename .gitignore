@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Keys ###
+
+src/main/java/de/stella/agora_web/auth/keys/
 ### STS ###
 .apt_generated
 .classpath

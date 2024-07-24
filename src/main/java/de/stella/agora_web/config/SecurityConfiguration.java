@@ -1,8 +1,17 @@
 package de.stella.agora_web.config;
 
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
+import de.stella.agora_web.auth.KeyUtils;
+import de.stella.agora_web.auth.ProblemDetailsAuthenticationEntryPoint;
+import de.stella.agora_web.jwt.JWTtoUserConverter;
+import de.stella.agora_web.security.JpaUserDetailsService;
 import java.util.Arrays;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -33,20 +43,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
-
-import de.stella.agora_web.auth.KeyUtils;
-import de.stella.agora_web.auth.ProblemDetailsAuthenticationEntryPoint;
-import de.stella.agora_web.jwt.JWTtoUserConverter;
-import de.stella.agora_web.user.services.JpaUserDetailsService;
-
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
 
   @Value("${api-endpoint}")
@@ -60,6 +59,7 @@ public class SecurityConfiguration {
 
   @Autowired
   JWTtoUserConverter jwtToUserConverter;
+
   @Autowired
   ProblemDetailsAuthenticationEntryPoint entryPoint;
 
@@ -77,19 +77,43 @@ public class SecurityConfiguration {
 
   @Bean
   SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable()).formLogin(form -> form.disable())
-        .logout(out -> out.logoutUrl(endpoint + "/logout").deleteCookies("JSESSIONID"))
-        .authorizeHttpRequests(auth -> auth.requestMatchers(PathRequest.toH2Console()).permitAll()
-            .requestMatchers("/error").permitAll().requestMatchers(endpoint + "/all/**").permitAll()
-            .requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER").requestMatchers(endpoint + "/admin/**")
-            .hasRole("ADMIN").requestMatchers(endpoint + "/user/**").hasRole("USER").anyRequest().permitAll())
-
-        .userDetailsService(jpaUserDetailsService).httpBasic(basic -> basic.disable())
-        .oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt) -> jwt.jwtAuthenticationConverter(jwtToUserConverter)))
-        .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .exceptionHandling(
-            (exceptions) -> exceptions.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
+    http
+      .cors(Customizer.withDefaults())
+      .csrf(csrf -> csrf.disable())
+      .formLogin(form -> form.disable())
+      .logout(out ->
+        out.logoutUrl(endpoint + "/logout").deleteCookies("JSESSIONID")
+      )
+      .authorizeHttpRequests(auth ->
+        auth
+          .requestMatchers(PathRequest.toH2Console())
+          .permitAll()
+          .requestMatchers("/error")
+          .permitAll()
+          .requestMatchers(endpoint + "/all/**")
+          .permitAll()
+          .requestMatchers(endpoint + "/any/**")
+          .hasAnyRole("ADMIN", "USER")
+          .requestMatchers(endpoint + "/admin/**")
+          .hasRole("ADMIN")
+          .requestMatchers(endpoint + "/user/**")
+          .hasRole("USER")
+          .anyRequest()
+          .authenticated()
+      )
+      .userDetailsService(jpaUserDetailsService)
+      .httpBasic(basic -> basic.disable())
+      .oauth2ResourceServer(oauth2 ->
+        oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtToUserConverter))
+      )
+      .sessionManagement(session ->
+        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+      )
+      .exceptionHandling(exceptions ->
+        exceptions
+          .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+          .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+      );
 
     http.headers(header -> header.frameOptions(frame -> frame.sameOrigin()));
 
@@ -99,11 +123,20 @@ public class SecurityConfiguration {
   @Bean
   @Primary
   JwtDecoder jwtAccessTokenDecoder() {
-    OAuth2TokenValidator<Jwt> defaults = JwtValidators.createDefaultWithIssuer(issuer);
-    OAuth2TokenValidator<Jwt> audiences = new JwtClaimValidator<List<String>>("aud",
-        (aud) -> aud != null && aud.contains(audience));
-    OAuth2TokenValidator<Jwt> all = new DelegatingOAuth2TokenValidator<>(defaults, audiences);
-    NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withPublicKey(keyUtils.getAccessTokenPublicKey()).build();
+    OAuth2TokenValidator<Jwt> defaults = JwtValidators.createDefaultWithIssuer(
+      issuer
+    );
+    OAuth2TokenValidator<Jwt> audiences = new JwtClaimValidator<List<String>>(
+      "aud",
+      aud -> aud != null && aud.contains(audience)
+    );
+    OAuth2TokenValidator<Jwt> all = new DelegatingOAuth2TokenValidator<>(
+      defaults,
+      audiences
+    );
+    NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder
+      .withPublicKey(keyUtils.getAccessTokenPublicKey())
+      .build();
     jwtDecoder.setJwtValidator(all);
     return jwtDecoder;
   }
@@ -111,8 +144,9 @@ public class SecurityConfiguration {
   @Bean
   @Primary
   JwtEncoder jwtAccessTokenEncoder() {
-    JWK jwk = new RSAKey.Builder(keyUtils.getAccessTokenPublicKey()).privateKey(keyUtils.getAccessTokenPrivateKey())
-        .build();
+    JWK jwk = new RSAKey.Builder(keyUtils.getAccessTokenPublicKey())
+      .privateKey(keyUtils.getAccessTokenPrivateKey())
+      .build();
     JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
     return new NimbusJwtEncoder(jwks);
   }
@@ -120,14 +154,17 @@ public class SecurityConfiguration {
   @Bean
   @Qualifier("jwtRefreshTokenDecoder")
   JwtDecoder jwtRefreshTokenDecoder() {
-    return NimbusJwtDecoder.withPublicKey(keyUtils.getRefreshTokenPublicKey()).build();
+    return NimbusJwtDecoder
+      .withPublicKey(keyUtils.getRefreshTokenPublicKey())
+      .build();
   }
 
   @Bean
   @Qualifier("jwtRefreshTokenEncoder")
   JwtEncoder jwtRefreshTokenEncoder() {
-    JWK jwk = new RSAKey.Builder(keyUtils.getRefreshTokenPublicKey()).privateKey(keyUtils.getRefreshTokenPrivateKey())
-        .build();
+    JWK jwk = new RSAKey.Builder(keyUtils.getRefreshTokenPublicKey())
+      .privateKey(keyUtils.getRefreshTokenPrivateKey())
+      .build();
     JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
     return new NimbusJwtEncoder(jwks);
   }
@@ -135,7 +172,9 @@ public class SecurityConfiguration {
   @Bean
   @Qualifier("jwtRefreshTokenAuthProvider")
   JwtAuthenticationProvider jwtRefreshTokenAuthProvider() {
-    JwtAuthenticationProvider provider = new JwtAuthenticationProvider(jwtRefreshTokenDecoder());
+    JwtAuthenticationProvider provider = new JwtAuthenticationProvider(
+      jwtRefreshTokenDecoder()
+    );
     provider.setJwtAuthenticationConverter(jwtToUserConverter);
     return provider;
   }
@@ -153,14 +192,22 @@ public class SecurityConfiguration {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowCredentials(true);
 
-    configuration
-        .setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174", "http://localhost:8080"));
+    configuration.setAllowedOrigins(
+      Arrays.asList(
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:8080"
+      )
+    );
 
-    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-    configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
+    configuration.setAllowedMethods(
+      Arrays.asList("GET", "POST", "PUT", "DELETE")
+    );
+    configuration.setAllowedHeaders(
+      Arrays.asList("Content-Type", "Authorization")
+    );
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration(("/**"), configuration);
     return source;
   }
-
 }

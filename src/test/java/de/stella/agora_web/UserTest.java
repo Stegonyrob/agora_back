@@ -1,86 +1,100 @@
 package de.stella.agora_web;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.junit.jupiter.api.Test;
-
+import de.stella.agora_web.profiles.model.Profile;
 import de.stella.agora_web.roles.model.Role;
 import de.stella.agora_web.user.model.User;
+import java.util.HashSet;
+import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.security.core.GrantedAuthority;
 
 public class UserTest {
 
-    @Test
-    void testConstructor() {
-        Long id = 1L;
-        String username = "testUser";
-        String password = "testPassword";
-        Set<Role> roles = new HashSet<>();
-        User user = new User();
-        user.setId(id);
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setRoles(roles);
+  private User user;
 
-        assertEquals(id, user.getId());
-        assertEquals(username, user.getUsername());
-        assertEquals(password, user.getPassword());
-        assertEquals(roles, user.getRoles());
+  @Mock
+  private Profile profile;
+
+  @BeforeEach
+  public void setUp() {
+    user = new User("test", "password", "test@example.com");
+    Set<Role> roles = new HashSet<>();
+    Role role1 = mock(Role.class);
+    Role role2 = mock(Role.class);
+    roles.add(role1);
+    roles.add(role2);
+    user.setRoles(roles);
+  }
+
+  @Test
+  public void testGetId() {
+    assertEquals(1L, user.getId());
+  }
+
+  @Test
+  public void testGetUsername() {
+    assertEquals("testUser", user.getUsername());
+  }
+
+  @Test
+  public void testGetPassword() {
+    assertEquals("password", user.getPassword());
+  }
+
+  @Test
+  public void testGetEmail() {
+    assertEquals("test@example.com", user.getEmail());
+  }
+
+  @Test
+  public void testGetRoles() {
+    Set<Role> roles = new HashSet<>();
+    Role role1 = mock(Role.class);
+    Role role2 = mock(Role.class);
+    roles.add(role1);
+    roles.add(role2);
+    user.setRoles(roles);
+    assertEquals(2, user.getRoles().size());
+  }
+
+  @Test
+  public void testHasRole() {
+    Role role1 = mock(Role.class);
+    Role role2 = mock(Role.class);
+    when(role1.getName()).thenReturn("ROLE_USER");
+    when(role2.getName()).thenReturn("ROLE_ADMIN");
+    Set<Role> roles = new HashSet<>();
+    roles.add(role1);
+    roles.add(role2);
+    user.setRoles(roles);
+    assertTrue(user.hasRole("ROLE_USER"));
+    assertFalse(user.hasRole("ROLE_GUEST"));
+  }
+
+  @Test
+  public void testGetAuthority() {
+    Set<Role> roles = user.getRoles();
+    if (!roles.isEmpty()) {
+      Role firstRole = roles.iterator().next();
+      String roleName = firstRole.getName();
+      if (roleName != null && !roleName.isBlank()) {
+        GrantedAuthority authority = user.getAuthority();
+        assertNotNull(authority);
+        assertEquals(roleName, authority.getAuthority());
+      } else {
+        throw new AssertionError("Role name is empty or null");
+      }
+    } else {
+      assertThrows(
+        NoSuchBeanDefinitionException.class,
+        () -> user.getAuthority()
+      );
     }
-
-    // @Test
-    // void testHasRole() {
-    //     User user = new User();
-    //     Role role = Mockito.mock(Role.class);
-    //     Mockito.when(role.getRole()).thenReturn("ROLE_USER");
-    //     Set<Role> roles = new HashSet<>();
-    //     roles.add(role);
-    //     user.setRoles(roles);
-
-    //     assertTrue(user.hasRole("ROLE_USER"));
-    //     assertFalse(user.hasRole("ROLE_ADMIN"));
-    // }
-
-    // @Test
-    // void testGetRole() {
-    //     User user = new User();
-    //     Role role = Mockito.mock(Role.class);
-    //     Mockito.when(role.getRole()).thenReturn("ROLE_USER");
-    //     Set<Role> roles = new HashSet<>();
-    //     roles.add(role);
-    //     user.setRoles(roles);
-
-    //     GrantedAuthority grantedAuthority = user.getAuthority();
-    //     assertNotNull(grantedAuthority);
-    //     assertNotNull(grantedAuthority.getAuthority());
-    //     assertEquals("ROLE_USER", grantedAuthority.getAuthority());
-    // }
-
-    // @Test
-    // void testSetFavorite() {
-    //     User user = new User();
-    //     assertFalse(user.isFavorite());
-
-    //     user.setFavorite(true);
-    //     assertTrue(user.isFavorite());
-
-    //     user.setFavorite(false);
-    //     assertFalse(user.isFavorite());
-
-    //     // Check for null pointer exception
-    //     user.setFavorite(null);
-    //     assertFalse(user.isFavorite());
-    // }
-
-    // @Test
-    // void testIsFavorite() {
-    //     User user = new User();
-    //     user.setFavorite(true);
-    //     assertTrue(user.isFavorite());
-    //     user.setFavorite(false);
-    //     assertFalse(user.isFavorite());
-    // }
+  }
 }
-

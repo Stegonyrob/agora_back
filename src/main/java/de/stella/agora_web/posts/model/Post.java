@@ -1,10 +1,6 @@
 package de.stella.agora_web.posts.model;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import de.stella.agora_web.replys.model.Reply;
 import de.stella.agora_web.tags.module.Tag;
 import de.stella.agora_web.user.model.User;
@@ -19,6 +15,8 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,45 +26,55 @@ import lombok.Setter;
 @Table(name = "posts")
 public class Post {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "title")
-    private String title;
+  @Column(name = "title")
+  private String title;
 
-    @Column(name = "message")
-    private String message;
+  @Column(name = "message")
+  private String message;
 
-    @Column(name = "creation_date")
-    private LocalDateTime creationDate;
+  @Column(name = "creation_date")
+  private LocalDateTime creationDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @JsonBackReference
-    private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  @JsonBackReference
+  private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reply_id")
-    private Reply reply;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "reply_id")
+  private Reply reply;
 
-    @ManyToMany
-    @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<Tag> tags;
+  @ManyToMany
+  @JoinTable(
+    name = "post_tag",
+    joinColumns = @JoinColumn(name = "post_id"),
+    inverseJoinColumns = @JoinColumn(name = "tag_id")
+  )
+  private List<Tag> tags;
 
-    public Post() {
-    }
+  public Post() {}
 
-    public Post(Long id, String title, String message, LocalDateTime creationDate, User user, Reply reply) {
-        this.id = id;
-        this.title = title;
-        this.message = message;
-        this.creationDate = creationDate;
-        this.user = user;
-        this.reply = reply;
-    }
+  public Post(
+    Long id,
+    String title,
+    String message,
+    LocalDateTime creationDate,
+    User user,
+    Reply reply
+  ) {
+    this.id = id;
+    this.title = title;
+    this.message = message;
+    this.creationDate = creationDate;
+    this.user = user;
+    this.reply = reply;
+  }
 
-    public void setUser(User user2) {
-        this.user = user2;
-    }
+  public void setUser(User user2) {
+    this.user = user2;
+  }
 }

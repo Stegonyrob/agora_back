@@ -38,10 +38,51 @@ public class AuthController {
 
     @PostMapping("/all/token")
     public ResponseEntity<TokenDTO> token(@RequestBody RefreshTokenDTO tokenDTO) {
+        System.out.println("Token recibido: " + tokenDTO.getRefreshToken());
         Authentication authentication = refreshTokenAuthProvider
                 .authenticate(new BearerTokenAuthenticationToken(tokenDTO.getRefreshToken()));
 
-        System.out.println(authentication);
         return ResponseEntity.ok(tokenGenerator.createToken(authentication));
     }
 }
+
+// import com.auth0.jwt.JWT;
+// import com.auth0.jwt.algorithms.Algorithm;
+// import com.auth0.jwt.interfaces.DecodedJWT;
+
+// // ...
+
+// public void handleRequest(HttpServletRequest request, HttpServletResponse
+// response) {
+// // Obtener el token desde el encabezado Authorization
+// String token = request.getHeader("Authorization");
+
+// // Eliminar la palabra "Bearer" del token si está presente
+// if (token != null && token.startsWith("Bearer ")) {
+// token = token.substring(7);
+// }
+
+// try {
+// // Decodificar el token JWT
+// DecodedJWT decodedToken = JWT.decode(token);
+
+// // Obtener los datos del token
+// String issuer = decodedToken.getIssuer();
+// String subject = decodedToken.getSubject();
+// String audience = decodedToken.getAudience().get(0);
+// Date expiresAt = decodedToken.getExpiresAt();
+
+// // Realizar las validaciones necesarias (por ejemplo, verificar la firma, el
+// emisor, el asunto, etc.)
+
+// // ...
+
+// // Realizar la lógica de tu aplicación
+
+// // ...
+
+// } catch (Exception e) {
+// // Manejar el error en caso de que el token sea inválido
+// // ...
+// }
+// }
