@@ -29,8 +29,7 @@ Construir y ejecutar la aplicación:
 Documentación de la API
 La documentación de la API generada por Springdoc OpenAPI está disponible en la ruta /swagger-ui.html de la aplicación.
 
-Contribuciones
-Las contribuciones son bienvenidas. Por favor, lee el archivo CONTRIBUTING.md para obtener más detalles sobre cómo contribuir al proyecto.
+
 
 Uername Y password 
 Username administrador: admin
