@@ -7,7 +7,6 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import de.stella.agora_web.auth.KeyUtils;
-import de.stella.agora_web.auth.ProblemDetailsAuthenticationEntryPoint;
 import de.stella.agora_web.jwt.JWTtoUserConverter;
 import de.stella.agora_web.security.JpaUserDetailsService;
 import java.util.Arrays;
@@ -61,9 +60,6 @@ public class SecurityConfiguration {
   JWTtoUserConverter jwtToUserConverter;
 
   @Autowired
-  ProblemDetailsAuthenticationEntryPoint entryPoint;
-
-  @Autowired
   KeyUtils keyUtils;
 
   @Autowired
@@ -76,7 +72,8 @@ public class SecurityConfiguration {
   }
 
   @Bean
-  SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain securityFilterChain(HttpSecurity http)
+    throws Exception {
     http
       .cors(Customizer.withDefaults())
       .csrf(csrf -> csrf.disable())
@@ -84,8 +81,8 @@ public class SecurityConfiguration {
       .logout(out ->
         out.logoutUrl(endpoint + "/logout").deleteCookies("JSESSIONID")
       )
-      .authorizeHttpRequests(auth ->
-        auth
+      .authorizeHttpRequests(authorize ->
+        authorize
           .requestMatchers(PathRequest.toH2Console())
           .permitAll()
           .requestMatchers("/error")
@@ -99,7 +96,7 @@ public class SecurityConfiguration {
           .requestMatchers(endpoint + "/user/**")
           .hasRole("USER")
           .anyRequest()
-          .authenticated()
+          .permitAll() //cambiar a autneticado .authenticated()
       )
       .userDetailsService(jpaUserDetailsService)
       .httpBasic(basic -> basic.disable())

@@ -1,5 +1,6 @@
 package de.stella.agora_web.security;
 
+import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,6 +25,10 @@ public class JpaUserDetailsService implements UserDetailsService {
       .orElseThrow(() ->
         new UsernameNotFoundException("User not found" + username)
       );
+  }
+
+  public void save(User user) {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }
 // @Override

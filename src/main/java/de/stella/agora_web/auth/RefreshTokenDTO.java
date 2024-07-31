@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class RefreshTokenDTO {
 
-    private String refreshToken;
+  public RefreshTokenDTO(String token) {}
 
+  private String refreshToken;
 }
