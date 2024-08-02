@@ -19,17 +19,10 @@ class UserTest {
     Set<Role> roles = new HashSet<>();
     roles.add(role);
 
-    User user = new User(
-      username,
-      password,
-      true,
-      email,
-      "User",
-      "User",
-      "User",
-      "User",
-      "User"
-    );
+    User user = new User();
+
+    Assertions.assertEquals(id, user.getId());
+
     user.setRoles(roles);
 
     Assertions.assertEquals(id, user.getId());

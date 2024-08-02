@@ -1,7 +1,6 @@
-package de.stella.agora_web.posts.model;
+package de.stella.agora_web.replies.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import de.stella.agora_web.replies.model.Reply;
+import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.tags.module.Tag;
 import de.stella.agora_web.user.model.User;
 import jakarta.persistence.Column;
@@ -23,8 +22,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "posts")
-public class Post {
+@Table(name = "replies")
+public class Reply {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,42 +38,45 @@ public class Post {
   @Column(name = "creation_date")
   private LocalDateTime creationDate;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  @JsonBackReference
-  private User user;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "reply_id")
-  private Reply reply;
-
   @ManyToMany
   @JoinTable(
-    name = "post_tag",
-    joinColumns = @JoinColumn(name = "post_id"),
+    name = "reply_tags",
+    joinColumns = @JoinColumn(name = "reply_id"),
     inverseJoinColumns = @JoinColumn(name = "tag_id")
   )
   private List<Tag> tags;
 
-  public Post() {}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private User author;
 
-  public Post(
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "post_id")
+  private Post post;
+
+  public Reply() {}
+
+  public Reply(
     Long id,
     String title,
     String message,
     LocalDateTime creationDate,
-    User user,
-    Reply reply
+    User author,
+    Post post
   ) {
     this.id = id;
     this.title = title;
     this.message = message;
     this.creationDate = creationDate;
-    this.user = user;
-    this.reply = reply;
+    this.author = author;
+    this.post = post;
   }
 
-  public void setUser(User user2) {
-    this.user = user2;
+  public void setAuthor(User author) {
+    this.author = author;
+  }
+
+  public void setUser(User user) {
+    this.author = user;
   }
 }

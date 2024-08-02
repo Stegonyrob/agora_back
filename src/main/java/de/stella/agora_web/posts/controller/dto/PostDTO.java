@@ -1,6 +1,6 @@
 package de.stella.agora_web.posts.controller.dto;
 
-import de.stella.agora_web.replys.controller.dto.ReplyDTO;
+import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;

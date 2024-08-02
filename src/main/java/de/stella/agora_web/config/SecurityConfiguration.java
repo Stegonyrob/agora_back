@@ -10,7 +10,6 @@ import de.stella.agora_web.auth.KeyUtils;
 import de.stella.agora_web.jwt.JWTtoUserConverter;
 import de.stella.agora_web.security.JpaUserDetailsService;
 import java.util.Arrays;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,13 +24,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
-import org.springframework.security.oauth2.core.OAuth2TokenValidator;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtClaimValidator;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
@@ -120,22 +114,9 @@ public class SecurityConfiguration {
   @Bean
   @Primary
   JwtDecoder jwtAccessTokenDecoder() {
-    OAuth2TokenValidator<Jwt> defaults = JwtValidators.createDefaultWithIssuer(
-      issuer
-    );
-    OAuth2TokenValidator<Jwt> audiences = new JwtClaimValidator<List<String>>(
-      "aud",
-      aud -> aud != null && aud.contains(audience)
-    );
-    OAuth2TokenValidator<Jwt> all = new DelegatingOAuth2TokenValidator<>(
-      defaults,
-      audiences
-    );
-    NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder
+    return NimbusJwtDecoder
       .withPublicKey(keyUtils.getAccessTokenPublicKey())
       .build();
-    jwtDecoder.setJwtValidator(all);
-    return jwtDecoder;
   }
 
   @Bean
@@ -207,4 +188,8 @@ public class SecurityConfiguration {
     source.registerCorsConfiguration(("/**"), configuration);
     return source;
   }
+  // @Bean
+  // PasswordEncoder passwordEncoder() {
+  //   return new BCryptPasswordEncoder();
+  // }
 }

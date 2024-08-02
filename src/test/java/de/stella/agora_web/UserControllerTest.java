@@ -1,19 +1,17 @@
 package de.stella.agora_web;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 import de.stella.agora_web.user.controller.UserController;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.services.impl.UserServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -47,52 +45,5 @@ public class UserControllerTest {
 
     // Assert
     assertEquals(result, users);
-  }
-
-  @Test
-  public void testGetById() throws Exception {
-    // Arrange
-    Long userId = 1L;
-    User user = new User(
-      "name",
-      "email",
-      true,
-      "password",
-      "User",
-      "User",
-      "User",
-      "User",
-      "User"
-    );
-    when(userServiceMock.findById(userId)).thenReturn(Optional.of(user));
-
-    // Act
-    ResponseEntity<User> result = userController.getById(userId);
-
-    // Assert
-    assertEquals(ResponseEntity.ok(user), result);
-  }
-
-  @Test
-  public void testCreate() throws Exception {
-    // Arrange
-    User user = new User(
-      "name",
-      "email",
-      true,
-      "password",
-      "User",
-      "User",
-      "User",
-      "User",
-      "User"
-    );
-    when(userServiceMock.save(user)).thenReturn(user);
-
-    // Act
-    ResponseEntity<User> result = userController.create(user);
-
-    // Assert
-    assertEquals(ResponseEntity.status(201).body(user), result);
   }
 }

@@ -4,7 +4,6 @@ import de.stella.agora_web.roles.model.Role;
 import de.stella.agora_web.user.model.User;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.NoSuchElementException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,14 +47,6 @@ public class SecurityUser implements UserDetails {
 
   public Long getId() {
     return user.getId();
-  }
-
-  public String getRole() {
-    try {
-      return user.getRoles().iterator().next().getName();
-    } catch (NoSuchElementException e) {
-      return "";
-    }
   }
 
   @Override

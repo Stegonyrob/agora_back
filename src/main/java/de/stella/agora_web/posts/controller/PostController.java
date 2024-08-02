@@ -1,13 +1,9 @@
 package de.stella.agora_web.posts.controller;
 
-import de.stella.agora_web.generics.IGenericFullService;
-import de.stella.agora_web.generics.IGenericSearchService;
-import de.stella.agora_web.messages.Message;
 import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.model.Post;
+import de.stella.agora_web.posts.services.IPostService;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,59 +18,59 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@AllArgsConstructor
-@NoArgsConstructor
-@RequestMapping(path = "${api-endpoint}")
+@RequestMapping(path = "${api-endpoint}/")
 public class PostController {
 
-  IGenericFullService<Post, PostDTO> service;
-  IGenericSearchService<Post> searchService;
+  private final IPostService postService;
 
-  @GetMapping("/any/posts")
-  @PreAuthorize("hasAnyRole('ADMIN', 'USER')") // Permitir acceso a ADMIN y USER
-  public List<Post> index() {
-    return service.getAll();
+  public PostController(IPostService postService) {
+    this.postService = postService;
   }
 
-  @GetMapping("/any/posts/{id}")
-  @PreAuthorize("hasAnyRole('ADMIN', 'USER')") // Permitir acceso a ADMIN y USER
-  public ResponseEntity<Post> findById(@PathVariable("id") @NonNull Long id)
-    throws Exception {
-    Post post = service.getById(id);
+  @PostMapping("any/posts")
+  @PreAuthorize("hasRole('USER','ADMIN')")
+  public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO) {
+    Post post = postService.createPost(postDTO, null);
+    return ResponseEntity.status(HttpStatus.CREATED).body(post);
+  }
+
+  @GetMapping
+  public List<Post> index() {
+    return postService.getAllPosts();
+  }
+
+  @GetMapping("any/posts/{id}")
+  public ResponseEntity<Post> show(@NonNull @PathVariable Long id) {
+    Post post = postService.getById(id);
     return ResponseEntity.status(HttpStatus.OK).body(post);
   }
 
-  @PostMapping("/admin/posts")
-  @PreAuthorize("hasRole('ADMIN')") // Solo ADMIN puede crear posts
-  public ResponseEntity<Post> create(@RequestBody PostDTO post) {
-    Post newPost = service.save();
-    return ResponseEntity.status(201).body(newPost);
+  @PostMapping("admin/posts/store")
+  public ResponseEntity<Post> store(@RequestBody PostDTO postDTO) {
+    Post post = postService.save(postDTO);
+    return ResponseEntity.status(HttpStatus.CREATED).body(post);
   }
 
-  @PutMapping("/admin/posts/{id}")
-  @PreAuthorize("hasRole('ADMIN')") // Solo ADMIN puede actualizar posts
+  @DeleteMapping("admin/posts/{id}")
+  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    postService.deleteById(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PutMapping("admin/posts/{id}")
   public ResponseEntity<Post> update(
-    @PathVariable("id") Long id,
+    @PathVariable Long id,
     @RequestBody PostDTO postDTO
-  ) throws Exception {
-    Post updatePost = service.update(id, postDTO);
-    return ResponseEntity.status(200).body(updatePost);
-  }
-
-  @DeleteMapping(path = "/admin/posts/{id}")
-  @PreAuthorize("hasRole('ADMIN')") // Solo ADMIN puede eliminar posts
-  public ResponseEntity<Message> remove(@PathVariable("id") @NonNull Long id)
-    throws Exception {
-    Message delete = service.delete(id);
-    return ResponseEntity.status(200).body(delete);
+  ) {
+    Post post = postService.update(postDTO, id);
+    return ResponseEntity.accepted().body(post);
   }
 
   @GetMapping("/user/{userId}")
-  @PreAuthorize("hasRole('USER')") // Solo USER puede obtener posts por userId
   public ResponseEntity<List<Post>> getPostsByUserId(
     @PathVariable Long userId
   ) {
-    List<Post> posts = service.findPostsByUserId(userId);
+    List<Post> posts = postService.findPostsByUserId(userId);
     return ResponseEntity.ok(posts);
   }
 }

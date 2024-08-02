@@ -3,7 +3,7 @@ package de.stella.agora_web;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.stella.agora_web.posts.model.Post;
-import de.stella.agora_web.replys.model.Reply;
+import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.tags.module.Tag;
 import de.stella.agora_web.user.model.User;
 import java.time.LocalDateTime;

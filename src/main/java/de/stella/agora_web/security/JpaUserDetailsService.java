@@ -1,6 +1,5 @@
 package de.stella.agora_web.security;
 
-import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,25 +25,4 @@ public class JpaUserDetailsService implements UserDetailsService {
         new UsernameNotFoundException("User not found" + username)
       );
   }
-
-  public void save(User user) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
 }
-// @Override
-// public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//     User user = userRepository.findByUsername(username)
-//         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-//     return new org.springframework.security.core.userdetails.User(
-//         user.getUsername(),
-//         user.getPassword(),
-//         getAuthorities(new ArrayList<>(user.getRoles()))
-//     );
-// }
-// private List<GrantedAuthority> getAuthorities(List<Role> roles) {
-//     List<GrantedAuthority> authorities = new ArrayList<>();
-//     for (Role role : roles) {
-//         authorities.add(new SimpleGrantedAuthority(role.getName()));
-//     }
-//     return authorities;
-// }

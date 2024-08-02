@@ -25,4 +25,6 @@ public interface IPostService {
   List<Post> findPostsByUserId(Long userId);
 
   Post createPost(PostDTO postDTO, Long userId);
+
+  public Post save(PostDTO postDTO);
 }
