@@ -28,24 +28,24 @@ public class PostController {
   }
 
   @PostMapping("any/posts")
-  @PreAuthorize("hasRole('USER','ADMIN')")
+  @PreAuthorize("hasRole('USER')")
   public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO) {
     Post post = postService.createPost(postDTO, null);
     return ResponseEntity.status(HttpStatus.CREATED).body(post);
   }
 
-  @GetMapping
+  @GetMapping("any/posts")
   public List<Post> index() {
     return postService.getAllPosts();
   }
 
   @GetMapping("any/posts/{id}")
-  public ResponseEntity<Post> show(@NonNull @PathVariable Long id) {
+  public ResponseEntity<Post> show(@NonNull @PathVariable("id") Long id) {
     Post post = postService.getById(id);
     return ResponseEntity.status(HttpStatus.OK).body(post);
   }
 
-  @PostMapping("admin/posts/store")
+  @PostMapping("any/posts/store")
   public ResponseEntity<Post> store(@RequestBody PostDTO postDTO) {
     Post post = postService.save(postDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(post);
@@ -59,7 +59,7 @@ public class PostController {
 
   @PutMapping("admin/posts/{id}")
   public ResponseEntity<Post> update(
-    @PathVariable Long id,
+    @PathVariable("id") Long id,
     @RequestBody PostDTO postDTO
   ) {
     Post post = postService.update(postDTO, id);
