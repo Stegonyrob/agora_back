@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+//separar dos controlladores de replies uno admin y otro user
 @RestController
 @RequestMapping(path = "${api-endpoint}/all")
 public class ReplyController {
@@ -25,6 +26,12 @@ public class ReplyController {
   public ReplyController(IReplyService replyService) {
     this.replyService = replyService;
   }
+
+  //(Get, endpoint/replies).hasAnyRoles(user,admin)
+  //respuesta a un comentario el cual debera esta asignado a un post y a un comentario refactorizar reolies para que sean
+  //las respuestas del admin crear entidad de comenta para usuarios
+
+  //censurar controllador unico
 
   @PostMapping("/replies/create")
   @PreAuthorize("hasRole('USER','ADMIN')")

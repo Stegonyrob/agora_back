@@ -15,8 +15,8 @@ public class ReplyDTO<PostDTO> {
   private String title;
   private String message;
   private LocalDateTime creationDate;
-  private List<PostDTO> post;
-  private UserDTO user;
+  private List<PostDTO> post; //un unico dto id post
+  private UserDTO user; //user id revisar que llega de front
 
   private List<String> tags;
 

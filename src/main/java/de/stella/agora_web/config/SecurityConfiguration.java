@@ -79,12 +79,12 @@ public class SecurityConfiguration {
         authorize
           .requestMatchers(PathRequest.toH2Console())
           .permitAll()
-          .requestMatchers("/error")
+          .requestMatchers("/error") //revisar el orden de leectura y prioridades revisar si es del mas preciso al mas general
           .permitAll()
           .requestMatchers(endpoint + "/all/**")
           .permitAll()
-          .requestMatchers(endpoint + "/any/**")
-          .hasAnyRole("ADMIN", "USER")
+          .requestMatchers(endpoint + "/any/**") //(get endpoint /posts).hasAnyRoles(admin, user)
+          .hasAnyRole("ADMIN", "USER") //(enpoitns/post/**).hasRole(ADMIN) revisar docuemntacion pra no tener que poner los cuatro metods
           .requestMatchers(endpoint + "/admin/**")
           .hasRole("ADMIN")
           .requestMatchers(endpoint + "/user/**")

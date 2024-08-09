@@ -6,6 +6,7 @@ import de.stella.agora_web.posts.services.IPostService;
 import java.util.List;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,10 +26,10 @@ public class PostController {
 
   public PostController(IPostService postService) {
     this.postService = postService;
-  }
+  } //re¡separar en dos controlladoress postuser y postadmin
 
   @PostMapping("any/posts")
-  @PreAuthorize("hasRole('USER')")
+  @PreAuthorize("hasRole('USER')") //retirar esta
   public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO) {
     Post post = postService.createPost(postDTO, null);
     return ResponseEntity.status(HttpStatus.CREATED).body(post);
@@ -39,7 +40,8 @@ public class PostController {
     return postService.getAllPosts();
   }
 
-  @GetMapping("any/posts/{id}")
+  //unica ru¡ta get compartido
+  @GetMapping("any/posts/{id}") //innecesaria por que en realidad usarias por tags paa encontrar un post
   public ResponseEntity<Post> show(@NonNull @PathVariable("id") Long id) {
     Post post = postService.getById(id);
     return ResponseEntity.status(HttpStatus.OK).body(post);
@@ -51,13 +53,24 @@ public class PostController {
     return ResponseEntity.status(HttpStatus.CREATED).body(post);
   }
 
+  @PostMapping(path = "/admin/posts") // ok
+  public ResponseEntity<Post> create(@RequestBody PostDTO post)
+    throws Exception {
+    Post newPost = postService.save(post);
+
+    return ResponseEntity
+      .status(201)
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(newPost);
+  }
+
   @DeleteMapping("admin/posts/{id}")
-  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+  public ResponseEntity<Void> deleteUser(@PathVariable Long id) { // no va 500
     postService.deleteById(id);
     return ResponseEntity.noContent().build();
   }
 
-  @PutMapping("admin/posts/{id}")
+  @PutMapping("admin/posts/{id}") //ok
   public ResponseEntity<Post> update(
     @PathVariable("id") Long id,
     @RequestBody PostDTO postDTO
