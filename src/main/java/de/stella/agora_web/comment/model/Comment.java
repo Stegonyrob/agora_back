@@ -1,4 +1,4 @@
-package de.stella.agora_web.replies.model;
+package de.stella.agora_web.comment.model;
 
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.tags.model.Tag;
@@ -22,8 +22,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "replies")
-public class Reply {
+@Table(name = "comments")
+public class Comment {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,25 +38,25 @@ public class Reply {
   @Column(name = "creation_date")
   private LocalDateTime creationDate;
 
-  @ManyToMany
-  @JoinTable(
-    name = "reply_tags",
-    joinColumns = @JoinColumn(name = "reply_id"),
-    inverseJoinColumns = @JoinColumn(name = "tag_id")
-  )
-  private List<Tag> tags;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  private User author;
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id")
   private Post post;
 
-  public Reply() {}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private User user;
 
-  public Reply(
+  @ManyToMany
+  @JoinTable(
+    name = "comment_tags",
+    joinColumns = @JoinColumn(name = "comment_id"),
+    inverseJoinColumns = @JoinColumn(name = "tag_id")
+  )
+  private List<Tag> tags;
+
+  public Comment() {}
+
+  public Comment(
     Long id,
     String title,
     String message,
@@ -68,15 +68,15 @@ public class Reply {
     this.title = title;
     this.message = message;
     this.creationDate = creationDate;
-    this.author = author;
+    this.user = author;
     this.post = post;
   }
 
   public void setAuthor(User author) {
-    this.author = author;
+    this.user = author;
   }
 
-  public void setUser(User user) {
-    this.author = user;
+  public void setPost(Post post) {
+    this.post = post;
   }
 }

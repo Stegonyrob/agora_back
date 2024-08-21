@@ -1,4 +1,4 @@
-package de.stella.agora_web.tags.module;
+package de.stella.agora_web.tags.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,9 +14,15 @@ import lombok.Setter;
 @Entity
 @Table(name = "tags")
 public class Tag {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "name")
-    private String name;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  @Column(name = "name")
+  private String name;
+
+  public void setName(String name) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

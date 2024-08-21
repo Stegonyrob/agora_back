@@ -1,8 +1,9 @@
 package de.stella.agora_web.posts.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.replies.model.Reply;
-import de.stella.agora_web.tags.module.Tag;
+import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,6 +48,10 @@ public class Post {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "reply_id")
   private Reply reply;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "post_id")
+  private Comment commnet;
 
   @ManyToMany
   @JoinTable(

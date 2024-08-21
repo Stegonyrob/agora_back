@@ -4,11 +4,9 @@ import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.services.IPostService;
 import java.util.List;
-import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,10 +24,9 @@ public class PostController {
 
   public PostController(IPostService postService) {
     this.postService = postService;
-  } //re¡separar en dos controlladoress postuser y postadmin
+  }
 
   @PostMapping("any/posts")
-  @PreAuthorize("hasRole('USER')") //retirar esta
   public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO) {
     Post post = postService.createPost(postDTO, null);
     return ResponseEntity.status(HttpStatus.CREATED).body(post);
@@ -41,11 +38,6 @@ public class PostController {
   }
 
   //unica ru¡ta get compartido
-  @GetMapping("any/posts/{id}") //innecesaria por que en realidad usarias por tags paa encontrar un post
-  public ResponseEntity<Post> show(@NonNull @PathVariable("id") Long id) {
-    Post post = postService.getById(id);
-    return ResponseEntity.status(HttpStatus.OK).body(post);
-  }
 
   @PostMapping("any/posts/store")
   public ResponseEntity<Post> store(@RequestBody PostDTO postDTO) {

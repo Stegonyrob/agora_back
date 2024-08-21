@@ -5,7 +5,7 @@ import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.repository.ReplyRepository;
 import de.stella.agora_web.replies.services.IReplyService;
-import de.stella.agora_web.tags.module.Tag;
+import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.tags.repository.TagRepository;
 import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.model.User;

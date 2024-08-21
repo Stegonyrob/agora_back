@@ -1,10 +1,12 @@
 package de.stella.agora_web.tags.service.impl;
 
+import de.stella.agora_web.comment.model.Comment;
+import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.repository.ReplyRepository;
-import de.stella.agora_web.tags.module.Tag;
+import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.tags.repository.TagRepository;
 import de.stella.agora_web.tags.service.ITagService;
 import java.util.ArrayList;
@@ -26,6 +28,9 @@ public class TagServiceImpl implements ITagService {
   @Autowired
   private ReplyRepository replyRepository;
 
+  @Autowired
+  private CommentRepository commentRepository;
+
   @Override
   public List<Tag> getAllTags() {
     return tagRepository.findAll();
@@ -43,6 +48,7 @@ public class TagServiceImpl implements ITagService {
     return tagRepository.save(tag);
   }
 
+  @Override
   public List<String> extractHashtags(String text) {
     List<String> hashtags = new ArrayList<>();
     Pattern pattern = Pattern.compile("#(\\w+)");
@@ -95,6 +101,26 @@ public class TagServiceImpl implements ITagService {
     if (reply != null && tag != null) {
       reply.getTags().remove(tag);
       replyRepository.save(reply);
+    }
+  }
+
+  @Override
+  public void addTagToComment(Long commentId, Long tagId) {
+    Comment comment = commentRepository.findById(commentId).orElse(null);
+    Tag tag = tagRepository.findById(tagId).orElse(null);
+    if (comment != null && tag != null) {
+      comment.getTags().add(tag);
+      commentRepository.save(comment);
+    }
+  }
+
+  @Override
+  public void removeTagFromComment(Long commentId, Long tagId) {
+    Comment comment = commentRepository.findById(commentId).orElse(null);
+    Tag tag = tagRepository.findById(tagId).orElse(null);
+    if (comment != null && tag != null) {
+      comment.getTags().remove(tag);
+      commentRepository.save(comment);
     }
   }
 }

@@ -21,7 +21,9 @@ public interface IGenericFullService<T, DTO> extends IGenericGetService<T> {
 
   Object get(long l);
 
-  T getById(@NonNull Long id);
+  @Override
+  T getById(Long id);
+
   T create(DTO dto);
   Post create(PostDTO postDTO);
 }

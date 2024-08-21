@@ -4,7 +4,7 @@ import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.posts.services.IPostService;
-import de.stella.agora_web.tags.module.Tag;
+import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.exceptions.UserNotFoundException;
 import de.stella.agora_web.user.model.User;

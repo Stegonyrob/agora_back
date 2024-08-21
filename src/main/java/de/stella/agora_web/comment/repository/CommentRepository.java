@@ -1,18 +1,18 @@
-package de.stella.agora_web.replies.repository;
+package de.stella.agora_web.comment.repository;
 
-import de.stella.agora_web.replies.model.Reply;
+import de.stella.agora_web.comment.model.Comment;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ReplyRepository extends JpaRepository<Reply, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long> {
   @SuppressWarnings("null")
   @Override
-  List<Reply> findAll();
+  List<Comment> findAll();
 
   @SuppressWarnings("null")
   @Override
-  Optional<Reply> findById(Long id);
+  Optional<Comment> findById(Long id);
 }
