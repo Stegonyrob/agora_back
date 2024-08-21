@@ -12,7 +12,6 @@ import de.stella.agora_web.user.services.impl.UserServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,26 +19,21 @@ public class PostServiceImpl implements IPostService {
 
   private final PostRepository postRepository;
   private final UserServiceImpl userService;
-
-  @Autowired
-  private ITagService tagService;
+  private final ITagService tagService;
 
   public PostServiceImpl(
     PostRepository postRepository,
-    UserServiceImpl userService
+    UserServiceImpl userService,
+    ITagService tagService
   ) {
     this.postRepository = postRepository;
     this.userService = userService;
+    this.tagService = tagService;
   }
 
   @Override
   public List<Post> getAllPosts() {
     return postRepository.findAll();
-  }
-
-  @Override
-  public Post getPostById(Long id) {
-    return postRepository.findById(id).orElse(null);
   }
 
   @Override
@@ -51,11 +45,10 @@ public class PostServiceImpl implements IPostService {
 
     Post post = new Post();
     post.setUser(user.get());
-    post.setMessage(postDTO.getMessage());
     post.setTitle(postDTO.getTitle());
+    post.setMessage(postDTO.getMessage());
     post.setCreationDate(postDTO.getCreationDate());
 
-    // Add tags from tag list
     List<Tag> tags = new ArrayList<>();
     for (String tagName : postDTO.getTags()) {
       Tag tag = tagService.getTagByName(tagName);
@@ -65,7 +58,6 @@ public class PostServiceImpl implements IPostService {
       tags.add(tag);
     }
 
-    // Add tags from hashtags in post message
     List<String> hashtags = tagService.extractHashtags(post.getMessage());
     for (String hashtag : hashtags) {
       Tag tag = tagService.getTagByName(hashtag);
@@ -80,17 +72,14 @@ public class PostServiceImpl implements IPostService {
     return postRepository.save(post);
   }
 
-  @Override
   public Post updatePost(Long id, PostDTO postDTO) {
     Post existingPost = postRepository.findById(id).orElse(null);
     if (existingPost != null) {
       existingPost.setTitle(postDTO.getTitle());
       existingPost.setMessage(postDTO.getMessage());
 
-      // Remove existing tags
       existingPost.getTags().clear();
 
-      // Add tags from tag list
       List<Tag> tags = new ArrayList<>();
       for (String tagName : postDTO.getTags()) {
         Tag tag = tagService.getTagByName(tagName);
@@ -100,7 +89,6 @@ public class PostServiceImpl implements IPostService {
         tags.add(tag);
       }
 
-      // Add tags from hashtags in post message
       List<String> hashtags = tagService.extractHashtags(postDTO.getMessage());
       for (String hashtag : hashtags) {
         Tag tag = tagService.getTagByName(hashtag);
@@ -125,45 +113,61 @@ public class PostServiceImpl implements IPostService {
 
   @Override
   public Post getById(Long postId) {
-    return postRepository.findById(postId).orElse(null);
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
-  public Post save(PostDTO postDTO) {
-    Post post = new Post();
-    post.setTitle(postDTO.getTitle());
-    post.setMessage(postDTO.getMessage());
+  @Override
+  public Post updatePost(PostDTO postDTO, Long postId) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 
-    return postRepository.save(post);
+  @Override
+  public Post save(PostDTO postDTO) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public List<String> extractHashtags(String message) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public Tag getTagByName(String tagName) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public Tag createTag(String tagName) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public List<Tag> getTagsByPostId(Long postId) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public List<Post> getPostsByTag(String tagName) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public List<Post> getPostsByUserId(Long userId) {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public void deleteById(Long id) {
-    postRepository.deleteById(id);
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public Post update(PostDTO postDTO, Long id) {
-    Post existingPost = postRepository.findById(id).orElse(null);
-    if (existingPost != null) {
-      existingPost.setTitle(postDTO.getTitle());
-      existingPost.setMessage(postDTO.getMessage());
-
-      return postRepository.save(existingPost);
-    }
-    return null;
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
-  public List<Post> findPostsByUserId(Long userId) {
-    return postRepository.findByUserId(userId);
-  }
-
-  @Override
-  public Post save(Post postDTO) {
-    Post post = new Post();
-    post.setTitle(postDTO.getTitle());
-    post.setMessage(postDTO.getMessage());
-
-    return postRepository.save(post);
+  public List<Post> getPostsByTagId(Long userId, Long tagId) {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

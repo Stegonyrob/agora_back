@@ -26,26 +26,18 @@ public class PostController {
     this.postService = postService;
   }
 
-  @PostMapping("any/posts")
-  public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO) {
-    Post post = postService.createPost(postDTO, null);
-    return ResponseEntity.status(HttpStatus.CREATED).body(post);
-  }
-
-  @GetMapping("any/posts")
+  @GetMapping("/posts")
   public List<Post> index() {
     return postService.getAllPosts();
   }
 
-  //unica ru¡ta get compartido
-
-  @PostMapping("any/posts/store")
+  @PostMapping("/posts/store")
   public ResponseEntity<Post> store(@RequestBody PostDTO postDTO) {
     Post post = postService.save(postDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(post);
   }
 
-  @PostMapping(path = "/admin/posts") // ok
+  @PostMapping(path = "/posts") // ok
   public ResponseEntity<Post> create(@RequestBody PostDTO post)
     throws Exception {
     Post newPost = postService.save(post);
@@ -56,13 +48,13 @@ public class PostController {
       .body(newPost);
   }
 
-  @DeleteMapping("admin/posts/{id}")
+  @DeleteMapping("posts/{id}")
   public ResponseEntity<Void> deleteUser(@PathVariable Long id) { // no va 500
     postService.deleteById(id);
     return ResponseEntity.noContent().build();
   }
 
-  @PutMapping("admin/posts/{id}") //ok
+  @PutMapping("posts/{id}") //ok
   public ResponseEntity<Post> update(
     @PathVariable("id") Long id,
     @RequestBody PostDTO postDTO
@@ -75,7 +67,15 @@ public class PostController {
   public ResponseEntity<List<Post>> getPostsByUserId(
     @PathVariable Long userId
   ) {
-    List<Post> posts = postService.findPostsByUserId(userId);
+    List<Post> posts = postService.getPostsByUserId(userId);
+    return ResponseEntity.ok(posts);
+  }
+
+  @GetMapping("/tag/{tagName}")
+  public ResponseEntity<List<Post>> getPostsByTag(
+    @PathVariable String tagName
+  ) {
+    List<Post> posts = postService.getPostsByTag(tagName);
     return ResponseEntity.ok(posts);
   }
 }

@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -79,10 +80,33 @@ public class SecurityConfiguration {
         authorize
           .requestMatchers(PathRequest.toH2Console())
           .permitAll()
-          .requestMatchers("/error") //revisar el orden de leectura y prioridades revisar si es del mas preciso al mas general
+          .requestMatchers("/error") //recordar que va 1/mas especifica 2/mas abierta 3/las generales
           .permitAll()
           .requestMatchers(endpoint + "/all/**")
           .permitAll()
+          // Permite GET para USER en Posts
+          .requestMatchers(HttpMethod.GET, "/posts/**")
+          .hasRole("USER")
+          // Permite todos los métodos para ADMIN en Posts
+          .requestMatchers("/posts/**")
+          .hasRole("ADMIN")
+          // Permite GET para USER en Replies
+          .requestMatchers(HttpMethod.GET, "/replies/**")
+          .hasRole("USER")
+          // Permite todos los métodos para ADMIN en replies
+          .requestMatchers("/replies/**")
+          .hasRole("ADMIN")
+          // Permite GET para USER en comment
+          .requestMatchers("/comments/**")
+          .hasRole("USER")
+          // Permitir GET y DELETE para ADMIN
+          .requestMatchers(HttpMethod.GET, "/comments/**")
+          .hasRole("ADMIN")
+          .requestMatchers(HttpMethod.DELETE, "/comments/**")
+          .hasRole("ADMIN")
+          // Permite todos los métodos para ADMIN en comment
+          .requestMatchers("/posts/**")
+          .hasRole("ADMIN")
           .requestMatchers(endpoint + "/any/**") //(get endpoint /posts).hasAnyRoles(admin, user)
           .hasAnyRole("ADMIN", "USER") //(enpoitns/post/**).hasRole(ADMIN) revisar docuemntacion pra no tener que poner los cuatro metods
           .requestMatchers(endpoint + "/admin/**")

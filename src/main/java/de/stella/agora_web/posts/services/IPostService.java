@@ -2,29 +2,37 @@ package de.stella.agora_web.posts.services;
 
 import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.model.Post;
+import de.stella.agora_web.tags.model.Tag;
 import java.util.List;
-import lombok.NonNull;
 
 public interface IPostService {
   List<Post> getAllPosts();
 
-  Post getPostById(Long id);
+  Post createPost(PostDTO postDTO, Long userId);
 
-  Post updatePost(Long id, PostDTO postDTO);
+  Post getById(Long postId);
 
-  void deletePost(Long id);
+  void deletePost(Long postId);
 
-  Post save(Post postDTO);
+  Post updatePost(PostDTO postDTO, Long postId);
+
+  Post save(PostDTO postDTO);
+
+  List<String> extractHashtags(String message);
+
+  Tag getTagByName(String tagName);
+
+  Tag createTag(String tagName);
+
+  List<Tag> getTagsByPostId(Long postId);
+
+  List<Post> getPostsByTag(String tagName);
+
+  List<Post> getPostsByUserId(Long userId);
 
   void deleteById(Long id);
 
   Post update(PostDTO postDTO, Long id);
 
-  Post getById(@NonNull Long id);
-
-  List<Post> findPostsByUserId(Long userId);
-
-  Post createPost(PostDTO postDTO, Long userId);
-
-  public Post save(PostDTO postDTO);
+  List<Post> getPostsByTagId(Long userId, Long tagId);
 }
