@@ -15,4 +15,12 @@ public interface ICommentService {
   Comment createComment(CommentDTO commentDTO, Object object);
 
   Comment updateComment(Long id, CommentDTO commentDTO);
+
+  public Object getCommentsByPostId(Long postId);
+
+  List<Comment> getCommentsByTagId(Long tagId);
+
+  List<Comment> getCommentsByUserId(Long userId);
+
+  List<Comment> getCommentsByTagName(String tagName);
 }

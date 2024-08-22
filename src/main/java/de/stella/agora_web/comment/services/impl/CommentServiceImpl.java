@@ -145,4 +145,24 @@ public class CommentServiceImpl implements ICommentService {
     CommentRepository.save(comment);
     return comment;
   }
+
+  @Override
+  public Object getCommentsByPostId(Long postId) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public List<Comment> getCommentsByTagId(Long tagId) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public List<Comment> getCommentsByUserId(Long userId) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public List<Comment> getCommentsByTagName(String tagName) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

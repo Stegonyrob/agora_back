@@ -147,8 +147,9 @@ public class PostServiceImpl implements IPostService {
   }
 
   @Override
-  public List<Post> getPostsByTag(String tagName) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public List<Post> getPostsByTagName(String tagName) {
+    List<Post> posts = postRepository.findByTags_Name(tagName);
+    return posts;
   }
 
   @Override
@@ -163,11 +164,6 @@ public class PostServiceImpl implements IPostService {
 
   @Override
   public Post update(PostDTO postDTO, Long id) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public List<Post> getPostsByTagId(Long userId, Long tagId) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 }

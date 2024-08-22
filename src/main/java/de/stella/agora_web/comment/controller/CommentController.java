@@ -4,6 +4,7 @@ import de.stella.agora_web.comment.controller.dto.CommentDTO;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.comment.services.ICommentService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import java.util.List;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,22 @@ public class CommentController {
   public ResponseEntity<Comment> show(@NonNull @PathVariable Long id) {
     Comment Comment = CommentService.getCommentById(id);
     return ResponseEntity.status(HttpStatus.OK).body(Comment);
+  }
+
+  @SuppressWarnings("unchecked")
+  @GetMapping("/comments/post/{postId}")
+  public List<Comment> getCommentsByPostId(@PathVariable Long postId) {
+    return (List<Comment>) CommentService.getCommentsByPostId(postId);
+  }
+
+  @GetMapping("/comments/tags/{tagName}")
+  public List<Comment> getCommentsByTagName(String tagName) {
+    return (List<Comment>) CommentService.getCommentsByTagName(tagName);
+  }
+
+  @GetMapping("/comments/user/{userId}")
+  public List<Comment> getCommentsByUserId(@PathVariable Long userId) {
+    return (List<Comment>) CommentService.getCommentsByUserId(userId);
   }
 
   @DeleteMapping("/comments/{id}")

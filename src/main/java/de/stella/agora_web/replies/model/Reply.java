@@ -1,5 +1,6 @@
 package de.stella.agora_web.replies.model;
 
+import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.user.model.User;
@@ -48,11 +49,15 @@ public class Reply {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
-  private User author;
+  private User user; // Cambiado de author a user
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "post_id")
   private Post post;
+
+  @ManyToOne
+  @JoinColumn(name = "comment_id")
+  private Comment comment;
 
   public Reply() {}
 
@@ -61,22 +66,30 @@ public class Reply {
     String title,
     String message,
     LocalDateTime creationDate,
-    User author,
+    User user,
     Post post
   ) {
     this.id = id;
     this.title = title;
     this.message = message;
     this.creationDate = creationDate;
-    this.author = author;
+    this.user = user;
     this.post = post;
   }
 
-  public void setAuthor(User author) {
-    this.author = author;
+  public void setUser(User user) {
+    this.user = user;
   }
 
-  public void setUser(User user) {
-    this.author = user;
+  public void setTags(List<Tag> tags) {
+    this.tags = tags;
+  }
+
+  public void setPost(Post post) {
+    this.post = post;
+  }
+
+  public void setComment(Comment comment) {
+    this.comment = comment;
   }
 }

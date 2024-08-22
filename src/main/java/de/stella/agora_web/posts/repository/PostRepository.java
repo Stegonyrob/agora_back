@@ -18,4 +18,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
   List<Post> findByUserId(Long userId);
 
   void save(Reply reply);
+
+  List<Post> findByTags_Name(String tagName);
 }

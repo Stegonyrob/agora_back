@@ -18,4 +18,12 @@ public interface IReplyService {
   void deleteReply(Long id);
 
   Reply save(@SuppressWarnings("rawtypes") ReplyDTO replyDTO);
+
+  List<Reply> getRepliesByUserId(Long userId);
+
+  List<Reply> getRepliesByTagId(Long tagId);
+
+  List<Reply> getRepliesByPostId(Long postId);
+
+  List<Reply> getRepliesByTagName(String tagName);
 }

@@ -1,31 +1,13 @@
 package de.stella.agora_web;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replies.model.Reply;
-import de.stella.agora_web.user.model.User;
-import java.time.LocalDateTime;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ReplyTest {
 
   private Reply reply;
-
-  @BeforeEach
-  void setUp() {
-    reply =
-      new Reply(
-        1L,
-        "Test title",
-        "Test message",
-        LocalDateTime.now(),
-        new User(),
-        new Post()
-      );
-  }
 
   @Test
   void testId() {
@@ -49,7 +31,7 @@ class ReplyTest {
 
   @Test
   void testAuthor() {
-    assertNotNull(reply.getAuthor());
+    assertNotNull(reply.getUser());
   }
 
   @Test

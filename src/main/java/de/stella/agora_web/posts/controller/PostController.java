@@ -71,11 +71,11 @@ public class PostController {
     return ResponseEntity.ok(posts);
   }
 
-  @GetMapping("/tag/{tagName}")
-  public ResponseEntity<List<Post>> getPostsByTag(
+  @GetMapping("posts/tag/{tagName}")
+  public ResponseEntity<List<Post>> getPostsByTagName(
     @PathVariable String tagName
   ) {
-    List<Post> posts = postService.getPostsByTag(tagName);
+    List<Post> posts = postService.getPostsByTagName(tagName);
     return ResponseEntity.ok(posts);
   }
 }

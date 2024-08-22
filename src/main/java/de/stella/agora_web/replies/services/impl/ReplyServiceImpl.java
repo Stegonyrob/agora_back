@@ -126,4 +126,28 @@ public class ReplyServiceImpl implements IReplyService {
     Reply reply = new Reply();
     return replyRepository.save(reply);
   }
+
+  public List<Reply> getRepliesByCommentId(Long commentId) {
+    return replyRepository.findByCommentId(commentId);
+  }
+
+  @Override
+  public List<Reply> getRepliesByUserId(Long userId) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public List<Reply> getRepliesByTagName(String tagName) {
+    return replyRepository.findAllByTagsName(tagName);
+  }
+
+  @Override
+  public List<Reply> getRepliesByPostId(Long postId) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public List<Reply> getRepliesByTagId(Long tagId) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

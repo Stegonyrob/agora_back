@@ -15,4 +15,14 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
   @SuppressWarnings("null")
   @Override
   Optional<Reply> findById(Long id);
+
+  List<Reply> findByPostId(Long postId);
+
+  List<Reply> findByUserId(Long userId);
+
+  List<Reply> findByTags_Name(String tagName);
+
+  public List<Reply> findByCommentId(Long commentId);
+
+  List<Reply> findAllByTagsName(String tagName);
 }

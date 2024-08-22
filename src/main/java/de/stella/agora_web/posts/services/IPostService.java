@@ -26,13 +26,11 @@ public interface IPostService {
 
   List<Tag> getTagsByPostId(Long postId);
 
-  List<Post> getPostsByTag(String tagName);
+  List<Post> getPostsByTagName(String tagName);
 
   List<Post> getPostsByUserId(Long userId);
 
   void deleteById(Long id);
 
   Post update(PostDTO postDTO, Long id);
-
-  List<Post> getPostsByTagId(Long userId, Long tagId);
 }

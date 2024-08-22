@@ -3,7 +3,7 @@ package de.stella.agora_web.replies.controller;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.services.IReplyService;
-import io.micrometer.common.lang.NonNull;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,17 +35,30 @@ public class ReplyController {
 
   @PostMapping("/replies/create")
   @PreAuthorize("hasRole('USER','ADMIN')")
-  public ResponseEntity<Reply> createReply(
-    @SuppressWarnings("rawtypes") @RequestBody ReplyDTO replyDTO
-  ) {
+  public ResponseEntity<Reply> createReply(@RequestBody ReplyDTO replyDTO) {
     Reply reply = replyService.createReply(replyDTO, null);
     return ResponseEntity.status(HttpStatus.CREATED).body(reply);
   }
 
   @GetMapping("/replies/{id}")
-  public ResponseEntity<Reply> show(@NonNull @PathVariable Long id) {
+  public ResponseEntity<Reply> show(@PathVariable Long id) {
     Reply reply = replyService.getReplyById(id);
-    return ResponseEntity.status(HttpStatus.OK).body(reply);
+    return ResponseEntity.ok(reply);
+  }
+
+  @GetMapping("/replies/post/{postId}")
+  public List<Reply> getRepliesByPostId(@PathVariable Long postId) {
+    return replyService.getRepliesByPostId(postId);
+  }
+
+  @GetMapping("/replies/tags/{tagName}")
+  public List<Reply> getRepliesByTagName(@PathVariable String tagName) {
+    return replyService.getRepliesByTagName(tagName);
+  }
+
+  @GetMapping("/replies/user/{userId}")
+  public List<Reply> getRepliesByUserId(@PathVariable Long userId) {
+    return replyService.getRepliesByUserId(userId);
   }
 
   @DeleteMapping("/replies/{id}")
