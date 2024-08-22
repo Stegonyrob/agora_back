@@ -31,6 +31,12 @@ public class PostController {
     return postService.getAllPosts();
   }
 
+  @GetMapping("/posts/{id}")
+  public ResponseEntity<Post> show(@PathVariable Long id) {
+    Post post = postService.getById(id);
+    return ResponseEntity.status(HttpStatus.OK).body(post);
+  }
+
   @PostMapping("/posts/store")
   public ResponseEntity<Post> store(@RequestBody PostDTO postDTO) {
     Post post = postService.save(postDTO);

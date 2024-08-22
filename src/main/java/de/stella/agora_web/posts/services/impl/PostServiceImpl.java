@@ -112,8 +112,8 @@ public class PostServiceImpl implements IPostService {
   }
 
   @Override
-  public Post getById(Long postId) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public Post getById(Long id) {
+    return postRepository.findById(id).orElseThrow();
   }
 
   @Override
