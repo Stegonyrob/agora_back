@@ -2,9 +2,9 @@ package de.stella.agora_web.posts.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import de.stella.agora_web.comment.model.Comment;
-import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.user.model.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,18 +41,16 @@ public class Post {
   @Column(name = "creation_date")
   private LocalDateTime creationDate;
 
+  @Column(name = "archived")
+  private Boolean archived;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   @JsonBackReference
   private User user;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "reply_id")
-  private Reply reply;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "post_id")
-  private Comment commnet;
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Comment> comments;
 
   @ManyToMany
   @JoinTable(
@@ -68,18 +67,34 @@ public class Post {
     String title,
     String message,
     LocalDateTime creationDate,
-    User user,
-    Reply reply
+    User user
   ) {
     this.id = id;
     this.title = title;
     this.message = message;
     this.creationDate = creationDate;
     this.user = user;
-    this.reply = reply;
   }
 
   public void setUser(User user2) {
     this.user = user2;
   }
+
+  public List<Comment> getComments() {
+    return comments;
+  }
+
+  public void setComments(List<Comment> comments) {
+    this.comments = comments;
+  }
+
+  public List<Tag> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<Tag> tags) {
+    this.tags = tags;
+  }
+  // No hay método para obtener respuestas, ya que un post no tiene respuestas directas
+  // Las respuestas están asociadas a los comentarios, no a los posts
 }

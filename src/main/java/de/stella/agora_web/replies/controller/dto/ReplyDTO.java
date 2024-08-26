@@ -31,4 +31,8 @@ public class ReplyDTO<PostDTO> {
     PostDTO firstPost = post.get(0);
     return ((UserDTO) firstPost).getId();
   }
+
+  public Long getUserId() {
+    return user != null ? user.getId() : null;
+  }
 }

@@ -39,6 +39,9 @@ public class Reply {
   @Column(name = "creation_date")
   private LocalDateTime creationDate;
 
+  @Column(name = "archived")
+  private Boolean archived;
+
   @ManyToMany
   @JoinTable(
     name = "reply_tags",

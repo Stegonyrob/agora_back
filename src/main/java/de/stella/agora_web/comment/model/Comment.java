@@ -1,8 +1,10 @@
 package de.stella.agora_web.comment.model;
 
 import de.stella.agora_web.posts.model.Post;
+import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.user.model.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +40,9 @@ public class Comment {
 
   @Column(name = "creation_date")
   private LocalDateTime creationDate;
+
+  @Column(name = "archived")
+  private Boolean archived;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id")
@@ -78,5 +84,16 @@ public class Comment {
 
   public void setPost(Post post) {
     this.post = post;
+  }
+
+  @OneToMany(
+    mappedBy = "comment",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+  )
+  private List<Reply> replies;
+
+  public List<Reply> getReplies() {
+    return replies;
   }
 }

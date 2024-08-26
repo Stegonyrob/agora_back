@@ -1,9 +1,15 @@
 package de.stella.agora_web.posts.services.impl;
 
+import de.stella.agora_web.comment.controller.dto.CommentDTO;
+import de.stella.agora_web.comment.model.Comment;
+import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.posts.services.IPostService;
+import de.stella.agora_web.replies.controller.dto.ReplyDTO;
+import de.stella.agora_web.replies.model.Reply;
+import de.stella.agora_web.replies.repository.ReplyRepository;
 import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.tags.repository.TagRepository;
 import de.stella.agora_web.tags.service.ITagService;
@@ -17,22 +23,34 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Service;
 
+//reiniciar la configuracion de cuando se de a borrar el post en realidad
+//archive el post con sus comentarios repuestas y tags
+// y que se pueda desarchivar retaurando todas las relaciones anteriores
+// al hacerlo tener encuenta que las tags estan en una tabla auxiliar posts_tag
+//idem para comment y reply
 @Service
 public class PostServiceImpl implements IPostService {
 
   private final PostRepository postRepository;
   private final UserServiceImpl userService;
   private final ITagService tagService;
-  private final TagRepository tagRepository = null;
+  private final TagRepository tagRepository;
+  private final CommentRepository commentRepository;
+
+  private final ReplyRepository replyRepository;
 
   public PostServiceImpl(
     PostRepository postRepository,
     UserServiceImpl userService,
-    ITagService tagService
+    ITagService tagService,
+    CommentRepository commentRepository
   ) {
     this.postRepository = postRepository;
     this.userService = userService;
     this.tagService = tagService;
+    this.commentRepository = commentRepository;
+    this.tagRepository = null;
+    this.replyRepository = null;
   }
 
   @Override
@@ -110,9 +128,34 @@ public class PostServiceImpl implements IPostService {
     return null;
   }
 
-  @Override
-  public void deletePost(Long id) {
-    postRepository.deleteById(id);
+  public void archivePost(Long id) {
+    Post post = postRepository.findById(id).orElseThrow();
+    post.setArchived(true);
+    for (Comment comment : post.getComments()) {
+      comment.setArchived(true);
+      for (Reply reply : comment.getReplies()) {
+        reply.setArchived(true);
+      }
+    }
+    for (Tag tag : post.getTags()) {
+      tag.getPosts().remove(post);
+    }
+    postRepository.save(post);
+  }
+
+  public void unarchivePost(Long id) {
+    Post post = postRepository.findById(id).orElseThrow();
+    post.setArchived(false);
+    for (Comment comment : post.getComments()) {
+      comment.setArchived(false);
+      for (Reply reply : comment.getReplies()) {
+        reply.setArchived(false);
+      }
+    }
+    for (Tag tag : post.getTags()) {
+      tag.getPosts().add(post);
+    }
+    postRepository.save(post);
   }
 
   @Override
@@ -223,11 +266,6 @@ public class PostServiceImpl implements IPostService {
   }
 
   @Override
-  public void deleteById(Long id) {
-    postRepository.deleteById(id);
-  }
-
-  @Override
   public Post update(PostDTO postDTO, Long id) {
     Optional<Post> postOptional = postRepository.findById(id);
     if (postOptional.isPresent()) {
@@ -258,5 +296,47 @@ public class PostServiceImpl implements IPostService {
       return postRepository.save(post);
     }
     return null;
+  }
+
+  @Override
+  public List<Comment> getCommentsByPostId(Long postId) {
+    Post post = postRepository.findById(postId).orElseThrow();
+    return post.getComments();
+  }
+
+  @Override
+  public List<Reply> getRepliesByCommentId(Long commentId) {
+    Comment comment = commentRepository.findById(commentId).orElseThrow();
+    return comment.getReplies();
+  }
+
+  @Override
+  public void createComment(Long postId, CommentDTO commentDTO) {
+    Post post = postRepository.findById(postId).orElseThrow();
+    Comment comment = new Comment();
+    comment.setMessage(commentDTO.getMessage());
+    comment.setUser(userService.getUserById(commentDTO.getUserId()));
+    comment.setPost(post);
+    commentRepository.save(comment);
+  }
+
+  @Override
+  public void createReply(Long commentId, ReplyDTO replyDTO) {
+    Comment comment = commentRepository.findById(commentId).orElseThrow();
+    Reply reply = new Reply();
+    reply.setMessage(replyDTO.getMessage());
+    reply.setUser(userService.getUserById(replyDTO.getUserId()));
+    reply.setComment(comment);
+    replyRepository.save(reply);
+  }
+
+  @Override
+  public void deleteComment(Long commentId) {
+    commentRepository.deleteById(commentId);
+  }
+
+  @Override
+  public void deleteReply(Long replyId) {
+    replyRepository.deleteById(replyId);
   }
 }

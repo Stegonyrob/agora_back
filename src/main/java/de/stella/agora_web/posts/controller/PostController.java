@@ -56,7 +56,7 @@ public class PostController {
 
   @DeleteMapping("posts/{id}")
   public ResponseEntity<Void> deleteUser(@PathVariable Long id) { // no va 500
-    postService.deleteById(id);
+    postService.archivePost(id);
     return ResponseEntity.noContent().build();
   }
 
