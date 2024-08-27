@@ -15,4 +15,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
   @SuppressWarnings("null")
   @Override
   Optional<Comment> findById(Long id);
+
+  public List<Comment> findByTagsName(String tagName);
+
+  public List<Comment> findByUserId(Long userId);
+
+  public Object findByPostId(Long postId);
 }

@@ -11,6 +11,7 @@ import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.model.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -146,23 +147,27 @@ public class CommentServiceImpl implements ICommentService {
     return comment;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public Object getCommentsByPostId(Long postId) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public List<Comment> getCommentsByTagId(Long tagId) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public List<Comment> getCommentsByPostId(Long postId) {
+    return (
+      (Collection<Comment>) CommentRepository.findByPostId(postId)
+    ).stream()
+      .collect(Collectors.toList());
   }
 
   @Override
   public List<Comment> getCommentsByUserId(Long userId) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return CommentRepository.findByUserId(userId);
   }
 
   @Override
   public List<Comment> getCommentsByTagName(String tagName) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return CommentRepository.findByTagsName(tagName);
+  }
+
+  @Override
+  public Comment findById(Long commentId) {
+    return CommentRepository.findById(commentId).orElseGet(() -> null);
   }
 }

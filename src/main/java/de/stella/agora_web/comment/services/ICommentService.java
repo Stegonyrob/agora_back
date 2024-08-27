@@ -18,9 +18,9 @@ public interface ICommentService {
 
   public Object getCommentsByPostId(Long postId);
 
-  List<Comment> getCommentsByTagId(Long tagId);
-
   List<Comment> getCommentsByUserId(Long userId);
 
   List<Comment> getCommentsByTagName(String tagName);
+
+  public Comment findById(Long commentId);
 }
