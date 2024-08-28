@@ -1,7 +1,7 @@
 package de.stella.agora_web;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import de.stella.agora_web.user.controller.UserController;
 import de.stella.agora_web.user.model.User;
@@ -12,12 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class UserControllerTest {
-
-  private MockMvc mockMvc;
 
   @Mock
   private UserServiceImpl userServiceMock;
@@ -27,10 +24,9 @@ public class UserControllerTest {
   @BeforeEach
   public void setup() {
     MockitoAnnotations.openMocks(this);
-    this.mockMvc =
-      MockMvcBuilders
-        .standaloneSetup(new UserController(userServiceMock))
-        .build();
+    MockMvcBuilders
+      .standaloneSetup(new UserController(userServiceMock))
+      .build();
     this.userController = new UserController(userServiceMock);
   }
 

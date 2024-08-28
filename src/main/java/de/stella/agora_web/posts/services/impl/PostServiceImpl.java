@@ -128,6 +128,7 @@ public class PostServiceImpl implements IPostService {
     return null;
   }
 
+  @Override
   public void archivePost(Long id) {
     Post post = postRepository.findById(id).orElseThrow();
     post.setArchived(true);
@@ -143,6 +144,7 @@ public class PostServiceImpl implements IPostService {
     postRepository.save(post);
   }
 
+  @Override
   public void unarchivePost(Long id) {
     Post post = postRepository.findById(id).orElseThrow();
     post.setArchived(false);
@@ -321,7 +323,10 @@ public class PostServiceImpl implements IPostService {
   }
 
   @Override
-  public void createReply(Long commentId, ReplyDTO replyDTO) {
+  public void createReply(
+    Long commentId,
+    @SuppressWarnings("rawtypes") ReplyDTO replyDTO
+  ) {
     Comment comment = commentRepository.findById(commentId).orElseThrow();
     Reply reply = new Reply();
     reply.setMessage(replyDTO.getMessage());

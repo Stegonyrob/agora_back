@@ -35,7 +35,9 @@ public class ReplyController {
 
   @PostMapping("/replies/create")
   @PreAuthorize("hasRole('USER','ADMIN')")
-  public ResponseEntity<Reply> createReply(@RequestBody ReplyDTO replyDTO) {
+  public ResponseEntity<Reply> createReply(
+    @SuppressWarnings("rawtypes") @RequestBody ReplyDTO replyDTO
+  ) {
     Reply reply = replyService.createReply(replyDTO, null);
     return ResponseEntity.status(HttpStatus.CREATED).body(reply);
   }

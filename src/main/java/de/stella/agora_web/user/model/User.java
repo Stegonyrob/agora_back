@@ -1,6 +1,7 @@
 package de.stella.agora_web.user.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.stella.agora_web.banned.model.Banned;
 import de.stella.agora_web.profiles.model.Profile;
 import de.stella.agora_web.roles.model.Role;
 import jakarta.persistence.Column;
@@ -12,8 +13,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -51,6 +54,9 @@ public class User {
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
   private Profile profile;
+
+  @OneToMany(mappedBy = "user")
+  private List<Banned> banned;
 
   public boolean hasRole(String role) {
     return roles.stream().anyMatch(r -> r.getName().equals(role));

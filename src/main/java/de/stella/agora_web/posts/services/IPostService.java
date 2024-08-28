@@ -45,7 +45,10 @@ public interface IPostService {
 
   void createComment(Long postId, CommentDTO commentDTO);
 
-  void createReply(Long commentId, ReplyDTO replyDTO);
+  void createReply(
+    Long commentId,
+    @SuppressWarnings("rawtypes") ReplyDTO replyDTO
+  );
 
   void deleteComment(Long commentId);
 
