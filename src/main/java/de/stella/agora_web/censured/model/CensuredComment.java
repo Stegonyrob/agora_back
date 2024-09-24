@@ -19,7 +19,8 @@ import lombok.Setter;
 @Table(name = "censured_comments")
 public class CensuredComment {
 
-  public CensuredComment(Comment comment1, Long userId) {}
+  public CensuredComment(Long long1, Long userId) {
+  }
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,5 +39,13 @@ public class CensuredComment {
 
   @Column(name = "notification_sent")
   private Boolean notificationSent;
-  // Getters y setters
+
+  public CensuredComment() {
+  }
+
+  public CensuredComment(Long commentId, User user, String reason) {
+    this.id = commentId;
+    this.user = user;
+    this.reason = reason;
+  }
 }

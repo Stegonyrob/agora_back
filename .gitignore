@@ -34,3 +34,5 @@ build/
 
 ### VS Code ###
 .vscode/
+# Ignorar la carpeta original
+src/main/java/de/stella/agora_web/nlp_moderation/model/OpenJDK-21/

@@ -32,4 +32,8 @@ public class CensuredCommentServiceImpl implements ICensuredCommentService {
   public void delete(Long id) {
     censuredCommentRepository.deleteById(id);
   }
+
+  public List<CensuredComment> findByUserId(Long userId) {
+    return censuredCommentRepository.findByUserId(userId);
+  }
 }

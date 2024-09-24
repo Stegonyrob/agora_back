@@ -50,18 +50,20 @@ public class CensuredCommentController {
   public ResponseEntity<Void> censureComment(
     @RequestBody CensuredCommentDTO censuredCommentDTO
   ) {
-    Comment comment = commentService.findById(
-      censuredCommentDTO.getCommentId()
+    Optional<Comment> commentOptional = Optional.of(
+      commentService.findById(censuredCommentDTO.getCommentId())
     );
-    if (comment != null) {
+    if (commentOptional.isPresent()) {
+      Long commentId = commentOptional.get().getId();
       CensuredComment censuredComment = new CensuredComment(
-        comment,
+        commentId,
         censuredCommentDTO.getUserId()
       );
+      // Aquí iría el código para guardar o actualizar el comentario censurado
       censuredCommentRepository.save(censuredComment);
-      return ResponseEntity.ok().build();
     } else {
       return ResponseEntity.notFound().build();
     }
+    return ResponseEntity.ok().build(); // Retorna un 200 OK si se ejecuta correctamente
   }
 }

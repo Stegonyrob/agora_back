@@ -1,22 +1,26 @@
 package de.stella.agora_web.comment.services.impl;
 
-import de.stella.agora_web.comment.controller.dto.CommentDTO;
-import de.stella.agora_web.comment.model.Comment;
-import de.stella.agora_web.comment.repository.CommentRepository;
-import de.stella.agora_web.comment.services.ICommentService;
-import de.stella.agora_web.posts.model.Post;
-import de.stella.agora_web.posts.repository.PostRepository;
-import de.stella.agora_web.tags.model.Tag;
-import de.stella.agora_web.tags.service.ITagService;
-import de.stella.agora_web.user.model.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import de.stella.agora_web.comment.controller.dto.CommentDTO;
+import de.stella.agora_web.comment.model.Comment;
+import de.stella.agora_web.comment.repository.CommentRepository;
+import de.stella.agora_web.comment.services.ICommentService;
+import de.stella.agora_web.comment.services.IMessageQueueService;
+import de.stella.agora_web.posts.model.Post;
+import de.stella.agora_web.posts.repository.PostRepository;
+import de.stella.agora_web.tags.model.Tag;
+import de.stella.agora_web.tags.service.ITagService;
+import de.stella.agora_web.user.model.User;
 
 @Service
 public class CommentServiceImpl implements ICommentService {
@@ -25,15 +29,13 @@ public class CommentServiceImpl implements ICommentService {
   private CommentRepository CommentRepository;
 
   @Autowired
+  private IMessageQueueService messageQueue;
+
+  @Autowired
   private ITagService tagService;
 
   @Autowired
   private PostRepository postRepository;
-
-  @Autowired
-  public List<Comment> getAllComments() {
-    return CommentRepository.findAll();
-  }
 
   @Override
   public Comment getCommentById(Long id) {
@@ -42,12 +44,10 @@ public class CommentServiceImpl implements ICommentService {
 
   public Comment createComment(CommentDTO commentDTO, User user) {
     Comment newComment = new Comment();
-    newComment.setPost(
-      postRepository.findById(commentDTO.getPostId()).orElse(null)
-    );
+    newComment.setPost(postRepository.findById(commentDTO.getPostId()).orElse(null));
     newComment.setUser(user);
     newComment.setMessage(commentDTO.getMessage());
-    newComment.setCreationDate(commentDTO.getCreationDate());
+    newComment.setCreationDate(LocalDateTime.now());
 
     List<Tag> tags = new ArrayList<>(commentDTO.getTags().length);
     for (String tagName : commentDTO.getTags()) {
@@ -57,18 +57,23 @@ public class CommentServiceImpl implements ICommentService {
       }
       tags.add(tag);
     }
-    tags.addAll(
-      tagService
-        .extractHashtags(commentDTO.getMessage())
-        .stream()
-        .map(tagService::getTagByName)
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList())
-    );
+    tags.addAll(tagService.extractHashtags(commentDTO.getMessage()).stream().map(tagService::getTagByName)
+        .filter(Objects::nonNull).collect(Collectors.toList()));
 
     newComment.setTags(tags);
 
-    return CommentRepository.save(newComment);
+    CommentRepository.save(newComment);
+    return newComment;
+  }
+
+  @Scheduled(fixedDelay = 1000)
+  public void processMessageQueue() {
+    List<Comment> comments = messageQueue.poll();
+    CommentRepository.saveAll(comments);
+  }
+
+  public List<Comment> getAllComments() {
+    return CommentRepository.findAllByOrderByCreationDateAsc();
   }
 
   @Override
@@ -91,9 +96,7 @@ public class CommentServiceImpl implements ICommentService {
       }
 
       // Add tags from hashtags in Comment message
-      List<String> hashtags = tagService.extractHashtags(
-        CommentDTO.getMessage()
-      );
+      List<String> hashtags = tagService.extractHashtags(CommentDTO.getMessage());
       for (String hashtag : hashtags) {
         Tag tag = tagService.getTagByName(hashtag);
         if (tag == null) {
@@ -150,10 +153,7 @@ public class CommentServiceImpl implements ICommentService {
   @SuppressWarnings("unchecked")
   @Override
   public List<Comment> getCommentsByPostId(Long postId) {
-    return (
-      (Collection<Comment>) CommentRepository.findByPostId(postId)
-    ).stream()
-      .collect(Collectors.toList());
+    return ((Collection<Comment>) CommentRepository.findByPostId(postId)).stream().collect(Collectors.toList());
   }
 
   @Override

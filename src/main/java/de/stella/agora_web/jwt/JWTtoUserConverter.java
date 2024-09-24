@@ -19,8 +19,8 @@ public class JWTtoUserConverter implements Converter<Jwt, UsernamePasswordAuthen
     }
 
     @Override
-    public UsernamePasswordAuthenticationToken convert(@SuppressWarnings("null") @NonNull Jwt source) {
-        Long userId = Long.parseLong(source.getSubject());
+    public UsernamePasswordAuthenticationToken convert(@NonNull Jwt source) {
+        Long userId = Long.valueOf(source.getSubject());
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         SecurityUser securityUser = new SecurityUser(user);
         return new UsernamePasswordAuthenticationToken(securityUser, securityUser.getPassword(),

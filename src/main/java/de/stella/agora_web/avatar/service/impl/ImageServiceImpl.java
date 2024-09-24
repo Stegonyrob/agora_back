@@ -90,9 +90,8 @@ public class ImageServiceImpl implements IStorageService {
     }
 
     @Override
-    public void saveImages(@SuppressWarnings("null") Long userId, MultipartFile[] images) {
+    public void saveImages(Long userId, MultipartFile[] images) {
         Arrays.asList(images).forEach(image -> {
-            @SuppressWarnings("null")
             String imageName = StringUtils.cleanPath(image.getOriginalFilename());
             try {
                 Files.copy(image.getInputStream(), this.rootLocation.resolve(imageName));
@@ -108,8 +107,7 @@ public class ImageServiceImpl implements IStorageService {
     }
 
     @Override
-    public void saveMainImage(@SuppressWarnings("null") Long userId, MultipartFile mainImage) {
-        @SuppressWarnings("null")
+    public void saveMainImage(Long userId, MultipartFile mainImage) {
         String imageName = StringUtils.cleanPath(mainImage.getOriginalFilename());
         try {
             Files.copy(mainImage.getInputStream(), this.rootLocation.resolve(imageName));
