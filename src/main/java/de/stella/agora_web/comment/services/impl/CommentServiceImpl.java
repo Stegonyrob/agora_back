@@ -12,6 +12,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.comment.controller.dto.CommentDTO;
+import de.stella.agora_web.comment.kafka.component.producer.CommentKafkaProducer;
+import de.stella.agora_web.comment.kafka.dto.CommentNotificationDTO;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.comment.services.ICommentService;
@@ -30,7 +32,8 @@ public class CommentServiceImpl implements ICommentService {
 
   @Autowired
   private IMessageQueueService messageQueue;
-
+  @Autowired
+  private CommentKafkaProducer kafkaProducer;
   @Autowired
   private ITagService tagService;
 
@@ -62,7 +65,12 @@ public class CommentServiceImpl implements ICommentService {
 
     newComment.setTags(tags);
 
-    CommentRepository.save(newComment);
+    // Enviar notificación a Kafka
+    CommentNotificationDTO notification = new CommentNotificationDTO();
+    notification.setCommentId(newComment.getId());
+    notification.setAuthor(user.getUsername());
+    notification.setMessage(newComment.getMessage());
+    kafkaProducer.sendCommentNotification(notification);
     return newComment;
   }
 

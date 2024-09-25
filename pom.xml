@@ -87,6 +87,19 @@
 			<artifactId>spark-core</artifactId>
 			<version>2.5.4</version>
 		</dependency>
+		<!-- spring-kafka -->
+		<!-- https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+			<version>3.2.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-autoconfigure -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<version>3.3.4</version>
+		</dependency>
 
 		<!-- DJL -->
 		<dependency>
