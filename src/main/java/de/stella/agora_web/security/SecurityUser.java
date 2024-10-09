@@ -1,16 +1,21 @@
 package de.stella.agora_web.security;
 
-import de.stella.agora_web.roles.model.Role;
-import de.stella.agora_web.user.model.User;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import de.stella.agora_web.roles.model.Role;
+import de.stella.agora_web.user.model.User;
+
 public class SecurityUser implements UserDetails {
 
   User user;
+  public Object getRoles;
 
   public SecurityUser(User user) {
     this.user = user;
@@ -26,9 +31,7 @@ public class SecurityUser implements UserDetails {
 
     for (Role role : user.getRoles()) {
       System.out.println("User role: " + role.getName());
-      SimpleGrantedAuthority authority = new SimpleGrantedAuthority(
-        role.getName()
-      );
+      SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getName());
       authorities.add(authority);
     }
 
@@ -67,5 +70,10 @@ public class SecurityUser implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  public String getRoles() {
+    List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+    return String.join(",", roles);
   }
 }
