@@ -7,16 +7,21 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import de.stella.agora_web.posts.model.Post;
-
+import de.stella.agora_web.replies.model.Reply;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    
-    @SuppressWarnings("null")
-    List<Post> findAll();
-   
-    @SuppressWarnings("null")
-    Optional<Post> findById(Long id);
+  @Override
+  List<Post> findAll();
 
-    List<Post> findByUserId(Long userId);
+  @Override
+  Optional<Post> findById(Long id);
+
+  List<Post> findByUserId(Long userId);
+
+  void save(Reply reply);
+
+  List<Post> findByTags_Name(String tagName);
+
+  public Post archived(Post existingPost);
 }

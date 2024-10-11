@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.3</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>3.3.4</version>
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>de.stella</groupId>
 	<artifactId>agora_web</artifactId>
@@ -16,10 +17,24 @@
 	<properties>
 		<java.version>21</java.version>
 	</properties>
+
 	<dependencies>
+		<!-- Spring Boot -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -27,23 +42,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.mysql</groupId>
-			<artifactId>mysql-connector-j</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -52,18 +52,120 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<scope>test</scope>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.0.2</version>
-		 </dependency>
-		 
-	</dependencies>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 
+		<!-- Stripe Google spark -->
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+			<version>24.21.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sparkjava</groupId>
+			<artifactId>spark-core</artifactId>
+			<version>2.5.4</version>
+		</dependency>
+		<!-- spring-kafka -->
+		<!-- https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+			<version>3.2.4</version>
+		</dependency>
+		<!-- spring-boot-starter-mail -->
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+			<version>3.3.4</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-autoconfigure -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<version>3.3.4</version>
+		</dependency>
+
+		<!-- DJL -->
+		<dependency>
+			<groupId>ai.djl</groupId>
+			<artifactId>api</artifactId>
+			<version>0.30.0</version>
+		</dependency>
+		<dependency>
+			<groupId>ai.djl.tensorflow</groupId>
+			<artifactId>tensorflow-engine</artifactId>
+			<version>0.30.0</version>
+		</dependency>
+		<dependency>
+			<groupId>ai.djl.tensorflow</groupId>
+			<artifactId>tensorflow-model-zoo</artifactId>
+			<version>0.30.0</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Hugging Face -->
+		<dependency>
+			<groupId>ai.djl.huggingface</groupId>
+			<artifactId>tokenizers</artifactId>
+			<version>0.30.0</version>
+		</dependency>
+
+		<!-- MySQL y H2 -->
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Lombok y Guava -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>30.1-jre</version>
+		</dependency>
+
+		<!-- Mockito -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>5.12.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -80,5 +182,183 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
+
+
+<!-- { -->
+
+<!-- <dependencies>
+
+
+
+
+https://mvnrepository.com/artifact/org.apache.opennlp/opennlp-tools
+<dependency>
+	<groupId>org.apache.opennlp</groupId>
+	<artifactId>opennlp-tools</artifactId>
+	<version>2.4.0</version>
+</dependency>
+Librería de procesamiento de lenguaje natural
+<dependency>
+	<groupId>org.apache.opennlp</groupId>
+	<artifactId>opennlp-tools</artifactId>
+	<version>2.0.0</version>
+</dependency>
+Librería de machine learning
+<dependency>
+	<groupId>org.deeplearning4j</groupId>
+	<artifactId>deeplearning4j-core</artifactId>
+	<version>1.0.0-M1.1</version>
+</dependency>
+Librería de modelos de lenguaje natural -->
+<!-- https://mvnrepository.com/artifact/ai.djl/api
+<dependency>
+	<groupId>ai.djl</groupId>
+	<artifactId>api</artifactId>
+	<version>0.30.0</version>
+</dependency>
+<dependency>
+	<groupId>ai.djl.pytorch</groupId>
+	<artifactId>pytorch-model-zoo</artifactId>
+	<version>0.14.0</version>
+</dependency>
+https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-hugging-face
+<dependency>
+	<groupId>dev.langchain4j</groupId>
+	<artifactId>langchain4j-hugging-face</artifactId>
+	<version>0.34.0</version>
+</dependency>
+
+Librería de tokenización
+<dependency>
+	<groupId>org.apache.lucene</groupId>
+	<artifactId>lucene-analyzers-common</artifactId>
+	<version>8.11.2</version>
+</dependency>
+Deeplearning4j
+<dependency>
+	<groupId>org.nd4j</groupId>
+	<artifactId>nd4j</artifactId>
+	<version>1.0.0-M2.1</version>
+	<type>pom</type>
+</dependency>
+<dependency>
+	<groupId>org.nd4j</groupId>
+	<artifactId>nd4j-native-platform</artifactId>
+	<version>1.0.0-M2.1</version>
+</dependency>
+https://mvnrepository.com/artifact/org.tensorflow/tensorflow-core-api
+<dependency>
+	<groupId>org.tensorflow</groupId>
+	<artifactId>tensorflow-core-api</artifactId>
+	<version>1.0.0-rc.1</version>
+</dependency>
+https://mvnrepository.com/artifact/org.tensorflow/tensorflow
+<dependency>
+	<groupId>org.tensorflow</groupId>
+	<artifactId>tensorflow</artifactId>
+	<version>1.15.0</version>
+</dependency>
+<dependency>
+	<groupId>ai.djl.tensorflow</groupId>
+	<artifactId>tensorflow-engine</artifactId>
+	<version>0.15.0</version>
+</dependency>
+https://mvnrepository.com/artifact/ai.djl.tensorflow/tensorflow-engine
+<dependency>
+	<groupId>ai.djl.tensorflow</groupId>
+	<artifactId>tensorflow-engine</artifactId>
+	<version>0.30.0</version>
+</dependency>
+
+
+https://mvnrepository.com/artifact/ai.djl.tensorflow/tensorflow-model-zoo
+<dependency>
+	<groupId>ai.djl.tensorflow</groupId>
+	<artifactId>tensorflow-model-zoo</artifactId>
+	<version>0.30.0</version>
+	<scope>runtime</scope>
+</dependency>
+
+
+		https://mvnrepository.com/artifact/ai.djl.spring/djl-spring-boot-starter-tensorflow-auto 
+<dependency>
+	<groupId>ai.djl.spring</groupId>
+	<artifactId>djl-spring-boot-starter-tensorflow-auto</artifactId>
+	<version>0.26</version>
+</dependency>
+
+
+<dependency>
+	<groupId>org.deeplearning4j</groupId>
+	<artifactId>deeplearning4j-nlp</artifactId>
+	<version>1.0.0-M1.1</version>
+</dependency>
+ UIMA 
+<dependency>
+	<groupId>org.apache.uima</groupId>
+	<artifactId>uimaj-core</artifactId>
+	<version>3.0.0</version>
+</dependency>
+
+ MXNet 
+<dependency>
+	<groupId>ai.djl.mxnet</groupId>
+	<artifactId>mxnet-model-zoo</artifactId>
+	<version>0.29.0</version>
+</dependency>
+
+ Tokenizers 
+<dependency>
+	<groupId>ai.djl.huggingface</groupId>
+	<artifactId>tokenizers</artifactId>
+	<version>0.29.0</version>
+</dependency>
+
+<dependency>
+	<groupId>ai.djl.huggingface</groupId>
+	<artifactId>tokenizers</artifactId>
+	<version>0.30.0</version>
+</dependency>
+
+<dependency>
+	<groupId>io.github.pig-mesh.ai</groupId>
+	<artifactId>spring-ai-huggingface</artifactId>
+	<version>1.2.1</version>
+</dependency>
+
+<dependency>
+	<groupId>ai.djl.tensorflow</groupId>
+	<artifactId>tensorflow-native-auto</artifactId>
+	<version>2.4.1</version>
+	<scope>runtime</scope>
+</dependency>
+
+<dependency>
+	<groupId>ai.djl.spring</groupId>
+	<artifactId>djl-spring-boot-starter-mxnet-auto</artifactId>
+	<version>0.26</version>
+	<scope>test</scope>
+</dependency>
+
+
+<dependency>
+	<groupId>ai.djl</groupId>
+	<artifactId>api</artifactId>
+	<version>0.30.0</version>
+</dependency>
+
+<dependency>
+	<groupId>com.google.guava</groupId>
+	<artifactId>guava</artifactId>
+	<version>30.1-jre</version>
+</dependency>
+
+
+<dependency>
+	<groupId>org.mockito</groupId>
+	<artifactId>mockito-junit-jupiter</artifactId>
+	<version>5.12.0</version>
+	<scope>test</scope>
+</dependency>
+ </dependencies> --> 

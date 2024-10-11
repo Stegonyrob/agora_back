@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Keys ###
+
+src/main/java/de/stella/agora_web/auth/keys/
 ### STS ###
 .apt_generated
 .classpath
@@ -31,3 +34,7 @@ build/
 
 ### VS Code ###
 .vscode/
+# Ignorar la carpeta original
+src/main/java/de/stella/agora_web/nlp_moderation/model/OpenJDK-21/
+nlp_moderation
+src/main/resources/stanford-corenlp-4.5.7

@@ -6,13 +6,13 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import de.stella.agora_web.user.controller.dto.UserDTO;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.persistence.IUserDAO;
 import de.stella.agora_web.user.repository.UserRepository;
 
 @Component
 public class UserDAOImpl implements IUserDAO {
-
     private final UserRepository userRepository;
 
     public UserDAOImpl(UserRepository userRepository) {
@@ -32,7 +32,7 @@ public class UserDAOImpl implements IUserDAO {
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return Optional.ofNullable(userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found")));
     }
 
     @Override
@@ -54,6 +54,7 @@ public class UserDAOImpl implements IUserDAO {
 
     @Override
     public User update(User user, User updatedUser) {
+        // Implement the update logic here
         return user;
     }
 
@@ -61,4 +62,53 @@ public class UserDAOImpl implements IUserDAO {
     public List<User> findById(List<Long> ids) {
         return userRepository.findAllById(ids);
     }
+
+    @Override
+    public User getLoggedInUser() {
+        // Implement the logic to get the logged-in user
+        return null;
+    }
+
+    @Override
+    public List<User> findAllById(List<Long> ids) {
+        return userRepository.findAllById(ids);
+    }
+
+    @Override
+    public Optional<User> findUserById(Long userId) {
+        return userRepository.findById(userId);
+    }
+
+    @Override
+    public User save(UserDTO userDTO) {
+        if (userDTO == null) {
+            throw new IllegalArgumentException("UserDTO cannot be null");
+        }
+
+        validateUserDTO(userDTO);
+        return null;
+
+    }
+
+
+    private void validateUserDTO(UserDTO userDTO) {
+        Objects.requireNonNull(userDTO, "UserDTO cannot be null");
+        validateUsername(userDTO.getUsername());
+        validatePassword(userDTO.getPassword());
+    }
+
+    private void validateUsername(String username) {
+        Objects.requireNonNull(username, "Username cannot be null");
+        if (username.isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        }
+    }
+
+    private void validatePassword(String password) {
+        Objects.requireNonNull(password, "Password cannot be null");
+        if (password.isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be empty");
+        }
+    }
+
 }

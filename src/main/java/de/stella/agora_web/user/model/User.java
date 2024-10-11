@@ -1,10 +1,8 @@
 package de.stella.agora_web.user.model;
 
-import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import de.stella.agora_web.posts.model.Post;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import de.stella.agora_web.banned.model.Banned;
+import de.stella.agora_web.profiles.model.Profile;
 import de.stella.agora_web.roles.model.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,54 +14,66 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.List;
+import java.util.Set;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
-
-    @Getter
-    @Setter
-    
+@Getter
+@Setter
 @Entity
-@Table (name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "users")
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)    
-    @Column (name = "id_user")
-    private Long id;
-    private String username;
-    private String password;
-    private String email;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id_user")
+  private Long id;
 
-   
-    public User() {
-    }
+  private String username;
 
-    public User(Long id, String username, String password, Set<Role> roles) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.roles = roles;
-    }
+  private String password;
 
-    public boolean hasRole(String role) {
-        return false;
-       
-    }
+  private String email;
 
-@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-@JsonManagedReference
-private Set<Post> posts;
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+    name = "roles_users",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "role_id")
+  )
+  private Set<Role> roles;
 
-@ManyToMany(fetch = FetchType.LAZY)
-@JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-@JsonManagedReference
-private Set<Role> roles;
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+  @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+  private Profile profile;
 
+  @OneToMany(mappedBy = "user")
+  private List<Banned> banned;
 
+  public boolean hasRole(String role) {
+    return roles.stream().anyMatch(r -> r.getName().equals(role));
+  }
 
+  public User(Long id, String username, String password) {
+    this.id = id;
+    this.username = username;
+    this.password = password;
+  }
 
+  public User(String userName, String password) {
+    this.username = userName;
+    this.password = password;
+  }
+
+  public GrantedAuthority getAuthority() {
+    return null;
+  }
 }
-
-
