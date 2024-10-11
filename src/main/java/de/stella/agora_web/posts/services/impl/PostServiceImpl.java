@@ -1,5 +1,13 @@
 package de.stella.agora_web.posts.services.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.springframework.stereotype.Service;
+
 import de.stella.agora_web.comment.controller.dto.CommentDTO;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.comment.repository.CommentRepository;
@@ -16,12 +24,6 @@ import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.exceptions.UserNotFoundException;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.services.impl.UserServiceImpl;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.springframework.stereotype.Service;
 
 //reiniciar la configuracion de cuando se de a borrar el post en realidad
 //archive el post con sus comentarios repuestas y tags
@@ -39,12 +41,8 @@ public class PostServiceImpl implements IPostService {
 
   private final ReplyRepository replyRepository;
 
-  public PostServiceImpl(
-    PostRepository postRepository,
-    UserServiceImpl userService,
-    ITagService tagService,
-    CommentRepository commentRepository
-  ) {
+  public PostServiceImpl(PostRepository postRepository, UserServiceImpl userService, ITagService tagService,
+      CommentRepository commentRepository) {
     this.postRepository = postRepository;
     this.userService = userService;
     this.tagService = tagService;
@@ -129,7 +127,7 @@ public class PostServiceImpl implements IPostService {
   }
 
   @Override
-  public void archivePost(Long id) {
+  public void archivedPost(Long id) {
     Post post = postRepository.findById(id).orElseThrow();
     post.setArchived(true);
     for (Comment comment : post.getComments()) {
@@ -145,7 +143,7 @@ public class PostServiceImpl implements IPostService {
   }
 
   @Override
-  public void unarchivePost(Long id) {
+  public void unarchivedPost(Long id) {
     Post post = postRepository.findById(id).orElseThrow();
     post.setArchived(false);
     for (Comment comment : post.getComments()) {
@@ -323,10 +321,7 @@ public class PostServiceImpl implements IPostService {
   }
 
   @Override
-  public void createReply(
-    Long commentId,
-    @SuppressWarnings("rawtypes") ReplyDTO replyDTO
-  ) {
+  public void createReply(Long commentId, @SuppressWarnings("rawtypes") ReplyDTO replyDTO) {
     Comment comment = commentRepository.findById(commentId).orElseThrow();
     Reply reply = new Reply();
     reply.setMessage(replyDTO.getMessage());
@@ -343,5 +338,26 @@ public class PostServiceImpl implements IPostService {
   @Override
   public void deleteReply(Long replyId) {
     replyRepository.deleteById(replyId);
+  }
+
+  @Override
+  public Post patch(PostDTO postDTO, Long id) {
+    Post existingPost = postRepository.findById(id).orElseThrow();
+    if (postDTO.getTitle() != null) {
+      existingPost.setTitle(postDTO.getTitle());
+    }
+    if (postDTO.getMessage() != null) {
+      existingPost.setMessage(postDTO.getMessage());
+    }
+    return postRepository.archived(existingPost);
+  }
+
+  @Override
+  public void deletedPost(Long id) {
+    Post post = postRepository.findById(id).orElseThrow();
+    for (Comment comment : post.getComments()) {
+      commentRepository.delete(comment);
+    }
+    postRepository.deleteById(id);
   }
 }

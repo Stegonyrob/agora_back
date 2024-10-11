@@ -1,5 +1,7 @@
 package de.stella.agora_web.posts.services;
 
+import java.util.List;
+
 import de.stella.agora_web.comment.controller.dto.CommentDTO;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.posts.controller.dto.PostDTO;
@@ -7,7 +9,6 @@ import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.tags.model.Tag;
-import java.util.List;
 
 public interface IPostService {
   List<Post> getAllPosts();
@@ -34,10 +35,11 @@ public interface IPostService {
 
   Post update(PostDTO postDTO, Long id);
 
-  // Nuevos métodos
-  void archivePost(Long postId);
+  Post patch(PostDTO postDTO, Long id);
 
-  void unarchivePost(Long postId);
+  void archivedPost(Long postId);
+
+  void unarchivedPost(Long postId);
 
   List<Comment> getCommentsByPostId(Long postId);
 
@@ -45,12 +47,11 @@ public interface IPostService {
 
   void createComment(Long postId, CommentDTO commentDTO);
 
-  void createReply(
-    Long commentId,
-    @SuppressWarnings("rawtypes") ReplyDTO replyDTO
-  );
+  void createReply(Long commentId, @SuppressWarnings("rawtypes") ReplyDTO replyDTO);
 
   void deleteComment(Long commentId);
 
   void deleteReply(Long replyId);
+
+  public void deletedPost(Long id);
 }

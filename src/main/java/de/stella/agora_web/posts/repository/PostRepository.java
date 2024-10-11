@@ -22,4 +22,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
   void save(Reply reply);
 
   List<Post> findByTags_Name(String tagName);
+
+  public Post archived(Post existingPost);
 }
