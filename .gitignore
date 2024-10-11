@@ -36,3 +36,5 @@ build/
 .vscode/
 # Ignorar la carpeta original
 src/main/java/de/stella/agora_web/nlp_moderation/model/OpenJDK-21/
+nlp_moderation
+src/main/resources/stanford-corenlp-4.5.7
