@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,10 +52,16 @@ public class PostController {
     return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON).body(newPost);
   }
 
-  @DeleteMapping("posts/{id}")
-  public ResponseEntity<Void> deleteUser(@PathVariable Long id) { // no va 500
-    postService.deletedPost(id);
-    return ResponseEntity.noContent().build();
+  // @DeleteMapping("posts/{id}")
+  // public ResponseEntity<Void> deleteUser(@PathVariable Long id) { // no va 500
+  // postService.archivePost(id);
+  // return ResponseEntity.noContent().build();
+  // }
+
+  @PutMapping("posts/{id}") // ok
+  public ResponseEntity<Post> update(@PathVariable("id") Long id, @RequestBody PostDTO postDTO) {
+    Post post = postService.update(postDTO, id);
+    return ResponseEntity.accepted().body(post);
   }
 
   @PatchMapping("posts/{id}")
@@ -74,12 +79,6 @@ public class PostController {
 
   }
 
-  @PutMapping("posts/{id}") // ok
-  public ResponseEntity<Post> update(@PathVariable("id") Long id, @RequestBody PostDTO postDTO) {
-    Post post = postService.update(postDTO, id);
-    return ResponseEntity.accepted().body(post);
-  }
-
   @GetMapping("/user/{userId}")
   public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable Long userId) {
     List<Post> posts = postService.getPostsByUserId(userId);
@@ -91,4 +90,5 @@ public class PostController {
     List<Post> posts = postService.getPostsByTagName(tagName);
     return ResponseEntity.ok(posts);
   }
+
 }

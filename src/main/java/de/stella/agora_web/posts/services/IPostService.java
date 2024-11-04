@@ -35,11 +35,10 @@ public interface IPostService {
 
   Post update(PostDTO postDTO, Long id);
 
-  Post patch(PostDTO postDTO, Long id);
+  // Nuevos métodos
+  void archivePost(Long postId);
 
-  void archivedPost(Long postId);
-
-  void unarchivedPost(Long postId);
+  void unarchivePost(Long postId);
 
   List<Comment> getCommentsByPostId(Long postId);
 
@@ -52,6 +51,4 @@ public interface IPostService {
   void deleteComment(Long commentId);
 
   void deleteReply(Long replyId);
-
-  public void deletedPost(Long id);
 }

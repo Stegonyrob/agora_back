@@ -1,3 +1,4 @@
+
 package de.stella.agora_web.posts.services.impl;
 
 import java.util.ArrayList;
@@ -127,7 +128,7 @@ public class PostServiceImpl implements IPostService {
   }
 
   @Override
-  public void archivedPost(Long id) {
+  public void archivePost(Long id) {
     Post post = postRepository.findById(id).orElseThrow();
     post.setArchived(true);
     for (Comment comment : post.getComments()) {
@@ -143,7 +144,7 @@ public class PostServiceImpl implements IPostService {
   }
 
   @Override
-  public void unarchivedPost(Long id) {
+  public void unarchivePost(Long id) {
     Post post = postRepository.findById(id).orElseThrow();
     post.setArchived(false);
     for (Comment comment : post.getComments()) {
@@ -340,7 +341,6 @@ public class PostServiceImpl implements IPostService {
     replyRepository.deleteById(replyId);
   }
 
-  @Override
   public Post patch(PostDTO postDTO, Long id) {
     Post existingPost = postRepository.findById(id).orElseThrow();
     if (postDTO.getTitle() != null) {
@@ -349,10 +349,12 @@ public class PostServiceImpl implements IPostService {
     if (postDTO.getMessage() != null) {
       existingPost.setMessage(postDTO.getMessage());
     }
-    return postRepository.archived(existingPost);
+    if (postDTO.getArchived() != null) {
+      existingPost.setArchived(postDTO.getArchived());
+    }
+    return postRepository.save(existingPost);
   }
 
-  @Override
   public void deletedPost(Long id) {
     Post post = postRepository.findById(id).orElseThrow();
     for (Comment comment : post.getComments()) {

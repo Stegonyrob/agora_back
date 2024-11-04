@@ -6,7 +6,11 @@ target/
 
 ### Keys ###
 
-src/main/java/de/stella/agora_web/auth/keys/
+
+src/main/java/de/stella/agora_web/auth/keys/access-token-private.key
+src/main/java/de/stella/agora_web/auth/keys/access-token-public.key
+src/main/java/de/stella/agora_web/auth/keys/refresh-token-private.key
+src/main/java/de/stella/agora_web/auth/keys/refresh-token-public.key
 ### STS ###
 .apt_generated
 .classpath
