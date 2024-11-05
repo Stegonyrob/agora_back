@@ -64,6 +64,23 @@ public class PostController {
     return ResponseEntity.accepted().body(post);
   }
 
+  @PatchMapping("/posts/{id}/archive")
+  public ResponseEntity<Void> archivePost(@PathVariable Long id) {
+    Post post = postService.getById(id);
+    if (post == null) {
+      return ResponseEntity.notFound().build();
+    }
+
+    try {
+      postService.archivePost(id);
+      return ResponseEntity.noContent().build();
+    } catch (Exception e) {
+
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+    }
+  }
+
   @PatchMapping("posts/{id}")
   public ResponseEntity<Post> patch(@PathVariable Long id, @RequestBody PostDTO postDTO) {
 
