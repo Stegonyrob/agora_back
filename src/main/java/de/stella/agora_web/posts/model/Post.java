@@ -1,6 +1,10 @@
 package de.stella.agora_web.posts.model;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.user.model.User;
@@ -17,8 +21,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,7 +41,7 @@ public class Post {
   private String message;
 
   @Column(name = "creation_date")
-  private LocalDateTime creationDate;
+  private LocalDateTime creationDate = LocalDateTime.now();
 
   @Column(name = "archived")
   private Boolean archived;
@@ -53,31 +55,21 @@ public class Post {
   private List<Comment> comments;
 
   @ManyToMany
-  @JoinTable(
-    name = "post_tag",
-    joinColumns = @JoinColumn(name = "post_id"),
-    inverseJoinColumns = @JoinColumn(name = "tag_id")
-  )
+  @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
   private List<Tag> tags;
 
-  public Post() {}
+  public Post() {
+  }
 
-  public Post(
-    Long id,
-    String title,
-    String message,
-    LocalDateTime creationDate,
-    User user
-  ) {
+  public Post(Long id, String title, String message, User user) {
     this.id = id;
     this.title = title;
     this.message = message;
-    this.creationDate = creationDate;
     this.user = user;
   }
 
-  public void setUser(User user2) {
-    this.user = user2;
+  public void setUser(User user) {
+    this.user = user;
   }
 
   public List<Comment> getComments() {
@@ -95,6 +87,8 @@ public class Post {
   public void setTags(List<Tag> tags) {
     this.tags = tags;
   }
-  // No hay método para obtener respuestas, ya que un post no tiene respuestas directas
-  // Las respuestas están asociadas a los comentarios, no a los posts
+
+  public String getLocation() {
+    return "Agora Web";
+  }
 }

@@ -68,7 +68,6 @@ public class PostServiceImpl implements IPostService {
     post.setUser(user.get());
     post.setTitle(postDTO.getTitle());
     post.setMessage(postDTO.getMessage());
-    post.setCreationDate(postDTO.getCreationDate());
 
     List<Tag> tags = new ArrayList<>();
     for (String tagName : postDTO.getTags()) {

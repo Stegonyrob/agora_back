@@ -1,6 +1,5 @@
 package de.stella.agora_web.posts.controller.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,20 +19,31 @@ import lombok.Setter;
 public class PostDTO {
 
   private Long id;
+
+  private Long userId;
   private String title;
   private String message;
-  private LocalDateTime creationDate;
-  private Boolean archived;
-  private Long userId;
+  private String location;
+  private int loves;
   private List<Comment> comments;
+  private boolean isArchived;
   private List<String> tags;
+  private List<String> images;
+  private boolean isPublished;
+  private String altImage;
+  private String sourceImage;
+  private String altAvatar;
+  private String sourceAvatar;
+  private String username;
+  private String role;
+  private String urlAvatar;
 
   public PostDTO(Post post) {
     this.id = post.getId();
     this.title = post.getTitle();
     this.message = post.getMessage();
-    this.creationDate = post.getCreationDate();
-    this.archived = post.getArchived();
+    this.location = post.getLocation();
+    this.isArchived = post.getArchived();
     this.userId = post.getUser().getId();
     this.comments = post.getComments();
     this.tags = post.getTags().stream().map(Tag::getName).collect(Collectors.toList());
@@ -43,7 +53,7 @@ public class PostDTO {
   private List<ReplyDTO> replies;
 
   public PostDTO(Boolean archived) {
-    this.archived = archived;
+    this.isArchived = archived;
   }
 
   public Long getUserId() {
@@ -62,7 +72,7 @@ public class PostDTO {
   }
 
   public boolean isArchived() {
-    return creationDate != null && creationDate.isBefore(LocalDateTime.now());
+    return Boolean.TRUE.equals(isArchived);
   }
 
   public Boolean getArchived() {

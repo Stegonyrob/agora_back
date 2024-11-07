@@ -39,17 +39,20 @@ public class PostController {
     return ResponseEntity.status(HttpStatus.OK).body(post);
   }
 
-  @PostMapping("/posts/store")
-  public ResponseEntity<Post> store(@RequestBody PostDTO postDTO) {
-    Post post = postService.save(postDTO);
-    return ResponseEntity.status(HttpStatus.CREATED).body(post);
-  }
+  @PostMapping(path = "/posts")
+  public ResponseEntity<Post> create(@RequestBody PostDTO postDTO) {
+    if (postDTO == null) {
+      return ResponseEntity.badRequest().build();
+    }
 
-  @PostMapping(path = "/posts") // ok
-  public ResponseEntity<Post> create(@RequestBody PostDTO post) throws Exception {
-    Post newPost = postService.save(post);
-
-    return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON).body(newPost);
+    try {
+      Post newPost = postService.save(postDTO);
+      System.out.println("Post recibido: " + postDTO);
+      return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(newPost);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
   }
 
   // @DeleteMapping("posts/{id}")
@@ -79,21 +82,6 @@ public class PostController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
     }
-  }
-
-  @PatchMapping("posts/{id}")
-  public ResponseEntity<Post> patch(@PathVariable Long id, @RequestBody PostDTO postDTO) {
-
-    Post post = postService.getById(id);
-    if (post == null) {
-
-      return ResponseEntity.notFound().build();
-    }
-
-    Post updatedPost = postService.updatePost(postDTO, id);
-
-    return ResponseEntity.accepted().body(updatedPost);
-
   }
 
   @GetMapping("/user/{userId}")
