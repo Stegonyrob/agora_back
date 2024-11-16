@@ -143,7 +143,7 @@ public class PostServiceImpl implements IPostService {
   }
 
   @Override
-  public void unarchivePost(Long id) {
+  public void unArchivePost(Long id) {
     Post post = postRepository.findById(id).orElseThrow();
     post.setArchived(false);
     for (Comment comment : post.getComments()) {
@@ -156,6 +156,7 @@ public class PostServiceImpl implements IPostService {
       tag.getPosts().add(post);
     }
     postRepository.save(post);
+
   }
 
   @Override

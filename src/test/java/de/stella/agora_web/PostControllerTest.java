@@ -66,16 +66,19 @@ public class PostControllerTest {
   @Test
   public void testCreatePost_Success() throws Exception {
     // Arrange
-    PostDTO postDto = new PostDTO(null, null, null, "title", "message", null, 0, null, false, null, null, false, null,
-        null, null, null, null, null, null, null, null);
-    Post newPost = new Post();
-    when(postService.save(any(PostDTO.class))).thenReturn(newPost);
+    PostDTO postDTO = new PostDTO(null, null, null, null, null, 0, null, false, null, null, false, null, null, null,
+        null, null, null, null, null);
+    when(postService.save(any(PostDTO.class))).thenReturn(null);
+    Post expectedPost = new Post();
+    when(postService.save(any(PostDTO.class))).thenReturn(expectedPost);
 
     // Act
-    ResponseEntity<Post> response = postController.create(postDto);
+    ResponseEntity<Post> responseEntity = postController.create(postDTO);
 
     // Assert
-    assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+    assertNotNull(responseEntity.getBody());
+    assertEquals(expectedPost, responseEntity.getBody());
   }
 
   @Test
@@ -91,8 +94,8 @@ public class PostControllerTest {
   @Test
   public void testCreatePost_InvalidPostDTO() throws Exception {
     // Arrange
-    PostDTO postDTO = new PostDTO(null, null, null, null, null, null, 0, null, false, null, null, false, null, null,
-        null, null, null, null, null, null, null);
+    PostDTO postDTO = new PostDTO(null, null, null, null, null, 0, null, false, null, null, false, null, null, null,
+        null, null, null, null, null);
     when(postService.save(any(PostDTO.class))).thenReturn(null);
 
     // Act
@@ -106,8 +109,9 @@ public class PostControllerTest {
   @Test
   public void testCreatePost_ExceptionThrown() throws Exception {
     // Arrange
-    PostDTO postDTO = new PostDTO(null, null, null, "title", "message", null, 0, null, false, null, null, false, null,
-        null, null, null, null, null, null, null, null);
+    PostDTO postDTO = new PostDTO(null, null, null, null, null, 0, null, false, null, null, false, null, null, null,
+        null, null, null, null, null);
+    when(postService.save(any(PostDTO.class))).thenReturn(null);
     doThrow(new RuntimeException()).when(postService).save(any(PostDTO.class));
 
     // Act

@@ -38,7 +38,7 @@ public interface IPostService {
   // Nuevos métodos
   void archivePost(Long postId);
 
-  void unarchivePost(Long postId);
+  void unArchivePost(Long postId);
 
   List<Comment> getCommentsByPostId(Long postId);
 

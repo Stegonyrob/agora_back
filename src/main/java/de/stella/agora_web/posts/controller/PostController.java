@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.posts.controller.dto.PostDTO;
@@ -68,19 +69,21 @@ public class PostController {
   }
 
   @PatchMapping("/posts/{id}/archive")
-  public ResponseEntity<Void> archivePost(@PathVariable Long id) {
+  public ResponseEntity<Void> archivePost(@PathVariable Long id, @RequestParam Boolean archive) {
     Post post = postService.getById(id);
     if (post == null) {
       return ResponseEntity.notFound().build();
     }
 
     try {
-      postService.archivePost(id);
+      if (archive) {
+        postService.archivePost(id);
+      } else {
+        postService.unArchivePost(id);
+      }
       return ResponseEntity.noContent().build();
     } catch (Exception e) {
-
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-
     }
   }
 
