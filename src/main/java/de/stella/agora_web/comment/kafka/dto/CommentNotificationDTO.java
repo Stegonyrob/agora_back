@@ -35,9 +35,22 @@ public class CommentNotificationDTO {
     }
 
     public Comment getComment() {
+        if (this.commentId == null) {
+            throw new IllegalArgumentException("commentId is null");
+        }
+
         Comment comment = new Comment();
         comment.setId(this.commentId);
-        comment.setUser(new User(commentId, this.author, author, author, null, null, null));
+        if (this.author == null) {
+            throw new IllegalArgumentException("author is null");
+        }
+        User user = new User();
+        user.setId(commentId);
+        user.setUsername(this.author);
+        comment.setUser(user);
+        if (this.message == null) {
+            throw new IllegalArgumentException("message is null");
+        }
         comment.setMessage(this.message);
         return comment;
     }

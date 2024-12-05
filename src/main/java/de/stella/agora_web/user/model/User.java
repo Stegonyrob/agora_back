@@ -1,7 +1,16 @@
 package de.stella.agora_web.user.model;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.security.core.GrantedAuthority;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import de.stella.agora_web.banned.model.Banned;
+import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.profiles.model.Profile;
 import de.stella.agora_web.roles.model.Role;
 import jakarta.persistence.Column;
@@ -16,13 +25,10 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.util.List;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
 
 @Getter
 @Setter
@@ -44,11 +50,7 @@ public class User {
   private String email;
 
   @ManyToMany(fetch = FetchType.EAGER)
-  @JoinTable(
-    name = "roles_users",
-    joinColumns = @JoinColumn(name = "user_id"),
-    inverseJoinColumns = @JoinColumn(name = "role_id")
-  )
+  @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles;
 
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -57,6 +59,9 @@ public class User {
 
   @OneToMany(mappedBy = "user")
   private List<Banned> banned;
+
+  @OneToMany(mappedBy = "user")
+  private Set<Comment> comments;
 
   public boolean hasRole(String role) {
     return roles.stream().anyMatch(r -> r.getName().equals(role));
@@ -75,5 +80,13 @@ public class User {
 
   public GrantedAuthority getAuthority() {
     return null;
+  }
+
+  public Set<Comment> getComments() {
+    return Collections.unmodifiableSet(comments);
+  }
+
+  public void setComments(Set<Comment> comments) {
+    this.comments = new HashSet<>(comments);
   }
 }

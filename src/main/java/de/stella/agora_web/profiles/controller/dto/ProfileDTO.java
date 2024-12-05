@@ -1,10 +1,19 @@
 package de.stella.agora_web.profiles.controller.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 
+@Builder
+@Data
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProfileDTO {
 
     private Long id;
@@ -17,13 +26,10 @@ public class ProfileDTO {
     private String password;
     private String confirmPassword;
     private String city;
+    private String country;
+    private String phone;
 
-    public ProfileDTO(Object firstName2, Object lastName12, Object lastName22, Object relationship2, Object email2,
-            Object city2) {
-
-    }
-
-    public Long getUserId() {
+    public @NonNull Long getUserId() {
         return id;
     }
 

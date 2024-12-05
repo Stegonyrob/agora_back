@@ -72,46 +72,23 @@ public class SecurityConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable()).formLogin(form -> form.disable())
-        .logout(out -> out.logoutUrl(endpoint + "/logout").deleteCookies("JSESSIONID"))
-        .authorizeHttpRequests(
-            authorize -> authorize.requestMatchers(PathRequest.toH2Console()).permitAll().requestMatchers("/error") // recordar
-                                                                                                                    // que
-                                                                                                                    // va
-                                                                                                                    // 1/mas
-                                                                                                                    // especifica
-                                                                                                                    // 2/mas
-                                                                                                                    // abierta
-                                                                                                                    // 3/las
-                                                                                                                    // generales
-                .permitAll().requestMatchers(endpoint + "/all/**").permitAll()
-                // Permite GET para USER en Posts
-                .requestMatchers(HttpMethod.GET, "/posts/**").hasRole("USER")
-                // Permite todos los métodos para ADMIN en Posts
-                .requestMatchers("/posts/**").hasRole("ADMIN")
-                // Permite GET para USER en Replies
-                .requestMatchers(HttpMethod.GET, "/replies/**").hasRole("USER")
-                // Permite todos los métodos para ADMIN en replies
-                .requestMatchers("/replies/**").hasRole("ADMIN")
-                // Permite GET para USER en comment
-                .requestMatchers("/comments/**").hasRole("USER")
-                // Permitir GET y DELETE para ADMIN
-                .requestMatchers(HttpMethod.GET, "/comments/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/comments/**").hasRole("ADMIN")
-                // Permite todos los métodos para ADMIN en comment
-                .requestMatchers("/posts/**").hasRole("ADMIN").requestMatchers(endpoint + "/any/**") // (get endpoint
-                                                                                                     // /posts).hasAnyRoles(admin,
-                                                                                                     // user)
-                .hasAnyRole("ADMIN", "USER") // (enpoitns/post/**).hasRole(ADMIN) revisar docuemntacion pra no tener que
-                                             // poner los cuatro metods
-                .requestMatchers(endpoint + "/admin/**").hasRole("ADMIN").requestMatchers(endpoint + "/user/**")
-                .hasRole("USER").anyRequest().permitAll() // cambiar a autneticado .authenticated()
-        ).userDetailsService(jpaUserDetailsService).httpBasic(basic -> basic.disable())
+        .logout(logout -> logout.logoutUrl(endpoint + "/logout").deleteCookies("JSESSIONID"))
+        .authorizeHttpRequests(auth -> auth.requestMatchers(PathRequest.toH2Console()).permitAll()
+            .requestMatchers("/error").permitAll().requestMatchers(endpoint + "/all/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/posts/**").hasRole("USER").requestMatchers("/posts/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.GET, "/replies/**").hasRole("USER").requestMatchers("/replies/**")
+            .hasRole("ADMIN").requestMatchers(HttpMethod.GET, "/comments/**").hasAnyRole("ADMIN", "USER")
+            .requestMatchers(HttpMethod.PUT, "/comments/**").hasAnyRole("ADMIN", "USER").requestMatchers("/comments/**")
+            .hasRole("ADMIN").requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER")
+            .requestMatchers(endpoint + "/admin/**").hasRole("ADMIN").requestMatchers(endpoint + "/user/**")
+            .hasRole("USER").anyRequest().permitAll())
+        .userDetailsService(jpaUserDetailsService).httpBasic(basic -> basic.disable())
         .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtToUserConverter)))
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
             .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
 
-    http.headers(header -> header.frameOptions(frame -> frame.sameOrigin()));
+    http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
     return http.build();
   }

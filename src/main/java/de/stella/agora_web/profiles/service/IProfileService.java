@@ -6,20 +6,23 @@ import java.util.Optional;
 import de.stella.agora_web.profiles.controller.dto.ProfileDTO;
 import de.stella.agora_web.profiles.model.Profile;
 
-
-
-    
 public interface IProfileService {
 
+  Profile getById(Long id) throws Exception;
+
+  Profile getByEmail(String email) throws Exception;
+
+  Profile updateProfile(ProfileDTO profileDTO, Long id) throws Exception;
+
   List<Profile> findAllProfiles();
-  Optional<Profile> findProfileById(Long id);
-  Profile saveProfile(Profile profile);
-  void deleteProfileById(Long id);
-  Optional<Profile> findProfileByUsernameAndPassword(String username, String password);
-  boolean checkProfileUserRole(String username, String role);
-  Object updateProfile(Profile profile, Profile updatedProfile);
-  List<Profile> getAllProfiles();
-  Profile registerProfile(ProfileDTO profileDTO);
-  List<Profile> getProfilesById(List<Long> ids);
-  Optional<Profile> findProfileByUsername(String username);
+
+  Optional<Profile> findById(Long id);
+
+  String addComment(Long profileId, Long commentId);
+
+  String deleteComment(Long profileId, Long commentId);
+
+  String addFavorite(Long profileId, Long commentId);
+
+  String deleteFavorite(Long profileId, Long commentId);
 }

@@ -29,7 +29,7 @@ public class UserController {
         this.service = service;
     }
 
-    @GetMapping(path = "/users")
+    @GetMapping(path = "/user")
     public List<User> index() {
         return service.getAll();
     }
@@ -44,7 +44,7 @@ public class UserController {
         }
     }
 
-    @PostMapping(path = "/users")
+    @PostMapping(path = "/user")
     public ResponseEntity<User> create(@NonNull @RequestBody User user) {
         User newUser = service.save(user);
         return ResponseEntity.status(201).body(newUser);

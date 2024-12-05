@@ -26,11 +26,6 @@ import de.stella.agora_web.user.exceptions.UserNotFoundException;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.services.impl.UserServiceImpl;
 
-//reiniciar la configuracion de cuando se de a borrar el post en realidad
-//archive el post con sus comentarios repuestas y tags
-// y que se pueda desarchivar retaurando todas las relaciones anteriores
-// al hacerlo tener encuenta que las tags estan en una tabla auxiliar posts_tag
-//idem para comment y reply
 @Service
 public class PostServiceImpl implements IPostService {
 
