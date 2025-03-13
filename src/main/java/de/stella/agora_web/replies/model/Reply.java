@@ -1,5 +1,8 @@
 package de.stella.agora_web.replies.model;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.tags.model.Tag;
@@ -15,8 +18,8 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.List;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,9 +33,13 @@ public class Reply {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @NotBlank
+  @Size(min = 1, max = 100)
   @Column(name = "title")
   private String title;
 
+  @NotBlank
+  @Size(min = 1, max = 1000)
   @Column(name = "message ", length = 1000)
   private String message;
 
@@ -43,16 +50,12 @@ public class Reply {
   private Boolean archived;
 
   @ManyToMany
-  @JoinTable(
-    name = "reply_tags",
-    joinColumns = @JoinColumn(name = "reply_id"),
-    inverseJoinColumns = @JoinColumn(name = "tag_id")
-  )
+  @JoinTable(name = "reply_tags", joinColumns = @JoinColumn(name = "reply_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
   private List<Tag> tags;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
-  private User user; // Cambiado de author a user
+  private User user;
 
   @ManyToOne
   @JoinColumn(name = "post_id")
@@ -62,16 +65,10 @@ public class Reply {
   @JoinColumn(name = "comment_id")
   private Comment comment;
 
-  public Reply() {}
+  public Reply() {
+  }
 
-  public Reply(
-    Long id,
-    String title,
-    String message,
-    LocalDateTime creationDate,
-    User user,
-    Post post
-  ) {
+  public Reply(Long id, String title, String message, LocalDateTime creationDate, User user, Post post) {
     this.id = id;
     this.title = title;
     this.message = message;

@@ -21,6 +21,8 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,9 +36,13 @@ public class Post {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @NotBlank
+  @Size(min = 1, max = 100)
   @Column(name = "title")
   private String title;
 
+  @NotBlank
+  @Size(min = 1, max = 2500)
   @Column(name = "message", length = 2500)
   private String message;
 

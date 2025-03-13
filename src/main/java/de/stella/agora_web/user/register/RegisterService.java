@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import de.stella.agora_web.auth.SignUpDTO;
 import de.stella.agora_web.encryptations.EncoderFacade;
@@ -17,9 +18,9 @@ import de.stella.agora_web.user.repository.UserRepository;
 @Service
 public class RegisterService {
 
-    UserRepository userRepository;
-    RoleService roleService;
-    EncoderFacade encoder;
+    private final UserRepository userRepository;
+    private final RoleService roleService;
+    private final EncoderFacade encoder;
 
     public RegisterService(UserRepository userRepository, RoleService roleService, EncoderFacade encoder) {
         this.userRepository = userRepository;
@@ -28,25 +29,32 @@ public class RegisterService {
     }
 
     public String save(User newUser) {
+        validateUser(newUser);
 
-        String passwordDecoded = encoder.decode("base64", newUser.getPassword());
-        String passwordEncoded = encoder.encode("bcrypt", passwordDecoded);
-
+        String passwordEncoded = encodePassword(newUser.getPassword());
         newUser.setPassword(passwordEncoded);
         assignDefaultRole(newUser);
 
         userRepository.save(newUser);
 
-        return "user stored successfully :" + newUser.getUsername();
+        return "User stored successfully: " + newUser.getUsername();
+    }
 
+    private void validateUser(User user) {
+        if (!StringUtils.hasText(user.getUsername()) || !StringUtils.hasText(user.getPassword())) {
+            throw new IllegalArgumentException("Username and password must not be empty");
+        }
+    }
+
+    private String encodePassword(String password) {
+        String passwordDecoded = encoder.decode("base64", password);
+        return encoder.encode("bcrypt", passwordDecoded);
     }
 
     public void assignDefaultRole(User user) {
-
         Role defaultRole = roleService.getById(2L);
         Set<Role> roles = new HashSet<>();
         roles.add(defaultRole);
-
         user.setRoles(roles);
     }
 
@@ -54,9 +62,7 @@ public class RegisterService {
         User user = new User();
         user.setUsername(signupDTO.getUsername());
 
-        String passwordDecoded = encoder.decode("base64", signupDTO.getPassword());
-        String passwordEncoded = encoder.encode("bcrypt", passwordDecoded);
-
+        String passwordEncoded = encodePassword(signupDTO.getPassword());
         user.setPassword(passwordEncoded);
         assignDefaultRole(user);
 
@@ -68,9 +74,7 @@ public class RegisterService {
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
 
-        String passwordDecoded = encoder.decode("base64", userDTO.getPassword());
-        String passwordEncoded = encoder.encode("bcrypt", passwordDecoded);
-
+        String passwordEncoded = encodePassword(userDTO.getPassword());
         user.setPassword(passwordEncoded);
         assignDefaultRole(user);
 

@@ -33,11 +33,11 @@ public class FavoriteController {
         return favoriteService.getAllFavorites();
     }
 
-    @PostMapping("/favorites")
-    public ResponseEntity<FavoriteDTO> createFavorite(@RequestBody FavoriteDTO favoriteDTO) {
-        if (favoriteDTO == null) {
-            return ResponseEntity.badRequest().build();
-        }
+    @PostMapping("/favorites/{postId}")
+    public ResponseEntity<FavoriteDTO> createFavorite(@PathVariable Long postId, @RequestBody Long profileId) {
+        FavoriteDTO favoriteDTO = new FavoriteDTO();
+        favoriteDTO.setId(postId);
+        favoriteDTO.setId(profileId);
         try {
             FavoriteDTO createdFavorite = favoriteService.createFavorite(favoriteDTO);
             if (createdFavorite != null) {

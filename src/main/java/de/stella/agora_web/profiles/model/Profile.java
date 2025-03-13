@@ -20,6 +20,9 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,14 +37,37 @@ public class Profile {
   @Column(name = "id_profile")
   private Long id;
 
+  @NotBlank
+  @Size(min = 1, max = 50)
   private String firstName;
+
+  @NotBlank
+  @Size(min = 1, max = 50)
   private String lastName1;
+
+  @Size(max = 50)
   private String lastName2;
+
+  @NotBlank
+  @Size(min = 3, max = 50)
   private String username;
+
   private String relationship;
+
+  @NotBlank
+  @Email
   private String email;
+
+  @NotBlank
+  @Size(min = 8, max = 100)
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private String password;
+
+  @NotBlank
+  @Size(min = 8, max = 100)
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private String confirmPassword;
+
   private String city;
   private boolean favorite;
   private String country;
@@ -64,9 +90,7 @@ public class Profile {
   }
 
   public Profile(Long id, String firstName, String lastName1, String lastName2, String username, String relationship,
-      String email, String password, String confirmPassword, String city, String country, String phone
-
-  ) {
+      String email, String password, String confirmPassword, String city, String country, String phone) {
     this.id = id;
     this.firstName = firstName;
     this.lastName1 = lastName1;
@@ -108,5 +132,4 @@ public class Profile {
   public void setFavoriteComments(Set<Comment> favoriteComments) {
     this.user.setComments(favoriteComments);
   }
-
 }
