@@ -50,12 +50,14 @@ public class Post {
   private LocalDateTime creationDate = LocalDateTime.now();
 
   @Column(name = "archived")
-  private Boolean archived;
+  private boolean archived;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "user_name")
   @JsonBackReference
   private User user;
+
+  private Long userId;
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> comments;
@@ -67,15 +69,44 @@ public class Post {
   public Post() {
   }
 
-  public Post(Long id, String title, String message, User user) {
+  public Post(Long id, String title, String message, User user, boolean archived) {
     this.id = id;
     this.title = title;
     this.message = message;
     this.user = user;
+    this.archived = archived;
+  }
+
+  public Post(Long id, String title, String message, Long userId, boolean archived) {
+    this.id = id;
+    this.title = title;
+    this.message = message;
+    this.user = new User();
+    this.user.setId(userId);
+    this.archived = archived;
+  }
+
+  public void setUserId(Long userId) {
+    if (this.user == null) {
+      this.user = new User();
+    }
+    this.user.setId(userId);
   }
 
   public void setUser(User user) {
     this.user = user;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public boolean getArchived() {
+    return archived;
+  }
+
+  public void setArchived(boolean archived) {
+    this.archived = archived;
   }
 
   public List<Comment> getComments() {
@@ -96,5 +127,16 @@ public class Post {
 
   public String getLocation() {
     return "Agora Web";
+  }
+
+  @Override
+  public String toString() {
+    return "Post{" + "id=" + id + ", title='" + title + '\'' + ", message='" + message + '\'' + ", creationDate="
+        + creationDate + ", archived=" + archived + ", user=" + user + ", comments=" + comments + ", tags=" + tags
+        + '}';
+  }
+
+  public int getLoves() {
+    return 0;
   }
 }

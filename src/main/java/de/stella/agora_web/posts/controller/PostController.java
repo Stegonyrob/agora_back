@@ -41,6 +41,7 @@ public class PostController {
   }
 
   @PostMapping(path = "/posts")
+  @SuppressWarnings("CallToPrintStackTrace")
   public ResponseEntity<Post> create(@RequestBody PostDTO postDTO) {
     if (postDTO == null) {
       return ResponseEntity.badRequest().build();

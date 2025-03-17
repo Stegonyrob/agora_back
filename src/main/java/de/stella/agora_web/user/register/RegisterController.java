@@ -17,6 +17,7 @@ public class RegisterController {
 
     RegisterService service;
 
+    @SuppressWarnings("unused")
     TokenGenerator tokenGenerator;
 
     @PostMapping(path = "/register")

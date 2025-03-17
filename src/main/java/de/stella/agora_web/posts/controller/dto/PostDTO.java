@@ -20,7 +20,7 @@ public class PostDTO {
 
   private Long id;
 
-  private Long userId;
+  private long userId;
   private String title;
   private String message;
   private String location;
@@ -44,7 +44,8 @@ public class PostDTO {
     this.message = post.getMessage();
     this.location = post.getLocation();
     this.isArchived = post.getArchived();
-    this.userId = post.getUser().getId();
+    this.loves = post.getLoves();
+    this.userId = post.getId();
     this.comments = post.getComments();
     this.tags = post.getTags().stream().map(Tag::getName).collect(Collectors.toList());
   }
@@ -56,11 +57,11 @@ public class PostDTO {
     this.isArchived = archived;
   }
 
-  public Long getUserId() {
+  public long getUserId() {
     return userId;
   }
 
-  public void setUserId(Long userId) {
+  public void setUserId(Integer userId) {
     this.userId = userId;
   }
 
