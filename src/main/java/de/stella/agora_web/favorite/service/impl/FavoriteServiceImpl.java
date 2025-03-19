@@ -68,7 +68,7 @@ public class FavoriteServiceImpl implements IFavoriteService {
         }
 
         Long profileId = favoriteDTO.getProfile().getId();
-        Long postId = favoriteDTO.getPost().getId();
+        Long postId = (long) favoriteDTO.getPost().getId();
         if (profileId == null || postId == null) {
             throw new IllegalArgumentException("Profile id and Post id cannot be null.");
         }
@@ -103,9 +103,9 @@ public class FavoriteServiceImpl implements IFavoriteService {
             updatedFavorite.setProfile(profile);
         }
 
-        if (favoriteDTO.getPost() != null && favoriteDTO.getPost().getId() != null) {
+        if (favoriteDTO.getPost() != null) {
             Post post = new Post();
-            post.setId(favoriteDTO.getPost().getId());
+            post.setId((long) favoriteDTO.getPost().getId());
             updatedFavorite.setPost(post);
         }
 

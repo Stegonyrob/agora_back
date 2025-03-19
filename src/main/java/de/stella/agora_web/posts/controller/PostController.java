@@ -91,6 +91,9 @@ public class PostController {
   @GetMapping("/user/{userId}")
   public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable Long userId) {
     List<Post> posts = postService.getPostsByUserId(userId);
+    if (posts.isEmpty()) {
+      return ResponseEntity.noContent().build();
+    }
     return ResponseEntity.ok(posts);
   }
 

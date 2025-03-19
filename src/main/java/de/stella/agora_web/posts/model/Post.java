@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.tags.model.Tag;
@@ -28,6 +29,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "posts")
 public class Post {
@@ -53,11 +56,9 @@ public class Post {
   private boolean archived;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_name")
+  @JoinColumn(name = "user_id")
   @JsonBackReference
   private User user;
-
-  private Long userId;
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> comments;
@@ -69,15 +70,7 @@ public class Post {
   public Post() {
   }
 
-  public Post(Long id, String title, String message, User user, boolean archived) {
-    this.id = id;
-    this.title = title;
-    this.message = message;
-    this.user = user;
-    this.archived = archived;
-  }
-
-  public Post(Long id, String title, String message, Long userId, boolean archived) {
+  public Post(Long id, String title, String message, Long userId, boolean archived, String user) {
     this.id = id;
     this.title = title;
     this.message = message;
@@ -132,11 +125,23 @@ public class Post {
   @Override
   public String toString() {
     return "Post{" + "id=" + id + ", title='" + title + '\'' + ", message='" + message + '\'' + ", creationDate="
-        + creationDate + ", archived=" + archived + ", user=" + user + ", comments=" + comments + ", tags=" + tags
-        + '}';
+        + creationDate + ", archived=" + archived + ", user=" + (user != null ? user.getId() : "null") + ", comments="
+        + comments + ", tags=" + tags + '}';
   }
 
   public int getLoves() {
     return 0;
+  }
+
+  public int getId() {
+    return id.intValue();
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public String getMessage() {
+    return message;
   }
 }

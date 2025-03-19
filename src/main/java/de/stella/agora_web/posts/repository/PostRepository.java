@@ -17,9 +17,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
   @Override
   Optional<Post> findById(Long id);
 
-  List<Post> findByUserId(Long userId);
-
-  void save(Reply reply);
+  List<Post> findByUser_Id(Long userId); // Cambia a "findByUser_Id"
 
   List<Post> findByTags_Name(String tagName);
+
+  void save(Reply reply);
 }

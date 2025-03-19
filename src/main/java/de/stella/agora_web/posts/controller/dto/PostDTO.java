@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
+import de.stella.agora_web.roles.model.Role;
 import de.stella.agora_web.tags.model.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,9 +19,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PostDTO {
 
-  private Long id;
+  private int id;
 
-  private long userId;
+  private Long userId;
   private String title;
   private String message;
   private String location;
@@ -34,7 +35,7 @@ public class PostDTO {
   private String sourceImage;
   private String altAvatar;
   private String sourceAvatar;
-  private String username;
+  private String userName;
   private String role;
   private String urlAvatar;
 
@@ -45,9 +46,12 @@ public class PostDTO {
     this.location = post.getLocation();
     this.isArchived = post.getArchived();
     this.loves = post.getLoves();
-    this.userId = post.getId();
+    this.userId = post.getUser() != null ? post.getUser().getId() : null; // Mapea el userId desde el objeto User
     this.comments = post.getComments();
     this.tags = post.getTags().stream().map(Tag::getName).collect(Collectors.toList());
+    this.userName = post.getUser() != null ? post.getUser().getUsername() : null;
+    this.role = post.getUser() != null ? post.getUser().getRoles().stream().findFirst().map(Role::getName).orElse(null)
+        : null;
   }
 
   @SuppressWarnings("rawtypes")
@@ -61,7 +65,7 @@ public class PostDTO {
     return userId;
   }
 
-  public void setUserId(Integer userId) {
+  public void setUserId(Long userId) {
     this.userId = userId;
   }
 

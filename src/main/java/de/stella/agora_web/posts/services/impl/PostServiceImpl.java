@@ -192,11 +192,17 @@ public class PostServiceImpl implements IPostService {
 
   @Override
   public Post save(PostDTO postDTO) {
+    Optional<User> user = userService.findById(postDTO.getUserId());
+    if (user.isEmpty()) {
+      throw new UserNotFoundException("User not found with ID: " + postDTO.getUserId());
+    }
+
     Post post = new Post();
     post.setTitle(postDTO.getTitle());
     post.setMessage(postDTO.getMessage());
-    post.setUserId(postDTO.getUserId());
+    post.setUser(user.get()); // Establece el usuario completo
     post.setArchived(postDTO.getArchived());
+
     List<Tag> tags = new ArrayList<>();
     for (String tagName : postDTO.getTags()) {
       Tag tag = tagService.getTagByName(tagName);
@@ -259,7 +265,7 @@ public class PostServiceImpl implements IPostService {
 
   @Override
   public List<Post> getPostsByUserId(Long userId) {
-    return postRepository.findByUserId(userId);
+    return postRepository.findByUser_Id(userId);
   }
 
   @Override
