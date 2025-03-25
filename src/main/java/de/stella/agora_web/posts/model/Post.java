@@ -1,6 +1,7 @@
 package de.stella.agora_web.posts.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -103,6 +104,9 @@ public class Post {
   }
 
   public List<Comment> getComments() {
+    if (comments == null) {
+      comments = new ArrayList<>();
+    }
     return comments;
   }
 
@@ -133,8 +137,8 @@ public class Post {
     return 0;
   }
 
-  public int getId() {
-    return id.intValue();
+  public Integer getId() {
+    return id != null ? id.intValue() : null;
   }
 
   public String getTitle() {

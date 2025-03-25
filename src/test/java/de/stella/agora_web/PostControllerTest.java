@@ -1,15 +1,17 @@
 package de.stella.agora_web;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +37,12 @@ public class PostControllerTest {
     when(postService.getAllPosts()).thenReturn(posts);
 
     // Act
-    List<Post> result = postController.index();
+    @SuppressWarnings("unchecked")
+    ResponseEntity<List<Post>> result = (ResponseEntity<List<Post>>) postController.index();
 
     // Assert
-    assertEquals(posts, result);
+    assertEquals(HttpStatus.OK, result.getStatusCode());
+    assertEquals(posts, result.getBody());
   }
 
   @Test
@@ -48,10 +52,12 @@ public class PostControllerTest {
     when(postService.getAllPosts()).thenReturn(posts);
 
     // Act
-    List<Post> result = postController.index();
+    @SuppressWarnings("unchecked")
+    ResponseEntity<List<Post>> result = (ResponseEntity<List<Post>>) postController.index();
 
     // Assert
-    assertEquals(posts, result);
+    assertEquals(HttpStatus.OK, result.getStatusCode());
+    assertEquals(posts, result.getBody());
   }
 
   @Test
@@ -60,25 +66,26 @@ public class PostControllerTest {
     when(postService.getAllPosts()).thenThrow(new RuntimeException());
 
     // Act and Assert
-    assertThrows(RuntimeException.class, () -> postController.index());
+    @SuppressWarnings("unchecked")
+    ResponseEntity<List<Post>> response = (ResponseEntity<List<Post>>) postController.index();
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    assertNotNull(response.getBody());
   }
 
   @Test
   public void testCreatePost_Success() throws Exception {
     // Arrange
-    PostDTO postDTO = new PostDTO(null, null, null, null, null, 0, null, false, null, null, false, null, null, null,
-        null, null, null, null, null);
-    when(postService.save(any(PostDTO.class))).thenReturn(null);
+    PostDTO postDto = new PostDTO((Post) null);
     Post expectedPost = new Post();
-    when(postService.save(any(PostDTO.class))).thenReturn(expectedPost);
+    when(postService.save(postDto)).thenReturn(expectedPost);
 
     // Act
-    ResponseEntity<Post> responseEntity = postController.create(postDTO);
+    ResponseEntity<Post> response = postController.create(postDto);
 
     // Assert
-    assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-    assertNotNull(responseEntity.getBody());
-    assertEquals(expectedPost, responseEntity.getBody());
+    assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    assertNotNull(response.getBody());
+    assertEquals(expectedPost, response.getBody());
   }
 
   @Test
@@ -94,23 +101,21 @@ public class PostControllerTest {
   @Test
   public void testCreatePost_InvalidPostDTO() throws Exception {
     // Arrange
-    PostDTO postDTO = new PostDTO(null, null, null, null, null, 0, null, false, null, null, false, null, null, null,
-        null, null, null, null, null);
+    PostDTO postDTO = new PostDTO((Post) null);
     when(postService.save(any(PostDTO.class))).thenReturn(null);
 
     // Act
     ResponseEntity<Post> response = postController.create(postDTO);
 
     // Assert
-    assertEquals(201, response.getStatusCode().value());
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertNull(response.getBody());
   }
 
   @Test
   public void testCreatePost_ExceptionThrown() throws Exception {
     // Arrange
-    PostDTO postDTO = new PostDTO(null, null, null, null, null, 0, null, false, null, null, false, null, null, null,
-        null, null, null, null, null);
+    PostDTO postDTO = new PostDTO((Post) null);
     when(postService.save(any(PostDTO.class))).thenReturn(null);
     doThrow(new RuntimeException()).when(postService).save(any(PostDTO.class));
 
@@ -118,7 +123,7 @@ public class PostControllerTest {
     ResponseEntity<Post> response = postController.create(postDTO);
 
     // Assert
-    assertEquals(500, response.getStatusCode().value());
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     assertNull(response.getBody());
   }
 }
