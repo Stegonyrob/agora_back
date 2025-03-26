@@ -42,3 +42,7 @@ build/
 src/main/java/de/stella/agora_web/nlp_moderation/model/OpenJDK-21/
 nlp_moderation
 src/main/resources/stanford-corenlp-4.5.7
+src/main/resources/stanford-corenlp-4.5.7.zip
+scr/main/resources/aplicacion.properties
+src/main/resources/client_secret.json
+src/main/resources/credentials.json

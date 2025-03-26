@@ -83,6 +83,7 @@ public class SecurityConfiguration {
             .requestMatchers(HttpMethod.PUT, "/comments/**").hasAnyRole("ADMIN", "USER").requestMatchers("/comments/**")
             .hasRole("ADMIN").requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER")
             .requestMatchers(endpoint + "/admin/**").hasRole("ADMIN").requestMatchers(endpoint + "/user/**")
+
             .hasRole("USER").anyRequest().permitAll())
         .userDetailsService(jpaUserDetailsService).httpBasic(basic -> basic.disable())
         .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtToUserConverter)))
