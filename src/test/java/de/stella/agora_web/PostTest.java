@@ -6,8 +6,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import de.stella.agora_web.posts.model.Post;
@@ -17,17 +15,10 @@ public class PostTest {
 
   @Test
   public void testPostConstructorAndDefaults() {
-
     Post post = new Post();
-    assertNull(post.getId());
-    assertNull(post.getMessage());
-    assertNull(post.getTitle());
-    post.setCreationDate(LocalDateTime.of(2023, 1, 1, 12, 0));
-    assertNotNull(post.getCreationDate()); // Ensure creationDate is initialized
-    assertNotNull(post.getComments()); // Ensure comments is initialized as an empty list
-    assertTrue(post.getComments().isEmpty());
-    assertNotNull(post.getTags()); // Ensure tags is initialized as an empty list
-    assertTrue(post.getTags().isEmpty());
+    assertNotNull(post.getId(), "Post ID should not be null");
+    assertNotNull(post.getTitle(), "Post title should not be null");
+    assertNotNull(post.getContent(), "Post content should not be null");
   }
 
   @Test

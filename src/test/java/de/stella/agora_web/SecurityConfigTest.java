@@ -5,12 +5,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
-class SecurityConfigurationTest {
+@WebMvcTest
+class SecurityConfigTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -24,7 +24,7 @@ class SecurityConfigurationTest {
   @Test
   @WithMockUser(roles = "ADMIN")
   void testAdminAccess() throws Exception {
-    mockMvc.perform(get("/api/admin/me")).andExpect(status().isOk());
+    mockMvc.perform(get("/admin")).andExpect(status().isOk());
   }
 
   @Test
@@ -34,12 +34,8 @@ class SecurityConfigurationTest {
 
   @Test
   void testCorsConfiguration() throws Exception {
-    mockMvc
-      .perform(get("/api/all/me").header("Origin", "http://localhost:5173"))
-      .andExpect(status().isOk())
-      .andExpect(
-        header().string("Access-Control-Allow-Origin", "http://localhost:5173")
-      )
-      .andExpect(header().string("Access-Control-Allow-Credentials", "true"));
+    mockMvc.perform(get("/api/all/me").header("Origin", "http://localhost:5173")).andExpect(status().isOk())
+        .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:5173"))
+        .andExpect(header().string("Access-Control-Allow-Credentials", "true"));
   }
 }

@@ -148,4 +148,8 @@ public class Post {
   public String getMessage() {
     return message;
   }
+
+  public Object getContent() {
+    return message;
+  }
 }

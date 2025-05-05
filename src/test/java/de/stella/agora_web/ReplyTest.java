@@ -2,12 +2,21 @@ package de.stella.agora_web;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import de.stella.agora_web.replies.model.Reply;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import de.stella.agora_web.replies.model.Reply;
+import de.stella.agora_web.user.model.User;
 
 class ReplyTest {
 
   private Reply reply;
+
+  @BeforeEach
+  void setup() {
+    reply = new Reply();
+    reply.setUser(new User());
+  }
 
   @Test
   void testId() {
@@ -31,7 +40,7 @@ class ReplyTest {
 
   @Test
   void testAuthor() {
-    assertNotNull(reply.getUser());
+    assertNotNull(reply.getUser(), "Reply user should not be null");
   }
 
   @Test

@@ -30,8 +30,9 @@ public class UserController {
     }
 
     @GetMapping(path = "/user")
-    public List<User> index() {
-        return service.getAll();
+    public ResponseEntity<List<User>> index() {
+        List<User> users = service.getAll();
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{userId}")

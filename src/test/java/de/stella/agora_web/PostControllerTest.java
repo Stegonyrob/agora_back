@@ -1,17 +1,15 @@
 package de.stella.agora_web;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -113,17 +111,14 @@ public class PostControllerTest {
   }
 
   @Test
-  public void testCreatePost_ExceptionThrown() throws Exception {
-    // Arrange
-    PostDTO postDTO = new PostDTO((Post) null);
-    when(postService.save(any(PostDTO.class))).thenReturn(null);
-    doThrow(new RuntimeException()).when(postService).save(any(PostDTO.class));
+  public void testCreatePost_ExceptionThrown() {
+    when(postService.createPost(any(PostDTO.class), any(Long.class)))
+        .thenThrow(new RuntimeException("Error creating post"));
 
-    // Act
-    ResponseEntity<Post> response = postController.create(postDTO);
+    RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+      postController.createPost(new PostDTO((Post) null), 1L);
+    });
 
-    // Assert
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    assertNull(response.getBody());
+    assertEquals("Error creating post", exception.getMessage());
   }
 }

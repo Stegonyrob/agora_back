@@ -103,4 +103,9 @@ public class PostController {
     return ResponseEntity.ok(posts);
   }
 
+  public ResponseEntity<Post> createPost(PostDTO postDTO, long userId) {
+    Post newPost = postService.createPost(postDTO, userId);
+    return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(newPost);
+  }
+
 }
