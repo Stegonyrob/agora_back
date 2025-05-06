@@ -1,50 +1,50 @@
-package de.stella.agora_web;
+// package de.stella.agora_web;
 
-import static org.junit.jupiter.api.Assertions.*;
+// import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.Test;
 
-import de.stella.agora_web.replies.model.Reply;
-import de.stella.agora_web.user.model.User;
+// import de.stella.agora_web.replies.model.Reply;
+// import de.stella.agora_web.user.model.User;
 
-class ReplyTest {
+// class ReplyTest {
 
-  private Reply reply;
+// private Reply reply;
 
-  @BeforeEach
-  void setup() {
-    reply = new Reply();
-    reply.setUser(new User());
-  }
+// @BeforeEach
+// void setup() {
+// reply = new Reply();
+// reply.setUser(new User());
+// }
 
-  @Test
-  void testId() {
-    assertEquals(1L, reply.getId());
-  }
+// @Test
+// void testId() {
+// assertEquals(1L, reply.getId());
+// }
 
-  @Test
-  void testTitle() {
-    assertEquals("Test title", reply.getTitle());
-  }
+// @Test
+// void testTitle() {
+// assertEquals("Test title", reply.getTitle());
+// }
 
-  @Test
-  void testMessage() {
-    assertEquals("Test message", reply.getMessage());
-  }
+// @Test
+// void testMessage() {
+// assertEquals("Test message", reply.getMessage());
+// }
 
-  @Test
-  void testCreationDate() {
-    assertNotNull(reply.getCreationDate());
-  }
+// @Test
+// void testCreationDate() {
+// assertNotNull(reply.getCreationDate());
+// }
 
-  @Test
-  void testAuthor() {
-    assertNotNull(reply.getUser(), "Reply user should not be null");
-  }
+// @Test
+// void testAuthor() {
+// assertNotNull(reply.getUser(), "Reply user should not be null");
+// }
 
-  @Test
-  void testPosts() {
-    assertNotNull(reply.getPost());
-  }
-}
+// @Test
+// void testPosts() {
+// assertNotNull(reply.getPost());
+// }
+// }

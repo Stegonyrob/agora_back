@@ -56,4 +56,8 @@ public class Role {
     this.name = name;
     this.users = new HashSet<>();
   }
+
+  public Object getName() {
+    return this.name;
+  }
 }

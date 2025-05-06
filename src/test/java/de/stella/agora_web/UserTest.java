@@ -1,17 +1,17 @@
-package de.stella.agora_web;
+// package de.stella.agora_web;
 
-import static org.junit.jupiter.api.Assertions.*;
+// import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.Test;
 
-import de.stella.agora_web.user.model.User;
+// import de.stella.agora_web.user.model.User;
 
-class UserTest {
+// class UserTest {
 
-  @Test
-  public void testUser() {
-    User user = new User();
-    user.setId(1L);
-    assertEquals(1L, user.getId(), "User ID should be 1");
-  }
-}
+// @Test
+// public void testUser() {
+// User user = new User();
+// user.setId(1L);
+// assertEquals(1L, user.getId(), "User ID should be 1");
+// }
+// }

@@ -31,7 +31,7 @@ public class SecurityUser implements UserDetails {
 
     for (Role role : user.getRoles()) {
       System.out.println("User role: " + role.getName());
-      SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getName());
+      SimpleGrantedAuthority authority = new SimpleGrantedAuthority((String) role.getName());
       authorities.add(authority);
     }
 
@@ -73,7 +73,11 @@ public class SecurityUser implements UserDetails {
   }
 
   public String getRoles() {
-    List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+    if (user == null || user.getRoles() == null) {
+      return "";
+    }
+    List<String> roles = user.getRoles().stream().map(role -> role != null ? (String) role.getName() : "")
+        .filter(name -> name != null && !name.isEmpty()).collect(Collectors.toList());
     return String.join(",", roles);
   }
 }

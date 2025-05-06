@@ -1,5 +1,7 @@
 package de.stella.agora_web.tags.model;
 
+import java.util.List;
+
 import de.stella.agora_web.posts.model.Post;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,5 +38,9 @@ public class Tag {
 
   public List<Post> getPosts() {
     return posts;
+  }
+
+  public String getName() {
+    return name; // Assuming 'description' is the name of the tag
   }
 }

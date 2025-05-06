@@ -50,7 +50,8 @@ public class PostDTO {
     this.comments = post.getComments();
     this.tags = post.getTags().stream().map(Tag::getName).collect(Collectors.toList());
     this.userName = post.getUser() != null ? post.getUser().getUsername() : null;
-    this.role = post.getUser() != null ? post.getUser().getRoles().stream().findFirst().map(Role::getName).orElse(null)
+    this.role = post.getUser() != null
+        ? (String) post.getUser().getRoles().stream().findFirst().map(Role::getName).orElse(null)
         : null;
   }
 

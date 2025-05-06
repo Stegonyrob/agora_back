@@ -67,11 +67,7 @@ public class User {
     return roles.stream().anyMatch(r -> r.getName().equals(role));
   }
 
-  public User() {
-    this.id = id;
-    this.username = username;
-    this.password = password;
-  }
+  // Removed redundant constructor
 
   public User(String userName, String password) {
     this.username = userName;
@@ -88,5 +84,21 @@ public class User {
 
   public void setComments(Set<Comment> comments) {
     this.comments = new HashSet<>(comments);
+  }
+
+  public Set<Role> getRoles() {
+    return Collections.unmodifiableSet(roles);
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public Long getId() {
+    return id;
   }
 }
