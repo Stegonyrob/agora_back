@@ -48,4 +48,8 @@ public class CensuredComment {
     this.user = user;
     this.reason = reason;
   }
+
+  public Object getId() {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

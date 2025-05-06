@@ -34,8 +34,8 @@ public class UserControllerTest {
   public void testIndex_ReturnsUsers() {
     // Arrange
     List<User> users = new ArrayList<>();
-    users.add(new User(1L, "testUser1", "test1@example.com"));
-    users.add(new User(2L, "testUser2", "test2@example.com"));
+    users.add(new User());
+    users.add(new User());
     when(userServiceMock.getAll()).thenReturn(users);
 
     // Act

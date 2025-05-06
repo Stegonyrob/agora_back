@@ -67,7 +67,7 @@ public class User {
     return roles.stream().anyMatch(r -> r.getName().equals(role));
   }
 
-  public User(Long id, String username, String password) {
+  public User() {
     this.id = id;
     this.username = username;
     this.password = password;

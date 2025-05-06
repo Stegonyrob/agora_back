@@ -11,4 +11,8 @@ public class TokenDTO {
     private String accessToken;
     private String refreshToken;
     private String role;
+
+    public String getRefreshToken() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

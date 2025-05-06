@@ -1,0 +1,44 @@
+package de.stella.agora_web.texts.controller.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public class TextItemDTO {
+
+    private Long id;
+
+    @NotBlank(message = "Image URL cannot be blank")
+    @Size(max = 255, message = "Image URL must be less than 255 characters")
+    private String image;
+
+    @NotBlank(message = "Description cannot be blank")
+    @Size(max = 1000, message = "Description must be less than 1000 characters")
+    private String description;
+
+    public String getNameImage;
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+}
