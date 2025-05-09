@@ -85,3 +85,9 @@ INSERT INTO texts (id, title, description, image, name_image) VALUES
   (13, 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;', 'Sed euismod, nunc at cursus pellentesque, nisl eros pellentesque quam, a faucibus nisl nunc id nisl.', '../../../public/images/img/alumnosOrdenador.jpg', 'alumnosOrdenador'),
   (14, 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;', 'Sed euismod, nunc at cursus pellentesque, nisl eros pellentesque quam, a faucibus nisl nunc id nisl.', '../../../public/images/img/alumnosOrdenador.jpg', 'alumnosOrdenador'),
   (15, 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;', 'Sed euismod, nunc at cursus pellentesque, nisl eros pellentesque quam, a faucibus nisl nunc id nisl.', '../../../public/images/img/ivan.jpg', 'ivan');
+
+-- Inserciones en la tabla 'eventos'
+INSERT INTO events (id, title, message, creation_date, archived, user_id) VALUES
+  (1, 'Taller de Juegos de Mesa', 'Un aspecto fundamental del taller es la gestión del tiempo y la paciencia al esperar el turno de juego, promoviendo la escucha activa y la consideración por los demás participantes.', NOW(), false, 1),
+  (2, 'Escuela de Padres', 'Programa de formación y apoyo dirigido a padres y madres. Se ofrecen herramientas, estrategias y recursos para afrontar los retos de la crianza, mejorar la comunicación familiar y promover un desarrollo saludable de los hijos.', NOW(), false, 2);
+
