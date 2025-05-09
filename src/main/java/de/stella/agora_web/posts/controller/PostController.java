@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.model.Post;
-import de.stella.agora_web.posts.services.IPostService;
+import de.stella.agora_web.posts.service.IPostService;
 
 @RestController
 @RequestMapping(path = "${api-endpoint}/")

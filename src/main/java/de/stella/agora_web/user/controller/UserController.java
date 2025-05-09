@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.user.model.User;
-import de.stella.agora_web.user.services.impl.UserServiceImpl;
+import de.stella.agora_web.user.service.impl.UserServiceImpl;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;

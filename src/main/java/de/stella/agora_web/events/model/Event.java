@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import de.stella.agora_web.attendee.model.Attendee;
 import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.user.model.User;
 import jakarta.persistence.Column;
@@ -56,10 +57,13 @@ public class Event {
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
-
     @ManyToMany
     @JoinTable(name = "event_tag", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags;
+
+    @ManyToMany
+    @JoinTable(name = "event_attendee", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "attendee_id"))
+    private List<Attendee> attendees;
 
     public Event() {
     }
@@ -133,5 +137,9 @@ public class Event {
 
     public Object getContent() {
         return message;
+    }
+
+    public List<Attendee> getAttendees() {
+        return attendees;
     }
 }

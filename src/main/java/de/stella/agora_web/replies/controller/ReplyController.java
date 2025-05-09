@@ -1,9 +1,7 @@
 package de.stella.agora_web.replies.controller;
 
-import de.stella.agora_web.replies.controller.dto.ReplyDTO;
-import de.stella.agora_web.replies.model.Reply;
-import de.stella.agora_web.replies.services.IReplyService;
 import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.stella.agora_web.replies.controller.dto.ReplyDTO;
+import de.stella.agora_web.replies.model.Reply;
+import de.stella.agora_web.replies.service.IReplyService;
+
 //separar dos controlladores de replies uno admin y otro user
 @RestController
 @RequestMapping(path = "${api-endpoint}/all")
@@ -27,17 +29,16 @@ public class ReplyController {
     this.replyService = replyService;
   }
 
-  //(Get, endpoint/replies).hasAnyRoles(user,admin)
-  //respuesta a un comentario el cual debera esta asignado a un post y a un comentario refactorizar reolies para que sean
-  //las respuestas del admin crear entidad de comenta para usuarios
+  // (Get, endpoint/replies).hasAnyRoles(user,admin)
+  // respuesta a un comentario el cual debera esta asignado a un post y a un
+  // comentario refactorizar reolies para que sean
+  // las respuestas del admin crear entidad de comenta para usuarios
 
-  //censurar controllador unico
+  // censurar controllador unico
 
   @PostMapping("/replies/create")
   @PreAuthorize("hasRole('USER','ADMIN')")
-  public ResponseEntity<Reply> createReply(
-    @SuppressWarnings("rawtypes") @RequestBody ReplyDTO replyDTO
-  ) {
+  public ResponseEntity<Reply> createReply(@SuppressWarnings("rawtypes") @RequestBody ReplyDTO replyDTO) {
     Reply reply = replyService.createReply(replyDTO, null);
     return ResponseEntity.status(HttpStatus.CREATED).body(reply);
   }
@@ -70,10 +71,8 @@ public class ReplyController {
   }
 
   @PutMapping("/replies/{id}")
-  public ResponseEntity<Reply> update(
-    @PathVariable Long id,
-    @SuppressWarnings("rawtypes") @RequestBody ReplyDTO replyDTO
-  ) {
+  public ResponseEntity<Reply> update(@PathVariable Long id,
+      @SuppressWarnings("rawtypes") @RequestBody ReplyDTO replyDTO) {
     Reply reply = replyService.updateReply(id, replyDTO);
     return ResponseEntity.accepted().body(reply);
   }

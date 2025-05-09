@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 import de.stella.agora_web.censured.model.CensuredComment;
 import de.stella.agora_web.censured.service.impl.CensuredCommentServiceImpl;
 import de.stella.agora_web.comment.kafka.dto.CommentNotificationDTO;
-import de.stella.agora_web.comment.kafka.services.IEmailService;
-import de.stella.agora_web.comment.kafka.services.IPushNotificationService;
-import de.stella.agora_web.moderation.services.impl.ModerationServiceImpl;
+import de.stella.agora_web.comment.kafka.service.IEmailService;
+import de.stella.agora_web.comment.kafka.service.IPushNotificationService;
+import de.stella.agora_web.moderation.service.impl.ModerationServiceImpl;
 
 @Component
 public class CommentNotificationConsumer {
