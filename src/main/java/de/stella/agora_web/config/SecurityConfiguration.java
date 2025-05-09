@@ -49,11 +49,9 @@ public class SecurityConfiguration {
   String endpoint;
 
   @Value("${jwt-issuer}")
-  @SuppressWarnings("unused")
   String issuer;
 
   @Value("${jwt-audience}")
-  @SuppressWarnings("unused")
   String audience;
 
   @Autowired
@@ -98,14 +96,12 @@ public class SecurityConfiguration {
 
   @Bean
   @Primary
-  @SuppressWarnings("unused")
   JwtDecoder jwtAccessTokenDecoder() {
     return NimbusJwtDecoder.withPublicKey(keyUtils.getAccessTokenPublicKey()).build();
   }
 
   @Bean
   @Primary
-  @SuppressWarnings("unused")
   JwtEncoder jwtAccessTokenEncoder() {
     JWK jwk = new RSAKey.Builder(keyUtils.getAccessTokenPublicKey()).privateKey(keyUtils.getAccessTokenPrivateKey())
         .build();
@@ -131,7 +127,6 @@ public class SecurityConfiguration {
 
   @Bean
   @Qualifier("jwtRefreshTokenAuthProvider")
-  @SuppressWarnings("unused")
   JwtAuthenticationProvider jwtRefreshTokenAuthProvider() {
     JwtAuthenticationProvider provider = new JwtAuthenticationProvider(jwtRefreshTokenDecoder());
     provider.setJwtAuthenticationConverter(jwtToUserConverter);
@@ -139,7 +134,6 @@ public class SecurityConfiguration {
   }
 
   @Bean
-  @SuppressWarnings("unused")
   DaoAuthenticationProvider daoAuthenticationProvider() {
     DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
     provider.setPasswordEncoder(passwordEncoder);
@@ -148,7 +142,6 @@ public class SecurityConfiguration {
   }
 
   @Bean
-  @SuppressWarnings("unused")
   CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowCredentials(true);

@@ -2,6 +2,8 @@ package de.stella.agora_web.texts.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,9 +26,14 @@ public class TextItemController {
     @Autowired
     private TextItemService textItemService;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TextItemController.class);
+
     @GetMapping
     public List<TextItemDTO> getAllTexts() {
-        return textItemService.getAllTexts();
+        LOGGER.info("Retrieving all texts");
+        List<TextItemDTO> allTexts = textItemService.getAllTexts();
+        LOGGER.info("Retrieved {} texts");
+        return allTexts;
     }
 
     @GetMapping("/{id}")

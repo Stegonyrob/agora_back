@@ -9,10 +9,14 @@ public class TokenDTO {
 
     private Long userId;
     private String accessToken;
-    private String refreshToken;
     private String role;
+    private String refreshToken;
 
     public String getRefreshToken() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

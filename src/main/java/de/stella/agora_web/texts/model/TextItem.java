@@ -7,18 +7,25 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "texts")
 public class TextItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "title", nullable = false, length = 255)
+    private String title;
 
     @NotBlank(message = "Image URL cannot be blank")
     @Column(nullable = false, length = 255)
@@ -32,15 +39,4 @@ public class TextItem {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    // Constructor vacío requerido por JPA
-    public TextItem() {
-    }
-
-    // Constructor con argumentos
-    public TextItem(String description, Long id, String image, String nameImage) {
-        this.description = description;
-        this.id = id;
-        this.image = image;
-        this.nameImage = nameImage;
-    }
 }

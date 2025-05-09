@@ -2,7 +2,11 @@ package de.stella.agora_web.texts.controller.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class TextItemDTO {
 
     private Long id;
@@ -10,6 +14,13 @@ public class TextItemDTO {
     @NotBlank(message = "Image URL cannot be blank")
     @Size(max = 255, message = "Image URL must be less than 255 characters")
     private String image;
+
+    @NotBlank(message = "Name to image cannot be blank")
+    @Size(max = 255, message = "Name to image must be less than 255 characters")
+    private String nameImage;
+
+    @Size(max = 255, message = "Name must be less than 255 characters")
+    private String title;
 
     @NotBlank(message = "Description cannot be blank")
     @Size(max = 1000, message = "Description must be less than 1000 characters")
