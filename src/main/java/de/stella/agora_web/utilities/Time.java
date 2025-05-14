@@ -17,4 +17,8 @@ public class Time {
         String currentTime = LocalDateTime.now().format(DATETIME_FORMATTER);
         return currentTime;
     }
+
+    public static String now() {
+        return LocalDateTime.now().format(DATETIME_FORMATTER);
+    }
 }

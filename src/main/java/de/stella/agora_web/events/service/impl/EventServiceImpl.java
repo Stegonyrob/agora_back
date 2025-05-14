@@ -10,6 +10,7 @@ import de.stella.agora_web.events.controller.dto.EventDTO;
 import de.stella.agora_web.events.model.Event;
 import de.stella.agora_web.events.repository.EventRepository;
 import de.stella.agora_web.events.service.IEventService;
+import de.stella.agora_web.image.service.IEventImageService;
 
 @Service
 public class EventServiceImpl implements IEventService {
@@ -17,6 +18,15 @@ public class EventServiceImpl implements IEventService {
     @Autowired
     private EventRepository eventRepository;
 
+    @Autowired
+    private IEventImageService imageService;
+
+    /**
+     * Convierte un objeto Event a EventDTO.
+     *
+     * @param event El objeto Event a convertir.
+     * @return El objeto EventDTO convertido.
+     */
     private EventDTO convertToDTO(Event event) {
         EventDTO dto = new EventDTO();
         if (event != null) {
@@ -28,6 +38,12 @@ public class EventServiceImpl implements IEventService {
         return dto;
     }
 
+    /**
+     * Convierte un objeto EventDTO a Event.
+     *
+     * @param dto El objeto EventDTO a convertir.
+     * @return El objeto Event convertido.
+     */
     private Event convertToEntity(EventDTO dto) {
         Event event = new Event();
         event.setId(dto.getId());
@@ -44,7 +60,8 @@ public class EventServiceImpl implements IEventService {
 
     @Override
     public EventDTO getEventById(Long id) {
-        Event event = eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Event not found"));
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
         return convertToDTO(event);
     }
 
@@ -58,18 +75,39 @@ public class EventServiceImpl implements IEventService {
     @Override
     public void deleteEvent(Long id) {
         if (!eventRepository.existsById(id)) {
-            throw new RuntimeException("Event not found");
+            throw new RuntimeException("Event not found with ID: " + id);
         }
+
+        // Eliminar imágenes asociadas al evento
+        imageService.deleteImagesByEventId(id);
+
+        // Eliminar el evento
         eventRepository.deleteById(id);
     }
 
     @Override
     public EventDTO updateEvent(Long id, EventDTO eventDTO) {
-        Event event = eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Event not found"));
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
+
+        // Actualizar los campos del evento
         event.setTitle(eventDTO.getTitle());
         event.setMessage(eventDTO.getMessage());
         event.setArchived(eventDTO.isArchived());
+
         Event savedEvent = eventRepository.save(event);
         return convertToDTO(savedEvent);
+    }
+
+    @Override
+    public EventDTO updateEventImage(Long eventId, String imagePath) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found with ID: " + eventId));
+
+        // Actualizar el path de las imágenes asociadas al evento
+        event.setImagePath(imagePath);
+
+        Event updatedEvent = eventRepository.save(event);
+        return convertToDTO(updatedEvent);
     }
 }

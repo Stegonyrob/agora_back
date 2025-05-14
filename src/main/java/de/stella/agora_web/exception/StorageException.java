@@ -1,4 +1,4 @@
-package de.stella.agora_web.avatar.exceptions;
+package de.stella.agora_web.exception;
 
 public class StorageException extends RuntimeException {
 

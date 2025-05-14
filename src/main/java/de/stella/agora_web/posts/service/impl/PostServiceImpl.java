@@ -1,8 +1,8 @@
-
 package de.stella.agora_web.posts.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,17 +34,17 @@ public class PostServiceImpl implements IPostService {
   private final ITagService tagService;
   private final TagRepository tagRepository;
   private final CommentRepository commentRepository;
-
   private final ReplyRepository replyRepository;
 
   public PostServiceImpl(PostRepository postRepository, UserServiceImpl userService, ITagService tagService,
-      CommentRepository commentRepository) {
+      CommentRepository commentRepository, ReplyRepository replyRepository, TagRepository tagRepository) {
     this.postRepository = postRepository;
     this.userService = userService;
     this.tagService = tagService;
     this.commentRepository = commentRepository;
-    this.tagRepository = null;
-    this.replyRepository = null;
+    this.replyRepository = replyRepository;
+    this.tagRepository = tagRepository;
+
   }
 
   @Override
@@ -87,40 +87,6 @@ public class PostServiceImpl implements IPostService {
     return postRepository.save(post);
   }
 
-  public Post updatePost(Long id, PostDTO postDTO) {
-    Post existingPost = postRepository.findById(id).orElse(null);
-    if (existingPost != null) {
-      existingPost.setTitle(postDTO.getTitle());
-      existingPost.setMessage(postDTO.getMessage());
-
-      existingPost.getTags().clear();
-
-      List<Tag> tags = new ArrayList<>();
-      for (String tagName : postDTO.getTags()) {
-        Tag tag = tagService.getTagByName(tagName);
-        if (tag == null) {
-          tag = tagService.createTag(tagName);
-        }
-        tags.add(tag);
-      }
-
-      List<String> hashtags = tagService.extractHashtags(postDTO.getMessage());
-      for (String hashtag : hashtags) {
-        Tag tag = tagService.getTagByName(hashtag);
-        if (tag == null) {
-          tag = tagService.createTag(hashtag);
-        }
-        tags.add(tag);
-      }
-
-      existingPost.setTags(tags);
-
-      return postRepository.save(existingPost);
-    }
-
-    return null;
-  }
-
   @Override
   public void archivePost(Long id) {
     Post post = postRepository.findById(id).orElseThrow();
@@ -151,7 +117,6 @@ public class PostServiceImpl implements IPostService {
       tag.getPosts().add(post);
     }
     postRepository.save(post);
-
   }
 
   @Override
@@ -191,17 +156,53 @@ public class PostServiceImpl implements IPostService {
   }
 
   @Override
-  public Post save(PostDTO postDTO) {
-    Optional<User> user = userService.findById(postDTO.getUserId());
-    if (user.isEmpty()) {
-      throw new UserNotFoundException("User not found with ID: " + postDTO.getUserId());
-    }
+  public List<Comment> getCommentsByPostId(Long postId) {
+    Post post = postRepository.findById(postId).orElseThrow();
+    return post.getComments();
+  }
 
+  @Override
+  public List<Reply> getRepliesByCommentId(Long commentId) {
+    Comment comment = commentRepository.findById(commentId).orElseThrow();
+    return comment.getReplies();
+  }
+
+  @Override
+  public void createComment(Long postId, CommentDTO commentDTO) {
+    Post post = postRepository.findById(postId).orElseThrow();
+    Comment comment = new Comment();
+    comment.setMessage(commentDTO.getMessage());
+    comment.setUser(userService.getUserById(commentDTO.getUserId()));
+    comment.setPost(post);
+    commentRepository.save(comment);
+  }
+
+  @Override
+  public void createReply(Long commentId, ReplyDTO replyDTO) {
+    Comment comment = commentRepository.findById(commentId).orElseThrow();
+    Reply reply = new Reply();
+    reply.setMessage(replyDTO.getMessage());
+    reply.setUser(userService.getUserById(replyDTO.getUserId()));
+    reply.setComment(comment);
+    replyRepository.save(reply);
+  }
+
+  @Override
+  public void deleteComment(Long commentId) {
+    commentRepository.deleteById(commentId);
+  }
+
+  @Override
+  public void deleteReply(Long replyId) {
+    replyRepository.deleteById(replyId);
+  }
+
+  @Override
+  public Post save(PostDTO postDTO) {
     Post post = new Post();
     post.setTitle(postDTO.getTitle());
     post.setMessage(postDTO.getMessage());
-    post.setUser(user.get()); // Establece el usuario completo
-    post.setArchived(postDTO.getArchived());
+    post.setUser(userService.getUserById(postDTO.getUserId()));
 
     List<Tag> tags = new ArrayList<>();
     for (String tagName : postDTO.getTags()) {
@@ -239,7 +240,11 @@ public class PostServiceImpl implements IPostService {
 
   @Override
   public Tag getTagByName(String tagName) {
-    return (Tag) tagRepository.findByName(tagName);
+    List<Tag> tags = tagRepository.findByName(tagName);
+    if (tags.isEmpty()) {
+      throw new NoSuchElementException("Tag with name " + tagName + " not found");
+    }
+    return tags.get(0);
   }
 
   @Override
@@ -251,16 +256,21 @@ public class PostServiceImpl implements IPostService {
 
   @Override
   public List<Tag> getTagsByPostId(Long postId) {
-    Optional<Post> postOptional = postRepository.findById(postId);
-    if (postOptional.isPresent()) {
-      return postOptional.get().getTags();
-    }
-    return new ArrayList<>();
+    Post post = postRepository.findById(postId).orElseThrow();
+    return post.getTags();
   }
 
   @Override
   public List<Post> getPostsByTagName(String tagName) {
-    return postRepository.findByTags_Name(tagName);
+    if (tagName == null) {
+      throw new IllegalArgumentException("Tag name cannot be null");
+    }
+
+    List<Post> posts = postRepository.findByTagsName(tagName);
+    if (posts == null) {
+      throw new UnsupportedOperationException("Unimplemented method 'getPostsByTagName'");
+    }
+    return posts;
   }
 
   @Override
@@ -270,98 +280,36 @@ public class PostServiceImpl implements IPostService {
 
   @Override
   public Post update(PostDTO postDTO, Long id) {
-    Optional<Post> postOptional = postRepository.findById(id);
-    if (postOptional.isPresent()) {
-      Post post = postOptional.get();
-      post.setTitle(postDTO.getTitle());
-      post.setMessage(postDTO.getMessage());
-
-      List<Tag> tags = new ArrayList<>();
-      for (String tagName : postDTO.getTags()) {
-        Tag tag = tagService.getTagByName(tagName);
-        if (tag == null) {
-          tag = tagService.createTag(tagName);
-        }
-        tags.add(tag);
-      }
-
-      List<String> hashtags = tagService.extractHashtags(postDTO.getMessage());
-      for (String hashtag : hashtags) {
-        Tag tag = tagService.getTagByName(hashtag);
-        if (tag == null) {
-          tag = tagService.createTag(hashtag);
-        }
-        tags.add(tag);
-      }
-
-      post.setTags(tags);
-
-      return postRepository.save(post);
-    }
-    return null;
-  }
-
-  @Override
-  public List<Comment> getCommentsByPostId(Long postId) {
-    Post post = postRepository.findById(postId).orElseThrow();
-    return post.getComments();
-  }
-
-  @Override
-  public List<Reply> getRepliesByCommentId(Long commentId) {
-    Comment comment = commentRepository.findById(commentId).orElseThrow();
-    return comment.getReplies();
-  }
-
-  @Override
-  public void createComment(Long postId, CommentDTO commentDTO) {
-    Post post = postRepository.findById(postId).orElseThrow();
-    Comment comment = new Comment();
-    comment.setMessage(commentDTO.getMessage());
-    comment.setUser(userService.getUserById(commentDTO.getUserId()));
-    comment.setPost(post);
-    commentRepository.save(comment);
-  }
-
-  @Override
-  public void createReply(Long commentId, @SuppressWarnings("rawtypes") ReplyDTO replyDTO) {
-    Comment comment = commentRepository.findById(commentId).orElseThrow();
-    Reply reply = new Reply();
-    reply.setMessage(replyDTO.getMessage());
-    reply.setUser(userService.getUserById(replyDTO.getUserId()));
-    reply.setComment(comment);
-    replyRepository.save(reply);
-  }
-
-  @Override
-  public void deleteComment(Long commentId) {
-    commentRepository.deleteById(commentId);
-  }
-
-  @Override
-  public void deleteReply(Long replyId) {
-    replyRepository.deleteById(replyId);
-  }
-
-  public Post patch(PostDTO postDTO, Long id) {
-    Post existingPost = postRepository.findById(id).orElseThrow();
-    if (postDTO.getTitle() != null) {
-      existingPost.setTitle(postDTO.getTitle());
-    }
-    if (postDTO.getMessage() != null) {
-      existingPost.setMessage(postDTO.getMessage());
-    }
-    if (postDTO.getArchived() != null) {
-      existingPost.setArchived(postDTO.getArchived());
-    }
-    return postRepository.save(existingPost);
-  }
-
-  public void deletedPost(Long id) {
     Post post = postRepository.findById(id).orElseThrow();
-    for (Comment comment : post.getComments()) {
-      commentRepository.delete(comment);
+
+    post.setTitle(postDTO.getTitle());
+    post.setMessage(postDTO.getMessage());
+
+    // Remove existing tags
+    post.getTags().clear();
+
+    // Add tags from tag list
+    List<Tag> tags = new ArrayList<>();
+    for (String tagName : postDTO.getTags()) {
+      Tag tag = tagService.getTagByName(tagName);
+      if (tag == null) {
+        tag = tagService.createTag(tagName);
+      }
+      tags.add(tag);
     }
-    postRepository.deleteById(id);
+
+    // Add tags from hashtags in post message
+    List<String> hashtags = tagService.extractHashtags(postDTO.getMessage());
+    for (String hashtag : hashtags) {
+      Tag tag = tagService.getTagByName(hashtag);
+      if (tag == null) {
+        tag = tagService.createTag(hashtag);
+      }
+      tags.add(tag);
+    }
+
+    post.setTags(tags);
+
+    return postRepository.save(post);
   }
 }

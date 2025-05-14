@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import de.stella.agora_web.posts.model.Post;
@@ -22,4 +24,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
   List<Post> findByTags_Name(String tagName);
 
   void save(Reply reply);
+
+  @Query("SELECT p FROM Post p JOIN p.tags t WHERE t.name = :tagName")
+  List<Post> findByTagsName(@Param("tagName") String tagName);
 }

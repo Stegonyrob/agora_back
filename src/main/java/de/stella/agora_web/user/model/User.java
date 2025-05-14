@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.stella.agora_web.avatar.module.Avatar;
 import de.stella.agora_web.banned.model.Banned;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.profiles.model.Profile;
@@ -63,11 +64,13 @@ public class User {
   @OneToMany(mappedBy = "user")
   private Set<Comment> comments;
 
+  @OneToOne
+  @JoinColumn(name = "avatar_id")
+  private Avatar avatar;
+
   public boolean hasRole(String role) {
     return roles.stream().anyMatch(r -> r.getName().equals(role));
   }
-
-  // Removed redundant constructor
 
   public User(String userName, String password) {
     this.username = userName;

@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.stella.agora_web.avatar.module.Avatar;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replies.model.Reply;
@@ -85,6 +86,10 @@ public class Profile {
   @JoinColumn(name = "user_id", referencedColumnName = "id_user")
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private User user;
+
+  @OneToOne
+  @JoinColumn(name = "avatar_id")
+  private Avatar avatar;
 
   public Profile() {
   }

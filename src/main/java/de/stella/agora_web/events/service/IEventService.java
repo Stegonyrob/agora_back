@@ -15,4 +15,6 @@ public interface IEventService {
 
     void deleteEvent(Long id);
 
+    EventDTO updateEventImage(Long eventId, String imagePath);
+
 }

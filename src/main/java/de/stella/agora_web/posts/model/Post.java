@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import de.stella.agora_web.comment.model.Comment;
+import de.stella.agora_web.image.module.PostImage;
 import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.user.model.User;
 import jakarta.persistence.CascadeType;
@@ -67,6 +68,9 @@ public class Post {
   @ManyToMany
   @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
   private List<Tag> tags;
+
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<PostImage> images = new ArrayList<>();
 
   public Post() {
   }
@@ -137,8 +141,8 @@ public class Post {
     return 0;
   }
 
-  public Integer getId() {
-    return id != null ? id.intValue() : null;
+  public Long getId() {
+    return id;
   }
 
   public String getTitle() {
@@ -151,5 +155,13 @@ public class Post {
 
   public Object getContent() {
     return message;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
   }
 }

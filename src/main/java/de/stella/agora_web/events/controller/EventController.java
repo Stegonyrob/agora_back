@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import de.stella.agora_web.events.controller.dto.EventDTO;
 
 @RestController
 @RequestMapping("/api/v1/events")
@@ -51,5 +54,12 @@ public class EventController {
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{eventId}/image")
+    public ResponseEntity<EventDTO> updateEventImage(@PathVariable Long eventId,
+            @RequestParam("imagePath") String imagePath) {
+        EventDTO updatedEvent = eventService.updateEventImage(eventId, imagePath);
+        return ResponseEntity.ok(updatedEvent);
     }
 }
