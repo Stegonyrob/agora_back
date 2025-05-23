@@ -3,11 +3,8 @@ package de.stella.agora_web.events.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,13 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.events.controller.dto.EventDTO;
 import de.stella.agora_web.events.model.Event;
+import de.stella.agora_web.events.service.IEventService;
 
 @RestController
 @RequestMapping(path = "${api-endpoint}/")
 public class EventController {
 
-    @Autowired
-    private de.stella.agora_web.events.service.IEventService eventService;
+    private final IEventService eventService;
+
+    public EventController(IEventService eventService) {
+        this.eventService = eventService;
+    }
 
     @GetMapping("/events")
     public List<EventDTO> index() {
@@ -39,37 +40,33 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.OK).body(event);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(path = "events/")
-    public ResponseEntity<de.stella.agora_web.events.controller.dto.EventDTO> createEvent(
-            @RequestBody de.stella.agora_web.events.controller.dto.EventDTO eventDTO) {
-        return ResponseEntity.ok(eventService.createEvent(eventDTO));
+    @PostMapping(path = "/events")
+    @SuppressWarnings("CallToPrintStackTrace")
+    public ResponseEntity<Event> create(@RequestBody EventDTO eventDTO) {
+        if (eventDTO == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            Event newEvent = eventService.save(eventDTO);
+            System.out.println("Event recibido: " + eventDTO);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .contentType(org.springframework.http.MediaType.APPLICATION_JSON).body(newEvent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
-    public ResponseEntity<de.stella.agora_web.events.controller.dto.EventDTO> updateEvent(@PathVariable Long id,
-            @RequestBody de.stella.agora_web.events.controller.dto.EventDTO eventDTO) {
-        return ResponseEntity.ok(eventService.updateEvent(id, eventDTO));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
-        eventService.deleteEvent(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/{eventId}/image")
-    public ResponseEntity<EventDTO> updateEventImage(@PathVariable Long eventId,
-            @RequestParam("imagePath") String imagePath) {
-        EventDTO updatedEvent = eventService.updateEventImage(eventId, imagePath);
-        return ResponseEntity.ok(updatedEvent);
+    @PutMapping("events/{id}")
+    public ResponseEntity<EventDTO> update(@PathVariable("id") Long id, @RequestBody EventDTO eventDTO) {
+        EventDTO event = eventService.updateEvent(id, eventDTO);
+        return ResponseEntity.accepted().body(event);
     }
 
     @PatchMapping("/events/{id}/archive")
-    public ResponseEntity<Void> archivePost(@PathVariable Long id, @RequestParam Boolean archive) {
-        EventDTO event = eventService.getEventById(id);
+    public ResponseEntity<Void> archiveEvent(@PathVariable Long id, @RequestParam Boolean archive) {
+        Event event = eventService.getById(id);
         if (event == null) {
             return ResponseEntity.notFound().build();
         }
@@ -85,4 +82,17 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("events/tag/{tagName}")
+    public ResponseEntity<List<Event>> getEventsByTagName(@PathVariable String tagName) {
+        List<Event> events = eventService.getEventsByTagName(tagName);
+        return ResponseEntity.ok(events);
+    }
+
+    public ResponseEntity<EventDTO> createEvent(EventDTO eventDTO, long userId) {
+        EventDTO newEvent = eventService.createEvent(eventDTO);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON).body(newEvent);
+    }
+
 }

@@ -127,4 +127,15 @@ public class EventServiceImpl implements IEventService {
     public Event getById(Long id) {
         return eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
     }
+
+    @Override
+    public Event save(EventDTO eventDTO) {
+        Event event = convertToEntity(eventDTO);
+        return eventRepository.save(event);
+    }
+
+    @Override
+    public List<Event> getEventsByTagName(String tagName) {
+        return eventRepository.findByTagsName(tagName);
+    }
 }

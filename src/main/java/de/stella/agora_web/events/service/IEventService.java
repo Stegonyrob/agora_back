@@ -24,4 +24,8 @@ public interface IEventService {
 
     Event getById(Long id);
 
+    Event save(EventDTO eventDTO);
+
+    List<Event> getEventsByTagName(String tagName);
+
 }

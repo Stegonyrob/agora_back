@@ -23,4 +23,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByArchived(Boolean archived);
 
+    List<Event> findByTagsName(String tagName);
+
 }
