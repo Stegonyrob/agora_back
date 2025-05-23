@@ -21,12 +21,6 @@ public class EventServiceImpl implements IEventService {
     @Autowired
     private IEventImageService imageService;
 
-    /**
-     * Convierte un objeto Event a EventDTO.
-     *
-     * @param event El objeto Event a convertir.
-     * @return El objeto EventDTO convertido.
-     */
     private EventDTO convertToDTO(Event event) {
         EventDTO dto = new EventDTO();
         if (event != null) {
@@ -109,5 +103,28 @@ public class EventServiceImpl implements IEventService {
 
         Event updatedEvent = eventRepository.save(event);
         return convertToDTO(updatedEvent);
+    }
+
+    @Override
+    public void unArchiveEventt(Long id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
+
+        event.setArchived(false);
+        eventRepository.save(event);
+    }
+
+    @Override
+    public void archiveEvent(Long id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
+
+        event.setArchived(true);
+        eventRepository.save(event);
+    }
+
+    @Override
+    public Event getById(Long id) {
+        return eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
     }
 }

@@ -47,8 +47,8 @@ public class Post {
   private String title;
 
   @NotBlank
-  @Size(min = 1, max = 2500)
-  @Column(name = "message", length = 2500)
+  @Size(min = 1, max = 25000)
+  @Column(name = "message", length = 25000, nullable = false)
   private String message;
 
   @Column(name = "creation_date")
