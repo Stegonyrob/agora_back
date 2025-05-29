@@ -62,7 +62,11 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/org.grails.plugins/recaptcha -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 		<!-- SpringDoc OpenAPI -->
 		<dependency>
 			<groupId>org.springdoc</groupId>

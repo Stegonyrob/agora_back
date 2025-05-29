@@ -39,4 +39,14 @@ public class Attendee {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
+
+    public Attendee() {
+    }
+
+    public Attendee(String name, String phone, String email, Event event) {
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+        this.event = event;
+    }
 }

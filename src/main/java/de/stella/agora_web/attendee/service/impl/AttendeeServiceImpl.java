@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import de.stella.agora_web.attendee.controller.dto.AttendeeDTO;
 import de.stella.agora_web.attendee.model.Attendee;
@@ -24,6 +26,11 @@ public class AttendeeServiceImpl implements IAttendeeService {
 
     @Override
     public AttendeeDTO registerAttendee(Long eventId, AttendeeDTO attendeeDTO) {
+        if (attendeeRepository.existsByEventIdAndEmail(eventId, attendeeDTO.getEmail())
+                || attendeeRepository.existsByEventIdAndPhone(eventId, attendeeDTO.getPhone())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Ya existe un registro con ese correo o teléfono para este evento.");
+        }
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
 
         Attendee attendee = new Attendee();
@@ -62,12 +69,7 @@ public class AttendeeServiceImpl implements IAttendeeService {
     public AttendeeDTO findById(Long eventId, Long attendeeId) {
         Attendee attendee = attendeeRepository.findByIdAndEventId(attendeeId, eventId)
                 .orElseThrow(() -> new RuntimeException("Attendee not found"));
-        AttendeeDTO attendeeDTO = new AttendeeDTO();
-        attendeeDTO.setId(attendee.getId());
-        attendeeDTO.setName(attendee.getName());
-        attendeeDTO.setPhone(attendee.getPhone());
-        attendeeDTO.setEmail(attendee.getEmail());
-        return attendeeDTO;
+        return convertToDTO(attendee);
     }
 
     @Override
