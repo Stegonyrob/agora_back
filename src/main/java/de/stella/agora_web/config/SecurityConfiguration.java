@@ -45,118 +45,126 @@ import de.stella.agora_web.security.JpaUserDetailsService;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
 
-  @Value("${api-endpoint}")
-  String endpoint;
+    @Value("${api-endpoint}")
+    String endpoint;
 
-  @Value("${jwt-issuer}")
-  String issuer;
+    @Value("${jwt-issuer}")
+    String issuer;
 
-  @Value("${jwt-audience}")
-  String audience;
+    @Value("${jwt-audience}")
+    String audience;
 
-  @Autowired
-  JWTtoUserConverter jwtToUserConverter;
+    @Autowired
+    JWTtoUserConverter jwtToUserConverter;
 
-  @Autowired
-  KeyUtils keyUtils;
+    @Autowired
+    KeyUtils keyUtils;
 
-  @Autowired
-  PasswordEncoder passwordEncoder;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
-  JpaUserDetailsService jpaUserDetailsService;
+    JpaUserDetailsService jpaUserDetailsService;
 
-  public SecurityConfiguration(JpaUserDetailsService jpaUserDetailsService) {
-    this.jpaUserDetailsService = jpaUserDetailsService;
-  }
+    public SecurityConfiguration(JpaUserDetailsService jpaUserDetailsService) {
+        this.jpaUserDetailsService = jpaUserDetailsService;
+    }
 
-  @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable()).formLogin(form -> form.disable())
-        .logout(logout -> logout.logoutUrl(endpoint + "/logout").deleteCookies("JSESSIONID"))
-        .authorizeHttpRequests(auth -> auth.requestMatchers(PathRequest.toH2Console()).permitAll()
-            .requestMatchers("/error").permitAll().requestMatchers(endpoint + "/all/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/posts/**").hasRole("USER").requestMatchers("/posts/**").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.GET, "/replies/**").hasRole("USER").requestMatchers("/replies/**")
-            .hasRole("ADMIN").requestMatchers(HttpMethod.GET, "/comments/**").hasAnyRole("ADMIN", "USER")
-            .requestMatchers(HttpMethod.PUT, "/comments/**").hasAnyRole("ADMIN", "USER").requestMatchers("/comments/**")
-            .hasRole("ADMIN").requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER")
-            .requestMatchers(endpoint + "/admin/**").hasRole("ADMIN").requestMatchers(endpoint + "/user/**")
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable()).formLogin(form -> form.disable())
+                .logout(logout -> logout.logoutUrl(endpoint + "/logout").deleteCookies("JSESSIONID"))
+                .authorizeHttpRequests(auth -> auth.requestMatchers(PathRequest.toH2Console()).permitAll()
+                .requestMatchers(PathRequest.toH2Console()).permitAll()
+                .requestMatchers("/error").permitAll()
+                .requestMatchers(endpoint + "/all/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/posts/**").hasRole("USER")
+                .requestMatchers("/posts/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/replies/**").hasRole("USER")
+                .requestMatchers("/replies/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/comments/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers(HttpMethod.PUT, "/comments/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/comments/**").hasRole("ADMIN")
+                .requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers(endpoint + "/admin/**").hasRole("ADMIN")
+                .requestMatchers(endpoint + "/user/**").hasRole("USER")
+                .requestMatchers(HttpMethod.GET, "/legal/**").hasRole("USER") // <-- aquí
+                .requestMatchers("/legal/**").hasRole("ADMIN") // <-- aquí
+                .anyRequest().permitAll()
+                )
+                .userDetailsService(jpaUserDetailsService).httpBasic(basic -> basic.disable())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtToUserConverter)))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
 
-            .hasRole("USER").anyRequest().permitAll())
-        .userDetailsService(jpaUserDetailsService).httpBasic(basic -> basic.disable())
-        .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtToUserConverter)))
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-            .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
+        http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
-    http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+        return http.build();
+    }
 
-    return http.build();
-  }
+    @Bean
+    @Primary
+    JwtDecoder jwtAccessTokenDecoder() {
+        return NimbusJwtDecoder.withPublicKey(keyUtils.getAccessTokenPublicKey()).build();
+    }
 
-  @Bean
-  @Primary
-  JwtDecoder jwtAccessTokenDecoder() {
-    return NimbusJwtDecoder.withPublicKey(keyUtils.getAccessTokenPublicKey()).build();
-  }
+    @Bean
+    @Primary
+    JwtEncoder jwtAccessTokenEncoder() {
+        JWK jwk = new RSAKey.Builder(keyUtils.getAccessTokenPublicKey()).privateKey(keyUtils.getAccessTokenPrivateKey())
+                .build();
+        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
+    }
 
-  @Bean
-  @Primary
-  JwtEncoder jwtAccessTokenEncoder() {
-    JWK jwk = new RSAKey.Builder(keyUtils.getAccessTokenPublicKey()).privateKey(keyUtils.getAccessTokenPrivateKey())
-        .build();
-    JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-    return new NimbusJwtEncoder(jwks);
-  }
+    @Bean
+    @Qualifier("jwtRefreshTokenDecoder")
+    JwtDecoder jwtRefreshTokenDecoder() {
+        return NimbusJwtDecoder.withPublicKey(keyUtils.getRefreshTokenPublicKey()).build();
+    }
 
-  @Bean
-  @Qualifier("jwtRefreshTokenDecoder")
-  JwtDecoder jwtRefreshTokenDecoder() {
-    return NimbusJwtDecoder.withPublicKey(keyUtils.getRefreshTokenPublicKey()).build();
-  }
+    @Bean
+    @Qualifier("jwtRefreshTokenEncoder")
+    @SuppressWarnings("unused")
+    JwtEncoder jwtRefreshTokenEncoder() {
+        JWK jwk = new RSAKey.Builder(keyUtils.getRefreshTokenPublicKey()).privateKey(keyUtils.getRefreshTokenPrivateKey())
+                .build();
+        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
+    }
 
-  @Bean
-  @Qualifier("jwtRefreshTokenEncoder")
-  @SuppressWarnings("unused")
-  JwtEncoder jwtRefreshTokenEncoder() {
-    JWK jwk = new RSAKey.Builder(keyUtils.getRefreshTokenPublicKey()).privateKey(keyUtils.getRefreshTokenPrivateKey())
-        .build();
-    JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-    return new NimbusJwtEncoder(jwks);
-  }
+    @Bean
+    @Qualifier("jwtRefreshTokenAuthProvider")
+    JwtAuthenticationProvider jwtRefreshTokenAuthProvider() {
+        JwtAuthenticationProvider provider = new JwtAuthenticationProvider(jwtRefreshTokenDecoder());
+        provider.setJwtAuthenticationConverter(jwtToUserConverter);
+        return provider;
+    }
 
-  @Bean
-  @Qualifier("jwtRefreshTokenAuthProvider")
-  JwtAuthenticationProvider jwtRefreshTokenAuthProvider() {
-    JwtAuthenticationProvider provider = new JwtAuthenticationProvider(jwtRefreshTokenDecoder());
-    provider.setJwtAuthenticationConverter(jwtToUserConverter);
-    return provider;
-  }
+    @Bean
+    DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(jpaUserDetailsService);
+        return provider;
+    }
 
-  @Bean
-  DaoAuthenticationProvider daoAuthenticationProvider() {
-    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-    provider.setPasswordEncoder(passwordEncoder);
-    provider.setUserDetailsService(jpaUserDetailsService);
-    return provider;
-  }
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowCredentials(true);
 
-  @Bean
-  CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowCredentials(true);
+        configuration
+                .setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174", "http://localhost:8080"));
 
-    configuration
-        .setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174", "http://localhost:8080"));
-
-    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
-    configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration(("/**"), configuration);
-    return source;
-  }
-  // @Bean
-  // PasswordEncoder passwordEncoder() {
-  // return new BCryptPasswordEncoder();
-  // }
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration(("/**"), configuration);
+        return source;
+    }
+    // @Bean
+    // PasswordEncoder passwordEncoder() {
+    // return new BCryptPasswordEncoder();
+    // }
 }
