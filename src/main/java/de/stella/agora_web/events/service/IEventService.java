@@ -6,6 +6,7 @@ import de.stella.agora_web.events.controller.dto.EventDTO;
 import de.stella.agora_web.events.model.Event;
 
 public interface IEventService {
+
     List<EventDTO> getAllEvents();
 
     EventDTO getEventById(Long id);
@@ -23,6 +24,8 @@ public interface IEventService {
     void archiveEvent(Long id);
 
     Event getById(Long id);
+
+    Event save(Event event);
 
     Event save(EventDTO eventDTO);
 

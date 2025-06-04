@@ -49,7 +49,11 @@ public class EventServiceImpl implements IEventService {
 
     @Override
     public List<EventDTO> getAllEvents() {
-        return eventRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
+        List<Event> events = eventRepository.findAll();
+        if (events == null) {
+            throw new RuntimeException("Events list is null");
+        }
+        return events.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -138,4 +142,10 @@ public class EventServiceImpl implements IEventService {
     public List<Event> getEventsByTagName(String tagName) {
         return eventRepository.findByTagsName(tagName);
     }
+
+    @Override
+    public Event save(Event event) {
+        return eventRepository.save(event);
+    }
+
 }

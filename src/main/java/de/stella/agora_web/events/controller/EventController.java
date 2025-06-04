@@ -1,4 +1,3 @@
-
 package de.stella.agora_web.events.controller;
 
 import java.util.List;
@@ -30,8 +29,13 @@ public class EventController {
     }
 
     @GetMapping("/events")
-    public List<EventDTO> index() {
-        return eventService.getAllEvents();
+    public ResponseEntity<List<EventDTO>> index() {
+        try {
+            return ResponseEntity.ok(eventService.getAllEvents());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/events/{id}")
@@ -95,4 +99,47 @@ public class EventController {
                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON).body(newEvent);
     }
 
+    // Marcar como favorito (incrementa el contador)
+    @PostMapping("/events/{id}/favorite")
+    public ResponseEntity<Void> favoriteEvent(@PathVariable Long id) {
+        Event event = eventService.getById(id);
+        if (event == null) {
+            return ResponseEntity.notFound().build();
+        }
+        event.setFavoritesCount(event.getFavoritesCount() + 1);
+        eventService.save(event); // Asegúrate de tener este método en tu servicio
+        return ResponseEntity.ok().build();
+    }
+
+    // Desmarcar como favorito (decrementa el contador, nunca menor que 0)
+    @PostMapping("/events/{id}/unfavorite")
+    public ResponseEntity<Void> unfavoriteEvent(@PathVariable Long id) {
+        Event event = eventService.getById(id);
+        if (event == null) {
+            return ResponseEntity.notFound().build();
+        }
+        int count = event.getFavoritesCount();
+        event.setFavoritesCount(Math.max(0, count - 1));
+        eventService.save(event);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/events/{id}/favorites/count")
+    public ResponseEntity<Integer> getFavoritesCount(@PathVariable Long id) {
+        Event event = eventService.getById(id);
+        if (event == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(event.getFavoritesCount());
+    }
+
+    @GetMapping("/events/{id}/favorites")
+    public ResponseEntity<List<Event>> getFavoritesByEventId(@PathVariable Long id) {
+        Event event = eventService.getById(id);
+        if (event == null) {
+            return ResponseEntity.notFound().build();
+        }
+        List<Event> favorites = eventService.getEventsByTagName(event.getTitle()); // Asumiendo que el título es único
+        return ResponseEntity.ok(favorites);
+    }
 }

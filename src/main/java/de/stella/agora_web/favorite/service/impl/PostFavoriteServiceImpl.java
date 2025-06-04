@@ -6,10 +6,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import de.stella.agora_web.favorite.controller.dto.FavoriteDTO;
+import de.stella.agora_web.favorite.controller.dto.PostFavoriteDTO;
 import de.stella.agora_web.favorite.model.Favorite;
 import de.stella.agora_web.favorite.repository.FavoriteRepository;
-import de.stella.agora_web.favorite.service.IFavoriteService;
+import de.stella.agora_web.favorite.service.IPostFavoriteService;
 import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.profiles.controller.dto.ProfileDTO;
@@ -18,29 +18,29 @@ import lombok.Builder;
 
 @Builder
 @Service
-public class FavoriteServiceImpl implements IFavoriteService {
+public class PostFavoriteServiceImpl implements IPostFavoriteService {
 
     @Autowired
     private FavoriteRepository favoriteRepository;
 
     @Override
-    public List<FavoriteDTO> getAllFavorites() {
+    public List<PostFavoriteDTO> getAllFavorites() {
         List<Favorite> favorites = favoriteRepository.findAll();
-        List<FavoriteDTO> favoriteDTOs = new ArrayList<>();
+        List<PostFavoriteDTO> favoriteDTOs = new ArrayList<>();
         for (Favorite favorite : favorites) {
             Profile profile = favorite.getProfile();
             Post post = favorite.getPost();
             if (profile != null && post != null) {
                 ProfileDTO profileDTO = ProfileDTO.builder().id(profile.getId()).build();
                 PostDTO postDTO = PostDTO.builder().id(post.getId()).build();
-                favoriteDTOs.add(FavoriteDTO.builder().id(favorite.getId()).profile(profileDTO).post(postDTO).build());
+                favoriteDTOs.add(PostFavoriteDTO.builder().id(favorite.getId()).profile(profileDTO).post(postDTO).build());
             }
         }
         return favoriteDTOs;
     }
 
     @Override
-    public FavoriteDTO getFavorite(Long favoriteId) {
+    public PostFavoriteDTO getFavorite(Long favoriteId) {
         Favorite favorite = favoriteRepository.findById(favoriteId)
                 .orElseThrow(() -> new IllegalArgumentException("Favorite not found with id: " + favoriteId));
 
@@ -50,7 +50,7 @@ public class FavoriteServiceImpl implements IFavoriteService {
         Post post = favorite.getPost();
         PostDTO postDTO = post != null ? PostDTO.builder().id(post.getId()).build() : null;
 
-        return FavoriteDTO.builder().id(favoriteId).profile(profileDTO).post(postDTO).build();
+        return PostFavoriteDTO.builder().id(favoriteId).profile(profileDTO).post(postDTO).build();
     }
 
     @Override
@@ -62,7 +62,7 @@ public class FavoriteServiceImpl implements IFavoriteService {
     }
 
     @Override
-    public FavoriteDTO createFavorite(FavoriteDTO favoriteDTO) {
+    public PostFavoriteDTO createFavorite(PostFavoriteDTO favoriteDTO) {
         if (favoriteDTO == null || favoriteDTO.getProfile() == null || favoriteDTO.getPost() == null) {
             throw new IllegalArgumentException("FavoriteDTO, Profile, and Post cannot be null.");
         }
@@ -84,12 +84,12 @@ public class FavoriteServiceImpl implements IFavoriteService {
         favorite.setPost(post);
         favoriteRepository.save(favorite);
 
-        return FavoriteDTO.builder().id(favorite.getId()).profile(favoriteDTO.getProfile()).post(favoriteDTO.getPost())
+        return PostFavoriteDTO.builder().id(favorite.getId()).profile(favoriteDTO.getProfile()).post(favoriteDTO.getPost())
                 .build();
     }
 
     @Override
-    public FavoriteDTO updateFavorite(Long id, FavoriteDTO favoriteDTO) {
+    public PostFavoriteDTO updateFavorite(Long id, PostFavoriteDTO favoriteDTO) {
         if (id == null || favoriteDTO == null) {
             throw new IllegalArgumentException("Id and FavoriteDTO cannot be null.");
         }
@@ -111,6 +111,6 @@ public class FavoriteServiceImpl implements IFavoriteService {
 
         favoriteRepository.save(updatedFavorite);
 
-        return FavoriteDTO.builder().id(id).profile(favoriteDTO.getProfile()).post(favoriteDTO.getPost()).build();
+        return PostFavoriteDTO.builder().id(id).profile(favoriteDTO.getProfile()).post(favoriteDTO.getPost()).build();
     }
 }

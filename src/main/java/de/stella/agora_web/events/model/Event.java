@@ -52,6 +52,9 @@ public class Event {
     @Column(name = "archived")
     private boolean archived;
 
+    @Column(name = "favorites_count")
+    private int favoritesCount = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
@@ -77,8 +80,6 @@ public class Event {
         this.id = id;
         this.title = title;
         this.message = message;
-        this.user = new User();
-        this.user.setId(userId);
         this.archived = archived;
     }
 
@@ -132,15 +133,6 @@ public class Event {
         return isArchived();
     }
 
-    // Getter y Setter para user
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     // Getter y Setter para tags
     public List<Tag> getTags() {
         return tags;
@@ -186,12 +178,12 @@ public class Event {
 
     public void addImage(EventImage image) {
         this.images.add(image);
-        image.setEvent(this); // Asociar la imagen con este evento
+        image.setEvent(this);
     }
 
     public void removeImage(EventImage image) {
         this.images.remove(image);
-        image.setEvent(null); // Desvincular la imagen del evento
+        image.setEvent(null);
     }
 
     public void removeAllImages() {
@@ -212,8 +204,17 @@ public class Event {
     // Método para establecer el path de las imágenes
     public void setImagePath(String imagePath) {
         for (EventImage image : images) {
-            image.setImageName(imagePath); // Cambiar el atributo según corresponda
+            image.setImageName(imagePath);
         }
+    }
+
+    // Getter y Setter para favoritesCount
+    public int getFavoritesCount() {
+        return favoritesCount;
+    }
+
+    public void setFavoritesCount(int favoritesCount) {
+        this.favoritesCount = favoritesCount;
     }
 
     // Método toString
@@ -221,6 +222,52 @@ public class Event {
     public String toString() {
         return "Event{" + "id=" + id + ", title='" + title + '\'' + ", message='" + message + '\'' + ", creationDate="
                 + creationDate + ", archived=" + archived + ", user=" + (user != null ? user.getId() : "null")
-                + ", tags=" + tags + ", attendees=" + attendees + ", images=" + images + '}';
+                + ", tags=" + tags + ", attendees=" + attendees + ", images=" + images + ", favoritesCount=" + favoritesCount + '}';
+    }
+
+    // Métodos auxiliares (opcional)
+    public String getName() {
+        return this.title;
+    }
+
+    public void setName(String name) {
+        this.title = name;
+    }
+
+    public String getDescription() {
+        return this.message;
+    }
+
+    public void setDescription(String description) {
+        this.message = description;
+    }
+
+    public boolean getActive() {
+        return !this.archived;
+    }
+
+    public void setActive(boolean active) {
+        this.archived = !active;
+    }
+
+    public List<Attendee> getAttendeesList() {
+        return this.attendees;
+    }
+
+    public void setAttendeesList(List<Attendee> attendees) {
+        this.attendees = attendees;
+    }
+
+    public void addAttendeeToList(Attendee attendee) {
+        if (this.attendees == null) {
+            this.attendees = new ArrayList<>();
+        }
+        this.attendees.add(attendee);
+    }
+
+    public void removeAttendeeFromList(Attendee attendee) {
+        if (this.attendees != null) {
+            this.attendees.remove(attendee);
+        }
     }
 }

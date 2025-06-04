@@ -489,7 +489,7 @@ VALUES
     'ivan'
   );
 
--- Inserciones en la tabla 'eventos'
+-- Inserciones en la tabla 'events'
 INSERT INTO
   events (
     id,
@@ -497,7 +497,8 @@ INSERT INTO
     message,
     creation_date,
     archived,
-    user_id
+    user_id,
+    favorites_count
   )
 VALUES
   (
@@ -506,7 +507,8 @@ VALUES
     'Un aspecto fundamental del taller es la gestión del tiempo y la paciencia al esperar el turno de juego, promoviendo la escucha activa y la consideración por los demás participantes.',
     NOW(),
     false,
-    1
+    1,
+    0
   ),
   (
     2,
@@ -514,7 +516,8 @@ VALUES
     'Programa de formación y apoyo dirigido a padres y madres. Se ofrecen herramientas, estrategias y recursos para afrontar los retos de la crianza, mejorar la comunicación familiar y promover un desarrollo saludable de los hijos.',
     NOW(),
     false,
-    2
+    2,
+    0
   );
 
 -- Inserta el Aviso Legal adaptado para el Centro de Apoyo Educativo Especializado Ágora

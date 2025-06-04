@@ -1,7 +1,9 @@
 package de.stella.agora_web.favorite.model;
 
+import de.stella.agora_web.events.model.Event;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.profiles.model.Profile;
+import de.stella.agora_web.user.model.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,6 +39,12 @@ public class Favorite {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @ManyToOne
+    private User user;
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
+
     public Long getId() {
         return id;
     }
@@ -59,5 +67,27 @@ public class Favorite {
 
     public void setPost(Post post) {
         this.post = post;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setUserId(Long userId) {
+        if (this.profile == null) {
+            this.profile = new Profile();
+        }
+        this.profile.setId(userId);
+    }
+
+    public void setEventId(Long eventId) {
+        if (this.event == null) {
+            this.event = new Event();
+        }
+        this.event.setId(eventId);
     }
 }

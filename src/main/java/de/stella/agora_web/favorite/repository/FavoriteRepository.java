@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import de.stella.agora_web.events.model.Event;
 import de.stella.agora_web.favorite.model.Favorite;
+import de.stella.agora_web.user.model.User;
 
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
@@ -18,5 +20,9 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     Optional<Favorite> findById(Long id);
 
     List<Favorite> findByProfileId(Long userId);
+
+    List<Favorite> findByEventIsNotNull();
+
+    boolean existsByUserAndEvent(User user, Event event);
 
 }

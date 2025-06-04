@@ -14,32 +14,32 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.stella.agora_web.favorite.controller.dto.FavoriteDTO;
+import de.stella.agora_web.favorite.controller.dto.PostFavoriteDTO;
 import de.stella.agora_web.favorite.model.Favorite;
-import de.stella.agora_web.favorite.service.impl.FavoriteServiceImpl;
+import de.stella.agora_web.favorite.service.impl.PostFavoriteServiceImpl;
 import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.profiles.controller.dto.ProfileDTO;
 
 @RestController
 @RequestMapping(path = "${api-endpoint}/any/")
-public class FavoriteController {
+public class PostFavoriteController {
 
     @Autowired
-    private FavoriteServiceImpl favoriteService;
+    private PostFavoriteServiceImpl favoriteService;
 
     @GetMapping(path = "/favorites")
 
-    public List<FavoriteDTO> getAllFavorites() {
+    public List<PostFavoriteDTO> getAllFavorites() {
         return favoriteService.getAllFavorites();
     }
 
     @PostMapping("/favorites/{postId}")
-    public ResponseEntity<FavoriteDTO> createFavorite(@PathVariable Long postId, @RequestBody Long profileId) {
-        FavoriteDTO favoriteDTO = new FavoriteDTO();
+    public ResponseEntity<PostFavoriteDTO> createFavorite(@PathVariable Long postId, @RequestBody Long profileId) {
+        PostFavoriteDTO favoriteDTO = new PostFavoriteDTO();
         favoriteDTO.setId(postId);
         favoriteDTO.setId(profileId);
         try {
-            FavoriteDTO createdFavorite = favoriteService.createFavorite(favoriteDTO);
+            PostFavoriteDTO createdFavorite = favoriteService.createFavorite(favoriteDTO);
             if (createdFavorite != null) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(createdFavorite);
             } else {
@@ -51,20 +51,20 @@ public class FavoriteController {
     }
 
     @GetMapping("/favorites/{id}")
-    public FavoriteDTO getFavorite(@PathVariable Long id) {
+    public PostFavoriteDTO getFavorite(@PathVariable Long id) {
         return favoriteService.getFavorite(id);
     }
 
     @PutMapping("/favorites/{id}")
-    public ResponseEntity<FavoriteDTO> updateFavorite(@PathVariable Long id, @RequestBody Favorite favorite) {
+    public ResponseEntity<PostFavoriteDTO> updateFavorite(@PathVariable Long id, @RequestBody Favorite favorite) {
         if (favorite == null) {
             return ResponseEntity.badRequest().build();
         }
         try {
-            FavoriteDTO favoriteDTO = FavoriteDTO.builder().id(favorite.getId())
+            PostFavoriteDTO favoriteDTO = PostFavoriteDTO.builder().id(favorite.getId())
                     .profile(ProfileDTO.builder().id(favorite.getProfile().getId()).build())
                     .post(PostDTO.builder().id(favorite.getPost().getId()).build()).build();
-            FavoriteDTO updatedFavorite = favoriteService.updateFavorite(id, favoriteDTO);
+            PostFavoriteDTO updatedFavorite = favoriteService.updateFavorite(id, favoriteDTO);
             if (updatedFavorite != null) {
                 return ResponseEntity.ok(updatedFavorite);
             } else {
