@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.events.controller.dto.EventDTO;
+import de.stella.agora_web.events.mapper.EventMapper;
 import de.stella.agora_web.events.model.Event;
 import de.stella.agora_web.events.repository.EventRepository;
 import de.stella.agora_web.events.service.IEventService;
@@ -21,7 +22,10 @@ public class EventServiceImpl implements IEventService {
     @Autowired
     private IEventImageService imageService;
 
-    private EventDTO convertToDTO(Event event) {
+    @Autowired
+    private EventMapper eventMapper;
+
+    private EventDTO toDto(Event event) {
         EventDTO dto = new EventDTO();
         if (event != null) {
             dto.setId(event.getId());
@@ -32,42 +36,37 @@ public class EventServiceImpl implements IEventService {
         return dto;
     }
 
-    /**
-     * Convierte un objeto EventDTO a Event.
-     *
-     * @param dto El objeto EventDTO a convertir.
-     * @return El objeto Event convertido.
-     */
-    private Event convertToEntity(EventDTO dto) {
-        Event event = new Event();
-        event.setId(dto.getId());
-        event.setTitle(dto.getTitle());
-        event.setMessage(dto.getMessage());
-        event.setArchived(dto.isArchived());
-        return event;
-    }
-
-    @Override
-    public List<EventDTO> getAllEvents() {
-        List<Event> events = eventRepository.findAll();
-        if (events == null) {
-            throw new RuntimeException("Events list is null");
-        }
-        return events.stream().map(this::convertToDTO).collect(Collectors.toList());
+    public List<EventDTO> toDtoList(List<Event> events) {
+        return events.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public EventDTO getEventById(Long id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
-        return convertToDTO(event);
+        return eventMapper.toDto(event);
     }
 
     @Override
     public EventDTO createEvent(EventDTO eventDTO) {
-        Event event = convertToEntity(eventDTO);
+        Event event = eventMapper.toEntity(eventDTO);
         Event savedEvent = eventRepository.save(event);
-        return convertToDTO(savedEvent);
+        return eventMapper.toDto(savedEvent);
+    }
+
+    @Override
+    public EventDTO updateEvent(Long id, EventDTO eventDTO) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
+
+        event.setTitle(eventDTO.getTitle());
+        event.setMessage(eventDTO.getMessage());
+        event.setArchived(eventDTO.isArchived());
+
+        Event savedEvent = eventRepository.save(event);
+        return eventMapper.toDto(savedEvent);
     }
 
     @Override
@@ -84,20 +83,6 @@ public class EventServiceImpl implements IEventService {
     }
 
     @Override
-    public EventDTO updateEvent(Long id, EventDTO eventDTO) {
-        Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
-
-        // Actualizar los campos del evento
-        event.setTitle(eventDTO.getTitle());
-        event.setMessage(eventDTO.getMessage());
-        event.setArchived(eventDTO.isArchived());
-
-        Event savedEvent = eventRepository.save(event);
-        return convertToDTO(savedEvent);
-    }
-
-    @Override
     public EventDTO updateEventImage(Long eventId, String imagePath) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found with ID: " + eventId));
@@ -106,7 +91,7 @@ public class EventServiceImpl implements IEventService {
         event.setImagePath(imagePath);
 
         Event updatedEvent = eventRepository.save(event);
-        return convertToDTO(updatedEvent);
+        return eventMapper.toDto(updatedEvent);
     }
 
     @Override
@@ -134,7 +119,7 @@ public class EventServiceImpl implements IEventService {
 
     @Override
     public Event save(EventDTO eventDTO) {
-        Event event = convertToEntity(eventDTO);
+        Event event = eventMapper.toEntity(eventDTO);
         return eventRepository.save(event);
     }
 
@@ -146,6 +131,12 @@ public class EventServiceImpl implements IEventService {
     @Override
     public Event save(Event event) {
         return eventRepository.save(event);
+    }
+
+    @Override
+    public List<EventDTO> getAllEvents() {
+        List<Event> events = eventRepository.findAll();
+        return eventMapper.toDtoList(events);
     }
 
 }

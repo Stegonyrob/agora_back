@@ -31,7 +31,15 @@ public class AttendeeServiceImpl implements IAttendeeService {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Ya existe un registro con ese correo o teléfono para este evento.");
         }
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        // Comprobación de aforo
+        int capacity = event.getCapacity();
+        int currentAttendees = attendeeRepository.countByEventId(eventId);
+        if (currentAttendees >= capacity) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No hay plazas libres para este evento.");
+        }
 
         Attendee attendee = new Attendee();
         attendee.setName(attendeeDTO.getName());

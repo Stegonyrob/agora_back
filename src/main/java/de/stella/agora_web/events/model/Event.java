@@ -55,6 +55,8 @@ public class Event {
     @Column(name = "favorites_count")
     private int favoritesCount = 0;
 
+    @Column(name = "capacity")
+    private int capacity;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
@@ -81,6 +83,7 @@ public class Event {
         this.title = title;
         this.message = message;
         this.archived = archived;
+        this.capacity = capacity;
     }
 
     // Getter y Setter para id
@@ -269,5 +272,22 @@ public class Event {
         if (this.attendees != null) {
             this.attendees.remove(attendee);
         }
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public int getAvailableSeats() {
+        // El número de plazas libres es el aforo menos los asistentes actuales
+        return capacity - (attendees != null ? attendees.size() : 0);
+    }
+
+    public boolean hasAvailableSeats() {
+        return getAvailableSeats() > 0;
     }
 }

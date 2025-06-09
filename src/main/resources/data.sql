@@ -498,7 +498,8 @@ INSERT INTO
     creation_date,
     archived,
     user_id,
-    favorites_count
+    favorites_count,
+    capacity
   )
 VALUES
   (
@@ -508,7 +509,8 @@ VALUES
     NOW(),
     false,
     1,
-    0
+    0,
+    30
   ),
   (
     2,
@@ -517,7 +519,8 @@ VALUES
     NOW(),
     false,
     2,
-    0
+    0,
+    40
   );
 
 -- Inserta el Aviso Legal adaptado para el Centro de Apoyo Educativo Especializado Ágora
