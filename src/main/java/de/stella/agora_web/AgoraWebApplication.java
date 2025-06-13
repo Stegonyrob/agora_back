@@ -9,13 +9,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootApplication
 public class AgoraWebApplication {
 
-	@Bean
-	PasswordEncoder passwordEncoder() { 
-		return new BCryptPasswordEncoder(); 
-	}
+    @SuppressWarnings("unused")
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(AgoraWebApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(AgoraWebApplication.class, args);
+    }
 
 }

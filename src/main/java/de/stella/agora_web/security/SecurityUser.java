@@ -14,70 +14,67 @@ import de.stella.agora_web.user.model.User;
 
 public class SecurityUser implements UserDetails {
 
-  User user;
-  public Object getRoles;
+    private final User user;
 
-  public SecurityUser(User user) {
-    this.user = user;
-  }
-
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    Collection<GrantedAuthority> authorities = new ArrayList<>();
-
-    System.out.println("-------------------");
-    System.out.println(user.getRoles());
-    System.out.println("-------------------");
-
-    for (Role role : user.getRoles()) {
-      System.out.println("User role: " + role.getName());
-      SimpleGrantedAuthority authority = new SimpleGrantedAuthority((String) role.getName());
-      authorities.add(authority);
+    public SecurityUser(User user) {
+        this.user = user;
     }
 
-    return authorities;
-  }
-
-  @Override
-  public String getPassword() {
-    return user.getPassword();
-  }
-
-  @Override
-  public String getUsername() {
-    return user.getUsername();
-  }
-
-  public Long getId() {
-    return user.getId();
-  }
-
-  @Override
-  public boolean isAccountNonExpired() {
-    return true;
-  }
-
-  @Override
-  public boolean isAccountNonLocked() {
-    return true;
-  }
-
-  @Override
-  public boolean isCredentialsNonExpired() {
-    return true;
-  }
-
-  @Override
-  public boolean isEnabled() {
-    return true;
-  }
-
-  public String getRoles() {
-    if (user == null || user.getRoles() == null) {
-      return "";
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        for (Role role : user.getRoles()) {
+            // Asegúrate de que getName() retorna String
+            String roleName = (role != null && role.getName() != null) ? role.getName().toString() : "";
+            if (!roleName.isEmpty()) {
+                authorities.add(new SimpleGrantedAuthority(roleName));
+            }
+        }
+        return authorities;
     }
-    List<String> roles = user.getRoles().stream().map(role -> role != null ? (String) role.getName() : "")
-        .filter(name -> name != null && !name.isEmpty()).collect(Collectors.toList());
-    return String.join(",", roles);
-  }
+
+    public String getRoles() {
+        if (user == null || user.getRoles() == null) {
+            return "";
+        }
+        List<String> roles = user.getRoles().stream()
+                .map(role -> (role != null && role.getName() != null) ? role.getName().toString() : "")
+                .filter(name -> !name.isEmpty())
+                .collect(Collectors.toList());
+        return String.join(",", roles);
+    }
+
+    @Override
+    public String getPassword() {
+        return user.getPassword();
+    }
+
+    @Override
+    public String getUsername() {
+        return user.getUsername();
+    }
+
+    public Long getId() {
+        return user.getId();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

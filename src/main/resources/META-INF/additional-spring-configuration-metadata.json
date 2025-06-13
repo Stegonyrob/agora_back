@@ -14,6 +14,11 @@
       "name": "refresh-token.public",
       "type": "java.lang.String",
       "description": "A description for 'refresh-token.public'"
+    },
+    {
+      "name": "access-token.public",
+      "type": "java.lang.String",
+      "description": "A description for 'access-token.public'"
     }
   ],
   "additionalProperties": [
@@ -36,11 +41,6 @@
       "name": "refresh-token.private",
       "type": "java.lang.String",
       "description": "A description for 'refresh-token.private'"
-    },
-    {
-      "name": "jwt-audience",
-      "type": "java.lang.String",
-      "description": "A description for 'jwt-audience'"
     },
     {
       "name": "jwt-audience",

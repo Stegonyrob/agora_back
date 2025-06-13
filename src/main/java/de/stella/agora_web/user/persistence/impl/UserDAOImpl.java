@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import de.stella.agora_web.user.controller.dto.UserDTO;
@@ -13,6 +16,7 @@ import de.stella.agora_web.user.repository.UserRepository;
 
 @Component
 public class UserDAOImpl implements IUserDAO {
+
     private final UserRepository userRepository;
 
     public UserDAOImpl(UserRepository userRepository) {
@@ -32,7 +36,7 @@ public class UserDAOImpl implements IUserDAO {
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return Optional.ofNullable(userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found")));
+        return userRepository.findByUsername(username);
     }
 
     @Override
@@ -54,8 +58,15 @@ public class UserDAOImpl implements IUserDAO {
 
     @Override
     public User update(User user, User updatedUser) {
-        // Implement the update logic here
-        return user;
+        Objects.requireNonNull(user, "User cannot be null");
+        Objects.requireNonNull(updatedUser, "UpdatedUser cannot be null");
+
+        user.setUsername(updatedUser.getUsername());
+        user.setEmail(updatedUser.getEmail());
+        user.setPassword(updatedUser.getPassword());
+        user.setRoles(updatedUser.getRoles());
+
+        return userRepository.save(user);
     }
 
     @Override
@@ -65,7 +76,11 @@ public class UserDAOImpl implements IUserDAO {
 
     @Override
     public User getLoggedInUser() {
-        // Implement the logic to get the logged-in user
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            return (User) authentication.getPrincipal();
+        }
         return null;
     }
 
@@ -90,6 +105,10 @@ public class UserDAOImpl implements IUserDAO {
 
     }
 
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 
     private void validateUserDTO(UserDTO userDTO) {
         Objects.requireNonNull(userDTO, "UserDTO cannot be null");

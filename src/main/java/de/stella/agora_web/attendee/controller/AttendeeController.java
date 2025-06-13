@@ -11,32 +11,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.attendee.controller.dto.AttendeeDTO;
 import de.stella.agora_web.attendee.service.IAttendeeService;
-import de.stella.agora_web.captcha.service.ICaptchaService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/attendees")
+
+@RequestMapping("${api-endpoint}/attendees")
 public class AttendeeController {
 
     @Autowired
     private IAttendeeService attendeeService;
 
-    @Autowired
-    private ICaptchaService captchaService; // Inyecta la interfaz
-
     @PostMapping("/{eventId}")
     public ResponseEntity<AttendeeDTO> registerAttendee(@PathVariable Long eventId,
-            @RequestBody AttendeeDTO attendeeDTO, @RequestParam("captchaToken") String captchaToken) {
-
-        // Verifica el captcha antes de registrar
-        if (!captchaService.verify(captchaToken)) {
-            return ResponseEntity.status(403).build();
-        }
+            @RequestBody AttendeeDTO attendeeDTO) {
 
         AttendeeDTO savedAttendee = attendeeService.registerAttendee(eventId, attendeeDTO);
         return ResponseEntity.ok(savedAttendee);
@@ -66,5 +57,4 @@ public class AttendeeController {
         attendeeService.deleteAttendee(eventId, attendeeId);
         return ResponseEntity.noContent().build();
     }
-
 }

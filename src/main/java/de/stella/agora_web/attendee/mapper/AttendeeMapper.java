@@ -10,5 +10,6 @@ public interface AttendeeMapper {
 
     AttendeeDTO toDto(Attendee attendee);
 
+    @org.mapstruct.Mapping(target = "event", ignore = true)
     Attendee toEntity(AttendeeDTO dto);
 }

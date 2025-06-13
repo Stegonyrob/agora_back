@@ -12,6 +12,7 @@ import lombok.NonNull;
 
 @Component
 public class JWTtoUserConverter implements Converter<Jwt, UsernamePasswordAuthenticationToken> {
+
     private final UserRepository userRepository;
 
     public JWTtoUserConverter(UserRepository userRepository) {
@@ -26,4 +27,5 @@ public class JWTtoUserConverter implements Converter<Jwt, UsernamePasswordAuthen
         return new UsernamePasswordAuthenticationToken(securityUser, securityUser.getPassword(),
                 securityUser.getAuthorities());
     }
+
 }

@@ -38,6 +38,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 
 import de.stella.agora_web.auth.KeyUtils;
 import de.stella.agora_web.jwt.JWTtoUserConverter;
+import de.stella.agora_web.security.CustomUserDetailsService;
 import de.stella.agora_web.security.JpaUserDetailsService;
 
 @Configuration
@@ -47,12 +48,6 @@ public class SecurityConfiguration {
 
     @Value("${api-endpoint}")
     String endpoint;
-
-    @Value("${jwt-issuer}")
-    String issuer;
-
-    @Value("${jwt-audience}")
-    String audience;
 
     @Autowired
     JWTtoUserConverter jwtToUserConverter;
@@ -145,10 +140,10 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    DaoAuthenticationProvider daoAuthenticationProvider() {
+    public DaoAuthenticationProvider daoAuthenticationProvider(CustomUserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(jpaUserDetailsService);
         return provider;
     }
 
