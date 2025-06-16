@@ -1,6 +1,7 @@
 package de.stella.agora_web.posts.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,89 +24,90 @@ import de.stella.agora_web.posts.service.IPostService;
 @RequestMapping(path = "${api-endpoint}/")
 public class PostController {
 
-  private final IPostService postService;
+    private final IPostService postService;
 
-  public PostController(IPostService postService) {
-    this.postService = postService;
-  }
-
-  @GetMapping("/posts")
-  public List<Post> index() {
-    return postService.getAllPosts();
-  }
-
-  @GetMapping("/posts/{id}")
-  public ResponseEntity<Post> show(@PathVariable Long id) {
-    Post post = postService.getById(id);
-    return ResponseEntity.status(HttpStatus.OK).body(post);
-  }
-
-  @PostMapping(path = "/posts")
-  @SuppressWarnings("CallToPrintStackTrace")
-  public ResponseEntity<Post> create(@RequestBody PostDTO postDTO) {
-    if (postDTO == null) {
-      return ResponseEntity.badRequest().build();
+    public PostController(IPostService postService) {
+        this.postService = postService;
     }
 
-    try {
-      Post newPost = postService.save(postDTO);
-      System.out.println("Post recibido: " + postDTO);
-      return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(newPost);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-  }
-
-  // @DeleteMapping("posts/{id}")
-  // public ResponseEntity<Void> deleteUser(@PathVariable Long id) { // no va 500
-  // postService.archivePost(id);
-  // return ResponseEntity.noContent().build();
-  // }
-
-  @PutMapping("posts/{id}") // ok
-  public ResponseEntity<Post> update(@PathVariable("id") Long id, @RequestBody PostDTO postDTO) {
-    Post post = postService.update(postDTO, id);
-    return ResponseEntity.accepted().body(post);
-  }
-
-  @PatchMapping("/posts/{id}/archive")
-  public ResponseEntity<Void> archivePost(@PathVariable Long id, @RequestParam Boolean archive) {
-    Post post = postService.getById(id);
-    if (post == null) {
-      return ResponseEntity.notFound().build();
+    @GetMapping("/posts")
+    public List<Post> index() {
+        return postService.getAllPosts();
     }
 
-    try {
-      if (archive) {
-        postService.archivePost(id);
-      } else {
-        postService.unArchivePost(id);
-      }
-      return ResponseEntity.noContent().build();
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    @GetMapping("/posts/{id}")
+    public ResponseEntity<Post> show(@PathVariable Long id) {
+        Post post = postService.getById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(post);
     }
-  }
 
-  @GetMapping("/user/{userId}")
-  public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable Long userId) {
-    List<Post> posts = postService.getPostsByUserId(userId);
-    if (posts.isEmpty()) {
-      return ResponseEntity.noContent().build();
+    @PostMapping(path = "/posts")
+    @SuppressWarnings("CallToPrintStackTrace")
+    public ResponseEntity<Post> create(@RequestBody PostDTO postDTO) {
+        if (postDTO == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            Post newPost = postService.save(postDTO);
+            System.out.println("Post recibido: " + postDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(newPost);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
-    return ResponseEntity.ok(posts);
-  }
 
-  @GetMapping("posts/tag/{tagName}")
-  public ResponseEntity<List<Post>> getPostsByTagName(@PathVariable String tagName) {
-    List<Post> posts = postService.getPostsByTagName(tagName);
-    return ResponseEntity.ok(posts);
-  }
+    // @DeleteMapping("posts/{id}")
+    // public ResponseEntity<Void> deleteUser(@PathVariable Long id) { // no va 500
+    // postService.archivePost(id);
+    // return ResponseEntity.noContent().build();
+    // }
+    @PutMapping("posts/{id}") // ok
+    public ResponseEntity<Post> update(@PathVariable("id") Long id, @RequestBody PostDTO postDTO) {
+        Post post = postService.update(postDTO, id);
+        return ResponseEntity.accepted().body(post);
+    }
 
-  public ResponseEntity<Post> createPost(PostDTO postDTO, long userId) {
-    Post newPost = postService.createPost(postDTO, userId);
-    return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(newPost);
-  }
+    @PatchMapping("/posts/{id}/archive")
+    public ResponseEntity<Void> archivePost(@PathVariable Long id, @RequestParam Boolean archive) {
+        try {
+            Post post = postService.getById(id);
+            if (post == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            if (archive) {
+                postService.archivePost(id);
+            } else {
+                postService.unArchivePost(id);
+            }
+            return ResponseEntity.noContent().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable Long userId) {
+        List<Post> posts = postService.getPostsByUserId(userId);
+        if (posts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("posts/tag/{tagName}")
+    public ResponseEntity<List<Post>> getPostsByTagName(@PathVariable String tagName) {
+        List<Post> posts = postService.getPostsByTagName(tagName);
+        return ResponseEntity.ok(posts);
+    }
+
+    public ResponseEntity<Post> createPost(PostDTO postDTO, long userId) {
+        Post newPost = postService.createPost(postDTO, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(newPost);
+    }
 
 }
