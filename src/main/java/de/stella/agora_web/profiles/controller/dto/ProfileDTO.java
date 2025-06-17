@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 
 @Builder
@@ -16,7 +15,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProfileDTO {
 
-    private Long id;
+    private Long id; // id_profile
+    private Long userId; // id_user (del usuario asociado)
     private String firstName;
     private String lastName1;
     private String lastName2;
@@ -29,8 +29,11 @@ public class ProfileDTO {
     private String country;
     private String phone;
 
-    public @NonNull Long getUserId() {
-        return id;
+    public String getFullName() {
+        return firstName + " " + lastName1 + (lastName2 != null ? " " + lastName2 : "");
     }
 
+    public String getFullNameWithUsername() {
+        return getFullName() + " (" + username + ")";
+    }
 }

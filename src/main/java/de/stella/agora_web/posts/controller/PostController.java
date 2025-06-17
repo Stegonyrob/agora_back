@@ -42,28 +42,19 @@ public class PostController {
     }
 
     @PostMapping(path = "/posts")
-    @SuppressWarnings("CallToPrintStackTrace")
     public ResponseEntity<Post> create(@RequestBody PostDTO postDTO) {
         if (postDTO == null) {
             return ResponseEntity.badRequest().build();
         }
-
         try {
             Post newPost = postService.save(postDTO);
-            System.out.println("Post recibido: " + postDTO);
             return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(newPost);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    // @DeleteMapping("posts/{id}")
-    // public ResponseEntity<Void> deleteUser(@PathVariable Long id) { // no va 500
-    // postService.archivePost(id);
-    // return ResponseEntity.noContent().build();
-    // }
-    @PutMapping("posts/{id}") // ok
+    @PutMapping("posts/{id}")
     public ResponseEntity<Post> update(@PathVariable("id") Long id, @RequestBody PostDTO postDTO) {
         Post post = postService.update(postDTO, id);
         return ResponseEntity.accepted().body(post);
@@ -76,7 +67,6 @@ public class PostController {
             if (post == null) {
                 return ResponseEntity.notFound().build();
             }
-
             if (archive) {
                 postService.archivePost(id);
             } else {
@@ -105,9 +95,47 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
-    public ResponseEntity<Post> createPost(PostDTO postDTO, long userId) {
-        Post newPost = postService.createPost(postDTO, userId);
-        return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(newPost);
+    @PutMapping("/posts/{id}/favorite")
+    public ResponseEntity<Void> favoritePost(@PathVariable Long id) {
+        Post post = postService.getById(id);
+        if (post == null) {
+            return ResponseEntity.notFound().build();
+        }
+        post.setLoves(post.getLoves() + 1);
+        postService.save(post);
+        return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/posts/{id}/unfavorite")
+    public ResponseEntity<Void> unfavoritePost(@PathVariable Long id) {
+        Post post = postService.getById(id);
+        if (post == null) {
+            return ResponseEntity.notFound().build();
+        }
+        post.setLoves(Math.max(0, post.getLoves() - 1));
+        postService.save(post);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/posts/{id}/favorites/count")
+    public ResponseEntity<Integer> getFavoritesCount(@PathVariable Long id) {
+        Post post = postService.getById(id);
+        if (post == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(post.getLoves());
+    }
+
+    public static PostDTO toPostDTO(Post post) {
+        if (post == null) {
+            return null;
+        }
+        return PostDTO.builder()
+                .id(post.getId())
+                .userId(post.getUser() != null ? post.getUser().getId() : null)
+                .title(post.getTitle())
+                .message(post.getMessage())
+                // Agrega aquí otros campos si tu PostDTO los tiene
+                .build();
+    }
 }

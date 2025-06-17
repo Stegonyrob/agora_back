@@ -37,131 +37,148 @@ import lombok.Setter;
 @Table(name = "posts")
 public class Post {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @NotBlank
-  @Size(min = 1, max = 100)
-  @Column(name = "title")
-  private String title;
+    @NotBlank
+    @Size(min = 1, max = 100)
+    @Column(name = "title")
+    private String title;
 
-  @NotBlank
-  @Size(min = 1, max = 25000)
-  @Column(name = "message", length = 25000, nullable = false)
-  private String message;
+    @NotBlank
+    @Size(min = 1, max = 25000)
+    @Column(name = "message", length = 25000, nullable = false)
+    private String message;
 
-  @Column(name = "creation_date")
-  private LocalDateTime creationDate = LocalDateTime.now();
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate = LocalDateTime.now();
 
-  @Column(name = "archived")
-  private boolean archived;
+    @Column(name = "archived")
+    private boolean archived;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  @JsonBackReference
-  private User user;
+    @Column(name = "favorites_count")
+    private Integer favoritesCount = 0;
 
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Comment> comments;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private User user;
 
-  @ManyToMany
-  @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-  private List<Tag> tags;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<PostImage> images = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private List<Tag> tags;
 
-  public Post() {
-  }
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostImage> images = new ArrayList<>();
+    private int loves;
 
-  public Post(Long id, String title, String message, Long userId, boolean archived, String user) {
-    this.id = id;
-    this.title = title;
-    this.message = message;
-    this.user = new User();
-    this.user.setId(userId);
-    this.archived = archived;
-  }
-
-  public void setUserId(Long userId) {
-    if (this.user == null) {
-      this.user = new User();
+    public Post() {
     }
-    this.user.setId(userId);
-  }
 
-  public void setUser(User user) {
-    this.user = user;
-  }
+    public Post(Long id, String title, String message, Long userId, boolean archived, String user) {
+        this.id = id;
+        this.title = title;
+        this.message = message;
+        this.user = new User();
+        this.user.setId(userId);
+        this.archived = archived;
 
-  public User getUser() {
-    return user;
-  }
-
-  public boolean getArchived() {
-    return archived;
-  }
-
-  public void setArchived(boolean archived) {
-    this.archived = archived;
-  }
-
-  public List<Comment> getComments() {
-    if (comments == null) {
-      comments = new ArrayList<>();
     }
-    return comments;
-  }
 
-  public void setComments(List<Comment> comments) {
-    this.comments = comments;
-  }
+    public void setUserId(Long userId) {
+        if (this.user == null) {
+            this.user = new User();
+        }
+        this.user.setId(userId);
+    }
 
-  public List<Tag> getTags() {
-    return tags;
-  }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-  public void setTags(List<Tag> tags) {
-    this.tags = tags;
-  }
+    public User getUser() {
+        return user;
+    }
 
-  public String getLocation() {
-    return "Agora Web";
-  }
+    public boolean getArchived() {
+        return archived;
+    }
 
-  @Override
-  public String toString() {
-    return "Post{" + "id=" + id + ", title='" + title + '\'' + ", message='" + message + '\'' + ", creationDate="
-        + creationDate + ", archived=" + archived + ", user=" + (user != null ? user.getId() : "null") + ", comments="
-        + comments + ", tags=" + tags + '}';
-  }
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
 
-  public int getLoves() {
-    return 0;
-  }
+    public List<Comment> getComments() {
+        if (comments == null) {
+            comments = new ArrayList<>();
+        }
+        return comments;
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
 
-  public String getTitle() {
-    return title;
-  }
+    public List<Tag> getTags() {
+        return tags;
+    }
 
-  public String getMessage() {
-    return message;
-  }
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
 
-  public Object getContent() {
-    return message;
-  }
+    public String getLocation() {
+        return "Agora Web";
+    }
 
-  public void setTitle(String title) {
-    this.title = title;
-  }
+    @Override
+    public String toString() {
+        return "Post{" + "id=" + id + ", title='" + title + '\'' + ", message='" + message + '\'' + ", creationDate="
+                + creationDate + ", archived=" + archived + ", user=" + (user != null ? user.getId() : "null") + ", comments="
+                + comments + ", tags=" + tags + '}';
+    }
 
-  public void setMessage(String message) {
-    this.message = message;
-  }
+    public int getLoves() {
+        return 0;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Object getContent() {
+        return message;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Integer getFavoritesCount() {
+        return favoritesCount;
+    }
+
+    public void setFavoritesCount(Integer favoritesCount) {
+        this.favoritesCount = favoritesCount;
+    }
+
+    public void setLoves(int loves) {
+        this.loves = loves;
+    }
 }

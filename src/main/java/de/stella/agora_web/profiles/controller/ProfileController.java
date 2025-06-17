@@ -85,4 +85,22 @@ public class ProfileController {
         return ResponseEntity.status(200).body(message);
     }
 
+    public static ProfileDTO toProfileDTO(Profile profile) {
+        return ProfileDTO.builder()
+                .id(profile.getId())
+                .userId(profile.getUser() != null ? profile.getUser().getId() : null)
+                .firstName(profile.getFirstName())
+                .lastName1(profile.getLastName1())
+                .lastName2(profile.getLastName2())
+                .username(profile.getUsername())
+                .relationship(profile.getRelationship())
+                .email(profile.getEmail())
+                .password(profile.getPassword())
+                .confirmPassword(profile.getConfirmPassword())
+                .city(profile.getCity())
+                .country(profile.getCountry())
+                .phone(profile.getPhone())
+                .build();
+    }
+
 }

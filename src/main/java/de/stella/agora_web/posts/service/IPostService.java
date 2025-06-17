@@ -11,44 +11,53 @@ import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.tags.model.Tag;
 
 public interface IPostService {
-  List<Post> getAllPosts();
 
-  Post createPost(PostDTO postDTO, Long userId);
+    List<Post> getAllPosts();
 
-  Post getById(Long postId);
+    Post createPost(PostDTO postDTO, Long userId);
 
-  Post updatePost(PostDTO postDTO, Long postId);
+    Post getById(Long postId);
 
-  Post save(PostDTO postDTO);
+    Post updatePost(PostDTO postDTO, Long postId);
 
-  List<String> extractHashtags(String message);
+    Post save(PostDTO postDTO);
 
-  Tag getTagByName(String tagName);
+    List<String> extractHashtags(String message);
 
-  Tag createTag(String tagName);
+    Tag getTagByName(String tagName);
 
-  List<Tag> getTagsByPostId(Long postId);
+    Tag createTag(String tagName);
 
-  List<Post> getPostsByTagName(String tagName);
+    List<Tag> getTagsByPostId(Long postId);
 
-  List<Post> getPostsByUserId(Long userId);
+    List<Post> getPostsByTagName(String tagName);
 
-  Post update(PostDTO postDTO, Long id);
+    List<Post> getPostsByUserId(Long userId);
 
-  // Nuevos métodos
-  void archivePost(Long postId);
+    Post update(PostDTO postDTO, Long id);
 
-  void unArchivePost(Long postId);
+    // Nuevos métodos
+    void archivePost(Long postId);
 
-  List<Comment> getCommentsByPostId(Long postId);
+    void unArchivePost(Long postId);
 
-  List<Reply> getRepliesByCommentId(Long commentId);
+    List<Comment> getCommentsByPostId(Long postId);
 
-  void createComment(Long postId, CommentDTO commentDTO);
+    List<Reply> getRepliesByCommentId(Long commentId);
 
-  void createReply(Long commentId, @SuppressWarnings("rawtypes") ReplyDTO replyDTO);
+    void createComment(Long postId, CommentDTO commentDTO);
 
-  void deleteComment(Long commentId);
+    void createReply(Long commentId, @SuppressWarnings("rawtypes") ReplyDTO replyDTO);
 
-  void deleteReply(Long replyId);
+    void deleteComment(Long commentId);
+
+    void deleteReply(Long replyId);
+
+    Post favoritePost(Long id);
+
+    Post unfavoritePost(Long id);
+
+    Integer getFavoritesCount(Long id);
+
+    void save(Post post);
 }

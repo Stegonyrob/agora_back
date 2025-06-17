@@ -100,19 +100,18 @@ public class EventController {
     }
 
     // Marcar como favorito (incrementa el contador)
-    @PostMapping("/events/{id}/favorite")
+    @PutMapping("/events/{id}/favorite")
     public ResponseEntity<Void> favoriteEvent(@PathVariable Long id) {
         Event event = eventService.getById(id);
         if (event == null) {
             return ResponseEntity.notFound().build();
         }
         event.setFavoritesCount(event.getFavoritesCount() + 1);
-        eventService.save(event); // Asegúrate de tener este método en tu servicio
+        eventService.save(event);
         return ResponseEntity.ok().build();
     }
 
-    // Desmarcar como favorito (decrementa el contador, nunca menor que 0)
-    @PostMapping("/events/{id}/unfavorite")
+    @PutMapping("/events/{id}/unfavorite")
     public ResponseEntity<Void> unfavoriteEvent(@PathVariable Long id) {
         Event event = eventService.getById(id);
         if (event == null) {

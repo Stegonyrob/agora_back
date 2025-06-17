@@ -312,4 +312,39 @@ public class PostServiceImpl implements IPostService {
 
         return postRepository.save(post);
     }
+
+    public static PostDTO toPostDTO(Post post) {
+        return PostDTO.builder().id(post.getId()).userId(post.getUser() != null ? post.getUser().getId() : null)
+                .title(post.getTitle()).message(post.getMessage())
+                .tags(post.getTags() != null ? post.getTags().stream().map(Tag::getName).toList() : new ArrayList<>())
+                // Si tienes tags, comentarios, etc., mapea aquí también
+                .build();
+    }
+
+    @Override
+    public Post favoritePost(Long id) {
+        Post post = postRepository.findById(id).orElseThrow();
+        int count = post.getFavoritesCount() != null ? post.getFavoritesCount() : 0;
+        post.setFavoritesCount(count + 1);
+        return postRepository.save(post);
+    }
+
+    @Override
+    public Post unfavoritePost(Long id) {
+        Post post = postRepository.findById(id).orElseThrow();
+        int count = post.getFavoritesCount() != null ? post.getFavoritesCount() : 0;
+        post.setFavoritesCount(Math.max(0, count - 1));
+        return postRepository.save(post);
+    }
+
+    @Override
+    public Integer getFavoritesCount(Long id) {
+        Post post = postRepository.findById(id).orElseThrow();
+        return post.getFavoritesCount() != null ? post.getFavoritesCount() : 0;
+    }
+
+    @Override
+    public void save(Post post) {
+        postRepository.save(post);
+    }
 }
