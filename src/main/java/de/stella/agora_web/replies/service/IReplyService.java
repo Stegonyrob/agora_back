@@ -7,24 +7,27 @@ import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.user.model.User;
 
 public interface IReplyService {
-  List<Reply> getAllReplys();
 
-  Reply getReplyById(Long id);
+    List<Reply> getAllReplys();
 
-  Reply createReply(@SuppressWarnings("rawtypes") ReplyDTO replyDTO, User user);
+    Reply getReplyById(Long id);
 
-  @SuppressWarnings("rawtypes")
-  Reply updateReply(Long id, ReplyDTO replyDTO);
+    Reply createReply(@SuppressWarnings("rawtypes") ReplyDTO replyDTO, User user);
 
-  void deleteReply(Long id);
+    @SuppressWarnings("rawtypes")
+    Reply updateReply(Long id, ReplyDTO replyDTO);
 
-  Reply save(@SuppressWarnings("rawtypes") ReplyDTO replyDTO);
+    void deleteReply(Long id);
 
-  List<Reply> getRepliesByUserId(Long userId);
+    Reply save(@SuppressWarnings("rawtypes") ReplyDTO replyDTO);
 
-  List<Reply> getRepliesByTagId(Long tagId);
+    List<Reply> getRepliesByUserId(Long userId);
 
-  List<Reply> getRepliesByPostId(Long postId);
+    List<Reply> getRepliesByTagId(Long tagId);
 
-  List<Reply> getRepliesByTagName(String tagName);
+    List<Reply> getRepliesByPostId(Long postId);
+
+    List<Reply> getRepliesByTagName(String tagName);
+
+    List<Reply> getRepliesByCommentId(Long id);
 }

@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.comment.controller.dto.CommentDTO;
+import de.stella.agora_web.comment.controller.dto.CommentWithRepliesDTO;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.comment.service.ICommentService;
+import de.stella.agora_web.replies.controller.dto.ReplyDTO;
+import de.stella.agora_web.replies.model.Reply;
+import de.stella.agora_web.replies.service.IReplyService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.NonNull;
 
@@ -23,57 +27,74 @@ import lombok.NonNull;
 @RequestMapping(path = "${api-endpoint}/")
 public class CommentController {
 
-  private final ICommentService CommentService;
+    private final ICommentService CommentService;
+    private final IReplyService replyService;
 
-  public CommentController(ICommentService CommentService) {
-    this.CommentService = CommentService;
-  }
+    public CommentController(ICommentService CommentService, IReplyService replyService) {
+        this.CommentService = CommentService;
+        this.replyService = replyService;
+    }
 
-  // (Get, endpoint/comments).hasAnyRoles(user,admin)
-  // respuesta a un comentario el cual debera esta asignado a un post y a un
-  // comentario refactorizar reolies para que sean
-  // las respuestas del admin crear entidad de comenta para usuarios
+    // (Get, endpoint/comments).hasAnyRoles(user,admin)
+    // respuesta a un comentario el cual debera esta asignado a un post y a un
+    // comentario refactorizar reolies para que sean
+    // las respuestas del admin crear entidad de comenta para usuarios
+    // censurar controllador unico
+    @PostMapping("/comments/create")
+    @PreAuthorize("hasRole('USER','ADMIN')")
+    public ResponseEntity<Comment> createComment(@RequestBody CommentDTO CommentDTO) {
+        Comment Comment = CommentService.createComment(CommentDTO, null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Comment);
+    }
 
-  // censurar controllador unico
+    @GetMapping("/comments/{id}")
+    public ResponseEntity<Comment> show(@NonNull @PathVariable Long id) {
+        Comment Comment = CommentService.getCommentById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(Comment);
+    }
 
-  @PostMapping("/comments/create")
-  @PreAuthorize("hasRole('USER','ADMIN')")
-  public ResponseEntity<Comment> createComment(@RequestBody CommentDTO CommentDTO) {
-    Comment Comment = CommentService.createComment(CommentDTO, null);
-    return ResponseEntity.status(HttpStatus.CREATED).body(Comment);
-  }
+    @SuppressWarnings("unchecked")
+    @GetMapping("/comments/post/{postId}")
+    public List<Comment> getCommentsByPostId(@PathVariable Long postId) {
+        return (List<Comment>) CommentService.getCommentsByPostId(postId);
+    }
 
-  @GetMapping("/comments/{id}")
-  public ResponseEntity<Comment> show(@NonNull @PathVariable Long id) {
-    Comment Comment = CommentService.getCommentById(id);
-    return ResponseEntity.status(HttpStatus.OK).body(Comment);
-  }
+    @GetMapping("/comments/tags/{tagName}")
+    public List<Comment> getCommentsByTagName(String tagName) {
+        return (List<Comment>) CommentService.getCommentsByTagName(tagName);
+    }
 
-  @SuppressWarnings("unchecked")
-  @GetMapping("/comments/post/{postId}")
-  public List<Comment> getCommentsByPostId(@PathVariable Long postId) {
-    return (List<Comment>) CommentService.getCommentsByPostId(postId);
-  }
+    @GetMapping("/comments/user/{userId}")
+    public List<Comment> getCommentsByUserId(@PathVariable Long userId) {
+        return (List<Comment>) CommentService.getCommentsByUserId(userId);
+    }
 
-  @GetMapping("/comments/tags/{tagName}")
-  public List<Comment> getCommentsByTagName(String tagName) {
-    return (List<Comment>) CommentService.getCommentsByTagName(tagName);
-  }
+    @DeleteMapping("/comments/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        CommentService.deleteComment(id);
+        return ResponseEntity.noContent().build();
+    }
 
-  @GetMapping("/comments/user/{userId}")
-  public List<Comment> getCommentsByUserId(@PathVariable Long userId) {
-    return (List<Comment>) CommentService.getCommentsByUserId(userId);
-  }
+    @PutMapping("/comments/{id}")
+    public ResponseEntity<Comment> update(@PathVariable Long id, @RequestBody CommentDTO CommentDTO) {
+        Comment Comment = CommentService.updateComment(id, CommentDTO);
+        return ResponseEntity.accepted().body(Comment);
+    }
 
-  @DeleteMapping("/comments/{id}")
-  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-    CommentService.deleteComment(id);
-    return ResponseEntity.noContent().build();
-  }
-
-  @PutMapping("/comments/{id}")
-  public ResponseEntity<Comment> update(@PathVariable Long id, @RequestBody CommentDTO CommentDTO) {
-    Comment Comment = CommentService.updateComment(id, CommentDTO);
-    return ResponseEntity.accepted().body(Comment);
-  }
+    @GetMapping("/comments/post/{postId}/with-replies")
+    public ResponseEntity<List<CommentWithRepliesDTO>> getCommentsWithReplies(@PathVariable Long postId) {
+        List<Comment> comments = (List<Comment>) CommentService.getCommentsByPostId(postId);
+        List<CommentWithRepliesDTO> dtos = comments.stream().map(comment -> {
+            List<Reply> replies = replyService.getRepliesByCommentId(comment.getId());
+            List<ReplyDTO> replyDTOs = replies.stream()
+                    .map(ReplyDTO::fromEntity)
+                    .toList();
+            return new CommentWithRepliesDTO(
+                    comment.getId(),
+                    comment.getMessage(),
+                    replyDTOs
+            );
+        }).toList();
+        return ResponseEntity.ok(dtos);
+    }
 }
