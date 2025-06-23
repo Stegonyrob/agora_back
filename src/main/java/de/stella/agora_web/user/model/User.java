@@ -39,69 +39,73 @@ import lombok.Setter;
 @Table(name = "users")
 public class User {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id_user")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_user")
+    private Long id;
 
-  private String username;
+    private String username;
 
-  private String password;
+    private String password;
 
-  private String email;
+    private String email;
 
-  @ManyToMany(fetch = FetchType.EAGER)
-  @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-  private Set<Role> roles;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
-  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-  @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-  private Profile profile;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    private Profile profile;
 
-  @OneToMany(mappedBy = "user")
-  private List<Banned> banned;
+    @OneToMany(mappedBy = "user")
+    private List<Banned> banned;
 
-  @OneToMany(mappedBy = "user")
-  private Set<Comment> comments;
+    @OneToMany(mappedBy = "user")
+    private Set<Comment> comments;
 
-  @OneToOne
-  @JoinColumn(name = "avatar_id")
-  private Avatar avatar;
+    @OneToOne
+    @JoinColumn(name = "avatar_id")
+    private Avatar avatar;
 
-  public boolean hasRole(String role) {
-    return roles.stream().anyMatch(r -> r.getName().equals(role));
-  }
+    public boolean hasRole(String role) {
+        return roles.stream().anyMatch(r -> r.getName().equals(role));
+    }
 
-  public User(String userName, String password) {
-    this.username = userName;
-    this.password = password;
-  }
+    public User(String userName, String password) {
+        this.username = userName;
+        this.password = password;
+    }
 
-  public GrantedAuthority getAuthority() {
-    return null;
-  }
+    public GrantedAuthority getAuthority() {
+        return null;
+    }
 
-  public Set<Comment> getComments() {
-    return Collections.unmodifiableSet(comments);
-  }
+    public Set<Comment> getComments() {
+        return Collections.unmodifiableSet(comments);
+    }
 
-  public void setComments(Set<Comment> comments) {
-    this.comments = new HashSet<>(comments);
-  }
+    public void setComments(Set<Comment> comments) {
+        this.comments = new HashSet<>(comments);
+    }
 
-  public Set<Role> getRoles() {
-    return Collections.unmodifiableSet(roles);
-  }
+    public Set<Role> getRoles() {
+        return Collections.unmodifiableSet(roles);
+    }
 
-  public String getPassword() {
-    return password;
-  }
+    public String getPassword() {
+        return password;
+    }
 
-  public String getUsername() {
-    return username;
-  }
+    public String getUsername() {
+        return username;
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public Long getId() {
+        return id;
+    }
+
+    public boolean isAdmin() {
+        return hasRole("ROLE_ADMIN");
+    }
 }

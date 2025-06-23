@@ -24,6 +24,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import net.minidev.json.annotate.JsonIgnore;
 
 @Getter
 @Setter
@@ -31,62 +32,63 @@ import lombok.Setter;
 @Table(name = "comments")
 public class Comment {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @NotBlank
-  @Size(min = 1, max = 100)
-  @Column(name = "title")
-  private String title;
+    @NotBlank
+    @Size(min = 1, max = 100)
+    @Column(name = "title")
+    private String title;
 
-  @NotBlank
-  @Size(min = 1, max = 1000)
-  @Column(name = "message ", length = 1000)
-  private String message;
+    @NotBlank
+    @Size(min = 1, max = 1000)
+    @Column(name = "message ", length = 1000)
+    private String message;
 
-  @Column(name = "creation_date")
-  private LocalDateTime creationDate;
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
 
-  @Column(name = "archived")
-  private Boolean archived;
+    @Column(name = "archived")
+    private Boolean archived;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "post_id")
-  private Post post;
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    @JsonIgnore
+    private Post post;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-  @ManyToMany
-  @JoinTable(name = "comment_tags", joinColumns = @JoinColumn(name = "comment_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-  private List<Tag> tags;
+    @ManyToMany
+    @JoinTable(name = "comment_tags", joinColumns = @JoinColumn(name = "comment_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private List<Tag> tags;
 
-  @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Reply> replies;
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reply> replies;
 
-  public Comment() {
-  }
+    public Comment() {
+    }
 
-  public Comment(Long id, String title, String message, LocalDateTime creationDate, User author, Post post) {
-    this.id = id;
-    this.title = title;
-    this.message = message;
-    this.creationDate = creationDate;
-    this.user = author;
-    this.post = post;
-  }
+    public Comment(Long id, String title, String message, LocalDateTime creationDate, User author, Post post) {
+        this.id = id;
+        this.title = title;
+        this.message = message;
+        this.creationDate = creationDate;
+        this.user = author;
+        this.post = post;
+    }
 
-  public void setAuthor(User author) {
-    this.user = author;
-  }
+    public void setAuthor(User author) {
+        this.user = author;
+    }
 
-  public void setPost(Post post) {
-    this.post = post;
-  }
+    public void setPost(Post post) {
+        this.post = post;
+    }
 
-  public List<Reply> getReplies() {
-    return replies;
-  }
+    public List<Reply> getReplies() {
+        return replies;
+    }
 }

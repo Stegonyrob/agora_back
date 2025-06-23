@@ -4,24 +4,25 @@ import java.util.List;
 
 import de.stella.agora_web.comment.controller.dto.CommentDTO;
 import de.stella.agora_web.comment.model.Comment;
-import lombok.NonNull;
+import de.stella.agora_web.user.model.User;
 
 public interface ICommentService {
-  List<Comment> getAllComment();
 
-  Comment getCommentById(@NonNull Long id);
+    Comment getCommentById(Long id);
 
-  void deleteComment(Long id);
+    Comment createComment(CommentDTO commentDTO, User user);
 
-  Comment createComment(CommentDTO commentDTO, Object object);
+    Comment updateComment(Long id, CommentDTO commentDTO, User user);
 
-  Comment updateComment(Long id, CommentDTO commentDTO);
+    void deleteComment(Long id, User user);
 
-  public Object getCommentsByPostId(Long postId);
+    List<Comment> getAllComments();
 
-  List<Comment> getCommentsByUserId(Long userId);
+    List<Comment> getCommentsByPostId(Long postId);
 
-  List<Comment> getCommentsByTagName(String tagName);
+    List<Comment> getCommentsByUserId(Long userId);
 
-  public Comment findById(Long commentId);
+    List<Comment> getCommentsByTagName(String tagName);
+
+    Comment findById(Long commentId);
 }

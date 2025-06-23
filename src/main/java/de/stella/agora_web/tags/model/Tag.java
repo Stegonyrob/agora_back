@@ -19,28 +19,33 @@ import lombok.Setter;
 @Table(name = "tags")
 public class Tag {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(name = "name")
-  private String name;
+    @Column(name = "name")
+    private String name;
 
-  @Column(name = "archived")
-  private Boolean archived;
+    @Column(name = "archived")
+    private Boolean archived = false;
 
-  public void setName(String name) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
+    @ManyToMany(mappedBy = "tags")
+    private List<Post> posts;
 
-  @ManyToMany(mappedBy = "tags")
-  private List<Post> posts;
+    public Tag() {
+        this.archived = false;
 
-  public List<Post> getPosts() {
-    return posts;
-  }
+    }
 
-  public String getName() {
-    return name; // Assuming 'description' is the name of the tag
-  }
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

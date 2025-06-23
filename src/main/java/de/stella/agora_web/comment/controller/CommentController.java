@@ -2,14 +2,16 @@ package de.stella.agora_web.comment.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,72 +22,85 @@ import de.stella.agora_web.comment.service.ICommentService;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.service.IReplyService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import lombok.NonNull;
+import de.stella.agora_web.user.model.User;
+import de.stella.agora_web.user.repository.UserRepository;
 
 @RestController
 @RequestMapping(path = "${api-endpoint}/")
 public class CommentController {
 
-    private final ICommentService CommentService;
-    private final IReplyService replyService;
+    @Autowired
+    private ICommentService commentService;
 
-    public CommentController(ICommentService CommentService, IReplyService replyService) {
-        this.CommentService = CommentService;
-        this.replyService = replyService;
-    }
+    @Autowired
+    private IReplyService replyService;
 
-    // (Get, endpoint/comments).hasAnyRoles(user,admin)
-    // respuesta a un comentario el cual debera esta asignado a un post y a un
-    // comentario refactorizar reolies para que sean
-    // las respuestas del admin crear entidad de comenta para usuarios
-    // censurar controllador unico
+    @SuppressWarnings("unused")
+    @Autowired
+    private UserRepository userRepository;
+
     @PostMapping("/comments/create")
-    @PreAuthorize("hasRole('USER','ADMIN')")
-    public ResponseEntity<Comment> createComment(@RequestBody CommentDTO CommentDTO) {
-        Comment Comment = CommentService.createComment(CommentDTO, null);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Comment);
-    }
+    public ResponseEntity<Comment> createComment(
+            @RequestBody CommentDTO commentDTO,
+            @AuthenticationPrincipal de.stella.agora_web.security.SecurityUser principal) {
 
-    @GetMapping("/comments/{id}")
-    public ResponseEntity<Comment> show(@NonNull @PathVariable Long id) {
-        Comment Comment = CommentService.getCommentById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(Comment);
-    }
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-    @SuppressWarnings("unchecked")
-    @GetMapping("/comments/post/{postId}")
-    public List<Comment> getCommentsByPostId(@PathVariable Long postId) {
-        return (List<Comment>) CommentService.getCommentsByPostId(postId);
-    }
+        User user = principal.getUser(); // Accede directamente a tu entidad User
 
-    @GetMapping("/comments/tags/{tagName}")
-    public List<Comment> getCommentsByTagName(String tagName) {
-        return (List<Comment>) CommentService.getCommentsByTagName(tagName);
-    }
-
-    @GetMapping("/comments/user/{userId}")
-    public List<Comment> getCommentsByUserId(@PathVariable Long userId) {
-        return (List<Comment>) CommentService.getCommentsByUserId(userId);
-    }
-
-    @DeleteMapping("/comments/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        CommentService.deleteComment(id);
-        return ResponseEntity.noContent().build();
+        Comment comment = commentService.createComment(commentDTO, user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(comment);
     }
 
     @PutMapping("/comments/{id}")
-    public ResponseEntity<Comment> update(@PathVariable Long id, @RequestBody CommentDTO CommentDTO) {
-        Comment Comment = CommentService.updateComment(id, CommentDTO);
-        return ResponseEntity.accepted().body(Comment);
+    public ResponseEntity<Comment> update(
+            @PathVariable Long id,
+            @RequestBody CommentDTO commentDTO,
+            @AuthenticationPrincipal de.stella.agora_web.security.SecurityUser principal) {
+
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        User user = principal.getUser();
+        Comment comment = commentService.getCommentById(id);
+        // Solo el dueño o admin puede modificar
+        if (!comment.getUser().getId().equals(user.getId()) && !principal.getRoles().contains("ROLE_ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        Comment updated = commentService.updateComment(id, commentDTO, user);
+        return ResponseEntity.accepted().body(updated);
+    }
+
+    @DeleteMapping("/comments/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal de.stella.agora_web.security.SecurityUser principal) {
+
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        User user = principal.getUser();
+        Comment comment = commentService.getCommentById(id);
+        // Solo el dueño o admin puede borrar
+        if (!comment.getUser().getId().equals(user.getId()) && !principal.getRoles().contains("ROLE_ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        commentService.deleteComment(id, user);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/comments/post/{postId}/with-replies")
     public ResponseEntity<List<CommentWithRepliesDTO>> getCommentsWithReplies(@PathVariable Long postId) {
-        List<Comment> comments = (List<Comment>) CommentService.getCommentsByPostId(postId);
+        List<Comment> comments = commentService.getCommentsByPostId(postId);
         List<CommentWithRepliesDTO> dtos = comments.stream().map(comment -> {
             List<Reply> replies = replyService.getRepliesByCommentId(comment.getId());
+            @SuppressWarnings("rawtypes")
             List<ReplyDTO> replyDTOs = replies.stream()
                     .map(ReplyDTO::fromEntity)
                     .toList();
@@ -96,5 +111,33 @@ public class CommentController {
             );
         }).toList();
         return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/comments/user/{userId}")
+    public ResponseEntity<List<Comment>> getCommentsByUserId(@PathVariable Long userId) {
+        if (userId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<Comment> comments = commentService.getCommentsByUserId(userId);
+        if (comments == null || comments.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(comments);
+    }
+
+    @GetMapping("/comments/post/{postId}")
+    public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable Long postId) {
+        if (postId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<Comment> comments = commentService.getCommentsByPostId(postId);
+        if (comments == null || comments.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(comments);
     }
 }

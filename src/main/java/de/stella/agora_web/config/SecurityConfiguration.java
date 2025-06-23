@@ -56,6 +56,7 @@ public class SecurityConfiguration {
     KeyUtils keyUtils;
 
     @Autowired
+    @SuppressWarnings("unused")
     PasswordEncoder passwordEncoder;
 
     JpaUserDetailsService jpaUserDetailsService;
@@ -78,9 +79,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/events/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/replies/**").hasRole("USER")
                 .requestMatchers("/replies/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/comments/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers(HttpMethod.PUT, "/comments/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/comments/**").hasRole("ADMIN")
+                .requestMatchers("/comments/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers(endpoint + "/admin/**").hasRole("ADMIN")
                 .requestMatchers(endpoint + "/user/**").hasRole("USER")
@@ -102,12 +101,14 @@ public class SecurityConfiguration {
 
     @Bean
     @Primary
+    @SuppressWarnings("unused")
     JwtDecoder jwtAccessTokenDecoder() {
         return NimbusJwtDecoder.withPublicKey(keyUtils.getAccessTokenPublicKey()).build();
     }
 
     @Bean
     @Primary
+    @SuppressWarnings("unused")
     JwtEncoder jwtAccessTokenEncoder() {
         JWK jwk = new RSAKey.Builder(keyUtils.getAccessTokenPublicKey()).privateKey(keyUtils.getAccessTokenPrivateKey())
                 .build();
@@ -133,6 +134,7 @@ public class SecurityConfiguration {
 
     @Bean
     @Qualifier("jwtRefreshTokenAuthProvider")
+    @SuppressWarnings("unused")
     JwtAuthenticationProvider jwtRefreshTokenAuthProvider() {
         JwtAuthenticationProvider provider = new JwtAuthenticationProvider(jwtRefreshTokenDecoder());
         provider.setJwtAuthenticationConverter(jwtToUserConverter);
@@ -148,6 +150,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    @SuppressWarnings("unused")
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);

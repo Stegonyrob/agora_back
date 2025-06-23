@@ -8,10 +8,10 @@ public class CommentWithRepliesDTO {
 
     private Long id;
     private String message;
+    @SuppressWarnings("rawtypes")
     private List<ReplyDTO> replies;
 
-    // Constructor
-    public CommentWithRepliesDTO(Long id, String message, List<ReplyDTO> replies) {
+    public CommentWithRepliesDTO(Long id, String message, @SuppressWarnings("rawtypes") List<ReplyDTO> replies) {
         this.id = id;
         this.message = message;
         this.replies = replies;
@@ -34,11 +34,12 @@ public class CommentWithRepliesDTO {
         this.message = message;
     }
 
+    @SuppressWarnings("rawtypes")
     public List<ReplyDTO> getReplies() {
         return replies;
     }
 
-    public void setReplies(List<ReplyDTO> replies) {
+    public void setReplies(@SuppressWarnings("rawtypes") List<ReplyDTO> replies) {
         this.replies = replies;
     }
 }

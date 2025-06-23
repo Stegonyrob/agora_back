@@ -77,4 +77,11 @@ public class SecurityUser implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public User getUser() {
+        if (user == null) {
+            throw new IllegalStateException("User is not initialized. This should never happen if the spring security configuration is correct.");
+        }
+        return user;
+    }
 }

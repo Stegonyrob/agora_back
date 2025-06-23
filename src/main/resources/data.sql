@@ -402,101 +402,157 @@ VALUES
   ),
   (
     2,
-    'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;',
-    'Sed euismod, nunc at cursus pellentesque, nisl eros pellentesque quam, a faucibus nisl nunc id nisl. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed euismod, nunc at cursus pellentesque, nisl eros pellentesque quam, a faucibus nisl nunc id nisl.',
+    'Donde Estamos',
+    'Nos encontramos en la zona Oeste de Gijón , mas exactamente en La Calzada en Calle Nicaragua al 16.',
     '../../../public/images/img/escritorio.jpg',
     'escritorio'
   ),
   (
     3,
+    'Nuestros Servicios',
+    'Nuestros servicios están diseñados para atender las necesidades de cada estudiante de manera individualizada, promoviendo su desarrollo integral y bienestar. los cuales son entre otros: Reeducación pedagógica, Educación psicomotriz, Refuerzo de inglés en grupos reducidos, Refuerzo educativo especializado en grupos pequeños, Talleres temáticos educativos (vacaciones), Taller juegos de mesa, Escuela de familias.',
+    '../../../public/images/img/escritorio.jpg',
+    'escritorio'
+  ),
+  (
+    4,
     'Reeducación pedagógica',
     'Apoyo educativo, Intervención en NEE y NEAE, Cuidado especializado por horas, Intervención educativa con familias y en el hogar, Coordinación multidisciplinar con centros educativos y particulares, Somos beneficiarios de las becas de reeducación pedagógica de NEAE y NEE.',
     '../../../public/images/img/niñoPuzzle.jpg',
     'niñoPuzzle'
   ),
   (
-    4,
+    5,
     'Educación Psicomotriz',
     'Sesiones diseñadas para fomentar el desarrollo integral de los niños a través del movimiento y la interacción con el entorno. Se trabaja la coordinación, el equilibrio, la conciencia corporal y otras habilidades motoras fundamentales para el aprendizaje y el bienestar.',
     '../../../public/images/img/niñaFicha.jpg',
     'educacionPsicomotriz'
   ),
   (
-    5,
+    6,
     'Refuerzo de Inglés en Grupos Reducidos',
     'Clases de apoyo para el aprendizaje del inglés, impartidas en grupos pequeños para garantizar una atención más personalizada. Se refuerzan los contenidos curriculares, se trabajan las habilidades comunicativas y se fomenta la confianza en el uso del idioma.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'refuerzoIngles'
   ),
   (
-    6,
+    7,
     'Refuerzo Educativo Especializado en Grupos Pequeños',
     'Apoyo académico individualizado o en grupos muy reducidos para alumnos con necesidades educativas especiales o dificultades de aprendizaje. Se adaptan las estrategias y los materiales para atender las particularidades de cada estudiante y facilitar su progreso.',
     '../../../public/images/img/adolescentesGrupal.jpg',
     'refuerzoEducativo'
   ),
   (
-    7,
+    8,
     'Talleres Temáticos Educativos (Vacaciones)',
     'Programas especiales durante los periodos vacacionales con temáticas diversas y educativas. Estos talleres buscan ofrecer un espacio de aprendizaje lúdico y creativo, explorando diferentes áreas de conocimiento y desarrollando nuevas habilidades de manera divertida.',
     '../../../public/images/img/niñoFichas.jpg',
     'talleresTematicos'
   ),
   (
-    8,
+    9,
     'Taller Juegos de Mesa',
     'Espacio dedicado al aprendizaje y desarrollo a través de los juegos de mesa. Se fomenta el pensamiento estratégico, la resolución de problemas, la cooperación, el respeto por las normas y las habilidades sociales en un ambiente divertido y participativo. Un aspecto fundamental del taller es la gestión del tiempo y la paciencia al esperar el turno de juego, promoviendo la escucha activa y la consideración por los demás participantes.',
     '../../../public/images/img/niñaFicha.jpg',
     'juegosDeMesa'
   ),
   (
-    9,
+    10,
     'Escuela de Familias',
     'Programa de formación y apoyo dirigido a padres y madres. Se ofrecen herramientas, estrategias y recursos para afrontar los retos de la crianza, mejorar la comunicación familiar y promover un desarrollo saludable de los hijos.',
     '../../../public/images/img/niñoPuzzle.jpg',
     'escuelaPadres'
   ),
   (
-    10,
-    'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;',
-    'Sed euismod, nunc at cursus pellentesque, nisl eros pellentesque quam, a faucibus nisl nunc id nisl.',
-    '../../../public/images/img/niñoCascos.jpg',
-    'niñoCascos'
-  ),
-  (
     11,
-    'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;',
-    'Sed euismod, nunc at cursus pellentesque, nisl eros pellentesque quam, a faucibus nisl nunc id nisl.',
-    '../../../public/images/img/alumnosOrdenador.jpg',
-    'alumnosOrdenador'
+    'Sobre mi;',
+    'Soy un profesional apasionado por la educación y el desarrollo integral de los niños. Con una formación sólida en pedagogía y psicología infantil, he dedicado mi carrera a crear entornos de aprendizaje inclusivos y estimulantes. Mi enfoque se centra en las necesidades individuales de cada estudiante, promoviendo su bienestar emocional y académico.',
+    '../../../public/images/img/ivan.jpg',
+    'ivan'
   ),
   (
     12,
-    'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;',
-    'Sed euismod, nunc at cursus pellentesque, nisl eros pellentesque quam, a faucibus nisl nunc id nisl.',
+    '¿qué es?;',
+    'La nerodiversidad se define como la variabilidad natural del cerebro humano, que abarca una amplia gama de diferencias neurológicas y cognitivas. Esta perspectiva reconoce que las variaciones en el funcionamiento cerebral son normales y valiosas, y que cada individuo aporta una forma única de pensar, aprender y experimentar el mundo.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     13,
-    'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;',
-    'Sed euismod, nunc at cursus pellentesque, nisl eros pellentesque quam, a faucibus nisl nunc id nisl.',
+    'Nuestra vision de la Neurodiversidad;',
+    'Nuestra visión de la neurodiversidad se basa en el respeto y la valoración de las diferencias individuales. Creemos que cada persona tiene un potencial único y que la diversidad cognitiva enriquece nuestras comunidades. Nuestro objetivo es crear entornos inclusivos que fomenten el aprendizaje y el desarrollo de todos los estudiantes, independientemente de sus habilidades o desafíos. Creemos fervientemente en PRESUMIR COMPETENCIA, no DISCAPACIDAD, y en que cada persona tiene el derecho a ser comprendida y apoyada en su proceso de aprendizaje.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     14,
-    'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;',
-    'Sed euismod, nunc at cursus pellentesque, nisl eros pellentesque quam, a faucibus nisl nunc id nisl.',
+    'Condicion del espectro autista;',
+    'El trastorno del espectro autista (TEA) es una condición del neurodesarrollo que afecta la comunicación, la interacción social y el comportamiento. Se manifiesta de diversas formas y con diferentes grados de intensidad, lo que hace que cada persona con TEA sea única. Es fundamental entender y respetar estas diferencias para ofrecer el apoyo adecuado.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     15,
-    'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;',
-    'Sed euismod, nunc at cursus pellentesque, nisl eros pellentesque quam, a faucibus nisl nunc id nisl.',
-    '../../../public/images/img/ivan.jpg',
-    'ivan'
+    'Evolución de la condición de espectro autista;',
+    'La Condición del espectro autista , antiguamente considerada un trastorno(TEA) , ha evolucionado en su comprensión y enfoque. Actualmente, se reconoce que cada persona con CEA es única y que sus experiencias y necesidades deben ser respetadas y atendidas de manera individualizada.',
+    '../../../public/images/img/alumnosOrdenador.jpg',
+    'alumnosOrdenador'
+  ),
+  (
+    16,
+    'Trastorno del déficit de atención  sin hiperactividad (TDA);',
+    'El trastorno del déficit de atención (TDA) es una condición del neurodesarrollo que se caracteriza por dificultades en la atención. Estas dificultades pueden afectar el rendimiento académico y las relaciones interpersonales. Es importante abordar el TDA con estrategias adecuadas y un enfoque comprensivo.',
+    '../../../public/images/img/alumnosOrdenador.jpg',
+    'alumnosOrdenador'
+  ),
+  (
+    17,
+    'Trastorno del déficit de atención con  hiperactividad (TDAH);',
+    'El trastorno del déficit de atención e hiperactividad (TDAH) es una condición del neurodesarrollo que se caracteriza por dificultades en la atención, la hiperactividad y la impulsividad. Estas dificultades pueden afectar el rendimiento académico y las relaciones interpersonales. Es importante abordar el TDAH con estrategias adecuadas y un enfoque comprensivo.',
+    '../../../public/images/img/alumnosOrdenador.jpg',
+    'alumnosOrdenador'
+  ),
+  (
+    18,
+    'Dificultades del aprendizaje;',
+    'Las dificultades del aprendizaje son condiciones que afectan la capacidad de una persona para adquirir, procesar o utilizar información de manera efectiva. Estas dificultades pueden manifestarse en diversas áreas, como la lectura, la escritura, el cálculo o la atención. Es fundamental identificar y abordar estas dificultades de manera temprana para ofrecer el apoyo adecuado y facilitar el aprendizaje.',
+    '../../../public/images/img/alumnosOrdenador.jpg',
+    'alumnosOrdenador'
+  ),
+  (
+    19,
+    'Desafíos del aprendizaje;',
+    'Los desafíos del aprendizaje son obstáculos que pueden dificultar el proceso educativo de los estudiantes. Estos desafíos pueden ser de naturaleza cognitiva, emocional o social, y es fundamental identificarlos y abordarlos de manera efectiva para garantizar una educación inclusiva y equitativa.',
+    '../../../public/images/img/alumnosOrdenador.jpg',
+    'alumnosOrdenador'
+  ),
+  (
+    20,
+    'Condiciones del Desarrollo;',
+    'Las condiciones del desarrollo son un conjunto de factores que influyen en el crecimiento y la evolución de los niños. Estos factores pueden ser biológicos, psicológicos o sociales, y su comprensión es esencial para ofrecer un apoyo adecuado a los estudiantes. Es fundamental abordar cada caso de manera individualizada, teniendo en cuenta las particularidades de cada niño y su contexto.',
+    '../../../public/images/img/alumnosOrdenador.jpg',
+    'alumnosOrdenador'
+  ),
+  (
+    21,
+    'Importancia de las condiciones del desarrollo;',
+    'La comprensión de las condiciones del desarrollo es esencial para ofrecer un apoyo adecuado a los estudiantes. Es fundamental abordar cada caso de manera individualizada, teniendo en cuenta las particularidades de cada niño y su contexto.',
+    '../../../public/images/img/alumnosOrdenador.jpg',
+    'alumnosOrdenador'
+  ),
+  (
+    22,
+    'Trastornos de la comunicación;',
+    'Los trastornos de la comunicación son condiciones que afectan la capacidad de una persona para comunicarse de manera efectiva. Estos trastornos pueden manifestarse en dificultades para hablar, entender o utilizar el lenguaje, y es fundamental abordarlos con un enfoque comprensivo y respetuoso. La intervención temprana y el apoyo adecuado son clave para ayudar a los niños a desarrollar habilidades comunicativas saludables.',
+    '../../../public/images/img/alumnosOrdenador.jpg',
+    'alumnosOrdenador'
+  ),
+  (
+    23,
+    'Importancia de los trastornos de la comunicación;',
+    'La comprensión de los trastornos de la comunicación es esencial para ofrecer un apoyo adecuado a los estudiantes. Es fundamental abordar cada caso de manera individualizada, teniendo en cuenta las particularidades de cada niño y su contexto. La correcta identificación y tratamiento de estos trastornos puede marcar una gran diferencia en el desarrollo y bienestar de los niños.',
+    '../../../public/images/img/alumnosOrdenador.jpg',
+    'alumnosOrdenador'
   );
 
 -- Inserciones en la tabla 'events'

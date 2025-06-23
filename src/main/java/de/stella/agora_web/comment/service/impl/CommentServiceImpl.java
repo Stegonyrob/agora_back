@@ -2,7 +2,6 @@ package de.stella.agora_web.comment.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -23,159 +22,167 @@ import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.model.User;
+import de.stella.agora_web.user.repository.UserRepository;
 
 @Service
 public class CommentServiceImpl implements ICommentService {
 
-  @Autowired
-  private CommentRepository CommentRepository;
+    @Autowired
+    private CommentRepository commentRepository;
 
-  @Autowired
-  private IMessageQueueService messageQueue;
-  @Autowired
-  private CommentKafkaProducer kafkaProducer;
-  @Autowired
-  private ITagService tagService;
+    @Autowired
+    private PostRepository postRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-  @Autowired
-  private PostRepository postRepository;
+    @Autowired
+    private IMessageQueueService messageQueue;
+    @Autowired
+    private CommentKafkaProducer kafkaProducer;
+    @Autowired
+    private ITagService tagService;
 
-  @Override
-  public Comment getCommentById(Long id) {
-    return CommentRepository.findById(id).orElse(null);
-  }
-
-  public Comment createComment(CommentDTO commentDTO, User user) {
-    Comment newComment = new Comment();
-    newComment.setPost(postRepository.findById(commentDTO.getPostId()).orElse(null));
-    newComment.setUser(user);
-    newComment.setMessage(commentDTO.getMessage());
-    newComment.setCreationDate(LocalDateTime.now());
-
-    List<Tag> tags = new ArrayList<>(commentDTO.getTags().length);
-    for (String tagName : commentDTO.getTags()) {
-      Tag tag = tagService.getTagByName(tagName);
-      if (tag == null) {
-        tag = tagService.createTag(tagName);
-      }
-      tags.add(tag);
+    @Override
+    public Comment getCommentById(Long id) {
+        return commentRepository.findById(id).orElse(null);
     }
-    tags.addAll(tagService.extractHashtags(commentDTO.getMessage()).stream().map(tagService::getTagByName)
-        .filter(Objects::nonNull).collect(Collectors.toList()));
 
-    newComment.setTags(tags);
+    @Override
+    public Comment createComment(CommentDTO commentDTO, User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("Usuario autenticado requerido");
+        } else {
+            Comment newComment = new Comment();
 
-    // Enviar notificación a Kafka
-    CommentNotificationDTO notification = new CommentNotificationDTO();
-    notification.setCommentId(newComment.getId());
-    notification.setAuthor(user.getUsername());
-    notification.setMessage(newComment.getMessage());
-    kafkaProducer.sendCommentNotification(notification);
-    return newComment;
-  }
+            // Asignar post
+            Post post = postRepository.findById(commentDTO.getPostId()).orElse(null);
+            newComment.setPost(post);
 
-  @Scheduled(fixedDelay = 1000)
-  public void processMessageQueue() {
-    List<Comment> comments = messageQueue.poll();
-    CommentRepository.saveAll(comments);
-  }
+            // Asignar usuario autenticado (siempre desde la base de datos)
+            User dbUser = userRepository.findById(user.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+            newComment.setUser(dbUser);
 
-  public List<Comment> getAllComments() {
-    return CommentRepository.findAllByOrderByCreationDateAsc();
-  }
+            // Setear título, mensaje y fecha
+            newComment.setTitle(commentDTO.getTitle());
+            newComment.setMessage(commentDTO.getMessage());
+            newComment.setCreationDate(LocalDateTime.now());
 
-  @Override
-  public Comment updateComment(Long id, CommentDTO CommentDTO) {
-    Comment existingComment = CommentRepository.findById(id).orElse(null);
-    if (existingComment != null) {
-      existingComment.setMessage(CommentDTO.getMessage());
+            // Inicializar archived a false
+            newComment.setArchived(false);
 
-      // Remove existing tags
-      existingComment.getTags().clear();
+            // Tags
+            List<Tag> tags = new ArrayList<>();
+            if (commentDTO.getTags() != null) {
+                for (String tagName : commentDTO.getTags()) {
+                    Tag tag = tagService.getOrCreateTagByName(tagName);
+                    if (tag != null) {
+                        tags.add(tag);
+                    }
+                }
+            }
+            for (String hashtag : tagService.extractHashtags(commentDTO.getMessage())) {
+                Tag tag = tagService.getOrCreateTagByName(hashtag);
+                if (tag != null && !tags.contains(tag)) {
+                    tags.add(tag);
+                }
+            }
+            newComment.setTags(tags);
 
-      // Add tags from tag list
-      List<Tag> tags = new ArrayList<>();
-      for (String tagName : CommentDTO.getTags()) {
-        Tag tag = tagService.getTagByName(tagName);
-        if (tag == null) {
-          tag = tagService.createTag(tagName);
+            // Guardar el comentario
+            commentRepository.save(newComment);
+
+            // Notificación Kafka
+            CommentNotificationDTO notification = new CommentNotificationDTO();
+            notification.setCommentId(newComment.getId());
+            notification.setAuthor(user.getUsername());
+            notification.setMessage(newComment.getMessage());
+            kafkaProducer.sendCommentNotification(notification);
+
+            return newComment;
         }
-        tags.add(tag);
-      }
+    }
 
-      // Add tags from hashtags in Comment message
-      List<String> hashtags = tagService.extractHashtags(CommentDTO.getMessage());
-      for (String hashtag : hashtags) {
-        Tag tag = tagService.getTagByName(hashtag);
-        if (tag == null) {
-          tag = tagService.createTag(hashtag);
+    @Override
+    public Comment updateComment(Long id, CommentDTO commentDTO, User user) {
+        Comment existingComment = commentRepository.findById(id).orElse(null);
+        if (existingComment == null) {
+            return null;
         }
-        tags.add(tag);
-      }
 
-      existingComment.setTags(tags);
+        // Solo el dueño o admin puede editar
+        if (!existingComment.getUser().getId().equals(user.getId()) && !user.isAdmin()) {
+            throw new SecurityException("No tienes permiso para editar este comentario.");
+        }
 
-      return CommentRepository.save(existingComment);
+        existingComment.setMessage(commentDTO.getMessage());
+        existingComment.setTitle(commentDTO.getTitle());
+
+        // Actualizar tags
+        existingComment.getTags().clear();
+        List<Tag> tags = new ArrayList<>();
+        if (commentDTO.getTags() != null) {
+            for (String tagName : commentDTO.getTags()) {
+                Tag tag = tagService.getTagByName(tagName);
+                if (tag == null) {
+                    tag = tagService.createTag(tagName);
+                }
+                tags.add(tag);
+            }
+            tags.addAll(tagService.extractHashtags(commentDTO.getMessage()).stream()
+                    .map(tagService::getTagByName)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+        }
+        existingComment.setTags(tags);
+
+        return commentRepository.save(existingComment);
     }
-    return null;
-  }
 
-  @SuppressWarnings("")
-  @Override
-  public void deleteComment(Long id) {
-    CommentRepository.deleteById(id);
-  }
+    @Override
+    public void deleteComment(Long id, User user) {
+        Comment comment = commentRepository.findById(id).orElse(null);
+        if (comment == null) {
+            return;
+        }
 
-  public Comment save(CommentDTO CommentDTO) {
-    Comment Comment = new Comment();
-    return CommentRepository.save(Comment);
-  }
+        // Solo el dueño o admin puede borrar
+        if (!comment.getUser().getId().equals(user.getId()) && !user.isAdmin()) {
+            throw new SecurityException("No tienes permiso para borrar este comentario.");
+        }
 
-  @Override
-  public List<Comment> getAllComment() {
-    return CommentRepository.findAll();
-  }
-
-  @Override
-  public Comment createComment(CommentDTO commentDTO, Object object) {
-    Comment comment = new Comment();
-    comment.setMessage(commentDTO.getMessage());
-    comment.setCreationDate(LocalDateTime.now());
-
-    User user = null;
-    if (object instanceof User user1) {
-      user = user1;
+        commentRepository.deleteById(id);
     }
-    comment.setUser(user);
 
-    Post post = null;
-    if (object instanceof Post post1) {
-      post = post1;
+    @Scheduled(fixedDelay = 1000)
+    public void processMessageQueue() {
+        List<Comment> comments = messageQueue.poll();
+        commentRepository.saveAll(comments);
     }
-    comment.setPost(post);
 
-    CommentRepository.save(comment);
-    return comment;
-  }
+    @Override
+    public List<Comment> getAllComments() {
+        return commentRepository.findAllByOrderByCreationDateAsc();
+    }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public List<Comment> getCommentsByPostId(Long postId) {
-    return ((Collection<Comment>) CommentRepository.findByPostId(postId)).stream().collect(Collectors.toList());
-  }
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Comment> getCommentsByPostId(Long postId) {
+        return (List<Comment>) commentRepository.findByPostId(postId);
+    }
 
-  @Override
-  public List<Comment> getCommentsByUserId(Long userId) {
-    return CommentRepository.findByUserId(userId);
-  }
+    @Override
+    public List<Comment> getCommentsByUserId(Long userId) {
+        return commentRepository.findByUserId(userId);
+    }
 
-  @Override
-  public List<Comment> getCommentsByTagName(String tagName) {
-    return CommentRepository.findByTagsName(tagName);
-  }
+    @Override
+    public List<Comment> getCommentsByTagName(String tagName) {
+        return commentRepository.findByTagsName(tagName);
+    }
 
-  @Override
-  public Comment findById(Long commentId) {
-    return CommentRepository.findById(commentId).orElseGet(() -> null);
-  }
+    @Override
+    public Comment findById(Long commentId) {
+        return commentRepository.findById(commentId).orElse(null);
+    }
 }
