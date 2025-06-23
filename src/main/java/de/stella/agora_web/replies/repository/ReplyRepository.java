@@ -11,19 +11,17 @@ import de.stella.agora_web.replies.model.Reply;
 @Repository
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
-  @Override
-  List<Reply> findAll();
+    @Override
+    List<Reply> findAll();
 
-  @Override
-  Optional<Reply> findById(Long id);
+    @Override
+    Optional<Reply> findById(Long id);
 
-  List<Reply> findByPostId(Long postId);
+    List<Reply> findByCommentId(Long commentId);
 
-  List<Reply> findByUserId(Long userId);
+    List<Reply> findByUserId(Long userId);
 
-  List<Reply> findByTags_Name(String tagName);
+    List<Reply> findByTags_Name(String tagName);
 
-  public List<Reply> findByCommentId(Long commentId);
-
-  List<Reply> findAllByTagsName(String tagName);
+    List<Reply> findAllByTagsName(String tagName);
 }

@@ -24,7 +24,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import net.minidev.json.annotate.JsonIgnore;
 
 @Getter
 @Setter
@@ -53,9 +52,12 @@ public class Comment {
     private Boolean archived;
 
     @ManyToOne
+
     @JoinColumn(name = "post_id")
-    @JsonIgnore
     private Post post;
+
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reply> replies;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -64,9 +66,6 @@ public class Comment {
     @ManyToMany
     @JoinTable(name = "comment_tags", joinColumns = @JoinColumn(name = "comment_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags;
-
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reply> replies;
 
     public Comment() {
     }

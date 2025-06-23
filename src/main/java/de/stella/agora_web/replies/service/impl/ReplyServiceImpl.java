@@ -6,144 +6,123 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import de.stella.agora_web.posts.repository.PostRepository;
+import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.repository.ReplyRepository;
 import de.stella.agora_web.replies.service.IReplyService;
 import de.stella.agora_web.tags.model.Tag;
-import de.stella.agora_web.tags.repository.TagRepository;
 import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.model.User;
+import de.stella.agora_web.user.repository.UserRepository;
 
 @Service
 public class ReplyServiceImpl implements IReplyService {
 
-  @Autowired
-  private ReplyRepository replyRepository;
+    @Autowired
+    private ReplyRepository replyRepository;
 
-  @Autowired
-  private ITagService tagService;
+    @Autowired
+    private CommentRepository commentRepository;
 
-  @Autowired
-  private PostRepository postRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ITagService tagService;
 
-  @SuppressWarnings("unused")
-  @Autowired
-  private TagRepository tagRepository;
-
-  @Override
-  public List<Reply> getAllReplys() {
-    return replyRepository.findAll();
-  }
-
-  @Override
-  public Reply getReplyById(Long id) {
-    return replyRepository.findById(id).orElse(null);
-  }
-
-  @Override
-  public Reply createReply(@SuppressWarnings("rawtypes") ReplyDTO replyDTO, User user) {
-    Reply reply = new Reply();
-    reply.setPost(postRepository.findById(replyDTO.getPostId()).orElse(null));
-    reply.setUser(user);
-    reply.setMessage(replyDTO.getMessage());
-    reply.setCreationDate(replyDTO.getCreationDate());
-
-    // Add tags from tag list
-    List<Tag> tags = new ArrayList<>();
-    for (String tagName : replyDTO.getTags()) {
-      Tag tag = tagService.getTagByName(tagName);
-      if (tag == null) {
-        tag = tagService.createTag(tagName);
-      }
-      tags.add(tag);
+    @Override
+    public List<Reply> getAllReplies() {
+        return replyRepository.findAll();
     }
 
-    // Add tags from hashtags in reply message
-    List<String> hashtags = tagService.extractHashtags(reply.getMessage());
-    for (String hashtag : hashtags) {
-      Tag tag = tagService.getTagByName(hashtag);
-      if (tag == null) {
-        tag = tagService.createTag(hashtag);
-      }
-      tags.add(tag);
+    @Override
+    public Reply getReplyById(Long id) {
+        return replyRepository.findById(id).orElse(null);
     }
 
-    reply.setTags(tags);
+    @Override
+    public Reply createReply(ReplyDTO replyDTO, User user) {
+        Reply reply = new Reply();
+        reply.setTitle(replyDTO.getTitle());
+        reply.setMessage(replyDTO.getMessage());
+        reply.setCreationDate(replyDTO.getCreationDate());
+        reply.setUser(userRepository.findById(replyDTO.getUserId()).orElse(null));
+        reply.setComment(commentRepository.findById(replyDTO.getCommentId()).orElse(null));
+        // ...asigna tags...
 
-    return replyRepository.save(reply);
-  }
-
-  @Override
-  public Reply updateReply(Long id, @SuppressWarnings("rawtypes") ReplyDTO replyDTO) {
-    Reply existingReply = replyRepository.findById(id).orElse(null);
-    if (existingReply != null) {
-      existingReply.setMessage(replyDTO.getMessage());
-
-      // Remove existing tags
-      existingReply.getTags().clear();
-
-      // Add tags from tag list
-      List<Tag> tags = new ArrayList<>();
-      for (String tagName : replyDTO.getTags()) {
-        Tag tag = tagService.getTagByName(tagName);
-        if (tag == null) {
-          tag = tagService.createTag(tagName);
+        List<Tag> tags = new ArrayList<>();
+        for (String tagName : replyDTO.getTags()) {
+            Tag tag = tagService.getTagByName(tagName);
+            if (tag == null) {
+                tag = tagService.createTag(tagName);
+            }
+            tags.add(tag);
         }
-        tags.add(tag);
-      }
-
-      // Add tags from hashtags in reply message
-      List<String> hashtags = tagService.extractHashtags(replyDTO.getMessage());
-      for (String hashtag : hashtags) {
-        Tag tag = tagService.getTagByName(hashtag);
-        if (tag == null) {
-          tag = tagService.createTag(hashtag);
+        List<String> hashtags = tagService.extractHashtags(reply.getMessage());
+        for (String hashtag : hashtags) {
+            Tag tag = tagService.getTagByName(hashtag);
+            if (tag == null) {
+                tag = tagService.createTag(hashtag);
+            }
+            tags.add(tag);
         }
-        tags.add(tag);
-      }
+        reply.setTags(tags);
 
-      existingReply.setTags(tags);
-
-      return replyRepository.save(existingReply);
+        return replyRepository.save(reply);
     }
-    return null;
-  }
 
-  @SuppressWarnings("")
-  @Override
-  public void deleteReply(Long id) {
-    replyRepository.deleteById(id);
-  }
+    @Override
+    public Reply updateReply(Long id, ReplyDTO replyDTO) {
+        Reply existingReply = replyRepository.findById(id).orElse(null);
+        if (existingReply != null) {
+            existingReply.setMessage(replyDTO.getMessage());
+            existingReply.getTags().clear();
 
-  @Override
-  public Reply save(@SuppressWarnings("rawtypes") ReplyDTO replyDTO) {
-    Reply reply = new Reply();
-    return replyRepository.save(reply);
-  }
+            List<Tag> tags = new ArrayList<>();
+            for (String tagName : replyDTO.getTags()) {
+                Tag tag = tagService.getTagByName(tagName);
+                if (tag == null) {
+                    tag = tagService.createTag(tagName);
+                }
+                tags.add(tag);
+            }
+            List<String> hashtags = tagService.extractHashtags(replyDTO.getMessage());
+            for (String hashtag : hashtags) {
+                Tag tag = tagService.getTagByName(hashtag);
+                if (tag == null) {
+                    tag = tagService.createTag(hashtag);
+                }
+                tags.add(tag);
+            }
+            existingReply.setTags(tags);
 
-  public List<Reply> getRepliesByCommentId(Long commentId) {
-    return replyRepository.findByCommentId(commentId);
-  }
+            return replyRepository.save(existingReply);
+        }
+        return null;
+    }
 
-  @Override
-  public List<Reply> getRepliesByUserId(Long userId) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
+    @Override
+    public void deleteReply(Long id) {
+        replyRepository.deleteById(id);
+    }
 
-  @Override
-  public List<Reply> getRepliesByTagName(String tagName) {
-    return replyRepository.findAllByTagsName(tagName);
-  }
+    @Override
+    public List<Reply> getRepliesByCommentId(Long commentId) {
+        return replyRepository.findByCommentId(commentId);
+    }
 
-  @Override
-  public List<Reply> getRepliesByPostId(Long postId) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
+    @Override
+    public List<Reply> getRepliesByUserId(Long userId) {
+        return replyRepository.findByUserId(userId);
+    }
 
-  @Override
-  public List<Reply> getRepliesByTagId(Long tagId) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
+    @Override
+    public List<Reply> getRepliesByTagName(String tagName) {
+        return replyRepository.findAllByTagsName(tagName);
+    }
+
+    @Override
+    public List<Reply> getRepliesByTagId(Long tagId) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

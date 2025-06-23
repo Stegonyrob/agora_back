@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,63 +18,61 @@ import org.springframework.web.bind.annotation.RestController;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.service.IReplyService;
+import de.stella.agora_web.user.model.User;
 
-//separar dos controlladores de replies uno admin y otro user
 @RestController
 @RequestMapping(path = "${api-endpoint}/all")
 public class ReplyController {
 
-  private final IReplyService replyService;
+    private final IReplyService replyService;
 
-  public ReplyController(IReplyService replyService) {
-    this.replyService = replyService;
-  }
+    public ReplyController(IReplyService replyService) {
+        this.replyService = replyService;
+    }
 
-  // (Get, endpoint/replies).hasAnyRoles(user,admin)
-  // respuesta a un comentario el cual debera esta asignado a un post y a un
-  // comentario refactorizar reolies para que sean
-  // las respuestas del admin crear entidad de comenta para usuarios
+    @PostMapping("/replies/create")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<Reply> createReply(
+            @RequestBody ReplyDTO replyDTO,
+            @AuthenticationPrincipal User user // Spring Security inyecta el usuario autenticado
+    ) {
+        Reply reply = replyService.createReply(replyDTO, user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(reply);
+    }
 
-  // censurar controllador unico
+    @GetMapping("/replies/{id}")
+    public ResponseEntity<Reply> show(@PathVariable Long id) {
+        Reply reply = replyService.getReplyById(id);
+        return ResponseEntity.ok(reply);
+    }
 
-  @PostMapping("/replies/create")
-  @PreAuthorize("hasRole('USER','ADMIN')")
-  public ResponseEntity<Reply> createReply(@SuppressWarnings("rawtypes") @RequestBody ReplyDTO replyDTO) {
-    Reply reply = replyService.createReply(replyDTO, null);
-    return ResponseEntity.status(HttpStatus.CREATED).body(reply);
-  }
+    @GetMapping("/replies/comment/{commentId}")
+    public List<Reply> getRepliesByCommentId(@PathVariable Long commentId) {
+        return replyService.getRepliesByCommentId(commentId);
+    }
 
-  @GetMapping("/replies/{id}")
-  public ResponseEntity<Reply> show(@PathVariable Long id) {
-    Reply reply = replyService.getReplyById(id);
-    return ResponseEntity.ok(reply);
-  }
+    @GetMapping("/replies/tags/{tagName}")
+    public List<Reply> getRepliesByTagName(@PathVariable String tagName) {
+        return replyService.getRepliesByTagName(tagName);
+    }
 
-  @GetMapping("/replies/post/{postId}")
-  public List<Reply> getRepliesByPostId(@PathVariable Long postId) {
-    return replyService.getRepliesByPostId(postId);
-  }
+    @GetMapping("/replies/user/{userId}")
+    public List<Reply> getRepliesByUserId(@PathVariable Long userId) {
+        return replyService.getRepliesByUserId(userId);
+    }
 
-  @GetMapping("/replies/tags/{tagName}")
-  public List<Reply> getRepliesByTagName(@PathVariable String tagName) {
-    return replyService.getRepliesByTagName(tagName);
-  }
+    @DeleteMapping("/replies/{id}")
+    public ResponseEntity<Void> deleteReply(@PathVariable Long id) {
+        replyService.deleteReply(id);
+        return ResponseEntity.noContent().build();
+    }
 
-  @GetMapping("/replies/user/{userId}")
-  public List<Reply> getRepliesByUserId(@PathVariable Long userId) {
-    return replyService.getRepliesByUserId(userId);
-  }
-
-  @DeleteMapping("/replies/{id}")
-  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-    replyService.deleteReply(id);
-    return ResponseEntity.noContent().build();
-  }
-
-  @PutMapping("/replies/{id}")
-  public ResponseEntity<Reply> update(@PathVariable Long id,
-      @SuppressWarnings("rawtypes") @RequestBody ReplyDTO replyDTO) {
-    Reply reply = replyService.updateReply(id, replyDTO);
-    return ResponseEntity.accepted().body(reply);
-  }
+    @PutMapping("/replies/{id}")
+    public ResponseEntity<Reply> update(
+            @PathVariable Long id,
+            @RequestBody ReplyDTO replyDTO
+    ) {
+        Reply reply = replyService.updateReply(id, replyDTO);
+        return ResponseEntity.accepted().body(reply);
+    }
 }

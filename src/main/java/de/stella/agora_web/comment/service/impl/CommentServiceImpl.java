@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.comment.controller.dto.CommentDTO;
+import de.stella.agora_web.comment.exceptions.CommentNotFoundException;
 import de.stella.agora_web.comment.kafka.component.producer.CommentKafkaProducer;
 import de.stella.agora_web.comment.kafka.dto.CommentNotificationDTO;
 import de.stella.agora_web.comment.model.Comment;
@@ -43,8 +44,8 @@ public class CommentServiceImpl implements ICommentService {
     private ITagService tagService;
 
     @Override
-    public Comment getCommentById(Long id) {
-        return commentRepository.findById(id).orElse(null);
+    public List<Comment> getCommentsByPostId(Long postId) {
+        return commentRepository.findByPostId(postId);
     }
 
     @Override
@@ -165,12 +166,6 @@ public class CommentServiceImpl implements ICommentService {
         return commentRepository.findAllByOrderByCreationDateAsc();
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Comment> getCommentsByPostId(Long postId) {
-        return (List<Comment>) commentRepository.findByPostId(postId);
-    }
-
     @Override
     public List<Comment> getCommentsByUserId(Long userId) {
         return commentRepository.findByUserId(userId);
@@ -184,5 +179,11 @@ public class CommentServiceImpl implements ICommentService {
     @Override
     public Comment findById(Long commentId) {
         return commentRepository.findById(commentId).orElse(null);
+    }
+
+    @Override
+    public Comment getCommentById(Long id) {
+        return commentRepository.findById(id)
+                .orElseThrow(() -> new CommentNotFoundException("Comment not found with id: " + id));
     }
 }

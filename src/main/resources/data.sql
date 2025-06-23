@@ -370,25 +370,87 @@ VALUES
     0
   );
 
--- Inserciones en la tabla 'replies'
+-- Inserta comentarios para posts existentes
 INSERT INTO
-  replies (message, user_id, post_id)
+  comments (
+    title,
+    message,
+    creation_date,
+    archived,
+    post_id,
+    user_id
+  )
 VALUES
-  ('Respuesta 1 del admin', 1, 1),
-  ('Respuesta 2 del user1', 2, 1),
-  ('Respuesta 3 del admin', 1, 2),
-  ('Respuesta 4 del user2', 3, 2),
-  ('Respuesta 5 del user3', 4, 3),
-  ('Respuesta 6 del admin', 1, 3);
+  (
+    'Comentario 1',
+    'Mensaje del comentario 1',
+    NOW(),
+    false,
+    1,
+    1
+  ),
+  (
+    'Comentario 2',
+    'Mensaje del comentario 2',
+    NOW(),
+    false,
+    1,
+    2
+  ),
+  (
+    'Comentario 3',
+    'Mensaje del comentario 3',
+    NOW(),
+    false,
+    2,
+    3
+  );
 
--- -- Inserciones en la tabla 'favorites'
--- INSERT INTO favorites (user_id, reply_id) VALUES
---   (2, 1),
---   (3, 1),
---   (4, 1),
---   (1, 2),
---   (3, 3),
---   (4, 5);
+-- Inserciones en la tabla 'replies'
+-- Inserta replies para comentarios existentes
+INSERT INTO
+  replies (
+    title,
+    message,
+    creation_date,
+    archived,
+    comment_id,
+    user_id
+  )
+VALUES
+  (
+    'Respuesta 1',
+    'Respuesta 1 al comentario 1',
+    NOW(),
+    false,
+    1,
+    1
+  ),
+  (
+    'Respuesta 2',
+    'Respuesta 2 al comentario 1',
+    NOW(),
+    false,
+    1,
+    2
+  ),
+  (
+    'Respuesta 3',
+    'Respuesta 3 al comentario 2',
+    NOW(),
+    false,
+    2,
+    3
+  ),
+  (
+    'Respuesta 4',
+    'Respuesta 4 al comentario 3',
+    NOW(),
+    false,
+    3,
+    1
+  );
+
 -- Inserciones en la tabla 'texts'
 INSERT INTO
   texts (id, title, description, image, name_image)

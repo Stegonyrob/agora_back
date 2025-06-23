@@ -11,17 +11,17 @@ import de.stella.agora_web.comment.model.Comment;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-  @Override
-  List<Comment> findAll();
+    @Override
+    List<Comment> findAll();
 
-  @Override
-  Optional<Comment> findById(Long id);
+    @Override
+    Optional<Comment> findById(Long id);
 
-  public List<Comment> findByTagsName(String tagName);
+    public List<Comment> findByTagsName(String tagName);
 
-  public List<Comment> findByUserId(Long userId);
+    public List<Comment> findByUserId(Long userId);
 
-  public Object findByPostId(Long postId);
+    public List<Comment> findByPostId(Long postId);
 
-  List<Comment> findAllByOrderByCreationDateAsc();
+    List<Comment> findAllByOrderByCreationDateAsc();
 }

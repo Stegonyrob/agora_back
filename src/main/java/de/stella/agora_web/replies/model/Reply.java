@@ -29,67 +29,59 @@ import lombok.Setter;
 @Table(name = "replies")
 public class Reply {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @NotBlank
-  @Size(min = 1, max = 100)
-  @Column(name = "title")
-  private String title;
+    @NotBlank
+    @Size(min = 1, max = 100)
+    @Column(name = "title")
+    private String title;
 
-  @NotBlank
-  @Size(min = 1, max = 1000)
-  @Column(name = "message ", length = 1000)
-  private String message;
+    @NotBlank
+    @Size(min = 1, max = 1000)
+    @Column(name = "message ", length = 1000)
+    private String message;
 
-  @Column(name = "creation_date")
-  private LocalDateTime creationDate;
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
 
-  @Column(name = "archived")
-  private Boolean archived;
+    @Column(name = "archived")
+    private Boolean archived;
 
-  @ManyToMany
-  @JoinTable(name = "reply_tags", joinColumns = @JoinColumn(name = "reply_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-  private List<Tag> tags;
+    @ManyToMany
+    @JoinTable(name = "reply_tags", joinColumns = @JoinColumn(name = "reply_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private List<Tag> tags;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-  @ManyToOne
-  @JoinColumn(name = "post_id")
-  private Post post;
+    @ManyToOne
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
-  @ManyToOne
-  @JoinColumn(name = "comment_id")
-  private Comment comment;
+    public Reply() {
+    }
 
-  public Reply() {
-  }
+    public Reply(Long id, String title, String message, LocalDateTime creationDate, User user, Post post) {
+        this.id = id;
+        this.title = title;
+        this.message = message;
+        this.creationDate = creationDate;
+        this.user = user;
 
-  public Reply(Long id, String title, String message, LocalDateTime creationDate, User user, Post post) {
-    this.id = id;
-    this.title = title;
-    this.message = message;
-    this.creationDate = creationDate;
-    this.user = user;
-    this.post = post;
-  }
+    }
 
-  public void setUser(User user) {
-    this.user = user;
-  }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-  public void setTags(List<Tag> tags) {
-    this.tags = tags;
-  }
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
 
-  public void setPost(Post post) {
-    this.post = post;
-  }
-
-  public void setComment(Comment comment) {
-    this.comment = comment;
-  }
+    public void setComment(Comment comment) {
+        this.comment = comment;
+    }
 }
