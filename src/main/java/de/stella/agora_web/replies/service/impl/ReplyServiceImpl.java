@@ -45,11 +45,21 @@ public class ReplyServiceImpl implements IReplyService {
         Reply reply = new Reply();
 
         reply.setMessage(replyDTO.getMessage());
-        reply.setCreationDate(replyDTO.getCreationDate());
+
+        // Si el DTO trae fecha, úsala; si no, pon la actual
+        if (replyDTO.getCreationDate() != null) {
+            reply.setCreationDate(replyDTO.getCreationDate());
+        } else {
+            reply.setCreationDate(java.time.LocalDateTime.now());
+        }
+
+        // Siempre marca como no archivado al crear
+        reply.setArchived(false);
+
         reply.setUser(userRepository.findById(replyDTO.getUserId()).orElse(null));
         reply.setComment(commentRepository.findById(replyDTO.getCommentId()).orElse(null));
-        // ...asigna tags...
 
+        // Asigna tags
         List<Tag> tags = new ArrayList<>();
         for (String tagName : replyDTO.getTags()) {
             Tag tag = tagService.getTagByName(tagName);
