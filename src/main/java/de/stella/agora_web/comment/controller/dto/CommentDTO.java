@@ -12,7 +12,6 @@ import lombok.Setter;
 @Builder
 public class CommentDTO {
 
-    private String title;
     private String message;
     private LocalDateTime creationDate;
     private Long postId;

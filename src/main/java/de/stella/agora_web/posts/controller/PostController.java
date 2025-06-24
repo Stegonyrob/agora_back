@@ -3,6 +3,8 @@ package de.stella.agora_web.posts.controller;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.posts.controller.dto.PostDTO;
+import de.stella.agora_web.posts.controller.dto.PostSummaryDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.service.IPostService;
 
@@ -31,8 +34,12 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public List<Post> index() {
-        return postService.getAllPosts();
+    public ResponseEntity<Page<PostSummaryDTO>> getAllPosts(Pageable pageable) {
+        Page<PostSummaryDTO> posts = postService.getAllPostsWithCounts(pageable);
+        if (posts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(posts);
     }
 
     @GetMapping("/posts/{id}")

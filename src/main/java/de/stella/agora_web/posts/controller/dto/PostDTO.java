@@ -84,4 +84,24 @@ public class PostDTO {
     public Boolean getArchived() {
         return isArchived();
     }
+
+    @java.lang.SuppressWarnings(value = "all")
+    @lombok.Generated
+    public static class PostDTOBuilder {
+
+        public PostDTOBuilder commentsCount(int commentsCount) {
+            if (commentsCount < 0) {
+                throw new IllegalArgumentException("commentsCount must not be negative");
+            }
+            return this;
+        }
+
+        public PostDTOBuilder favoritesCount(int favoritesCount) {
+            if (favoritesCount < 0) {
+                throw new IllegalArgumentException("favoritesCount must not be negative");
+            }
+            this.loves = favoritesCount;
+            return this;
+        }
+    }
 }

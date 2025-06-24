@@ -65,8 +65,8 @@ public class Post {
     @JsonBackReference
     private User user;
 
-    @JsonBackReference
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @com.fasterxml.jackson.annotation.JsonManagedReference
     private List<Comment> comments;
 
     @ManyToMany

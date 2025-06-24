@@ -36,11 +36,6 @@ public class Comment {
     private Long id;
 
     @NotBlank
-    @Size(min = 1, max = 100)
-    @Column(name = "title")
-    private String title;
-
-    @NotBlank
     @Size(min = 1, max = 1000)
     @Column(name = "message ", length = 1000)
     private String message;
@@ -52,11 +47,12 @@ public class Comment {
     private Boolean archived;
 
     @ManyToOne
-
     @JoinColumn(name = "post_id")
+    @com.fasterxml.jackson.annotation.JsonBackReference
     private Post post;
 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @com.fasterxml.jackson.annotation.JsonManagedReference
     private List<Reply> replies;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -70,9 +66,9 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(Long id, String title, String message, LocalDateTime creationDate, User author, Post post) {
+    public Comment(Long id, String message, LocalDateTime creationDate, User author, Post post) {
         this.id = id;
-        this.title = title;
+
         this.message = message;
         this.creationDate = creationDate;
         this.user = author;

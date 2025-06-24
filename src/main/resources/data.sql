@@ -373,7 +373,6 @@ VALUES
 -- Inserta comentarios para posts existentes
 INSERT INTO
   comments (
-    title,
     message,
     creation_date,
     archived,
@@ -381,36 +380,14 @@ INSERT INTO
     user_id
   )
 VALUES
-  (
-    'Comentario 1',
-    'Mensaje del comentario 1',
-    NOW(),
-    false,
-    1,
-    1
-  ),
-  (
-    'Comentario 2',
-    'Mensaje del comentario 2',
-    NOW(),
-    false,
-    1,
-    2
-  ),
-  (
-    'Comentario 3',
-    'Mensaje del comentario 3',
-    NOW(),
-    false,
-    2,
-    3
-  );
+  ('Comentario 1', NOW(), false, 1, 1),
+  ('Comentario 2', NOW(), false, 1, 2),
+  ('Comentario 3', NOW(), false, 2, 3);
 
 -- Inserciones en la tabla 'replies'
 -- Inserta replies para comentarios existentes
 INSERT INTO
   replies (
-    title,
     message,
     creation_date,
     archived,
@@ -418,38 +395,10 @@ INSERT INTO
     user_id
   )
 VALUES
-  (
-    'Respuesta 1',
-    'Respuesta 1 al comentario 1',
-    NOW(),
-    false,
-    1,
-    1
-  ),
-  (
-    'Respuesta 2',
-    'Respuesta 2 al comentario 1',
-    NOW(),
-    false,
-    1,
-    2
-  ),
-  (
-    'Respuesta 3',
-    'Respuesta 3 al comentario 2',
-    NOW(),
-    false,
-    2,
-    3
-  ),
-  (
-    'Respuesta 4',
-    'Respuesta 4 al comentario 3',
-    NOW(),
-    false,
-    3,
-    1
-  );
+  ('Respuesta 1 al comentario 1', NOW(), false, 1, 1),
+  ('Respuesta 2 al comentario 1', NOW(), false, 1, 2),
+  ('Respuesta 3 al comentario 2', NOW(), false, 2, 3),
+  ('Respuesta 4 al comentario 3', NOW(), false, 3, 1);
 
 -- Inserciones en la tabla 'texts'
 INSERT INTO

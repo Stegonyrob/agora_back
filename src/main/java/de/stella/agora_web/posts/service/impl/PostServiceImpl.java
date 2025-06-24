@@ -7,12 +7,15 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.comment.controller.dto.CommentDTO;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.posts.controller.dto.PostDTO;
+import de.stella.agora_web.posts.controller.dto.PostSummaryDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.posts.service.IPostService;
@@ -346,5 +349,10 @@ public class PostServiceImpl implements IPostService {
     @Override
     public void save(Post post) {
         postRepository.save(post);
+    }
+
+    @Override
+    public Page<PostSummaryDTO> getAllPostsWithCounts(Pageable pageable) {
+        return postRepository.findAllWithCounts(pageable);
     }
 }

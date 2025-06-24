@@ -34,11 +34,6 @@ public class Reply {
     private Long id;
 
     @NotBlank
-    @Size(min = 1, max = 100)
-    @Column(name = "title")
-    private String title;
-
-    @NotBlank
     @Size(min = 1, max = 1000)
     @Column(name = "message ", length = 1000)
     private String message;
@@ -59,14 +54,15 @@ public class Reply {
 
     @ManyToOne
     @JoinColumn(name = "comment_id")
+    @com.fasterxml.jackson.annotation.JsonBackReference
     private Comment comment;
 
     public Reply() {
     }
 
-    public Reply(Long id, String title, String message, LocalDateTime creationDate, User user, Post post) {
+    public Reply(Long id, String message, LocalDateTime creationDate, User user, Post post) {
         this.id = id;
-        this.title = title;
+        this.archived = false; // Por defecto, no está archivado
         this.message = message;
         this.creationDate = creationDate;
         this.user = user;
@@ -75,6 +71,10 @@ public class Reply {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public void setTags(List<Tag> tags) {

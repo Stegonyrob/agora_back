@@ -2,9 +2,13 @@ package de.stella.agora_web.posts.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import de.stella.agora_web.comment.controller.dto.CommentDTO;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.posts.controller.dto.PostDTO;
+import de.stella.agora_web.posts.controller.dto.PostSummaryDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.model.Reply;
@@ -60,4 +64,6 @@ public interface IPostService {
     Integer getFavoritesCount(Long id);
 
     void save(Post post);
+
+    Page<PostSummaryDTO> getAllPostsWithCounts(Pageable pageable);
 }

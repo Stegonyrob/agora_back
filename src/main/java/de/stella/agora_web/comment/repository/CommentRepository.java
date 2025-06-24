@@ -3,6 +3,8 @@ package de.stella.agora_web.comment.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -24,4 +26,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     public List<Comment> findByPostId(Long postId);
 
     List<Comment> findAllByOrderByCreationDateAsc();
+
+    Page<Comment> findByPostId(Long postId, Pageable pageable);
 }

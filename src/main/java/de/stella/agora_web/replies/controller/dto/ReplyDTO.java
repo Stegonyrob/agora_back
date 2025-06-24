@@ -14,7 +14,6 @@ import lombok.Setter;
 @Builder
 public class ReplyDTO {
 
-    private String title;
     private String message;
     private LocalDateTime creationDate;
     private Long commentId; // Relación directa con Comment
@@ -28,7 +27,6 @@ public class ReplyDTO {
 
     public static ReplyDTO fromEntity(Reply reply) {
         return ReplyDTO.builder()
-                .title(reply.getTitle())
                 .message(reply.getMessage())
                 .creationDate(reply.getCreationDate())
                 .commentId(reply.getComment() != null ? reply.getComment().getId() : null)

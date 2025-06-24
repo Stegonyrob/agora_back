@@ -43,7 +43,7 @@ public class ReplyServiceImpl implements IReplyService {
     @Override
     public Reply createReply(ReplyDTO replyDTO, User user) {
         Reply reply = new Reply();
-        reply.setTitle(replyDTO.getTitle());
+
         reply.setMessage(replyDTO.getMessage());
         reply.setCreationDate(replyDTO.getCreationDate());
         reply.setUser(userRepository.findById(replyDTO.getUserId()).orElse(null));

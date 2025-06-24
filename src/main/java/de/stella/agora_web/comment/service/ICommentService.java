@@ -2,6 +2,9 @@ package de.stella.agora_web.comment.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import de.stella.agora_web.comment.controller.dto.CommentDTO;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.user.model.User;
@@ -25,4 +28,6 @@ public interface ICommentService {
     List<Comment> getCommentsByTagName(String tagName);
 
     Comment findById(Long commentId);
+
+    Page<Comment> getCommentsByPostId(Long postId, Pageable pageable);
 }

@@ -3,6 +3,8 @@ package de.stella.agora_web.comment.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -96,11 +98,12 @@ public class CommentController {
     }
 
     @GetMapping("/comments/post/{postId}/with-replies")
-    public ResponseEntity<List<CommentWithRepliesDTO>> getCommentsWithReplies(@PathVariable Long postId) {
-        List<Comment> comments = commentService.getCommentsByPostId(postId);
-        List<CommentWithRepliesDTO> dtos = comments.stream().map(comment -> {
+    public ResponseEntity<Page<CommentWithRepliesDTO>> getCommentsWithReplies(
+            @PathVariable Long postId,
+            Pageable pageable) {
+        Page<Comment> comments = commentService.getCommentsByPostId(postId, pageable);
+        Page<CommentWithRepliesDTO> dtos = comments.map(comment -> {
             List<Reply> replies = replyService.getRepliesByCommentId(comment.getId());
-            @SuppressWarnings("rawtypes")
             List<ReplyDTO> replyDTOs = replies.stream()
                     .map(ReplyDTO::fromEntity)
                     .toList();
@@ -109,35 +112,8 @@ public class CommentController {
                     comment.getMessage(),
                     replyDTOs
             );
-        }).toList();
+        });
         return ResponseEntity.ok(dtos);
     }
 
-    @GetMapping("/comments/user/{userId}")
-    public ResponseEntity<List<Comment>> getCommentsByUserId(@PathVariable Long userId) {
-        if (userId == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        List<Comment> comments = commentService.getCommentsByUserId(userId);
-        if (comments == null || comments.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(comments);
-    }
-
-    @GetMapping("/comments/post/{postId}")
-    public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable Long postId) {
-        if (postId == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        List<Comment> comments = commentService.getCommentsByPostId(postId);
-        if (comments == null || comments.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(comments);
-    }
 }

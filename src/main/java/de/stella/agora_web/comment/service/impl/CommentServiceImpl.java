@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -65,7 +67,6 @@ public class CommentServiceImpl implements ICommentService {
             newComment.setUser(dbUser);
 
             // Setear título, mensaje y fecha
-            newComment.setTitle(commentDTO.getTitle());
             newComment.setMessage(commentDTO.getMessage());
             newComment.setCreationDate(LocalDateTime.now());
 
@@ -117,7 +118,6 @@ public class CommentServiceImpl implements ICommentService {
         }
 
         existingComment.setMessage(commentDTO.getMessage());
-        existingComment.setTitle(commentDTO.getTitle());
 
         // Actualizar tags
         existingComment.getTags().clear();
@@ -185,5 +185,10 @@ public class CommentServiceImpl implements ICommentService {
     public Comment getCommentById(Long id) {
         return commentRepository.findById(id)
                 .orElseThrow(() -> new CommentNotFoundException("Comment not found with id: " + id));
+    }
+
+    @Override
+    public Page<Comment> getCommentsByPostId(Long postId, Pageable pageable) {
+        return commentRepository.findByPostId(postId, pageable);
     }
 }
