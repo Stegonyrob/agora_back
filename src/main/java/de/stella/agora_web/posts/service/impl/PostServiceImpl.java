@@ -17,6 +17,8 @@ import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.controller.dto.PostSummaryDTO;
 import de.stella.agora_web.posts.model.Post;
+import de.stella.agora_web.posts.model.PostLove;
+import de.stella.agora_web.posts.repository.PostLoveRepository;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.posts.service.IPostService;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
@@ -33,21 +35,22 @@ import de.stella.agora_web.user.service.impl.UserServiceImpl;
 public class PostServiceImpl implements IPostService {
 
     private final PostRepository postRepository;
+    private final PostLoveRepository postLoveRepository;
     private final UserServiceImpl userService;
     private final ITagService tagService;
     private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
 
-    public PostServiceImpl(PostRepository postRepository, UserServiceImpl userService, ITagService tagService,
+    public PostServiceImpl(PostRepository postRepository, PostLoveRepository postLoveRepository, UserServiceImpl userService, ITagService tagService,
             CommentRepository commentRepository, ReplyRepository replyRepository, TagRepository tagRepository) {
         this.postRepository = postRepository;
+        this.postLoveRepository = postLoveRepository;
         this.userService = userService;
         this.tagService = tagService;
         this.commentRepository = commentRepository;
         this.replyRepository = replyRepository;
         this.tagRepository = tagRepository;
-
     }
 
     @Override
@@ -324,26 +327,31 @@ public class PostServiceImpl implements IPostService {
                 .build();
     }
 
+    // --- Lógica de "loves" usando la tabla auxiliar ---
     @Override
-    public Post favoritePost(Long id) {
-        Post post = postRepository.findById(id).orElseThrow();
-        int count = post.getFavoritesCount() != null ? post.getFavoritesCount() : 0;
-        post.setFavoritesCount(count + 1);
-        return postRepository.save(post);
+    public void lovePost(Long postId, Long userId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        User user = userService.getUserById(userId);
+
+        boolean exists = postLoveRepository.existsByPostIdAndProfileUserId(postId, userId);
+        if (!exists) {
+            PostLove postLove = new PostLove();
+            postLove.setPost(post);
+            postLove.setProfile(user.getProfile());
+            postLoveRepository.save(postLove);
+        }
     }
 
     @Override
-    public Post unfavoritePost(Long id) {
-        Post post = postRepository.findById(id).orElseThrow();
-        int count = post.getFavoritesCount() != null ? post.getFavoritesCount() : 0;
-        post.setFavoritesCount(Math.max(0, count - 1));
-        return postRepository.save(post);
+    public void unlovePost(Long postId, Long userId) {
+        PostLove postLove = postLoveRepository.findByPostIdAndProfileUserId(postId, userId)
+                .orElseThrow(() -> new NoSuchElementException("No love found for this post and user"));
+        postLoveRepository.delete(postLove);
     }
 
     @Override
-    public Integer getFavoritesCount(Long id) {
-        Post post = postRepository.findById(id).orElseThrow();
-        return post.getFavoritesCount() != null ? post.getFavoritesCount() : 0;
+    public Integer getLoveCount(Long postId) {
+        return postLoveRepository.countByPostId(postId);
     }
 
     @Override

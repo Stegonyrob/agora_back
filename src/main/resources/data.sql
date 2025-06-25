@@ -82,8 +82,7 @@ INSERT INTO
     email,
     password,
     confirm_password,
-    city,
-    favorite
+    city
   )
 VALUES
   (
@@ -97,8 +96,7 @@ VALUES
     'admin@gmail.com',
     '',
     '',
-    'city',
-    false
+    'city'
   );
 
 INSERT INTO
@@ -113,8 +111,7 @@ INSERT INTO
     email,
     password,
     confirm_password,
-    city,
-    favorite
+    city
   )
 VALUES
   (
@@ -128,8 +125,7 @@ VALUES
     'admin@gmail.com',
     '',
     '',
-    'Gijon',
-    false
+    'Gijon'
   );
 
 INSERT INTO
@@ -144,8 +140,7 @@ INSERT INTO
     email,
     password,
     confirm_password,
-    city,
-    favorite
+    city
   )
 VALUES
   (
@@ -159,8 +154,7 @@ VALUES
     'admin@gmail.com',
     '',
     '',
-    'city',
-    false
+    'city'
   );
 
 INSERT INTO
@@ -175,8 +169,7 @@ INSERT INTO
     email,
     password,
     confirm_password,
-    city,
-    favorite
+    city
   )
 VALUES
   (
@@ -190,8 +183,7 @@ VALUES
     'admin@gmail.com',
     '',
     '',
-    'city',
-    false
+    'city'
   );
 
 INSERT INTO
@@ -206,8 +198,7 @@ INSERT INTO
     email,
     password,
     confirm_password,
-    city,
-    favorite
+    city
   )
 VALUES
   (
@@ -221,8 +212,7 @@ VALUES
     'admin@gmail.com',
     '',
     '',
-    'city',
-    false
+    'city'
   );
 
 INSERT INTO
@@ -237,8 +227,7 @@ INSERT INTO
     email,
     password,
     confirm_password,
-    city,
-    favorite
+    city
   )
 VALUES
   (
@@ -252,8 +241,7 @@ VALUES
     'admin@gmail.com',
     '',
     '',
-    'city',
-    false
+    'city'
   );
 
 INSERT INTO
@@ -268,8 +256,7 @@ INSERT INTO
     email,
     password,
     confirm_password,
-    city,
-    favorite
+    city
   )
 VALUES
   (
@@ -283,8 +270,7 @@ VALUES
     'admin@gmail.com',
     '',
     '',
-    'city',
-    false
+    'city'
   );
 
 -- Inserciones en la tabla 'roles'
@@ -336,38 +322,28 @@ VALUES
 
 -- Inserciones en la tabla 'posts'
 INSERT INTO
-  posts (
-    title,
-    message,
-    user_id,
-    creation_date,
-    archived,
-    loves
-  )
+  posts (title, message, user_id, creation_date, archived)
 VALUES
   (
     'Post 1',
     'Comer es un desafío diario para mí. No es solo cuestión de elegir qué quiero comer, sino de superar las barreras que mi cerebro y mi cuerpo me ponen. Tengo selectividad alimentaria por texturas y colores, lo que significa que solo como alimentos que se ajustan a mis estándares de textura y color. La carne debe ser suave y tierna, no puede tener grasa visible ni tener un color demasiado intenso. Las verduras deben ser crujientes y frescas, no pueden estar cocidas ni tener un color demasiado oscuro. Los frutos deben ser dulces y jugosos, no pueden ser ácidos ni tener un color demasiado brillante. Cada comida es un reto, cada bocado una lucha. Me siento aislada en una sociedad que valora la variedad y la experimentación culinaria. Me siento culpable por no poder disfrutar de una comida familiar o compartir un plato con amigos. Me siento frustrada por no poder explicarles a los demás por qué no como ciertas cosas. Me siento sola en mi lucha diaria por encontrar alimentos que se ajusten a mis necesidades. Pero también me siento fuerte por haber aprendido a adaptarme y a encontrar formas de superar mis limitaciones. Me siento orgullosa de haber encontrado una comunidad en línea que entiende mi lucha y me apoya. Comer es un desafío, pero no es imposible. Y aunque sea difícil, vale la pena luchar por encontrar la comida que me hace sentir bien.',
     1,
     now(),
-    false,
-    0
+    false
   ),
   (
     'Post 2',
     'Este es el segundo post. dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
     1,
     now(),
-    false,
-    0
+    false
   ),
   (
     'Post 3',
     'Este es el tercer post.since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. ',
     1,
     now(),
-    false,
-    0
+    false
   );
 
 -- Inserta comentarios para posts existentes
@@ -575,7 +551,6 @@ INSERT INTO
     creation_date,
     archived,
     user_id,
-    favorites_count,
     capacity
   )
 VALUES
@@ -586,7 +561,6 @@ VALUES
     NOW(),
     false,
     1,
-    0,
     30
   ),
   (
@@ -596,7 +570,6 @@ VALUES
     NOW(),
     false,
     2,
-    0,
     40
   );
 

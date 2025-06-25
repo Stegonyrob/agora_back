@@ -2,7 +2,9 @@ package de.stella.agora_web.events.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -52,9 +54,6 @@ public class Event {
     @Column(name = "archived")
     private boolean archived;
 
-    @Column(name = "favorites_count")
-    private int favoritesCount = 0;
-
     @Column(name = "capacity")
     private int capacity;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -73,12 +72,15 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventImage> images = new ArrayList<>();
 
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private final Set<EventLove> eventLoves = new HashSet<>();
+
     // Constructor vacío
     public Event() {
     }
 
     // Constructor con parámetros
-    public Event(Long id, String title, String message, Long userId, boolean archived) {
+    public Event(Long id, String title, String message, Long userId, boolean archived, int capacity) {
         this.id = id;
         this.title = title;
         this.message = message;
@@ -211,21 +213,12 @@ public class Event {
         }
     }
 
-    // Getter y Setter para favoritesCount
-    public int getFavoritesCount() {
-        return favoritesCount;
-    }
-
-    public void setFavoritesCount(int favoritesCount) {
-        this.favoritesCount = favoritesCount;
-    }
-
     // Método toString
     @Override
     public String toString() {
         return "Event{" + "id=" + id + ", title='" + title + '\'' + ", message='" + message + '\'' + ", creationDate="
                 + creationDate + ", archived=" + archived + ", user=" + (user != null ? user.getId() : "null")
-                + ", tags=" + tags + ", attendees=" + attendees + ", images=" + images + ", favoritesCount=" + favoritesCount + '}';
+                + ", tags=" + tags + ", attendees=" + attendees + ", images=" + images + ", capacity=" + capacity + '}';
     }
 
     // Métodos auxiliares (opcional)
@@ -289,5 +282,9 @@ public class Event {
 
     public boolean hasAvailableSeats() {
         return getAvailableSeats() > 0;
+    }
+
+    public Set<EventLove> getEventLoves() {
+        return eventLoves;
     }
 }

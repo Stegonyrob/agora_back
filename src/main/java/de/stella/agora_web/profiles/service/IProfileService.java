@@ -8,21 +8,20 @@ import de.stella.agora_web.profiles.model.Profile;
 
 public interface IProfileService {
 
-  Profile getById(Long id) throws Exception;
+    Profile getById(Long id) throws Exception;
 
-  Profile getByEmail(String email) throws Exception;
+    Profile getByEmail(String email) throws Exception;
 
-  Profile updateProfile(ProfileDTO profileDTO, Long id) throws Exception;
+    Profile updateProfile(ProfileDTO profileDTO, Long id) throws Exception;
 
-  List<Profile> findAllProfiles();
+    List<Profile> findAllProfiles();
 
-  Optional<Profile> findById(Long id);
+    Optional<Profile> findById(Long id);
 
-  String addComment(Long profileId, Long commentId);
+    // Favoritos de posts
+    String addFavoritePost(Long profileId, Long postId);
 
-  String deleteComment(Long profileId, Long commentId);
+    String deleteFavoritePost(Long profileId, Long postId);
 
-  String addFavorite(Long profileId, Long commentId);
-
-  String deleteFavorite(Long profileId, Long commentId);
+    // Puedes dejar los métodos de comentarios si los necesitas
 }

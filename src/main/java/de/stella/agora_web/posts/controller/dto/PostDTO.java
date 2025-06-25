@@ -20,7 +20,6 @@ import lombok.Setter;
 public class PostDTO {
 
     private Long id;
-
     private Long userId;
     private String title;
     private String message;
@@ -39,24 +38,27 @@ public class PostDTO {
     private String role;
     private String urlAvatar;
 
-    public PostDTO(Post post) {
+    @SuppressWarnings("rawtypes")
+    private List<ReplyDTO> replies;
+
+    public PostDTO(Post post, int lovesCount) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.message = post.getMessage();
         this.location = post.getLocation();
-        this.isArchived = post.getArchived();
-        this.loves = post.getLoves();
-        this.userId = post.getUser() != null ? post.getUser().getId() : null; // Mapea el userId desde el objeto User
+        this.isArchived = post.isArchived();
+        this.loves = lovesCount;
+        this.userId = post.getUser() != null ? post.getUser().getId() : null;
         this.comments = post.getComments();
         this.tags = post.getTags().stream().map(Tag::getName).collect(Collectors.toList());
         this.userName = post.getUser() != null ? post.getUser().getUsername() : null;
-        this.role = post.getUser() != null
-                ? (String) post.getUser().getRoles().stream().findFirst().map(Role::getName).orElse(null)
+        this.role = (post.getUser() != null && post.getUser().getRoles() != null)
+                ? (String) post.getUser().getRoles().stream()
+                        .map(Role::getName)
+                        .findFirst()
+                        .orElse(null)
                 : null;
     }
-
-    @SuppressWarnings("rawtypes")
-    private List<ReplyDTO> replies;
 
     public PostDTO(Boolean archived) {
         this.isArchived = archived;
@@ -78,11 +80,11 @@ public class PostDTO {
     }
 
     public boolean isArchived() {
-        return Boolean.TRUE.equals(isArchived);
+        return isArchived;
     }
 
     public Boolean getArchived() {
-        return isArchived();
+        return isArchived;
     }
 
     @java.lang.SuppressWarnings(value = "all")

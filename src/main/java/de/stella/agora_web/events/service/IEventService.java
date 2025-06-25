@@ -31,4 +31,10 @@ public interface IEventService {
 
     List<Event> getEventsByTagName(String tagName);
 
+    void addFavorite(Long eventId, Long userId);
+
+    void removeFavorite(Long eventId, Long userId);
+
+    List<EventDTO> getFavoriteEventsByUser(Long userId);
+
 }

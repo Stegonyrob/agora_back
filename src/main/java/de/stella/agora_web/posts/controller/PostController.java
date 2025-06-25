@@ -102,37 +102,43 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
-    @PutMapping("/posts/{id}/favorite")
-    public ResponseEntity<Void> favoritePost(@PathVariable Long id) {
-        Post post = postService.getById(id);
-        if (post == null) {
-            return ResponseEntity.notFound().build();
+    // --- NUEVOS ENDPOINTS PARA LOVES ---
+    // Marcar un post como favorito (love)
+    @PutMapping("/posts/{postId}/love")
+    public ResponseEntity<Void> lovePost(@PathVariable Long postId, @RequestParam Long userId) {
+        try {
+            postService.lovePost(postId, userId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        post.setLoves(post.getLoves() + 1);
-        postService.save(post);
-        return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/posts/{id}/unfavorite")
-    public ResponseEntity<Void> unfavoritePost(@PathVariable Long id) {
-        Post post = postService.getById(id);
-        if (post == null) {
+    // Quitar favorito (unlove)
+    @PutMapping("/posts/{postId}/unlove")
+    public ResponseEntity<Void> unlovePost(@PathVariable Long postId, @RequestParam Long userId) {
+        try {
+            postService.unlovePost(postId, userId);
+            return ResponseEntity.ok().build();
+        } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        post.setLoves(Math.max(0, post.getLoves() - 1));
-        postService.save(post);
-        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/posts/{id}/favorites/count")
-    public ResponseEntity<Integer> getFavoritesCount(@PathVariable Long id) {
-        Post post = postService.getById(id);
-        if (post == null) {
-            return ResponseEntity.notFound().build();
+    // Obtener el número de favoritos (loves) de un post
+    @GetMapping("/posts/{postId}/loves/count")
+    public ResponseEntity<Integer> getLoveCount(@PathVariable Long postId) {
+        try {
+            Integer count = postService.getLoveCount(postId);
+            return ResponseEntity.ok(count);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.ok(post.getLoves());
     }
 
+    // --- FIN ENDPOINTS LOVES ---
     public static PostDTO toPostDTO(Post post) {
         if (post == null) {
             return null;

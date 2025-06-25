@@ -23,7 +23,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Override
     Optional<Post> findById(Long id);
 
-    List<Post> findByUser_Id(Long userId); // Cambia a "findByUser_Id"
+    List<Post> findByUser_Id(Long userId);
 
     List<Post> findByTags_Name(String tagName);
 
@@ -35,7 +35,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("""
         SELECT p.id AS id, p.title AS title, p.message AS message, 
                (SELECT COUNT(c) FROM Comment c WHERE c.post.id = p.id) AS commentsCount,
-               p.favoritesCount AS favoritesCount,
+               (SELECT COUNT(pl) FROM PostLove pl WHERE pl.post.id = p.id) AS favoritesCount,
                p.user.id AS userId
         FROM Post p
     """)

@@ -2,7 +2,9 @@ package de.stella.agora_web.posts.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -31,7 +33,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "posts")
@@ -57,9 +58,6 @@ public class Post {
     @Column(name = "archived")
     private boolean archived;
 
-    @Column(name = "favorites_count")
-    private Integer favoritesCount = 0;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
@@ -67,27 +65,28 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @com.fasterxml.jackson.annotation.JsonManagedReference
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<Tag> tags;
+    private List<Tag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> images = new ArrayList<>();
-    private int loves;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PostLove> postLoves = new HashSet<>();
 
     public Post() {
     }
 
-    public Post(Long id, String title, String message, Long userId, boolean archived, String user) {
+    public Post(Long id, String title, String message, Long userId, boolean archived) {
         this.id = id;
         this.title = title;
         this.message = message;
         this.user = new User();
         this.user.setId(userId);
         this.archived = archived;
-
     }
 
     public void setUserId(Long userId) {
@@ -95,41 +94,6 @@ public class Post {
             this.user = new User();
         }
         this.user.setId(userId);
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public boolean getArchived() {
-        return archived;
-    }
-
-    public void setArchived(boolean archived) {
-        this.archived = archived;
-    }
-
-    public List<Comment> getComments() {
-        if (comments == null) {
-            comments = new ArrayList<>();
-        }
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
     }
 
     public String getLocation() {
@@ -143,43 +107,8 @@ public class Post {
                 + comments + ", tags=" + tags + '}';
     }
 
-    public int getLoves() {
-        return 0;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public Object getContent() {
-        return message;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Integer getFavoritesCount() {
-        return favoritesCount;
-    }
-
-    public void setFavoritesCount(Integer favoritesCount) {
-        this.favoritesCount = favoritesCount;
-    }
-
-    public void setLoves(int loves) {
-        this.loves = loves;
+    // Devuelve la cantidad de "loves" que tiene este post
+    public int getLoveCount() {
+        return postLoves != null ? postLoves.size() : 0;
     }
 }

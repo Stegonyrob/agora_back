@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import de.stella.agora_web.events.controller.dto.EventDTO;
 import de.stella.agora_web.events.mapper.EventMapper;
 import de.stella.agora_web.events.model.Event;
+import de.stella.agora_web.events.model.UserFavoriteEvent;
 import de.stella.agora_web.events.repository.EventRepository;
+import de.stella.agora_web.events.repository.UserFavoriteEventRepository;
 import de.stella.agora_web.events.service.IEventService;
 import de.stella.agora_web.image.service.IEventImageService;
 
@@ -24,6 +26,8 @@ public class EventServiceImpl implements IEventService {
 
     @Autowired
     private EventMapper eventMapper;
+    @Autowired
+    private UserFavoriteEventRepository userFavoriteEventRepository;
 
     private EventDTO toDto(Event event) {
         EventDTO dto = new EventDTO();
@@ -136,6 +140,29 @@ public class EventServiceImpl implements IEventService {
     @Override
     public List<EventDTO> getAllEvents() {
         List<Event> events = eventRepository.findAll();
+        return eventMapper.toDtoList(events);
+    }
+
+    @Override
+    public void addFavorite(Long eventId, Long userId) {
+        if (!userFavoriteEventRepository.existsByUserIdAndEventId(userId, eventId)) {
+            UserFavoriteEvent favorite = new UserFavoriteEvent(userId, eventId);
+            userFavoriteEventRepository.save(favorite);
+        }
+    }
+
+    @Override
+    public void removeFavorite(Long eventId, Long userId) {
+        userFavoriteEventRepository.deleteByUserIdAndEventId(userId, eventId);
+    }
+
+    @Override
+    public List<EventDTO> getFavoriteEventsByUser(Long userId) {
+        List<UserFavoriteEvent> favorites = userFavoriteEventRepository.findByUserId(userId);
+        List<Long> eventIds = favorites.stream()
+                .map(UserFavoriteEvent::getEventId)
+                .collect(Collectors.toList());
+        List<Event> events = eventRepository.findAllById(eventIds);
         return eventMapper.toDtoList(events);
     }
 

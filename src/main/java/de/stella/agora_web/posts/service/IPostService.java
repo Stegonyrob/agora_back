@@ -40,7 +40,6 @@ public interface IPostService {
 
     Post update(PostDTO postDTO, Long id);
 
-    // Nuevos métodos
     void archivePost(Long postId);
 
     void unArchivePost(Long postId);
@@ -57,11 +56,12 @@ public interface IPostService {
 
     void deleteReply(Long replyId);
 
-    Post favoritePost(Long id);
+    // Métodos para "loves" usando la tabla auxiliar
+    void lovePost(Long postId, Long userId);
 
-    Post unfavoritePost(Long id);
+    void unlovePost(Long postId, Long userId);
 
-    Integer getFavoritesCount(Long id);
+    Integer getLoveCount(Long postId);
 
     void save(Post post);
 

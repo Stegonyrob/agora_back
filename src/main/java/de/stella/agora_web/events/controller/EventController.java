@@ -98,47 +98,25 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON).body(newEvent);
     }
+// Marcar evento como favorito
 
-    // Marcar como favorito (incrementa el contador)
-    @PutMapping("/events/{id}/favorite")
-    public ResponseEntity<Void> favoriteEvent(@PathVariable Long id) {
-        Event event = eventService.getById(id);
-        if (event == null) {
-            return ResponseEntity.notFound().build();
-        }
-        event.setFavoritesCount(event.getFavoritesCount() + 1);
-        eventService.save(event);
+    @PutMapping("/events/{eventId}/favorite")
+    public ResponseEntity<Void> favoriteEvent(@PathVariable Long eventId, @RequestParam Long userId) {
+        eventService.addFavorite(eventId, userId);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/events/{id}/unfavorite")
-    public ResponseEntity<Void> unfavoriteEvent(@PathVariable Long id) {
-        Event event = eventService.getById(id);
-        if (event == null) {
-            return ResponseEntity.notFound().build();
-        }
-        int count = event.getFavoritesCount();
-        event.setFavoritesCount(Math.max(0, count - 1));
-        eventService.save(event);
+// Quitar evento de favoritos
+    @PutMapping("/events/{eventId}/unfavorite")
+    public ResponseEntity<Void> unfavoriteEvent(@PathVariable Long eventId, @RequestParam Long userId) {
+        eventService.removeFavorite(eventId, userId);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/events/{id}/favorites/count")
-    public ResponseEntity<Integer> getFavoritesCount(@PathVariable Long id) {
-        Event event = eventService.getById(id);
-        if (event == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(event.getFavoritesCount());
-    }
-
-    @GetMapping("/events/{id}/favorites")
-    public ResponseEntity<List<Event>> getFavoritesByEventId(@PathVariable Long id) {
-        Event event = eventService.getById(id);
-        if (event == null) {
-            return ResponseEntity.notFound().build();
-        }
-        List<Event> favorites = eventService.getEventsByTagName(event.getTitle()); // Asumiendo que el título es único
+// Obtener eventos favoritos de un usuario
+    @GetMapping("/users/{userId}/favorite-events")
+    public ResponseEntity<List<EventDTO>> getFavoriteEvents(@PathVariable Long userId) {
+        List<EventDTO> favorites = eventService.getFavoriteEventsByUser(userId);
         return ResponseEntity.ok(favorites);
     }
 }
