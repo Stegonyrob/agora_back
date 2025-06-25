@@ -138,7 +138,14 @@ public class ProfileServiceImpl implements IProfileService {
 
     // Elimina el perfil (derecho al olvido)
     public String delete(Long id) {
-        repository.deleteById(id);
-        return "Profile deleted";
+        if (id == null) {
+            throw new NullPointerException("Profile ID cannot be null");
+        }
+        try {
+            repository.deleteById(id);
+            return "Profile deleted";
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting profile with ID: " + id, e);
+        }
     }
 }
