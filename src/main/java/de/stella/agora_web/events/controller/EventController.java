@@ -33,7 +33,7 @@ public class EventController {
         try {
             return ResponseEntity.ok(eventService.getAllEvents());
         } catch (Exception e) {
-            e.printStackTrace();
+            // Log del error en lugar de printStackTrace
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -53,11 +53,9 @@ public class EventController {
 
         try {
             Event newEvent = eventService.save(eventDTO);
-            System.out.println("Event recibido: " + eventDTO);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .contentType(org.springframework.http.MediaType.APPLICATION_JSON).body(newEvent);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -79,7 +77,7 @@ public class EventController {
             if (archive) {
                 eventService.archiveEvent(id);
             } else {
-                eventService.unArchiveEventt(id);
+                eventService.unArchiveEvent(id);
             }
             return ResponseEntity.noContent().build();
         } catch (Exception e) {

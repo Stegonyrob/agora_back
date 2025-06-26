@@ -19,7 +19,7 @@ public interface IEventService {
 
     EventDTO updateEventImage(Long eventId, String imagePath);
 
-    void unArchiveEventt(Long id);
+    void unArchiveEvent(Long id);
 
     void archiveEvent(Long id);
 

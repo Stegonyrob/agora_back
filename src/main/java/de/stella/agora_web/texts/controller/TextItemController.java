@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +20,8 @@ import de.stella.agora_web.texts.controller.dto.TextItemDTO;
 import de.stella.agora_web.texts.service.TextItemService;
 
 @RestController
-@RequestMapping(path = "${api-endpoint}/texts")
+@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"})
+@RequestMapping(path = "${api-endpoint}/all/texts")
 
 public class TextItemController {
 
@@ -32,7 +34,7 @@ public class TextItemController {
     public List<TextItemDTO> getAllTexts() {
         LOGGER.info("Retrieving all texts");
         List<TextItemDTO> allTexts = textItemService.getAllTexts();
-        LOGGER.info("Retrieved {} texts");
+        LOGGER.info("Retrieved {} texts", allTexts.size());
         return allTexts;
     }
 

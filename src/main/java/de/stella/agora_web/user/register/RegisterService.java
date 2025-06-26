@@ -61,6 +61,7 @@ public class RegisterService {
     public User registerUser(SignUpDTO signupDTO) {
         User user = new User();
         user.setUsername(signupDTO.getUsername());
+        user.setEmail(signupDTO.getEmail()); // Agregar email
 
         String passwordEncoded = encodePassword(signupDTO.getPassword());
         user.setPassword(passwordEncoded);
@@ -87,7 +88,20 @@ public class RegisterService {
     }
 
     public String createUser(SignUpDTO signupDTO) {
-        User user = registerUser(signupDTO);
-        return "User created successfully: " + user.getUsername();
+        // Verificar si ya existe un usuario con ese username o email
+        boolean userExists = userRepository.findAll().stream()
+                .anyMatch(user -> user.getUsername().equals(signupDTO.getUsername())
+                || user.getEmail().equals(signupDTO.getEmail()));
+
+        if (userExists) {
+            return "Error: Ya existe un usuario con ese username o email";
+        }
+
+        try {
+            User user = registerUser(signupDTO);
+            return "Usuario creado exitosamente: " + user.getUsername();
+        } catch (Exception e) {
+            return "Error al crear usuario: " + e.getMessage();
+        }
     }
 }

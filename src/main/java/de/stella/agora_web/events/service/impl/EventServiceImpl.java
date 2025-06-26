@@ -99,7 +99,7 @@ public class EventServiceImpl implements IEventService {
     }
 
     @Override
-    public void unArchiveEventt(Long id) {
+    public void unArchiveEvent(Long id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
 

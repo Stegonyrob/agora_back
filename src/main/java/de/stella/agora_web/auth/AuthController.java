@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.jwt.TokenDTO;
 import de.stella.agora_web.jwt.TokenGenerator;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("${api-endpoint}/all")
@@ -31,11 +32,10 @@ public class AuthController {
     JwtAuthenticationProvider refreshTokenAuthProvider;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO> login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<TokenDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         if (loginDTO == null) {
             throw new NullPointerException("LoginDTO cannot be null");
         }
-        System.out.println("Received login data: " + loginDTO);
 
         Authentication authentication;
         try {
@@ -55,8 +55,6 @@ public class AuthController {
         if (authentication == null) {
             throw new NullPointerException("Authentication cannot be null");
         }
-
-        System.out.println(authentication);
 
         return ResponseEntity.ok(tokenGenerator.createToken(authentication));
     }

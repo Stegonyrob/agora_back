@@ -40,7 +40,7 @@ public class CommentServiceImpl implements ICommentService {
 
     @Autowired
     private IMessageQueueService messageQueue;
-    @Autowired
+    @Autowired // Siempre disponible (real o dummy según kafka.enabled)
     private CommentKafkaProducer kafkaProducer;
     @Autowired
     private ITagService tagService;
@@ -94,7 +94,7 @@ public class CommentServiceImpl implements ICommentService {
             // Guardar el comentario
             commentRepository.save(newComment);
 
-            // Notificación Kafka
+            // Notificación Kafka - Siempre disponible (dummy si kafka está deshabilitado)
             CommentNotificationDTO notification = new CommentNotificationDTO();
             notification.setCommentId(newComment.getId());
             notification.setAuthor(user.getUsername());

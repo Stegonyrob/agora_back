@@ -1,78 +1,46 @@
 /*Users*/
 INSERT INTO
-  users (id_user, username, password, email)
+  users (username, password, email)
 VALUES
   (
-    default,
     'admin',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
     'admin@gmail.com'
-  );
-
-INSERT INTO
-  users (id_user, username, password, email)
-VALUES
+  ),
   (
-    default,
     'user1',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
     'user1@gmail.com'
-  );
-
-INSERT INTO
-  users (id_user, username, password, email)
-VALUES
+  ),
   (
-    default,
     'user2',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
     'user2@gmail.com'
-  );
-
-INSERT INTO
-  users (id_user, username, password, email)
-VALUES
+  ),
   (
-    default,
     'user3',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
     'user3@gmail.com'
-  );
-
-INSERT INTO
-  users (id_user, username, password, email)
-VALUES
+  ),
   (
-    default,
     'user4',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
-    'user3@gmail.com'
-  );
-
-INSERT INTO
-  users (id_user, username, password, email)
-VALUES
+    'user4@gmail.com'
+  ),
   (
-    default,
     'user5',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
-    'user3@gmail.com'
-  );
-
-INSERT INTO
-  users (id_user, username, password, email)
-VALUES
+    'user5@gmail.com'
+  ),
   (
-    default,
     'user6',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
-    'user3@gmail.com'
+    'user6@gmail.com'
   );
 
 /*Profiles*/
 INSERT INTO
   profiles (
-    id_profile,
     user_id,
     first_Name,
     last_Name1,
@@ -86,7 +54,6 @@ INSERT INTO
   )
 VALUES
   (
-    default,
     1,
     'Ivan',
     'Apellido1',
@@ -97,25 +64,8 @@ VALUES
     '',
     '',
     'city'
-  );
-
-INSERT INTO
-  profiles (
-    id_profile,
-    user_id,
-    first_Name,
-    last_Name1,
-    last_name2,
-    username,
-    relationship,
-    email,
-    password,
-    confirm_password,
-    city
-  )
-VALUES
+  ),
   (
-    default,
     2,
     'Stella',
     'Apellido1',
@@ -126,25 +76,8 @@ VALUES
     '',
     '',
     'Gijon'
-  );
-
-INSERT INTO
-  profiles (
-    id_profile,
-    user_id,
-    first_Name,
-    last_Name1,
-    last_name2,
-    username,
-    relationship,
-    email,
-    password,
-    confirm_password,
-    city
-  )
-VALUES
+  ),
   (
-    default,
     3,
     'Name3',
     'Apellido1',
@@ -155,25 +88,8 @@ VALUES
     '',
     '',
     'city'
-  );
-
-INSERT INTO
-  profiles (
-    id_profile,
-    user_id,
-    first_Name,
-    last_Name1,
-    last_name2,
-    username,
-    relationship,
-    email,
-    password,
-    confirm_password,
-    city
-  )
-VALUES
+  ),
   (
-    default,
     4,
     'Name4',
     'Apellido1',
@@ -184,25 +100,8 @@ VALUES
     '',
     '',
     'city'
-  );
-
-INSERT INTO
-  profiles (
-    id_profile,
-    user_id,
-    first_Name,
-    last_Name1,
-    last_name2,
-    username,
-    relationship,
-    email,
-    password,
-    confirm_password,
-    city
-  )
-VALUES
+  ),
   (
-    default,
     5,
     'Name5',
     'Apellido1',
@@ -213,25 +112,8 @@ VALUES
     '',
     '',
     'city'
-  );
-
-INSERT INTO
-  profiles (
-    id_profile,
-    user_id,
-    first_Name,
-    last_Name1,
-    last_name2,
-    username,
-    relationship,
-    email,
-    password,
-    confirm_password,
-    city
-  )
-VALUES
+  ),
   (
-    default,
     6,
     'Name5',
     'Apellido1',
@@ -242,25 +124,8 @@ VALUES
     '',
     '',
     'city'
-  );
-
-INSERT INTO
-  profiles (
-    id_profile,
-    user_id,
-    first_Name,
-    last_Name1,
-    last_name2,
-    username,
-    relationship,
-    email,
-    password,
-    confirm_password,
-    city
-  )
-VALUES
+  ),
   (
-    default,
     7,
     'Name7',
     'Apellido1',
@@ -275,49 +140,21 @@ VALUES
 
 -- Inserciones en la tabla 'roles'
 INSERT INTO
-  roles (id_role, name)
+  roles (name)
 VALUES
-  (default, 'ROLE_ADMIN');
-
-INSERT INTO
-  roles (id_role, name)
-VALUES
-  (default, 'ROLE_USER');
+  ('ROLE_ADMIN'),
+  ('ROLE_USER');
 
 -- Asociación entre usuarios y roles
 INSERT INTO
   roles_users (role_id, user_id)
 VALUES
-  (1, 1);
-
-INSERT INTO
-  roles_users (role_id, user_id)
-VALUES
-  (2, 2);
-
-INSERT INTO
-  roles_users (role_id, user_id)
-VALUES
-  (2, 3);
-
-INSERT INTO
-  roles_users (role_id, user_id)
-VALUES
-  (2, 4);
-
-INSERT INTO
-  roles_users (role_id, user_id)
-VALUES
-  (2, 5);
-
-INSERT INTO
-  roles_users (role_id, user_id)
-VALUES
-  (2, 6);
-
-INSERT INTO
-  roles_users (role_id, user_id)
-VALUES
+  (1, 1),
+  (2, 2),
+  (2, 3),
+  (2, 4),
+  (2, 5),
+  (2, 6),
   (2, 7);
 
 -- Inserciones en la tabla 'posts'
@@ -452,91 +289,91 @@ VALUES
   ),
   (
     11,
-    'Sobre mi;',
+    'Sobre mi',
     'Soy un profesional apasionado por la educación y el desarrollo integral de los niños. Con una formación sólida en pedagogía y psicología infantil, he dedicado mi carrera a crear entornos de aprendizaje inclusivos y estimulantes. Mi enfoque se centra en las necesidades individuales de cada estudiante, promoviendo su bienestar emocional y académico.',
     '../../../public/images/img/ivan.jpg',
     'ivan'
   ),
   (
     12,
-    '¿qué es?;',
+    'Neurodiversidad ¿Qué es? ¿Qué Significa?',
     'La nerodiversidad se define como la variabilidad natural del cerebro humano, que abarca una amplia gama de diferencias neurológicas y cognitivas. Esta perspectiva reconoce que las variaciones en el funcionamiento cerebral son normales y valiosas, y que cada individuo aporta una forma única de pensar, aprender y experimentar el mundo.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     13,
-    'Nuestra vision de la Neurodiversidad;',
+    'Nuestra vision de la Neurodiversidad',
     'Nuestra visión de la neurodiversidad se basa en el respeto y la valoración de las diferencias individuales. Creemos que cada persona tiene un potencial único y que la diversidad cognitiva enriquece nuestras comunidades. Nuestro objetivo es crear entornos inclusivos que fomenten el aprendizaje y el desarrollo de todos los estudiantes, independientemente de sus habilidades o desafíos. Creemos fervientemente en PRESUMIR COMPETENCIA, no DISCAPACIDAD, y en que cada persona tiene el derecho a ser comprendida y apoyada en su proceso de aprendizaje.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     14,
-    'Condicion del espectro autista;',
-    'El trastorno del espectro autista (TEA) es una condición del neurodesarrollo que afecta la comunicación, la interacción social y el comportamiento. Se manifiesta de diversas formas y con diferentes grados de intensidad, lo que hace que cada persona con TEA sea única. Es fundamental entender y respetar estas diferencias para ofrecer el apoyo adecuado.',
+    'Condición del espectro autista',
+    'La condición del espectro autista (CEA) es una condición del neurodesarrollo que afecta la comunicación, la interacción social y el comportamiento. Se manifiesta de diversas formas y con diferentes grados de intensidad, lo que hace que cada persona con CEA sea única. Es fundamental entender y respetar estas diferencias para ofrecer el apoyo adecuado.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     15,
-    'Evolución de la condición de espectro autista;',
-    'La Condición del espectro autista , antiguamente considerada un trastorno(TEA) , ha evolucionado en su comprensión y enfoque. Actualmente, se reconoce que cada persona con CEA es única y que sus experiencias y necesidades deben ser respetadas y atendidas de manera individualizada.',
+    'Evolución de la condición de espectro autista',
+    'La condición del espectro autista, antiguamente considerada un trastorno (TEA), ha evolucionado en su comprensión y enfoque. Actualmente, se reconoce que cada persona con CEA es única y que sus experiencias y necesidades deben ser respetadas y atendidas de manera individualizada.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     16,
-    'Trastorno del déficit de atención  sin hiperactividad (TDA);',
+    'Trastorno del déficit de atención sin hiperactividad (TDA)',
     'El trastorno del déficit de atención (TDA) es una condición del neurodesarrollo que se caracteriza por dificultades en la atención. Estas dificultades pueden afectar el rendimiento académico y las relaciones interpersonales. Es importante abordar el TDA con estrategias adecuadas y un enfoque comprensivo.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     17,
-    'Trastorno del déficit de atención con  hiperactividad (TDAH);',
+    'Trastorno del déficit de atención con hiperactividad (TDAH)',
     'El trastorno del déficit de atención e hiperactividad (TDAH) es una condición del neurodesarrollo que se caracteriza por dificultades en la atención, la hiperactividad y la impulsividad. Estas dificultades pueden afectar el rendimiento académico y las relaciones interpersonales. Es importante abordar el TDAH con estrategias adecuadas y un enfoque comprensivo.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     18,
-    'Dificultades del aprendizaje;',
+    'Dificultades del aprendizaje',
     'Las dificultades del aprendizaje son condiciones que afectan la capacidad de una persona para adquirir, procesar o utilizar información de manera efectiva. Estas dificultades pueden manifestarse en diversas áreas, como la lectura, la escritura, el cálculo o la atención. Es fundamental identificar y abordar estas dificultades de manera temprana para ofrecer el apoyo adecuado y facilitar el aprendizaje.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     19,
-    'Desafíos del aprendizaje;',
+    'Desafíos del aprendizaje',
     'Los desafíos del aprendizaje son obstáculos que pueden dificultar el proceso educativo de los estudiantes. Estos desafíos pueden ser de naturaleza cognitiva, emocional o social, y es fundamental identificarlos y abordarlos de manera efectiva para garantizar una educación inclusiva y equitativa.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     20,
-    'Condiciones del Desarrollo;',
+    'Condiciones del Desarrollo',
     'Las condiciones del desarrollo son un conjunto de factores que influyen en el crecimiento y la evolución de los niños. Estos factores pueden ser biológicos, psicológicos o sociales, y su comprensión es esencial para ofrecer un apoyo adecuado a los estudiantes. Es fundamental abordar cada caso de manera individualizada, teniendo en cuenta las particularidades de cada niño y su contexto.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     21,
-    'Importancia de las condiciones del desarrollo;',
+    'Importancia de las condiciones del desarrollo',
     'La comprensión de las condiciones del desarrollo es esencial para ofrecer un apoyo adecuado a los estudiantes. Es fundamental abordar cada caso de manera individualizada, teniendo en cuenta las particularidades de cada niño y su contexto.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     22,
-    'Trastornos de la comunicación;',
+    'Trastornos de la comunicación',
     'Los trastornos de la comunicación son condiciones que afectan la capacidad de una persona para comunicarse de manera efectiva. Estos trastornos pueden manifestarse en dificultades para hablar, entender o utilizar el lenguaje, y es fundamental abordarlos con un enfoque comprensivo y respetuoso. La intervención temprana y el apoyo adecuado son clave para ayudar a los niños a desarrollar habilidades comunicativas saludables.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
   ),
   (
     23,
-    'Importancia de los trastornos de la comunicación;',
+    'Importancia de los trastornos de la comunicación',
     'La comprensión de los trastornos de la comunicación es esencial para ofrecer un apoyo adecuado a los estudiantes. Es fundamental abordar cada caso de manera individualizada, teniendo en cuenta las particularidades de cada niño y su contexto. La correcta identificación y tratamiento de estos trastornos puede marcar una gran diferencia en el desarrollo y bienestar de los niños.',
     '../../../public/images/img/alumnosOrdenador.jpg',
     'alumnosOrdenador'
@@ -789,4 +626,147 @@ VALUES
     Si tienes cualquier duda sobre nuestra política de cookies, puedes contactar con nosotros en centroeducativoagora@gmail.com.
   </p>',
     NOW()
+  );
+
+INSERT INTO
+  legal_texts (type, title, content, updated_at)
+VALUES
+  (
+    'blog-rules',
+    'Reglas de la Comunidad Ágora',
+    '<div class="rules-content">
+  <h2>Bienvenido a la Comunidad Ágora</h2>
+  <p>Estas reglas están diseñadas para mantener un ambiente seguro, respetuoso y enriquecedor para todos los miembros de nuestra comunidad educativa.</p>
+
+  <h3>Normas de Convivencia</h3>
+  <ul class="rules-list">
+    <li>
+      <strong>Respeto y tolerancia:</strong> Mantén siempre un trato respetuoso hacia todos los miembros de la comunidad. No se tolerarán insultos, amenazas o cualquier forma de acoso.
+    </li>
+    <li>
+      <strong>Prohibición de lenguaje soez:</strong> Está prohibido el uso de lenguaje vulgar, obsceno o inapropiado en cualquier contexto dentro de la plataforma.
+    </li>
+    <li>
+      <strong>Cero tolerancia al racismo:</strong> No se permitirán comentarios, publicaciones o cualquier tipo de contenido que promueva discriminación racial o étnica.
+    </li>
+    <li>
+      <strong>Prohibición de xenofobia:</strong> Está estrictamente prohibido cualquier contenido que manifieste rechazo, hostilidad o discriminación hacia personas de otros países o culturas.
+    </li>
+    <li>
+      <strong>No discriminación:</strong> Prohibido cualquier tipo de discriminación por motivos de género, orientación sexual, religión, discapacidad o cualquier otra característica personal.
+    </li>
+    <li>
+      <strong>Contenido educativo apropiado:</strong> Todo el contenido compartido debe ser apropiado para un entorno educativo y relacionado con los temas de apoyo especializado y desarrollo personal.
+    </li>
+    <li>
+      <strong>No spam ni contenido comercial:</strong> Está prohibido el envío repetitivo de mensajes o contenido comercial no autorizado.
+    </li>
+    <li>
+      <strong>Veracidad de la información:</strong> Comparte información veraz y basada en fuentes confiables. Evita la difusión de noticias falsas o información engañosa.
+    </li>
+    <li>
+      <strong>Privacidad y confidencialidad:</strong> Respeta la privacidad de otros usuarios. No compartas información personal de terceros sin su consentimiento. Mantén la confidencialidad de los casos y situaciones personales compartidas.
+    </li>
+    <li>
+      <strong>Uso responsable y constructivo:</strong> Utiliza la plataforma de manera responsable, contribuyendo positivamente al crecimiento y bienestar de la comunidad educativa.
+    </li>
+    <li>
+      <strong>Apoyo y empatía:</strong> Fomenta un ambiente de apoyo mutuo, comprensión y empatía, especialmente hacia aquellos que pueden estar enfrentando desafíos educativos o personales.
+    </li>
+    <li>
+      <strong>Contenido apropiado para menores:</strong> Dado nuestro enfoque educativo, todo el contenido debe ser apropiado para menores de edad y familias.
+    </li>
+  </ul>
+
+  <h3>Protección de Datos Personales - RGPD</h3>
+  <div class="gdpr-section">
+    <p>
+      <strong>Cumplimiento del RGPD:</strong> En conformidad con el Reglamento General de Protección de Datos (RGPD) de la Unión Europea (Reglamento UE 2016/679), 
+      te informamos que como usuario de nuestra plataforma tienes los siguientes derechos:
+    </p>
+    <ul>
+      <li><strong>Derecho de acceso:</strong> Puedes solicitar información sobre qué datos personales procesamos sobre ti</li>
+      <li><strong>Derecho de rectificación:</strong> Puedes solicitar la corrección de información incorrecta o incompleta</li>
+      <li><strong>Derecho de supresión:</strong> Puedes solicitar la eliminación de tus datos personales</li>
+      <li><strong>Derecho de limitación:</strong> Puedes solicitar que limitemos el tratamiento de tus datos</li>
+      <li><strong>Derecho a la portabilidad:</strong> Puedes solicitar recibir tus datos en un formato estructurado y de uso común</li>
+      <li><strong>Derecho de oposición:</strong> Puedes oponerte al tratamiento de tus datos en determinadas circunstancias</li>
+      <li><strong>Derecho a no ser objeto de decisiones automatizadas:</strong> Incluido el perfilado automatizado</li>
+    </ul>
+    <p>
+      <strong>Ejercicio de derechos:</strong> Para ejercer cualquiera de estos derechos, puedes contactarnos a través de:
+    </p>
+    <ul>
+      <li>Email: contacto@agoraeducativo.es</li>
+      <li>Teléfono: +34 693 54 59 93</li>
+      <li>Dirección postal: Calle Nicagua 16 Gijón-Oeste, 33213, Gijón, ASTURIAS</li>
+    </ul>
+    <p>
+      <strong>Plazo de respuesta:</strong> Nos comprometemos a responder a tu solicitud en un plazo máximo de 30 días naturales desde la recepción de la misma.
+    </p>
+    <p>
+      <strong>Autoridad de control:</strong> Tienes derecho a presentar una reclamación ante la Agencia Española de Protección de Datos (AEPD) si consideras que tus derechos no han sido respetados.
+    </p>
+  </div>
+
+  <h3>Normativa Específica para Entorno Educativo</h3>
+  <div class="educational-section">
+    <ul>
+      <li>
+        <strong>Protección de menores:</strong> Se aplicarán medidas especiales de protección para usuarios menores de edad, incluyendo moderación adicional de contenido.
+      </li>
+      <li>
+        <strong>Colaboración con familias:</strong> Fomentamos la participación e involucración de las familias en el proceso educativo a través de la plataforma.
+      </li>
+      <li>
+        <strong>Confidencialidad profesional:</strong> Los profesionales del centro mantienen la confidencialidad de la información compartida en el contexto de su trabajo.
+      </li>
+      <li>
+        <strong>Recursos educativos:</strong> El contenido compartido debe alinearse con los objetivos educativos y terapéuticos del centro.
+      </li>
+    </ul>
+  </div>
+
+  <h3>Consecuencias por Incumplimiento</h3>
+  <div class="consequences-section">
+    <p>El incumplimiento de estas reglas puede resultar en las siguientes medidas disciplinarias:</p>
+    <ul>
+      <li><strong>Primera infracción:</strong> Advertencia oficial y orientación sobre las normas</li>
+      <li><strong>Infracciones repetidas:</strong> Suspensión temporal de la cuenta (3-30 días)</li>
+      <li><strong>Infracciones graves:</strong> Suspensión de funcionalidades específicas</li>
+      <li><strong>Infracciones muy graves:</strong> Eliminación permanente de la cuenta</li>
+      <li><strong>Casos extremos:</strong> Comunicación a las autoridades competentes si procede</li>
+    </ul>
+    <p>
+      La gravedad de las medidas dependerá de la naturaleza de la infracción, su impacto en la comunidad y la reincidencia del usuario.
+    </p>
+  </div>
+
+  <h3>Proceso de Moderación y Apelaciones</h3>
+  <div class="moderation-section">
+    <p>
+      <strong>Moderación:</strong> Nuestro equipo de moderación revisa el contenido reportado y aplica las medidas necesarias.
+    </p>
+    <p>
+      <strong>Derecho de apelación:</strong> Si consideras que una medida disciplinaria ha sido injusta, puedes presentar una apelación en un plazo de 15 días a través de contacto@agoraeducativo.es.
+    </p>
+  </div>
+
+  <div class="footer">
+    <p>
+      <strong>Actualizaciones:</strong> Estas reglas pueden ser actualizadas periódicamente para adaptarse a nuevas necesidades o cambios normativos. 
+      Te notificaremos sobre cualquier cambio significativo con al menos 15 días de antelación.
+    </p>
+    <p>
+      <strong>Aceptación:</strong> Al registrarte en la plataforma del Centro de Apoyo Educativo Especializado Ágora, aceptas cumplir con todas estas normas 
+      y contribuir a mantener un ambiente educativo sano, seguro y constructivo para toda la comunidad.
+    </p>
+    <p>
+      <strong>Contacto:</strong> Para cualquier consulta sobre estas reglas o para reportar incumplimientos, contacta con nosotros a través de 
+      nuestros canales oficiales de comunicación.
+    </p>
+  </div>
+</div>
+<p><strong>Fecha de última actualización:</strong> 26 de Junio de 2025</p>',
+    '2025-06-26 00:00:00'
   );

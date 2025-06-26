@@ -106,6 +106,9 @@ public class PostController {
     // Marcar un post como favorito (love)
     @PutMapping("/posts/{postId}/love")
     public ResponseEntity<Void> lovePost(@PathVariable Long postId, @RequestParam Long userId) {
+        if (postId == null || userId == null || postId <= 0 || userId <= 0) {
+            return ResponseEntity.badRequest().build();
+        }
         try {
             postService.lovePost(postId, userId);
             return ResponseEntity.ok().build();
@@ -117,6 +120,9 @@ public class PostController {
     // Quitar favorito (unlove)
     @PutMapping("/posts/{postId}/unlove")
     public ResponseEntity<Void> unlovePost(@PathVariable Long postId, @RequestParam Long userId) {
+        if (postId == null || userId == null || postId <= 0 || userId <= 0) {
+            return ResponseEntity.badRequest().build();
+        }
         try {
             postService.unlovePost(postId, userId);
             return ResponseEntity.ok().build();

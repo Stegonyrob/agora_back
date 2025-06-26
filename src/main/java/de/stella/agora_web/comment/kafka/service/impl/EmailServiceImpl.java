@@ -1,8 +1,6 @@
 package de.stella.agora_web.comment.kafka.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,9 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.stella.agora_web.comment.kafka.service.IEmailService;
 import de.stella.agora_web.messages.EmailMessage;
 
-@Service
+// @Service // TEMPORALMENTE DESHABILITADO - Habilitar cuando Kafka esté configurado
 public class EmailServiceImpl implements IEmailService {
-    @Autowired
+
+    // @Autowired // TEMPORALMENTE DESHABILITADO
     private KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 

@@ -3,7 +3,6 @@ package de.stella.agora_web.events.controller.dto;
 import java.util.List;
 
 import de.stella.agora_web.attendee.controller.dto.AttendeeDTO;
-import de.stella.agora_web.events.model.Event;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -46,14 +45,5 @@ public class EventDTO {
         this.attendees = attendees;
         this.capacity = capacity;
         this.attendeesCount = attendeesCount;
-    }
-
-    public EventDTO toDto(Event event) {
-        EventDTO dto = new EventDTO();
-        dto.setId(event.getId());
-        dto.setTitle(event.getTitle());
-        dto.setMessage(event.getMessage());
-        dto.setArchived(event.getArchived());
-        return dto;
     }
 }

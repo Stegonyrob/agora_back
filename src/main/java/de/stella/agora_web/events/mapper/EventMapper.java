@@ -1,20 +1,51 @@
 package de.stella.agora_web.events.mapper;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 
 import de.stella.agora_web.events.controller.dto.EventDTO;
 import de.stella.agora_web.events.model.Event;
 
-@Mapper(componentModel = "spring")
-public interface EventMapper {
+@Component
+public class EventMapper {
 
-    @Mapping(target = "attendeesCount", expression = "java(event.getAttendeesList() != null ? event.getAttendeesList().size() : 0)")
-    EventDTO toDto(Event event);
+    public EventDTO toDto(Event event) {
+        if (event == null) {
+            return null;
+        }
 
-    List<EventDTO> toDtoList(List<Event> events);
+        EventDTO dto = new EventDTO();
+        dto.setId(event.getId());
+        dto.setTitle(event.getTitle());
+        dto.setMessage(event.getMessage());
+        dto.setArchived(event.getArchived());
+        dto.setCapacity(event.getCapacity());
+        dto.setAttendeesCount(event.getAttendees() != null ? event.getAttendees().size() : 0);
+        return dto;
+    }
 
-    Event toEntity(EventDTO eventDTO);
+    public List<EventDTO> toDtoList(List<Event> events) {
+        if (events == null) {
+            return null;
+        }
+        return events.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public Event toEntity(EventDTO eventDTO) {
+        if (eventDTO == null) {
+            return null;
+        }
+
+        Event event = new Event();
+        event.setId(eventDTO.getId());
+        event.setTitle(eventDTO.getTitle());
+        event.setMessage(eventDTO.getMessage());
+        event.setArchived(eventDTO.isArchived());
+        event.setCapacity(eventDTO.getCapacity());
+        return event;
+    }
 }

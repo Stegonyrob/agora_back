@@ -1,30 +1,26 @@
 package de.stella.agora_web.comment.kafka.component.consumer;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
-
-import de.stella.agora_web.censured.model.CensuredComment;
 import de.stella.agora_web.censured.service.impl.CensuredCommentServiceImpl;
-import de.stella.agora_web.comment.kafka.dto.CommentNotificationDTO;
 import de.stella.agora_web.comment.kafka.service.IEmailService;
 import de.stella.agora_web.comment.kafka.service.IPushNotificationService;
 import de.stella.agora_web.moderation.service.impl.ModerationServiceImpl;
 
-@Component
+// @Component // TEMPORALMENTE DESHABILITADO - Habilitar cuando Kafka esté configurado
 public class CommentNotificationConsumer {
-    @Autowired
+
+    // @Autowired // TEMPORALMENTE DESHABILITADO
     private IEmailService emailService;
 
-    @Autowired
+    // @Autowired // TEMPORALMENTE DESHABILITADO
     private CensuredCommentServiceImpl censuredCommentService;
 
-    @Autowired
+    // @Autowired // TEMPORALMENTE DESHABILITADO
     private ModerationServiceImpl moderationService;
-    @Autowired
+    // @Autowired // TEMPORALMENTE DESHABILITADO
     private IPushNotificationService pushNotificationService;
 
-    @KafkaListener(topics = "comments")
+    // @KafkaListener(topics = "comments") // TEMPORALMENTE DESHABILITADO - Habilitar cuando Kafka esté configurado
+    /*
     public void consume(CommentNotificationDTO notification) {
         // Moderamos el comentario
         CensuredComment censuredComment = moderationService.moderateComment(notification.getComment());
@@ -49,4 +45,5 @@ public class CommentNotificationConsumer {
             e.printStackTrace();
         }
     }
+     */
 }

@@ -83,9 +83,8 @@ public class SecurityConfiguration {
                 .requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers(endpoint + "/admin/**").hasRole("ADMIN")
                 .requestMatchers(endpoint + "/user/**").hasRole("USER")
-                .requestMatchers(HttpMethod.GET, "/legal/**").hasRole("USER") // <-- aquí
+                .requestMatchers(HttpMethod.GET, "/legal/**").hasRole("USER")
                 .requestMatchers("/legal/**").hasRole("ADMIN")
-                // <-- aquí
                 .anyRequest().permitAll()
                 )
                 .userDetailsService(jpaUserDetailsService).httpBasic(basic -> basic.disable())
