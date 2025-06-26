@@ -72,7 +72,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth.requestMatchers(PathRequest.toH2Console()).permitAll()
                 .requestMatchers(PathRequest.toH2Console()).permitAll()
                 .requestMatchers("/error").permitAll()
-                .requestMatchers(endpoint + "/all/**").permitAll()
+                .requestMatchers(endpoint + "/all/**").permitAll() // Incluye /register
+                .requestMatchers(endpoint + "/any/user/register").permitAll() // Registro público (por si acaso)
                 .requestMatchers(HttpMethod.GET, "/posts/**").hasRole("USER")
                 .requestMatchers("/posts/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/events/**").hasRole("USER")
