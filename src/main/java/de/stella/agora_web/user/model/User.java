@@ -9,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.stella.agora_web.avatar.module.Avatar;
 import de.stella.agora_web.banned.model.Banned;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.profiles.model.Profile;
@@ -50,6 +49,9 @@ public class User {
 
     private String email;
 
+    @Column(nullable = false)
+    private boolean acceptedRules;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
@@ -64,10 +66,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Comment> comments;
 
-    @OneToOne
-    @JoinColumn(name = "avatar_id")
-    private Avatar avatar;
-
+    // Avatar removed - should be in Profile entity only
     public boolean hasRole(String role) {
         return roles.stream().anyMatch(r -> r.getName().equals(role));
     }
@@ -75,6 +74,7 @@ public class User {
     public User(String userName, String password) {
         this.username = userName;
         this.password = password;
+        this.acceptedRules = true; // Default to true when creating a user
     }
 
     public GrantedAuthority getAuthority() {

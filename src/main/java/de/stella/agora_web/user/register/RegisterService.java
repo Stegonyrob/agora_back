@@ -47,8 +47,8 @@ public class RegisterService {
     }
 
     private String encodePassword(String password) {
-        String passwordDecoded = encoder.decode("base64", password);
-        return encoder.encode("bcrypt", passwordDecoded);
+        // Directamente codificar con BCrypt sin decodificar base64
+        return encoder.encode("bcrypt", password);
     }
 
     public void assignDefaultRole(User user) {
@@ -62,6 +62,7 @@ public class RegisterService {
         User user = new User();
         user.setUsername(signupDTO.getUsername());
         user.setEmail(signupDTO.getEmail()); // Agregar email
+        user.setAcceptedRules(true); // Usuario acepta las reglas al registrarse
 
         String passwordEncoded = encodePassword(signupDTO.getPassword());
         user.setPassword(passwordEncoded);
@@ -74,6 +75,7 @@ public class RegisterService {
         User user = new User();
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
+        user.setAcceptedRules(true); // Usuario acepta las reglas al registrarse
 
         String passwordEncoded = encodePassword(userDTO.getPassword());
         user.setPassword(passwordEncoded);

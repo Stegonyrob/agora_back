@@ -1,7 +1,6 @@
 package de.stella.agora_web.avatar.module;
 
 import de.stella.agora_web.profiles.model.Profile;
-import de.stella.agora_web.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -40,11 +39,7 @@ public class Avatar {
     @Column(nullable = false)
     private boolean preloaded;
 
-    // Relación con User (opcional)
-    @OneToOne(mappedBy = "avatar")
-    private User user;
-
-    // Relación con Profile (opcional)
+    // Relación con Profile (avatar belongs to profile, not user)
     @OneToOne(mappedBy = "avatar")
     private Profile profile;
 }

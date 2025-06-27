@@ -24,9 +24,14 @@ public class RegisterController {
             return ResponseEntity.badRequest().body("La contraseña es obligatoria");
         }
 
+        // Validar que se hayan aceptado las normas
+        if (!signupDTO.isRulesAccepted()) {
+            return ResponseEntity.badRequest().body("Debes aceptar las normas del blog para registrarte");
+        }
+
         String message = service.createUser(signupDTO);
 
-        if (message.contains("successfully")) {
+        if (message.contains("exitosamente") || message.contains("successfully")) {
             return ResponseEntity.ok(message);
         } else {
             return ResponseEntity.badRequest().body(message);

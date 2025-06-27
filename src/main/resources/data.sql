@@ -1,41 +1,48 @@
 /*Users*/
 INSERT INTO
-  users (username, password, email)
+  users (username, password, email, accepted_rules)
 VALUES
   (
     'admin',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
-    'admin@gmail.com'
+    'admin@gmail.com',
+    true
   ),
   (
     'user1',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
-    'user1@gmail.com'
+    'user1@gmail.com',
+    true
   ),
   (
     'user2',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
-    'user2@gmail.com'
+    'user2@gmail.com',
+    true
   ),
   (
     'user3',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
-    'user3@gmail.com'
+    'user3@gmail.com',
+    true
   ),
   (
     'user4',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
-    'user4@gmail.com'
+    'user4@gmail.com',
+    true
   ),
   (
     'user5',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
-    'user5@gmail.com'
+    'user5@gmail.com',
+    true
   ),
   (
     'user6',
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
-    'user6@gmail.com'
+    'user6@gmail.com',
+    true
   );
 
 /*Profiles*/
