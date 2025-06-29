@@ -28,18 +28,30 @@ public class Avatar {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String imageName;
 
+    // Para avatares precargados: solo el nombre del archivo
+    // Para avatares personalizados: los datos binarios
     @Lob
-    @Column(nullable = false)
+    @Column(name = "image_data")
     private byte[] imageData;
 
-    // Si el avatar es precargado o personalizado
+    // Si el avatar es precargado (archivo estático) o personalizado (base de datos)
     @Column(nullable = false)
     private boolean preloaded;
+
+    // Si es el avatar por defecto del sistema
+    @Column(nullable = false)
+    private boolean isDefault;
+
+    // Descripción o nombre amigable para mostrar en el selector
+    private String displayName;
+
+    private String imageUrl; // URL del avatar para uso en frontend
 
     // Relación con Profile (avatar belongs to profile, not user)
     @OneToOne(mappedBy = "avatar")
     private Profile profile;
+
 }

@@ -3,6 +3,8 @@ package de.stella.agora_web.profiles.model;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.hibernate.annotations.BatchSize;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.stella.agora_web.avatar.module.Avatar;
@@ -58,13 +60,12 @@ public class Profile {
     @Email
     private String email;
 
-    @NotBlank
-    @Size(min = 8, max = 100)
+    // Campos para cambio de contraseña (solo se usan en el frontend, no se persisten)
+    @Size(max = 100)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @NotBlank
-    @Size(min = 8, max = 100)
+    @Size(max = 100)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String confirmPassword;
 
@@ -83,10 +84,11 @@ public class Profile {
     private User user;
 
     // Relación correcta con PostLove
+    @BatchSize(size = 20)
     @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PostLove> postLoves;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "avatar_id")
     private Avatar avatar;
 

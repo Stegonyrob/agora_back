@@ -31,7 +31,8 @@ public class UserDAOImpl implements IUserDAO {
     @Override
     public Optional<User> findById(Long id) {
         Objects.requireNonNull(id, "ID cannot be null");
-        return userRepository.findById(id);
+        // Usar consulta optimizada que carga roles para evitar LazyInitializationException
+        return userRepository.findByIdWithRoles(id);
     }
 
     @Override
@@ -91,7 +92,8 @@ public class UserDAOImpl implements IUserDAO {
 
     @Override
     public Optional<User> findUserById(Long userId) {
-        return userRepository.findById(userId);
+        // Usar consulta optimizada que carga roles para evitar LazyInitializationException
+        return userRepository.findByIdWithRoles(userId);
     }
 
     @Override

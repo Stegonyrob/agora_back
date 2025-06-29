@@ -1,5 +1,7 @@
 package de.stella.agora_web.profiles.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.stella.agora_web.profiles.controller.dto.ProfileDTO;
 import de.stella.agora_web.profiles.model.Profile;
 import de.stella.agora_web.profiles.service.impl.ProfileServiceImpl;
@@ -20,6 +24,9 @@ import de.stella.agora_web.profiles.service.impl.ProfileServiceImpl;
 @RestController
 @RequestMapping(path = "${api-endpoint}/any/")
 public class ProfileController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     ProfileServiceImpl service;
 
@@ -44,6 +51,18 @@ public class ProfileController {
     @PostAuthorize("returnObject.body.id == authentication.principal.id")
     @PutMapping(path = "/user/profile/{id}")
     public ResponseEntity<Profile> update(@PathVariable Long id, @RequestBody ProfileDTO profileDTO) throws Exception {
+        try {
+            // Log the complete JSON received
+            String jsonReceived = objectMapper.writeValueAsString(profileDTO);
+            logger.info("=== PROFILE UPDATE REQUEST ===");
+            logger.info("Profile ID: {}", id);
+            logger.info("JSON received: {}", jsonReceived);
+            logger.info("ProfileDTO toString: {}", profileDTO.toString());
+            logger.info("============================");
+        } catch (Exception e) {
+            logger.error("Error logging ProfileDTO: {}", e.getMessage());
+        }
+
         Profile profile = service.update(profileDTO, id);
         return ResponseEntity.accepted().body(profile);
     }

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.annotations.BatchSize;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -52,7 +53,8 @@ public class User {
     @Column(nullable = false)
     private boolean acceptedRules;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @BatchSize(size = 10)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
@@ -60,10 +62,12 @@ public class User {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Profile profile;
 
-    @OneToMany(mappedBy = "user")
+    @BatchSize(size = 20)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Banned> banned;
 
-    @OneToMany(mappedBy = "user")
+    @BatchSize(size = 50)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Comment> comments;
 
     // Avatar removed - should be in Profile entity only

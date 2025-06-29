@@ -12,8 +12,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class AvatarDTO {
+
     private Long id;
     private String imageName;
     private byte[] imageData;
     private boolean preloaded;
+    private boolean isDefault;
+    private String displayName;
 }

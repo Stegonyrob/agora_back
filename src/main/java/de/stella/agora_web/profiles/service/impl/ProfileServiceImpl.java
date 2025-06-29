@@ -30,7 +30,9 @@ public class ProfileServiceImpl implements IProfileService {
 
     @PreAuthorize("hasRole('USER')")
     public Profile getById(@NonNull Long id) throws ProfileNotFoundException {
-        return repository.findById(id).orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
+        // Usar consulta optimizada que incluye User y Roles en una sola consulta
+        return repository.findByIdWithUserAndRoles(id)
+                .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
     }
 
     @PreAuthorize("hasRole('USER')")
@@ -40,7 +42,9 @@ public class ProfileServiceImpl implements IProfileService {
 
     @PreAuthorize("hasRole('USER')")
     public Profile updateProfile(ProfileDTO profileDTO, Long id) throws ProfileNotFoundException {
-        Profile profile = repository.findById(id).orElseThrow(() -> new ProfileNotFoundException("Profile Not Found"));
+        // Usar consulta optimizada solo con datos de User básicos (sin roles innecesarios para update)
+        Profile profile = repository.findByIdWithUser(id)
+                .orElseThrow(() -> new ProfileNotFoundException("Profile Not Found"));
 
         profile.setFirstName(profileDTO.getFirstName());
         profile.setLastName1(profileDTO.getLastName1());
@@ -109,6 +113,7 @@ public class ProfileServiceImpl implements IProfileService {
     public String updateFavorites(Long postId) {
         // Obtén el usuario autenticado
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        // Usar findByEmail normal ya que no necesitamos User/Roles para esta operación
         Profile profile = repository.findByEmail(auth.getName())
                 .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
 

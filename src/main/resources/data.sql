@@ -777,3 +777,247 @@ VALUES
 <p><strong>Fecha de última actualización:</strong> 26 de Junio de 2025</p>',
     '2025-06-26 00:00:00'
   );
+
+/* Avatares precargados */
+INSERT INTO
+  avatars (
+    image_name,
+    image_data,
+    preloaded,
+    is_default,
+    display_name,
+    image_url
+  )
+VALUES
+  (
+    '1.png',
+    NULL,
+    true,
+    true,
+    'Avatar amarillo sonriente',
+    '/images/avatars/1.png'
+  ),
+  (
+    '2.png',
+    NULL,
+    true,
+    false,
+    'Avatar marron sonriente',
+    '/images/avatars/2.png'
+  ),
+  (
+    '3.png',
+    NULL,
+    true,
+    false,
+    'Avatar avatar azul cielo sonriente',
+    '/images/avatars/3.png'
+  ),
+  (
+    '4.png',
+    NULL,
+    true,
+    false,
+    'Avatar verde sonriente',
+    '/images/avatars/4.png'
+  ),
+  (
+    '5.png',
+    NULL,
+    true,
+    false,
+    'Avatar 5amarillo sonriente',
+    '/images/avatars/5.png'
+  ),
+  (
+    '6.png',
+    NULL,
+    true,
+    false,
+    'Avatar turquesa sonriente',
+    '/images/avatars/6.png'
+  ),
+  (
+    '7.png',
+    NULL,
+    true,
+    false,
+    'Avatar verde claro sonriente',
+    '/images/avatars/7.png'
+  ),
+  (
+    '8.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul cielo sonriente 2',
+    '/images/avatars/8.png'
+  ),
+  (
+    '9.png',
+    NULL,
+    true,
+    false,
+    'Avatar girs y blanco sonriente',
+    '/images/avatars/9.png'
+  ),
+  (
+    '10.png',
+    NULL,
+    true,
+    false,
+    'Avatar lila sonriente',
+    '/images/avatars/10.png'
+  ),
+  (
+    '11.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul sonriente',
+    '/images/avatars/11.png'
+  ),
+  (
+    '12.png',
+    NULL,
+    true,
+    false,
+    'Avatar amarillo sonriente 2',
+    '/images/avatars/12.png'
+  ),
+  (
+    '13.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul sonriente ojos cerrados',
+    '/images/avatars/13.png'
+  ),
+  (
+    '14.png',
+    NULL,
+    true,
+    false,
+    'Avatar rosa sonriente',
+    '/images/avatars/14.png'
+  ),
+  (
+    '15.png',
+    NULL,
+    true,
+    false,
+    'Avatar marron serio',
+    '/images/avatars/15.png'
+  ),
+  (
+    '16.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul cielo serio',
+    '/images/avatars/16.png'
+  ),
+  (
+    '17.png',
+    NULL,
+    true,
+    false,
+    'Avatar 17',
+    '/images/avatars/17.png'
+  ),
+  (
+    '18.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul feliz',
+    '/images/avatars/18.png'
+  ),
+  (
+    '19.png',
+    NULL,
+    true,
+    false,
+    'Avatar amarillo feliz',
+    '/images/avatars/19.png'
+  ),
+  (
+    '20.png',
+    NULL,
+    true,
+    false,
+    'Avatar verde sonriente',
+    '/images/avatars/20.png'
+  ),
+  (
+    '21.png',
+    NULL,
+    true,
+    false,
+    'Avatar gris sonriente',
+    '/images/avatars/21.png'
+  ),
+  (
+    '22.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul cielo mirando a la izquierda',
+    '/images/avatars/22.png'
+  ),
+  (
+    '23.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul cielo serio',
+    '/images/avatars/23.png'
+  ),
+  (
+    '24.png',
+    NULL,
+    true,
+    false,
+    'Avatar rosa con cuernos sonriente',
+    '/images/avatars/24.png'
+  ),
+  (
+    '25.png',
+    NULL,
+    true,
+    false,
+    'Avatar verde y blanco sonriente',
+    '/images/avatars/25.png'
+  ),
+  (
+    '26.png',
+    NULL,
+    true,
+    false,
+    'Avatar lila serio',
+    '/images/avatars/26.png'
+  ),
+  (
+    '27.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul serio 2',
+    '/images/avatars/27.png'
+  ),
+  (
+    '28.png',
+    NULL,
+    true,
+    false,
+    'Avatar verde pensativo',
+    '/images/avatars/28.png'
+  ),
+  (
+    'onron.png',
+    NULL,
+    true,
+    true,
+    'Avatar Onron (Admin)',
+    '/images/avatars/onron.png'
+  );
