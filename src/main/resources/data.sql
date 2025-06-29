@@ -1017,7 +1017,7 @@ VALUES
     'onron.png',
     NULL,
     true,
-    true,
+    false,
     'Avatar Onron (Admin)',
     '/images/avatars/onron.png'
   );
