@@ -3,6 +3,7 @@ package de.stella.agora_web.avatar.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,9 @@ public class AvatarService {
     @Transactional(readOnly = true)
     public List<AvatarSelectorDTO> getPreloadedAvatarsForSelector() {
         logger.info("Obteniendo avatares precargados para selector");
-        return avatarRepository.findPreloadedAvatarsForSelector();
+        return avatarRepository.findPreloadedAvatars().stream()
+                .map(avatar -> new AvatarSelectorDTO(avatar.getId(), avatar.getImageName(), avatar.getDisplayName()))
+                .collect(Collectors.toList());
     }
 
     /**

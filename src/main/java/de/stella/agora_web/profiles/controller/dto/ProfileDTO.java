@@ -28,6 +28,7 @@ public class ProfileDTO {
     private String city;
     private String country;
     private String phone;
+    private Long avatarId; // ID del avatar seleccionado
 
     public String getFullName() {
         return firstName + " " + lastName1 + (lastName2 != null ? " " + lastName2 : "");

@@ -3,6 +3,7 @@ package de.stella.agora_web.avatar.module;
 import de.stella.agora_web.profiles.model.Profile;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,9 +33,9 @@ public class Avatar {
     private String imageName;
 
     // Para avatares precargados: solo el nombre del archivo
-    // Para avatares personalizados: los datos binarios
+    // Para avatares personalizados: los datos binarios (soporte para archivos grandes)
     @Lob
-    @Column(name = "image_data")
+    @Column(name = "image_data", columnDefinition = "LONGBLOB")
     private byte[] imageData;
 
     // Si el avatar es precargado (archivo estático) o personalizado (base de datos)
@@ -50,8 +51,19 @@ public class Avatar {
 
     private String imageUrl; // URL del avatar para uso en frontend
 
-    // Relación con Profile (avatar belongs to profile, not user)
-    @OneToOne(mappedBy = "avatar")
+    // Relación con Profile (un avatar puede ser usado por muchos perfiles, pero esta referencia es solo informativa)
+    @OneToOne(mappedBy = "avatar", fetch = FetchType.LAZY)
     private Profile profile;
+
+    public Avatar(Long id, String imageName, byte[] imageData, boolean preloaded, boolean isDefault, String displayName,
+            String imageUrl) {
+        this.id = id;
+        this.imageName = imageName;
+        this.imageData = imageData;
+        this.preloaded = preloaded;
+        this.isDefault = isDefault;
+        this.displayName = displayName;
+        this.imageUrl = imageUrl;
+    }
 
 }

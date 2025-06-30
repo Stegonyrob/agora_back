@@ -43,14 +43,15 @@ public class ProfileController {
 
     @PostAuthorize("returnObject.body.id == authentication.principal.id")
     @GetMapping(path = "/user/profile/{id}")
-    public ResponseEntity<?> getById(@NonNull @PathVariable Long id) throws Exception {
+    public ResponseEntity<ProfileDTO> getById(@NonNull @PathVariable Long id) throws Exception {
         Profile profile = service.getById(id);
-        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(profile);
+        ProfileDTO profileDTO = toProfileDTO(profile);
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(profileDTO);
     }
 
     @PostAuthorize("returnObject.body.id == authentication.principal.id")
     @PutMapping(path = "/user/profile/{id}")
-    public ResponseEntity<Profile> update(@PathVariable Long id, @RequestBody ProfileDTO profileDTO) throws Exception {
+    public ResponseEntity<ProfileDTO> update(@PathVariable Long id, @RequestBody ProfileDTO profileDTO) throws Exception {
         try {
             // Log the complete JSON received
             String jsonReceived = objectMapper.writeValueAsString(profileDTO);
@@ -58,13 +59,18 @@ public class ProfileController {
             logger.info("Profile ID: {}", id);
             logger.info("JSON received: {}", jsonReceived);
             logger.info("ProfileDTO toString: {}", profileDTO.toString());
+            logger.info("Avatar ID in request: {}", profileDTO.getAvatarId());
             logger.info("============================");
         } catch (Exception e) {
             logger.error("Error logging ProfileDTO: {}", e.getMessage());
         }
 
-        Profile profile = service.update(profileDTO, id);
-        return ResponseEntity.accepted().body(profile);
+        Profile updatedProfile = service.update(profileDTO, id);
+        ProfileDTO responseDTO = toProfileDTO(updatedProfile);
+
+        logger.info("Updated profile avatar ID: {}", responseDTO.getAvatarId());
+
+        return ResponseEntity.accepted().body(responseDTO);
     }
 
     @PutMapping(path = "/user/profile/favorite/{id}")
@@ -119,6 +125,7 @@ public class ProfileController {
                 .city(profile.getCity())
                 .country(profile.getCountry())
                 .phone(profile.getPhone())
+                .avatarId(profile.getAvatar() != null ? profile.getAvatar().getId() : null)
                 .build();
     }
 

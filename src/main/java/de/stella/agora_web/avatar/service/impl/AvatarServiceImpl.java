@@ -42,7 +42,9 @@ public class AvatarServiceImpl implements IAvatarService {
 
     @Override
     public List<AvatarSelectorDTO> getPreloadedAvatarsForSelector() {
-        return avatarRepository.findPreloadedAvatarsForSelector();
+        return avatarRepository.findPreloadedAvatars().stream()
+                .map(avatar -> new AvatarSelectorDTO(avatar.getId(), avatar.getImageName(), avatar.getDisplayName()))
+                .collect(Collectors.toList());
     }
 
     @Override

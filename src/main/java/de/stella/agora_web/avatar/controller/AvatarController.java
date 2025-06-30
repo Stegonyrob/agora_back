@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/avatars")
+@RequestMapping("${api-endpoint}/any/avatars")
 @RequiredArgsConstructor
 public class AvatarController {
 

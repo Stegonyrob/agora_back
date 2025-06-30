@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import de.stella.agora_web.avatar.repository.AvatarRepository;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.model.PostLove;
 import de.stella.agora_web.posts.repository.PostLoveRepository;
@@ -27,8 +28,10 @@ public class ProfileServiceImpl implements IProfileService {
     private final ProfileRepository repository;
     private final PostRepository postRepository;
     private final PostLoveRepository postLoveRepository;
+    private final AvatarRepository avatarRepository;
 
     @PreAuthorize("hasRole('USER')")
+    @Override
     public Profile getById(@NonNull Long id) throws ProfileNotFoundException {
         // Usar consulta optimizada que incluye User y Roles en una sola consulta
         return repository.findByIdWithUserAndRoles(id)
@@ -36,11 +39,13 @@ public class ProfileServiceImpl implements IProfileService {
     }
 
     @PreAuthorize("hasRole('USER')")
+    @Override
     public Profile getByEmail(@NonNull String email) throws ProfileNotFoundException {
         return repository.findByEmail(email).orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
     }
 
     @PreAuthorize("hasRole('USER')")
+    @Override
     public Profile updateProfile(ProfileDTO profileDTO, Long id) throws ProfileNotFoundException {
         // Usar consulta optimizada solo con datos de User básicos (sin roles innecesarios para update)
         Profile profile = repository.findByIdWithUser(id)
@@ -56,7 +61,32 @@ public class ProfileServiceImpl implements IProfileService {
         profile.setEmail(profileDTO.getEmail());
         profile.setPhone(profileDTO.getPhone());
 
-        return repository.save(profile);
+        // Manejar actualización del avatar
+        if (profileDTO.getAvatarId() != null) {
+            avatarRepository.findById(profileDTO.getAvatarId())
+                    .ifPresentOrElse(
+                            avatar -> {
+                                profile.setAvatar(avatar);
+                                System.out.println("Avatar actualizado: ID=" + avatar.getId() + ", imageName=" + avatar.getImageName());
+                            },
+                            () -> System.out.println("Avatar no encontrado con ID: " + profileDTO.getAvatarId())
+                    );
+        } else {
+            // Si no se proporciona avatarId, mantener el avatar actual o usar el default
+            if (profile.getAvatar() == null) {
+                avatarRepository.findDefaultAvatar()
+                        .ifPresent(defaultAvatar -> {
+                            profile.setAvatar(defaultAvatar);
+                            System.out.println("Asignado avatar por defecto: " + defaultAvatar.getImageName());
+                        });
+            }
+        }
+
+        Profile savedProfile = repository.save(profile);
+        System.out.println("Perfil guardado con avatar ID: "
+                + (savedProfile.getAvatar() != null ? savedProfile.getAvatar().getId() : "null"));
+
+        return savedProfile;
     }
 
     @Override
