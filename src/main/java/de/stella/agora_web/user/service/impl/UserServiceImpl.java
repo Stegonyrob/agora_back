@@ -88,4 +88,8 @@ public class UserServiceImpl implements IUserService {
     public User getUserById(Long userId) {
         return userDAO.findById(userId).orElseThrow();
     }
+
+    public List<User> getAllUsers() {
+        return userDAO.findAll();
+    }
 }

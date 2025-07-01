@@ -1,5 +1,6 @@
 package de.stella.agora_web.user.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +34,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + "LEFT JOIN FETCH u.roles "
             + "WHERE u.id = :id")
     Optional<User> findByIdWithRoles(@Param("id") Long id);
+
+    // Consulta optimizada para obtener todos los usuarios con todas las relaciones necesarias para el DTO
+    @Query("SELECT DISTINCT u FROM User u "
+            + "LEFT JOIN FETCH u.roles "
+            + "LEFT JOIN FETCH u.profile p "
+            + "LEFT JOIN FETCH p.avatar "
+            + "LEFT JOIN FETCH u.banned")
+    List<User> findAllWithProfileAndRoles();
 }

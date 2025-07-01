@@ -37,7 +37,7 @@ public class Comment {
 
     @NotBlank
     @Size(min = 1, max = 1000)
-    @Column(name = "message ", length = 1000)
+    @Column(name = "message", length = 1000)
     private String message;
 
     @Column(name = "creation_date")

@@ -2,8 +2,11 @@ package de.stella.agora_web.legal_text.service.impl;
 
 import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.stella.agora_web.legal_text.controller.dto.LegalTextDTO;
 import de.stella.agora_web.legal_text.model.LegalText;
@@ -12,6 +15,8 @@ import de.stella.agora_web.legal_text.service.ILegalTextService;
 
 @Service
 public class LegalTextServiceImpl implements ILegalTextService {
+
+    private static final Logger logger = LoggerFactory.getLogger(LegalTextServiceImpl.class);
 
     @Autowired
     private LegalTextRepository repository;
@@ -28,14 +33,38 @@ public class LegalTextServiceImpl implements ILegalTextService {
     }
 
     @Override
+    @Transactional
     public LegalTextDTO updateByType(String type, LegalTextDTO dto) {
-        LegalText entity = repository.findByType(type)
-                .orElseThrow(() -> new NoSuchElementException("No existe el texto legal para: " + type));
-        entity.setTitle(dto.getTitle());
-        entity.setContent(dto.getContent());
-        repository.save(entity);
-        dto.setType(entity.getType());
-        return dto;
+        try {
+            logger.info("Updating legal text for type: {}", type);
+            logger.info("DTO received - title: {}, content length: {}",
+                    dto.getTitle(), dto.getContent() != null ? dto.getContent().length() : "null");
+
+            LegalText entity = repository.findByType(type)
+                    .orElseThrow(() -> new NoSuchElementException("No existe el texto legal para: " + type));
+
+            logger.info("Found existing entity with ID: {}", entity.getId());
+
+            // Validar datos antes de actualizar
+            if (dto.getTitle() == null || dto.getTitle().trim().isEmpty()) {
+                throw new IllegalArgumentException("Title cannot be null or empty");
+            }
+            if (dto.getContent() == null || dto.getContent().trim().isEmpty()) {
+                throw new IllegalArgumentException("Content cannot be null or empty");
+            }
+
+            entity.setTitle(dto.getTitle().trim());
+            entity.setContent(dto.getContent().trim());
+
+            LegalText savedEntity = repository.save(entity);
+            logger.info("Legal text saved successfully with ID: {}", savedEntity.getId());
+
+            dto.setType(savedEntity.getType());
+            return dto;
+        } catch (Exception e) {
+            logger.error("Error updating legal text for type {}: {}", type, e.getMessage(), e);
+            throw e;
+        }
     }
 
     @Override

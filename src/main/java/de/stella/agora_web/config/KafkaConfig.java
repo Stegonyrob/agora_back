@@ -9,6 +9,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 import de.stella.agora_web.comment.kafka.component.producer.CommentKafkaProducer;
 import de.stella.agora_web.comment.kafka.dto.CommentNotificationDTO;
+import de.stella.agora_web.replies.kafka.component.producer.ReplyKafkaProducer;
+import de.stella.agora_web.replies.kafka.dto.ReplyNotificationDTO;
 
 /**
  * Configuración para cuando Kafka está habilitado
@@ -24,6 +26,16 @@ public class KafkaConfig {
             @Override
             public void sendCommentNotification(CommentNotificationDTO notification) {
                 kafkaTemplate.send("comments", notification);
+            }
+        };
+    }
+
+    @Bean
+    public ReplyKafkaProducer replyKafkaProducer(@Autowired KafkaTemplate<String, ReplyNotificationDTO> kafkaTemplate) {
+        return new ReplyKafkaProducer() {
+            @Override
+            public void sendReplyNotification(ReplyNotificationDTO notification) {
+                kafkaTemplate.send("replies", notification);
             }
         };
     }
@@ -44,6 +56,19 @@ class KafkaDisabledConfig {
         return new CommentKafkaProducer() {
             @Override
             public void sendCommentNotification(CommentNotificationDTO notification) {
+                // No hacer nada cuando Kafka está deshabilitado
+            }
+        };
+    }
+
+    /**
+     * Bean dummy para Reply producer cuando Kafka está deshabilitado
+     */
+    @Bean
+    public ReplyKafkaProducer replyKafkaProducer() {
+        return new ReplyKafkaProducer() {
+            @Override
+            public void sendReplyNotification(ReplyNotificationDTO notification) {
                 // No hacer nada cuando Kafka está deshabilitado
             }
         };

@@ -43,6 +43,12 @@ VALUES
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
     'user6@gmail.com',
     true
+  ),
+  (
+    'user7',
+    '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
+    'user7@gmail.com',
+    true
   );
 
 /*Profiles*/

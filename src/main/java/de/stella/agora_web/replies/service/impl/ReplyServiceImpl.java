@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
+import de.stella.agora_web.replies.kafka.component.producer.ReplyKafkaProducer;
+import de.stella.agora_web.replies.kafka.dto.ReplyNotificationDTO;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.repository.ReplyRepository;
 import de.stella.agora_web.replies.service.IReplyService;
@@ -27,8 +29,12 @@ public class ReplyServiceImpl implements IReplyService {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private ITagService tagService;
+
+    @Autowired // Siempre disponible (real o dummy según kafka.enabled)
+    private ReplyKafkaProducer kafkaProducer;
 
     @Override
     public List<Reply> getAllReplies() {
@@ -78,7 +84,19 @@ public class ReplyServiceImpl implements IReplyService {
         }
         reply.setTags(tags);
 
-        return replyRepository.save(reply);
+        // Guardar la respuesta
+        Reply savedReply = replyRepository.save(reply);
+
+        // Enviar notificación Kafka - Siempre disponible (dummy si kafka está deshabilitado)
+        ReplyNotificationDTO notification = new ReplyNotificationDTO();
+        notification.setReplyId(savedReply.getId());
+        notification.setCommentId(savedReply.getComment().getId());
+        notification.setAuthor(user.getUsername());
+        notification.setMessage(savedReply.getMessage());
+
+        kafkaProducer.sendReplyNotification(notification);
+
+        return savedReply;
     }
 
     @Override

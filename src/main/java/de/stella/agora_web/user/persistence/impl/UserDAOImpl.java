@@ -25,7 +25,8 @@ public class UserDAOImpl implements IUserDAO {
 
     @Override
     public List<User> findAll() {
-        return userRepository.findAll();
+        // Usar consulta optimizada que carga todas las relaciones necesarias
+        return userRepository.findAllWithProfileAndRoles();
     }
 
     @Override
