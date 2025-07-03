@@ -440,7 +440,7 @@ VALUES
     'Programa de formación y apoyo dirigido a padres y madres. Se ofrecen herramientas, estrategias y recursos para afrontar los retos de la crianza, mejorar la comunicación familiar y promover un desarrollo saludable de los hijos.',
     NOW(),
     false,
-    2,
+    1,
     40
   );
 
@@ -1047,4 +1047,87 @@ VALUES
     false,
     'Avatar Onron (Admin)',
     '/images/avatars/onron.png'
+  );
+
+-- Inserciones en la tabla 'tags'
+INSERT INTO
+  tags (id, name, archived)
+VALUES
+  (1, 'Educativo', false),
+  (2, 'Talleres', false),
+  (3, 'Padres', false),
+  (4, 'Formación', false),
+  (5, 'Juegos', false),
+  (6, 'Apoyo', false),
+  (7, 'Infantil', false),
+  (8, 'Desarrollo', false);
+
+-- Inserciones en la tabla 'event_tag' (relación entre eventos y tags)
+-- Evento 1: "Taller de Juegos de Mesa" (id=1) con tags Educativo, Talleres, Juegos, Infantil
+INSERT INTO
+  event_tag (event_id, tag_id)
+VALUES
+  (1, 1), -- Educativo
+  (1, 2), -- Talleres
+  (1, 5), -- Juegos
+  (1, 7);
+
+-- Infantil
+-- Evento 2: "Escuela de Padres" (id=2) con tags Padres, Formación, Apoyo, Desarrollo
+INSERT INTO
+  event_tag (event_id, tag_id)
+VALUES
+  (2, 3), -- Padres
+  (2, 4), -- Formación
+  (2, 6), -- Apoyo
+  (2, 8);
+
+-- Desarrollo
+-- Nota: Las imágenes de eventos se almacenan como LONGBLOB en la tabla event_images.
+-- Estas inserciones son ejemplos conceptuales ya que los datos LONGBLOB deben cargarse
+-- desde archivos reales usando aplicaciones específicas o scripts de migración.
+-- 
+-- Las siguientes inserciones muestran la estructura, pero los valores de image_data
+-- deben ser reemplazados por datos binarios reales de imágenes.
+-- Ejemplo de estructura para event_images:
+-- INSERT INTO event_images (image_name, image_data, event_id)
+-- VALUES 
+--   ('juegos_mesa_1.jpg', LOAD_FILE('/path/to/juegos_mesa_1.jpg'), 1),
+--   ('juegos_mesa_2.jpg', LOAD_FILE('/path/to/juegos_mesa_2.jpg'), 1),
+--   ('escuela_padres_1.jpg', LOAD_FILE('/path/to/escuela_padres_1.jpg'), 2),
+--   ('escuela_padres_2.jpg', LOAD_FILE('/path/to/escuela_padres_2.jpg'), 2);
+-- INSERCIONES REALES para event_images con imágenes de prueba
+-- Estas son imágenes JPEG mínimas válidas de 8x8 píxeles para desarrollo/testing
+INSERT INTO
+  event_images (image_name, image_data, event_id)
+VALUES
+  -- Imágenes para Evento 1: "Taller de Juegos de Mesa"
+  (
+    'taller_juegos_mesa_1.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    1
+  ),
+  (
+    'taller_juegos_mesa_2.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    1
+  ),
+  -- Imágenes para Evento 2: "Escuela de Padres"
+  (
+    'escuela_padres_1.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    2
+  ),
+  (
+    'escuela_padres_2.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    2
   );
