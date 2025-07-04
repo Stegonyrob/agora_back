@@ -267,19 +267,6 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public List<Post> getPostsByTagName(String tagName) {
-        if (tagName == null) {
-            throw new IllegalArgumentException("Tag name cannot be null");
-        }
-
-        List<Post> posts = postRepository.findByTagsName(tagName);
-        if (posts == null) {
-            throw new UnsupportedOperationException("Unimplemented method 'getPostsByTagName'");
-        }
-        return posts;
-    }
-
-    @Override
     public List<Post> getPostsByUserId(Long userId) {
         return postRepository.findByUser_Id(userId);
     }

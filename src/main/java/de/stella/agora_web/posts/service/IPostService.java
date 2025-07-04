@@ -34,8 +34,6 @@ public interface IPostService {
 
     List<Tag> getTagsByPostId(Long postId);
 
-    List<Post> getPostsByTagName(String tagName);
-
     List<Post> getPostsByUserId(Long userId);
 
     Post update(PostDTO postDTO, Long id);

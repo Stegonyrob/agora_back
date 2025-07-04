@@ -34,7 +34,7 @@ public class EventImage {
     private String imageName;
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGBLOB")
     private byte[] imageData;
 
     @ManyToOne(fetch = FetchType.LAZY)

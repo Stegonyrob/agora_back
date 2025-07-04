@@ -2,6 +2,8 @@ package de.stella.agora_web.tags.service;
 
 import java.util.List;
 
+import de.stella.agora_web.events.model.Event;
+import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.tags.model.Tag;
 
 public interface ITagService {
@@ -28,5 +30,18 @@ public interface ITagService {
 
     void removeTagFromComment(Long commentId, String tagName);
 
+    // Métodos para gestionar tags de eventos
+    void addTagToEvent(Long eventId, String tagName);
+
+    void removeTagFromEvent(Long eventId, String tagName);
+
+    void addTagToEvent(Long eventId, Long tagId);
+
+    void removeTagFromEvent(Long eventId, Long tagId);
+
     Tag createTag(String tagName);
+
+    List<Post> getPostsByTagName(String tagName);
+
+    List<Event> getEventsByTagName(String tagName);
 }

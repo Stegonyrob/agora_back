@@ -28,12 +28,13 @@ public class EventDTO {
 
     private List<AttendeeDTO> attendees;
 
-    private int capacity; // Aforo máximo del evento
+    private int capacity;
+    private int attendeesCount;
 
-    private int attendeesCount; // Número de asistentes registrados
+    private List<String> tags;
 
     public EventDTO() {
-        // Default constructor
+
     }
 
     public EventDTO(Long id, String title, String message, boolean archived, List<AttendeeDTO> attendees, int capacity,
@@ -45,5 +46,6 @@ public class EventDTO {
         this.attendees = attendees;
         this.capacity = capacity;
         this.attendeesCount = attendeesCount;
+        this.tags = tags;
     }
 }

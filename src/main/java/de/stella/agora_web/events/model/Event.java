@@ -267,6 +267,15 @@ public class Event {
         }
     }
 
+    // Getter y Setter para user
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public int getCapacity() {
         return capacity;
     }

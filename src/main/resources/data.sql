@@ -1053,6 +1053,7 @@ VALUES
 INSERT INTO
   tags (id, name, archived)
 VALUES
+  -- Tags básicos ya existentes
   (1, 'Educativo', false),
   (2, 'Talleres', false),
   (3, 'Padres', false),
@@ -1060,7 +1061,121 @@ VALUES
   (5, 'Juegos', false),
   (6, 'Apoyo', false),
   (7, 'Infantil', false),
-  (8, 'Desarrollo', false);
+  (8, 'Desarrollo', false),
+  -- Tags relacionados con neurodiversidad y condiciones
+  (9, 'Neurodiversidad', false),
+  (10, 'Autismo', false),
+  (11, 'CEA', false), -- Condición del Espectro Autista
+  (12, 'TDAH', false),
+  (13, 'TDA', false),
+  (14, 'NEE', false), -- Necesidades Educativas Especiales
+  (15, 'NEAE', false), -- Necesidades Específicas de Apoyo Educativo
+  (16, 'Dificultades Aprendizaje', false),
+  (17, 'Trastornos Comunicación', false),
+  (18, 'Condiciones Desarrollo', false),
+  -- Tags de servicios específicos
+  (19, 'Reeducación Pedagógica', false),
+  (20, 'Educación Psicomotriz', false),
+  (21, 'Refuerzo Inglés', false),
+  (22, 'Refuerzo Educativo', false),
+  (23, 'Talleres Temáticos', false),
+  (24, 'Escuela Familias', false),
+  (25, 'Juegos Mesa', false),
+  (26, 'Vacaciones', false),
+  -- Tags de metodología y enfoques
+  (27, 'Individualizado', false),
+  (28, 'Grupos Reducidos', false),
+  (29, 'Especializado', false),
+  (30, 'Inclusivo', false),
+  (31, 'Coordinación Multidisciplinar', false),
+  (32, 'Intervención Familiar', false),
+  (33, 'Atención Personalizada', false),
+  -- Tags de habilidades y competencias
+  (34, 'Habilidades Sociales', false),
+  (35, 'Comunicación', false),
+  (36, 'Pensamiento Estratégico', false),
+  (37, 'Resolución Problemas', false),
+  (38, 'Cooperación', false),
+  (39, 'Paciencia', false),
+  (40, 'Escucha Activa', false),
+  (41, 'Coordinación', false),
+  (42, 'Equilibrio', false),
+  (43, 'Conciencia Corporal', false),
+  (44, 'Motricidad', false),
+  -- Tags de áreas de desarrollo
+  (45, 'Cognitivo', false),
+  (46, 'Emocional', false),
+  (47, 'Social', false),
+  (48, 'Motor', false),
+  (49, 'Académico', false),
+  (50, 'Bienestar', false),
+  (51, 'Autoestima', false),
+  (52, 'Autonomía', false),
+  -- Tags de edades y grupos
+  (53, 'Preescolar', false),
+  (54, 'Primaria', false),
+  (55, 'Secundaria', false),
+  (56, 'Adolescentes', false),
+  (57, 'Adultos', false),
+  (58, 'Familias', false),
+  -- Tags de actividades específicas
+  (59, 'Lectura', false),
+  (60, 'Escritura', false),
+  (61, 'Cálculo', false),
+  (62, 'Atención', false),
+  (63, 'Concentración', false),
+  (64, 'Memoria', false),
+  (65, 'Lenguaje', false),
+  (66, 'Habla', false),
+  (67, 'Comprensión', false),
+  -- Tags de temas específicos del blog/posts
+  (68, 'Selectividad Alimentaria', false),
+  (69, 'Texturas', false),
+  (70, 'Colores', false),
+  (71, 'Sensibilidad Sensorial', false),
+  (72, 'Adaptación', false),
+  (73, 'Superación', false),
+  (74, 'Comunidad', false),
+  (75, 'Apoyo Mutuo', false),
+  (76, 'Experiencias Personales', false),
+  (77, 'Testimonios', false),
+  -- Tags de metodología profesional
+  (78, 'Evaluación', false),
+  (79, 'Diagnóstico', false),
+  (80, 'Intervención', false),
+  (81, 'Seguimiento', false),
+  (82, 'Progreso', false),
+  (83, 'Adaptaciones Curriculares', false),
+  (84, 'Estrategias', false),
+  (85, 'Recursos', false),
+  (86, 'Herramientas', false),
+  -- Tags de contextos
+  (87, 'Hogar', false),
+  (88, 'Escuela', false),
+  (89, 'Centro Educativo', false),
+  (90, 'Aula', false),
+  (91, 'Exterior', false),
+  (92, 'Presencial', false),
+  (93, 'Online', false),
+  -- Tags de eventos y actividades grupales
+  (94, 'Eventos', false),
+  (95, 'Actividades Grupales', false),
+  (96, 'Participación', false),
+  (97, 'Interacción', false),
+  (98, 'Convivencia', false),
+  (99, 'Respeto', false),
+  (100, 'Normas', false),
+  -- Tags adicionales específicos del centro
+  (101, 'Gijón', false),
+  (102, 'Asturias', false),
+  (103, 'Centro Ágora', false),
+  (104, 'Profesional', false),
+  (105, 'Calidad', false),
+  (106, 'Excelencia', false),
+  (107, 'Innovación', false),
+  (108, 'Creatividad', false),
+  (109, 'Diversión', false),
+  (110, 'Lúdico', false);
 
 -- Inserciones en la tabla 'event_tag' (relación entre eventos y tags)
 -- Evento 1: "Taller de Juegos de Mesa" (id=1) con tags Educativo, Talleres, Juegos, Infantil

@@ -37,7 +37,7 @@ public class PostImage {
     private boolean isMainImage;
 
     @Lob
-    @Column(name = "image_data", nullable = false)
+    @Column(name = "image_data", nullable = false, columnDefinition = "LONGBLOB")
     private byte[] imageData; // Almacenar los datos binarios de la imagen
 
     @ManyToOne(fetch = FetchType.LAZY)

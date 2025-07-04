@@ -96,12 +96,6 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
-    @GetMapping("posts/tag/{tagName}")
-    public ResponseEntity<List<Post>> getPostsByTagName(@PathVariable String tagName) {
-        List<Post> posts = postService.getPostsByTagName(tagName);
-        return ResponseEntity.ok(posts);
-    }
-
     // --- NUEVOS ENDPOINTS PARA LOVES ---
     // Marcar un post como favorito (love)
     @PutMapping("/posts/{postId}/love")

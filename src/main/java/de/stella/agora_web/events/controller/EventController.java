@@ -85,12 +85,6 @@ public class EventController {
         }
     }
 
-    @GetMapping("events/tag/{tagName}")
-    public ResponseEntity<List<Event>> getEventsByTagName(@PathVariable String tagName) {
-        List<Event> events = eventService.getEventsByTagName(tagName);
-        return ResponseEntity.ok(events);
-    }
-
     public ResponseEntity<EventDTO> createEvent(EventDTO eventDTO, long userId) {
         EventDTO newEvent = eventService.createEvent(eventDTO);
         return ResponseEntity.status(HttpStatus.CREATED)

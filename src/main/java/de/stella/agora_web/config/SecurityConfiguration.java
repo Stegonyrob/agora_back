@@ -72,7 +72,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth.requestMatchers(PathRequest.toH2Console()).permitAll()
                 .requestMatchers(PathRequest.toH2Console()).permitAll()
                 .requestMatchers("/error").permitAll()
-                .requestMatchers(endpoint + "/all/**").permitAll() // Incluye /register
+                .requestMatchers(endpoint + "/all/**").permitAll() // Incluye /register Y los tags públicos
                 .requestMatchers(endpoint + "/any/user/register").permitAll() // Registro público (por si acaso)
                 .requestMatchers(HttpMethod.GET, "/posts/**").hasRole("USER")
                 .requestMatchers("/posts/**").hasRole("ADMIN")
@@ -81,6 +81,9 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.GET, "/replies/**").hasRole("USER")
                 .requestMatchers("/replies/**").hasRole("ADMIN")
                 .requestMatchers("/comments/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers(HttpMethod.GET, endpoint + "/any/tags/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers(HttpMethod.POST, endpoint + "/any/tags/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, endpoint + "/any/tags/**").hasRole("ADMIN")
                 .requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers(endpoint + "/admin/**").hasRole("ADMIN")
                 .requestMatchers(endpoint + "/user/**").hasRole("USER")

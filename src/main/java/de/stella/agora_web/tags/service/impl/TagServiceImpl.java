@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.comment.repository.CommentRepository;
+import de.stella.agora_web.events.model.Event;
+import de.stella.agora_web.events.repository.EventRepository;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.replies.model.Reply;
@@ -26,6 +28,8 @@ public class TagServiceImpl implements ITagService {
     @Autowired
     private PostRepository postRepository;
     @Autowired
+    private EventRepository eventRepository;
+    @Autowired
     private ReplyRepository replyRepository;
     @Autowired
     private CommentRepository commentRepository;
@@ -40,6 +44,7 @@ public class TagServiceImpl implements ITagService {
         return tagRepository.findById(id).orElse(null);
     }
 
+    @Override
     public Tag getOrCreateTagByName(String name) {
         if (name == null || name.isBlank()) {
             return null;
@@ -74,6 +79,7 @@ public class TagServiceImpl implements ITagService {
     }
 
     // Métodos genéricos para asociar tags a entidades
+    @Override
     public void addTagToPost(Long postId, String tagName) {
         Post post = postRepository.findById(postId).orElse(null);
         Tag tag = getOrCreateTagByName(tagName);
@@ -83,6 +89,7 @@ public class TagServiceImpl implements ITagService {
         }
     }
 
+    @Override
     public void removeTagFromPost(Long postId, String tagName) {
         Post post = postRepository.findById(postId).orElse(null);
         Tag tag = getTagByName(tagName);
@@ -92,6 +99,7 @@ public class TagServiceImpl implements ITagService {
         }
     }
 
+    @Override
     public void addTagToReply(Long replyId, String tagName) {
         Reply reply = replyRepository.findById(replyId).orElse(null);
         Tag tag = getOrCreateTagByName(tagName);
@@ -186,5 +194,57 @@ public class TagServiceImpl implements ITagService {
             comment.getTags().remove(tag);
             commentRepository.save(comment);
         }
+    }
+
+    // ========== NUEVOS MÉTODOS PARA EVENTOS ==========
+    @Override
+    public void addTagToEvent(Long eventId, String tagName) {
+        Event event = eventRepository.findById(eventId).orElse(null);
+        Tag tag = getOrCreateTagByName(tagName);
+        if (event != null && tag != null) {
+            event.getTags().add(tag);
+            eventRepository.save(event);
+        }
+    }
+
+    @Override
+    public void removeTagFromEvent(Long eventId, String tagName) {
+        Event event = eventRepository.findById(eventId).orElse(null);
+        Tag tag = getTagByName(tagName);
+        if (event != null && tag != null) {
+            event.getTags().remove(tag);
+            eventRepository.save(event);
+        }
+    }
+
+    @Override
+    public void addTagToEvent(Long eventId, Long tagId) {
+        Event event = eventRepository.findById(eventId).orElse(null);
+        Tag tag = tagRepository.findById(tagId).orElse(null);
+        if (event != null && tag != null) {
+            event.getTags().add(tag);
+            eventRepository.save(event);
+        }
+    }
+
+    @Override
+    public void removeTagFromEvent(Long eventId, Long tagId) {
+        Event event = eventRepository.findById(eventId).orElse(null);
+        Tag tag = tagRepository.findById(tagId).orElse(null);
+        if (event != null && tag != null) {
+            event.getTags().remove(tag);
+            eventRepository.save(event);
+        }
+    }
+
+    // Métodos que necesita la interfaz actualizada
+    @Override
+    public List<Event> getEventsByTagName(String tagName) {
+        return eventRepository.findByTagsName(tagName);
+    }
+
+    @Override
+    public List<Post> getPostsByTagName(String tagName) {
+        return postRepository.findByTagsName(tagName);
     }
 }

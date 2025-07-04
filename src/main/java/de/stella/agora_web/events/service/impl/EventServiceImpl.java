@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.events.controller.dto.EventDTO;
@@ -14,6 +16,9 @@ import de.stella.agora_web.events.repository.EventRepository;
 import de.stella.agora_web.events.repository.UserFavoriteEventRepository;
 import de.stella.agora_web.events.service.IEventService;
 import de.stella.agora_web.image.service.IEventImageService;
+import de.stella.agora_web.security.SecurityUser;
+import de.stella.agora_web.user.model.User;
+import de.stella.agora_web.user.repository.UserRepository;
 
 @Service
 public class EventServiceImpl implements IEventService {
@@ -26,8 +31,12 @@ public class EventServiceImpl implements IEventService {
 
     @Autowired
     private EventMapper eventMapper;
+
     @Autowired
     private UserFavoriteEventRepository userFavoriteEventRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private EventDTO toDto(Event event) {
         EventDTO dto = new EventDTO();
@@ -55,8 +64,7 @@ public class EventServiceImpl implements IEventService {
 
     @Override
     public EventDTO createEvent(EventDTO eventDTO) {
-        Event event = eventMapper.toEntity(eventDTO);
-        Event savedEvent = eventRepository.save(event);
+        Event savedEvent = save(eventDTO);  // Use the save method that assigns the user
         return eventMapper.toDto(savedEvent);
     }
 
@@ -123,13 +131,26 @@ public class EventServiceImpl implements IEventService {
 
     @Override
     public Event save(EventDTO eventDTO) {
-        Event event = eventMapper.toEntity(eventDTO);
-        return eventRepository.save(event);
-    }
+        Event event = eventMapper.toEntity(eventDTO);        // Obtener el usuario autenticado
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof SecurityUser) {
+            SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+            Long userId = securityUser.getUser().getId();
 
-    @Override
-    public List<Event> getEventsByTagName(String tagName) {
-        return eventRepository.findByTagsName(tagName);
+            // Buscar el usuario en la base de datos
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userId));
+
+            // Asignar el usuario al evento
+            event.setUser(user);
+        } else {
+            // Fallback: si no hay usuario autenticado, usar admin (ID=1)
+            User adminUser = userRepository.findById(1L)
+                    .orElseThrow(() -> new RuntimeException("Usuario admin no encontrado"));
+            event.setUser(adminUser);
+        }
+
+        return eventRepository.save(event);
     }
 
     @Override
