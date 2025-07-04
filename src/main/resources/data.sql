@@ -182,15 +182,15 @@ VALUES
     false
   ),
   (
-    'Post 2',
-    'Este es el segundo post. dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+    'Presunción de Competencia: Un Nuevo Paradigma',
+    'La presunción de competencia es un principio fundamental que está revolucionando el apoyo a personas autistas. En lugar de asumir déficits, partimos de la base de que toda persona tiene capacidades innatas que pueden desarrollarse. Este enfoque reconoce que las diferencias en la comunicación o el comportamiento no indican menor inteligencia o capacidad. Muchas personas autistas han demostrado que, cuando se les brinda el apoyo adecuado y se respetan sus formas naturales de procesar el mundo, pueden alcanzar logros extraordinarios. La clave está en encontrar los métodos de comunicación y aprendizaje que mejor se adapten a cada persona, en lugar de forzar adaptaciones a métodos neurotípicos. Este paradigma nos invita a ser más creativos, pacientes y respetuosos en nuestro acompañamiento.',
     1,
     now(),
     false
   ),
   (
-    'Post 3',
-    'Este es el tercer post.since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. ',
+    'Más Allá del Capacitismo: Celebrando la Neurodiversidad',
+    'El movimiento de neurodiversidad nos ha enseñado a ver el autismo no como algo que necesita ser "curado", sino como una variación natural del cerebro humano. Los enfoques tradicionales, a menudo capacitistas, se centraban en hacer que las personas autistas se vieran "normales", ignorando el estrés y trauma que esto causaba. Hoy sabemos que es más efectivo y respetuoso adaptar el entorno a las necesidades de cada persona. Esto significa crear espacios sensorialmente seguros, respetar los stims (movimientos autorregulatorios), y valorar formas alternativas de comunicación como el uso de tableros de comunicación o tecnología asistiva. Cuando eliminamos las barreras capacitistas, las personas autistas florecen mostrando sus verdaderas habilidades y talentos únicos.',
     1,
     now(),
     false
@@ -203,15 +203,15 @@ VALUES
     false
   ),
   (
-    'Post 5',
-    'Este es el segundo post. dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+    'Comunicación Alternativa y Aumentativa: Rompiendo Barreras',
+    'La comunicación no tiene por qué ser verbal para ser válida y poderosa. Los sistemas de comunicación alternativa y aumentativa (CAA) han abierto un mundo de posibilidades para personas autistas que comunican de formas diferentes. Desde pictogramas y tableros de comunicación hasta aplicaciones tecnológicas avanzadas, estas herramientas permiten que las personas expresen sus pensamientos, necesidades y emociones de manera efectiva. Es fundamental entender que alguien que no habla no es alguien que no tiene nada que decir. De hecho, muchas personas autistas no parlantes tienen pensamientos complejos y profundos que comparten a través de la escritura, los símbolos o la tecnología. El respeto por estas formas de comunicación y la paciencia para aprender a usarlas correctamente es clave para construir relaciones auténticas y significativas.',
     1,
     now(),
     false
   ),
   (
-    'Post 6',
-    'Este es el tercer post.since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. ',
+    'Apoyo Centrado en la Persona: Respetando la Autodeterminación',
+    'El enfoque centrado en la persona reconoce que cada individuo autista es único, con sus propios intereses, fortalezas y formas de interactuar con el mundo. Este paradigma se aleja de los modelos "talla única" y abraza la personalización del apoyo. Significa escuchar activamente lo que la persona comunica sobre sus necesidades, respetar sus elecciones cuando es posible, y trabajar CON la persona, no SOBRE ella. Incluye valorar los intereses especiales como recursos de aprendizaje y conexión, respetar las necesidades sensoriales, y entender que los comportamientos repetitivos (stims) son formas naturales de autorregulación. Cuando el apoyo se centra verdaderamente en la persona, vemos un aumento en la autoestima, la autonomía y el bienestar general. Este enfoque nos recuerda que nuestro objetivo no es cambiar a la persona, sino crear las condiciones para que pueda prosperar siendo auténticamente ella misma.',
     1,
     now(),
     false
@@ -805,7 +805,7 @@ VALUES
     '2025-06-26 00:00:00'
   );
 
-/* Avatares precargados */
+-- Avatares precargados
 INSERT INTO
   avatars (
     image_name,
@@ -1245,4 +1245,183 @@ VALUES
       'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
     ),
     2
+  );
+
+-- Inserciones para post_tag (relación entre posts y tags)
+-- Asignando tags relevantes basándose en el contenido actualizado de cada post
+INSERT INTO
+  post_tag (post_id, tag_id)
+VALUES
+  -- Post 1: "Post 1" - Sobre selectividad alimentaria, texturas, colores, desafíos personales
+  (1, 68), -- Selectividad Alimentaria
+  (1, 69), -- Texturas
+  (1, 70), -- Colores
+  (1, 71), -- Sensibilidad Sensorial
+  (1, 72), -- Adaptación
+  (1, 73), -- Superación
+  (1, 74), -- Comunidad
+  (1, 75), -- Apoyo Mutuo
+  (1, 76), -- Experiencias Personales
+  (1, 77), -- Testimonios
+  (1, 46), -- Emocional
+  (1, 50), -- Bienestar
+  (1, 51), -- Autoestima
+  -- Post 2: "Presunción de Competencia: Un Nuevo Paradigma"
+  (2, 9), -- Neurodiversidad
+  (2, 10), -- Autismo
+  (2, 30), -- Inclusivo
+  (2, 35), -- Comunicación
+  (2, 72), -- Adaptación
+  (2, 85), -- Recursos
+  (2, 84), -- Estrategias
+  (2, 104), -- Profesional
+  (2, 107), -- Innovación
+  (2, 8), -- Desarrollo
+  (2, 45), -- Cognitivo
+  (2, 52), -- Autonomía
+  -- Post 3: "Más Allá del Capacitismo: Celebrando la Neurodiversidad"
+  (3, 9), -- Neurodiversidad
+  (3, 10), -- Autismo
+  (3, 30), -- Inclusivo
+  (3, 71), -- Sensibilidad Sensorial
+  (3, 35), -- Comunicación
+  (3, 86), -- Herramientas
+  (3, 99), -- Respeto
+  (3, 50), -- Bienestar
+  (3, 51), -- Autoestima
+  (3, 74), -- Comunidad
+  (3, 107), -- Innovación
+  -- Post 4: "Post 4" - Sobre selectividad alimentaria (mismo contenido que Post 1)
+  (4, 68), -- Selectividad Alimentaria
+  (4, 69), -- Texturas
+  (4, 70), -- Colores
+  (4, 71), -- Sensibilidad Sensorial
+  (4, 72), -- Adaptación
+  (4, 73), -- Superación
+  (4, 74), -- Comunidad
+  (4, 75), -- Apoyo Mutuo
+  (4, 76), -- Experiencias Personales
+  (4, 77), -- Testimonios
+  (4, 46), -- Emocional
+  (4, 50), -- Bienestar
+  (4, 52), -- Autonomía
+  -- Post 5: "Comunicación Alternativa y Aumentativa: Rompiendo Barreras"
+  (5, 10), -- Autismo
+  (5, 35), -- Comunicación
+  (5, 17), -- Trastornos Comunicación
+  (5, 86), -- Herramientas
+  (5, 84), -- Estrategias
+  (5, 85), -- Recursos
+  (5, 30), -- Inclusivo
+  (5, 99), -- Respeto
+  (5, 72), -- Adaptación
+  (5, 107), -- Innovación
+  (5, 52), -- Autonomía
+  (5, 74), -- Comunidad
+  -- Post 6: "Apoyo Centrado en la Persona: Respetando la Autodeterminación"
+  (6, 10), -- Autismo
+  (6, 9), -- Neurodiversidad
+  (6, 33), -- Atención Personalizada
+  (6, 27), -- Individualizado
+  (6, 52), -- Autonomía
+  (6, 51), -- Autoestima
+  (6, 50), -- Bienestar
+  (6, 99), -- Respeto
+  (6, 72), -- Adaptación
+  (6, 84), -- Estrategias
+  (6, 30), -- Inclusivo
+  (6, 74), -- Comunidad
+  (6, 8);
+
+-- Desarrollo
+-- Inserciones para post_images con imágenes de prueba
+-- Estas son imágenes JPEG mínimas válidas de 8x8 píxeles para desarrollo/testing
+INSERT INTO
+  post_images (image_name, image_data, is_main_image, post_id)
+VALUES
+  -- Imágenes para Post 1: "Selectividad Alimentaria"
+  (
+    'selectividad_alimentaria_1.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    true,
+    1
+  ),
+  (
+    'selectividad_alimentaria_2.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    false,
+    1
+  ),
+  -- Imágenes para Post 2: "Presunción de Competencia"
+  (
+    'presuncion_competencia_1.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    true,
+    2
+  ),
+  (
+    'presuncion_competencia_2.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    false,
+    2
+  ),
+  -- Imágenes para Post 3: "Comunicación Aumentativa y Alternativa"
+  (
+    'comunicacion_caa_1.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    true,
+    3
+  ),
+  -- Imágenes para Post 4: "Experiencias Personales con Selectividad Alimentaria"
+  (
+    'experiencias_alimentarias_1.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    true,
+    4
+  ),
+  (
+    'experiencias_alimentarias_2.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    false,
+    4
+  ),
+  -- Imágenes para Post 5: "Desenmascarando Mitos sobre el Autismo"
+  (
+    'mitos_autismo_1.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    true,
+    5
+  ),
+  -- Imágenes para Post 6: "Apoyo Centrado en la Persona"
+  (
+    'apoyo_centrado_persona_1.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    true,
+    6
+  ),
+  (
+    'apoyo_centrado_persona_2.jpg',
+    UNHEX(
+      'FFD8FFE000104A46494600010101006000600000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232FFC0001108000800080301220002110103110FFD'
+    ),
+    false,
+    6
   );
