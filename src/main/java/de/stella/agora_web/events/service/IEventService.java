@@ -3,6 +3,7 @@ package de.stella.agora_web.events.service;
 import java.util.List;
 
 import de.stella.agora_web.events.controller.dto.EventDTO;
+import de.stella.agora_web.events.controller.dto.EventResponseDTO;
 import de.stella.agora_web.events.model.Event;
 
 public interface IEventService {
@@ -34,5 +35,7 @@ public interface IEventService {
     void removeFavorite(Long eventId, Long userId);
 
     List<EventDTO> getFavoriteEventsByUser(Long userId);
+
+    EventResponseDTO getEventResponseById(Long id);
 
 }

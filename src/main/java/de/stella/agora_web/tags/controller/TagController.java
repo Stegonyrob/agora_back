@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.stella.agora_web.posts.model.Post;
+import de.stella.agora_web.tags.dto.PostSummaryDTO;
 import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.tags.service.ITagService;
 
@@ -24,10 +24,10 @@ public class TagController {
     private ITagService tagService;
 
     // ========== ENDPOINTS DE LECTURA PRIVADOS ==========
-    // Obtener posts por tag - REQUIERE AUTENTICACIÓN (posts son privados)
+    // Obtener posts por tag - REQUIERE AUTENTICACIÓN (OPTIMIZADO)
     @GetMapping("/posts/{tagName}")
-    public ResponseEntity<List<Post>> getPostsByTagName(@PathVariable String tagName) {
-        List<Post> posts = tagService.getPostsByTagName(tagName);
+    public ResponseEntity<List<PostSummaryDTO>> getPostsByTagName(@PathVariable String tagName) {
+        List<PostSummaryDTO> posts = tagService.getPostsSummaryByTagName(tagName);
         return ResponseEntity.ok(posts);
     }
 

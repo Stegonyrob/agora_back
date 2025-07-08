@@ -38,7 +38,6 @@ import com.nimbusds.jose.proc.SecurityContext;
 
 import de.stella.agora_web.auth.KeyUtils;
 import de.stella.agora_web.jwt.JWTtoUserConverter;
-import de.stella.agora_web.security.CustomUserDetailsService;
 import de.stella.agora_web.security.JpaUserDetailsService;
 
 @Configuration
@@ -49,6 +48,12 @@ public class SecurityConfiguration {
     @Value("${api-endpoint}")
     String endpoint;
 
+    @Value("${jwt-issuer}")
+    String issuer;
+
+    @Value("${jwt-audience}")
+    String audience;
+
     @Autowired
     JWTtoUserConverter jwtToUserConverter;
 
@@ -56,7 +61,6 @@ public class SecurityConfiguration {
     KeyUtils keyUtils;
 
     @Autowired
-    @SuppressWarnings("unused")
     PasswordEncoder passwordEncoder;
 
     JpaUserDetailsService jpaUserDetailsService;
@@ -72,23 +76,19 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth.requestMatchers(PathRequest.toH2Console()).permitAll()
                 .requestMatchers(PathRequest.toH2Console()).permitAll()
                 .requestMatchers("/error").permitAll()
-                .requestMatchers(endpoint + "/all/**").permitAll() // Incluye /register Y los tags públicos
-                .requestMatchers(endpoint + "/any/user/register").permitAll() // Registro público (por si acaso)
+                .requestMatchers(endpoint + "/all/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/posts/**").hasRole("USER")
                 .requestMatchers("/posts/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/events/**").hasRole("USER")
-                .requestMatchers("/events/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/replies/**").hasRole("USER")
                 .requestMatchers("/replies/**").hasRole("ADMIN")
-                .requestMatchers("/comments/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers(HttpMethod.GET, endpoint + "/any/tags/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers(HttpMethod.POST, endpoint + "/any/tags/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, endpoint + "/any/tags/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/comments/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers(HttpMethod.PUT, "/comments/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/comments/**").hasRole("ADMIN")
                 .requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers(endpoint + "/admin/**").hasRole("ADMIN")
                 .requestMatchers(endpoint + "/user/**").hasRole("USER")
-                .requestMatchers(HttpMethod.GET, "/legal/**").hasRole("USER")
-                .requestMatchers("/legal/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/legal/**").hasRole("USER") // <-- aquí
+                .requestMatchers("/legal/**").hasRole("ADMIN") // <-- aquí
                 .anyRequest().permitAll()
                 )
                 .userDetailsService(jpaUserDetailsService).httpBasic(basic -> basic.disable())
@@ -104,14 +104,12 @@ public class SecurityConfiguration {
 
     @Bean
     @Primary
-    @SuppressWarnings("unused")
     JwtDecoder jwtAccessTokenDecoder() {
         return NimbusJwtDecoder.withPublicKey(keyUtils.getAccessTokenPublicKey()).build();
     }
 
     @Bean
     @Primary
-    @SuppressWarnings("unused")
     JwtEncoder jwtAccessTokenEncoder() {
         JWK jwk = new RSAKey.Builder(keyUtils.getAccessTokenPublicKey()).privateKey(keyUtils.getAccessTokenPrivateKey())
                 .build();
@@ -137,7 +135,6 @@ public class SecurityConfiguration {
 
     @Bean
     @Qualifier("jwtRefreshTokenAuthProvider")
-    @SuppressWarnings("unused")
     JwtAuthenticationProvider jwtRefreshTokenAuthProvider() {
         JwtAuthenticationProvider provider = new JwtAuthenticationProvider(jwtRefreshTokenDecoder());
         provider.setJwtAuthenticationConverter(jwtToUserConverter);
@@ -145,15 +142,14 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(CustomUserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(jpaUserDetailsService);
         return provider;
     }
 
     @Bean
-    @SuppressWarnings("unused")
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);

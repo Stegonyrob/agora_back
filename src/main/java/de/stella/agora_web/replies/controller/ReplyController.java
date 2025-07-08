@@ -20,7 +20,7 @@ import de.stella.agora_web.replies.service.IReplyService;
 import de.stella.agora_web.user.model.User;
 
 @RestController
-@RequestMapping(path = "${api-endpoint}/all")
+@RequestMapping(path = "${api-endpoint}/any")
 public class ReplyController {
 
     private final IReplyService replyService;
@@ -41,6 +41,7 @@ public class ReplyController {
     }
 
     @GetMapping("/replies/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<ReplyDTO> show(@PathVariable Long id) {
         Reply reply = replyService.getReplyById(id);
         ReplyDTO dto = ReplyDTO.fromEntity(reply);
@@ -48,6 +49,7 @@ public class ReplyController {
     }
 
     @GetMapping("/replies/comment/{commentId}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public List<ReplyDTO> getRepliesByCommentId(@PathVariable Long commentId) {
         return replyService.getRepliesByCommentId(commentId)
                 .stream()
@@ -56,6 +58,7 @@ public class ReplyController {
     }
 
     @GetMapping("/replies/tags/{tagName}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public List<ReplyDTO> getRepliesByTagName(@PathVariable String tagName) {
         return replyService.getRepliesByTagName(tagName)
                 .stream()
@@ -64,6 +67,7 @@ public class ReplyController {
     }
 
     @GetMapping("/replies/user/{userId}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public List<ReplyDTO> getRepliesByUserId(@PathVariable Long userId) {
         return replyService.getRepliesByUserId(userId)
                 .stream()
@@ -72,6 +76,7 @@ public class ReplyController {
     }
 
     @PutMapping("/replies/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<ReplyDTO> update(
             @PathVariable Long id,
             @RequestBody ReplyDTO replyDTO

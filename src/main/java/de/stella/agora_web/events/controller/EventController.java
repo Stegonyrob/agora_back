@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.events.controller.dto.EventDTO;
+import de.stella.agora_web.events.controller.dto.EventResponseDTO;
 import de.stella.agora_web.events.model.Event;
 import de.stella.agora_web.events.service.IEventService;
 
@@ -39,8 +40,8 @@ public class EventController {
     }
 
     @GetMapping("/events/{id}")
-    public ResponseEntity<Event> show(@PathVariable Long id) {
-        Event event = eventService.getById(id);
+    public ResponseEntity<EventResponseDTO> show(@PathVariable Long id) {
+        EventResponseDTO event = eventService.getEventResponseById(id);
         return ResponseEntity.status(HttpStatus.OK).body(event);
     }
 

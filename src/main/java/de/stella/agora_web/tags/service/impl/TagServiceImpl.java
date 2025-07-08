@@ -16,6 +16,9 @@ import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.repository.ReplyRepository;
+import de.stella.agora_web.tags.dto.EventSummaryDTO;
+import de.stella.agora_web.tags.dto.PostSummaryDTO;
+import de.stella.agora_web.tags.dto.TagSummaryDTO;
 import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.tags.repository.TagRepository;
 import de.stella.agora_web.tags.service.ITagService;
@@ -109,6 +112,7 @@ public class TagServiceImpl implements ITagService {
         }
     }
 
+    @Override
     public void removeTagFromReply(Long replyId, String tagName) {
         Reply reply = replyRepository.findById(replyId).orElse(null);
         Tag tag = getTagByName(tagName);
@@ -118,6 +122,7 @@ public class TagServiceImpl implements ITagService {
         }
     }
 
+    @Override
     public void addTagToComment(Long commentId, String tagName) {
         Comment comment = commentRepository.findById(commentId).orElse(null);
         Tag tag = getOrCreateTagByName(tagName);
@@ -127,6 +132,7 @@ public class TagServiceImpl implements ITagService {
         }
     }
 
+    @Override
     public void removeTagFromComment(Long commentId, String tagName) {
         Comment comment = commentRepository.findById(commentId).orElse(null);
         Tag tag = getTagByName(tagName);
@@ -136,6 +142,7 @@ public class TagServiceImpl implements ITagService {
         }
     }
 
+    @Override
     public Tag createTag(String name) {
         Tag tag = new Tag();
         tag.setName(name);
@@ -246,5 +253,65 @@ public class TagServiceImpl implements ITagService {
     @Override
     public List<Post> getPostsByTagName(String tagName) {
         return postRepository.findByTagsName(tagName);
+    }
+
+    // ========== MÉTODOS DE CONVERSIÓN A DTO ==========
+    private TagSummaryDTO convertToTagSummaryDTO(Tag tag) {
+        boolean archived = tag.getArchived() != null && tag.getArchived();
+        return new TagSummaryDTO(tag.getId(), tag.getName(), archived);
+    }
+
+    private EventSummaryDTO convertToEventSummaryDTO(Event event) {
+        List<TagSummaryDTO> tagDTOs = event.getTags().stream()
+                .map(this::convertToTagSummaryDTO)
+                .collect(java.util.stream.Collectors.toList());
+
+        return new EventSummaryDTO(
+                event.getId(),
+                event.getTitle(),
+                event.getMessage(),
+                event.getCreationDate(),
+                event.getCapacity(),
+                tagDTOs
+        );
+    }
+
+    private PostSummaryDTO convertToPostSummaryDTO(Post post) {
+        List<TagSummaryDTO> tagDTOs = post.getTags().stream()
+                .map(this::convertToTagSummaryDTO)
+                .collect(java.util.stream.Collectors.toList());
+
+        String username = post.getUser() != null ? post.getUser().getUsername() : "Usuario Anónimo";
+
+        return new PostSummaryDTO(
+                post.getId(),
+                post.getTitle(),
+                post.getMessage(),
+                post.getCreationDate(),
+                post.isArchived(),
+                username,
+                tagDTOs
+        );
+    }
+
+    // ========== MÉTODOS OPTIMIZADOS PARA CONTROLADORES ==========
+    public List<TagSummaryDTO> getAllTagsSummary() {
+        return tagRepository.findAll().stream()
+                .filter(java.util.Objects::nonNull) // Añadir filtro para evitar NullPointerException
+                .map(this::convertToTagSummaryDTO)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    public List<EventSummaryDTO> getEventsSummaryByTagName(String tagName) {
+        return eventRepository.findByTagsName(tagName).stream()
+                .map(this::convertToEventSummaryDTO)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    public List<PostSummaryDTO> getPostsSummaryByTagName(String tagName) {
+        return postRepository.findByTagsName(tagName).stream()
+                .map(this::convertToPostSummaryDTO)
+                .collect(java.util.stream.Collectors.toList());
     }
 }

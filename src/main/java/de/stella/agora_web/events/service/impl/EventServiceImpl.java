@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.events.controller.dto.EventDTO;
+import de.stella.agora_web.events.controller.dto.EventResponseDTO;
 import de.stella.agora_web.events.mapper.EventMapper;
 import de.stella.agora_web.events.model.Event;
 import de.stella.agora_web.events.model.UserFavoriteEvent;
@@ -185,6 +186,32 @@ public class EventServiceImpl implements IEventService {
                 .collect(Collectors.toList());
         List<Event> events = eventRepository.findAllById(eventIds);
         return eventMapper.toDtoList(events);
+    }
+
+    @Override
+    public EventResponseDTO getEventResponseById(Long id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found with id: " + id));
+
+        return new EventResponseDTO(
+                event.getId(),
+                event.getTitle(),
+                event.getMessage(),
+                null, // location field doesn't exist in Event model
+                event.getCreationDate(),
+                null, // eventDate field doesn't exist in Event model
+                event.getCapacity(),
+                event.isArchived(),
+                event.getUser() != null ? event.getUser().getUsername() : null,
+                event.getUser() != null ? event.getUser().getUsername() : null, // User doesn't have fullName
+                event.getTags() != null ? event.getTags().stream()
+                .map(tag -> new de.stella.agora_web.tags.dto.TagSummaryDTO(tag.getId(), tag.getName(), false))
+                .collect(Collectors.toList()) : null,
+                event.getImages() != null ? event.getImages().stream()
+                .map(img -> "/api/v1/event-images/" + img.getId())
+                .collect(Collectors.toList()) : null,
+                event.getAttendees() != null ? event.getAttendees().size() : 0
+        );
     }
 
 }

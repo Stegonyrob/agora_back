@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.posts.controller.dto.PostDTO;
+import de.stella.agora_web.posts.controller.dto.PostResponseDTO;
 import de.stella.agora_web.posts.controller.dto.PostSummaryDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.service.IPostService;
@@ -43,8 +44,8 @@ public class PostController {
     }
 
     @GetMapping("/posts/{id}")
-    public ResponseEntity<Post> show(@PathVariable Long id) {
-        Post post = postService.getById(id);
+    public ResponseEntity<PostResponseDTO> show(@PathVariable Long id) {
+        PostResponseDTO post = postService.getPostResponseById(id);
         return ResponseEntity.status(HttpStatus.OK).body(post);
     }
 

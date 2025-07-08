@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import de.stella.agora_web.comment.controller.dto.CommentDTO;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.posts.controller.dto.PostDTO;
+import de.stella.agora_web.posts.controller.dto.PostResponseDTO;
 import de.stella.agora_web.posts.controller.dto.PostSummaryDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
@@ -64,4 +65,13 @@ public interface IPostService {
     void save(Post post);
 
     Page<PostSummaryDTO> getAllPostsWithCounts(Pageable pageable);
+
+    // ========== MÉTODOS OPTIMIZADOS CON DTOs ==========
+    PostResponseDTO getPostResponseById(Long postId);
+
+    List<PostResponseDTO> getPostsResponseByUserId(Long userId);
+
+    PostResponseDTO createPostResponse(PostDTO postDTO);
+
+    PostResponseDTO updatePostResponse(PostDTO postDTO, Long id);
 }

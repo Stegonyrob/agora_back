@@ -4,6 +4,9 @@ import java.util.List;
 
 import de.stella.agora_web.events.model.Event;
 import de.stella.agora_web.posts.model.Post;
+import de.stella.agora_web.tags.dto.EventSummaryDTO;
+import de.stella.agora_web.tags.dto.PostSummaryDTO;
+import de.stella.agora_web.tags.dto.TagSummaryDTO;
 import de.stella.agora_web.tags.model.Tag;
 
 public interface ITagService {
@@ -44,4 +47,10 @@ public interface ITagService {
     List<Post> getPostsByTagName(String tagName);
 
     List<Event> getEventsByTagName(String tagName);
+
+    public List<PostSummaryDTO> getPostsSummaryByTagName(String tagName);
+
+    List<EventSummaryDTO> getEventsSummaryByTagName(String tagName);
+
+    List<TagSummaryDTO> getAllTagsSummary();
 }
