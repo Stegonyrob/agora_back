@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,45 +20,27 @@ import de.stella.agora_web.image.service.IEventImageService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("${api-endpoint}/event-images")
+@RequestMapping("${api-endpoint}/any/event-images")
 @RequiredArgsConstructor
 public class EventImageController {
 
     private final IEventImageService eventImageService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<EventImageDTO> getEventImage(@PathVariable Long id) {
-        return ResponseEntity.ok(eventImageService.getEventImageById(id));
-    }
-
-    // ✅ ENDPOINT PARA SERVIR LA IMAGEN COMO BYTES 
-    @GetMapping("/{id}/data")
-    public ResponseEntity<byte[]> getEventImageData(@PathVariable Long id) {
-        try {
-            EventImageDTO image = eventImageService.getEventImageById(id);
-
-            return ResponseEntity.ok()
-                    .header("Content-Type", "image/jpeg") // Podríamos determinar el tipo real
-                    .header("Content-Disposition", "inline; filename=\"" + image.getImageName() + "\"")
-                    .body(image.getImageData());
-
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
     @GetMapping("/event/{eventId}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<List<EventImageDTO>> getImagesByEvent(@PathVariable Long eventId) {
         return ResponseEntity.ok(eventImageService.getImagesByEventId(eventId));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<EventImageDTO> uploadEventImage(@RequestBody EventImageDTO dto) {
         return ResponseEntity.ok(eventImageService.saveEventImage(dto));
     }
 
     // ✅ ENDPOINT PARA SUBIR MÚLTIPLES IMÁGENES A UN EVENTO
     @PostMapping("/upload")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<List<EventImageDTO>> uploadMultipleEventImages(
             @RequestParam("files") MultipartFile[] files,
             @RequestParam("eventId") Long eventId) {
@@ -71,8 +54,21 @@ public class EventImageController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<Void> deleteEventImage(@PathVariable Long id) {
         eventImageService.deleteEventImage(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // ✅ ENDPOINT PARA ELIMINAR MÚLTIPLES IMÁGENES
+    @DeleteMapping("/delete-multiple")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<Void> deleteMultipleEventImages(@RequestBody List<Long> imageIds) {
+        try {
+            eventImageService.deleteMultipleEventImages(imageIds);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

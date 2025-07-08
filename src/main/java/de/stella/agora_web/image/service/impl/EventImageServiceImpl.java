@@ -62,6 +62,23 @@ public class EventImageServiceImpl implements IEventImageService {
         eventImageRepository.deleteById(id);
     }
 
+    @Override
+    public void deleteMultipleEventImages(List<Long> imageIds) {
+        if (imageIds == null || imageIds.isEmpty()) {
+            return;
+        }
+
+        // Verificar que todas las imágenes existen antes de eliminar
+        for (Long id : imageIds) {
+            if (!eventImageRepository.existsById(id)) {
+                throw new EventImageNotFoundException("Event image not found with id: " + id);
+            }
+        }
+
+        // Eliminar todas las imágenes
+        eventImageRepository.deleteAllById(imageIds);
+    }
+
     private EventImageDTO toDTO(EventImage image) {
         return EventImageDTO.builder().id(image.getId()).imageName(image.getImageName()).imageData(image.getImageData())
                 .eventId(image.getEvent().getId()).build();

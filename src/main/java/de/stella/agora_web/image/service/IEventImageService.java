@@ -16,6 +16,9 @@ public interface IEventImageService {
 
     void deleteEventImage(Long id);
 
+    // ✅ NUEVO MÉTODO PARA ELIMINAR MÚLTIPLES IMÁGENES POR IDS
+    void deleteMultipleEventImages(List<Long> imageIds);
+
     void deleteImagesByEventId(Long id);
 
     // ✅ NUEVO MÉTODO PARA MANEJAR MULTIPART FILES

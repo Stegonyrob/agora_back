@@ -208,7 +208,7 @@ public class EventServiceImpl implements IEventService {
                 .map(tag -> new de.stella.agora_web.tags.dto.TagSummaryDTO(tag.getId(), tag.getName(), false))
                 .collect(Collectors.toList()) : null,
                 event.getImages() != null ? event.getImages().stream()
-                .map(img -> "/api/v1/event-images/" + img.getId())
+                .map(img -> "/api/v1/all/event-images/" + img.getId())
                 .collect(Collectors.toList()) : null,
                 event.getAttendees() != null ? event.getAttendees().size() : 0
         );
