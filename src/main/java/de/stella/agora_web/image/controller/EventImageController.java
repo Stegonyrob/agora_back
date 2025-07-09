@@ -100,16 +100,13 @@ public class EventImageController {
     @DeleteMapping("/delete-multiple")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<Void> deleteMultipleEventImages(@RequestBody de.stella.agora_web.image.dtos.ImageIdListDTO dto) {
-        
-            
-        
+
         try {
-                eventImageService.deleteMultipleEventImages(dto.getImageIds());
-                
-                
+            eventImageService.deleteMultipleEventImages(dto.getImageIds());
+
             return ResponseEntity.noContent().build();
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+}

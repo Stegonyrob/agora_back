@@ -239,7 +239,7 @@ public class EventServiceImpl implements IEventService {
                 .collect(Collectors.toList()) : null,
                 event.getImages() != null ? event.getImages().stream()
                 .map(img -> "/api/v1/all/event-images/" + img.getId())
-                .collect(Collectors.toList()) : null,
+                .collect(Collectors.toList()) : null, // Cambiado a 'images'
                 event.getAttendees() != null ? event.getAttendees().size() : 0
         );
     }

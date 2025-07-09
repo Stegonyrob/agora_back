@@ -346,15 +346,14 @@ public class PostServiceImpl implements IPostService {
         String username = post.getUser() != null ? post.getUser().getUsername() : "Usuario Anónimo";
         String fullName = username; // User solo tiene username, no fullName
 
-        // Obtener URLs de imágenes (PostImage solo tiene imageName, no URL)
-        List<String> imageUrls = post.getImages() != null
+        // Obtener nombres de imágenes (PostImage solo tiene imageName, no URL)
+        List<String> images = post.getImages() != null
                 ? post.getImages().stream()
-                        .map(PostImage::getImageName) // Solo devolver el nombre de la imagen
+                        .map(PostImage::getImageName)
                         .collect(java.util.stream.Collectors.toList())
                 : new ArrayList<>();
 
-        // Obtener conteos
-        int lovesCount = post.getLoveCount(); // Post ya tiene este método
+        int lovesCount = post.getLoveCount();
         int repliesCount = post.getComments() != null
                 ? post.getComments().stream()
                         .mapToInt(comment -> comment.getReplies() != null ? comment.getReplies().size() : 0)
@@ -374,7 +373,7 @@ public class PostServiceImpl implements IPostService {
                 username,
                 fullName,
                 tagDTOs,
-                imageUrls,
+                images, // Unificado con EventResponseDTO
                 repliesCount,
                 commentsCount
         );

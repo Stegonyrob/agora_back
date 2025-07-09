@@ -15,6 +15,7 @@ public class EventMapper {
         if (event == null) {
             return null;
         }
+
         EventDTO dto = new EventDTO();
         dto.setId(event.getId());
         dto.setTitle(event.getTitle());
@@ -22,15 +23,6 @@ public class EventMapper {
         dto.setArchived(event.getArchived());
         dto.setCapacity(event.getCapacity());
         dto.setAttendeesCount(event.getAttendees() != null ? event.getAttendees().size() : 0);
-        // --- MAPEO DE TAGS: de entidades a nombres ---
-        if (event.getTags() != null) {
-            dto.setTags(event.getTags().stream()
-                    .filter(java.util.Objects::nonNull)
-                    .map(de.stella.agora_web.tags.model.Tag::getName)
-                    .collect(java.util.stream.Collectors.toList()));
-        } else {
-            dto.setTags(new java.util.ArrayList<>());
-        }
         return dto;
     }
 
@@ -47,13 +39,13 @@ public class EventMapper {
         if (eventDTO == null) {
             return null;
         }
+
         Event event = new Event();
         event.setId(eventDTO.getId());
         event.setTitle(eventDTO.getTitle());
         event.setMessage(eventDTO.getMessage());
         event.setArchived(eventDTO.isArchived());
         event.setCapacity(eventDTO.getCapacity());
-        // NOTA: Las tags se asignan en EventServiceImpl, no aquí, para poder usar el servicio de tags.
         return event;
     }
 }

@@ -1,8 +1,5 @@
 package de.stella.agora_web.posts.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
@@ -11,6 +8,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -104,7 +104,7 @@ public class PostControllerJsonTest {
             assert rootNode.has("userUsername") : "Post debe tener userUsername";
             assert rootNode.has("userFullName") : "Post debe tener userFullName";
             assert rootNode.has("tags") : "Post debe tener tags";
-            assert rootNode.has("imageUrls") : "Post debe tener imageUrls";
+            assert rootNode.has("images") : "Post debe tener images";
             assert rootNode.has("repliesCount") : "Post debe tener repliesCount";
             assert rootNode.has("commentsCount") : "Post debe tener commentsCount";
 
@@ -125,11 +125,11 @@ public class PostControllerJsonTest {
                 assert !firstTag.has("events") : "Tag NO debe incluir events";
             }
 
-            // Verificar que imageUrls sea array de strings, no objetos
-            JsonNode imageUrls = rootNode.get("imageUrls");
-            if (imageUrls.isArray() && imageUrls.size() > 0) {
-                JsonNode firstImageUrl = imageUrls.get(0);
-                assert firstImageUrl.isTextual() : "imageUrls debe contener solo strings, no objetos";
+            // Verificar que images sea array de strings, no objetos
+            JsonNode images = rootNode.get("images");
+            if (images.isArray() && images.size() > 0) {
+                JsonNode firstImage = images.get(0);
+                assert firstImage.isTextual() : "images debe contener solo strings, no objetos";
             }
 
             System.out.println("✅ Estructura JSON de getPostById es correcta y optimizada");

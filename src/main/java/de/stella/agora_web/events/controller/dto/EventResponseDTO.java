@@ -24,6 +24,6 @@ public class EventResponseDTO {
     private String userUsername;
     private String userFullName;
     private List<TagSummaryDTO> tags;
-    private List<String> imageUrls; // Solo las URLs de las imágenes, no objetos completos
+    private List<String> images; // Unificado con PostResponseDTO
     private int participantsCount;
 }

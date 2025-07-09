@@ -23,6 +23,7 @@ import de.stella.agora_web.posts.controller.dto.PostResponseDTO;
 import de.stella.agora_web.posts.controller.dto.PostSummaryDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.service.IPostService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(path = "${api-endpoint}/")
@@ -50,7 +51,7 @@ public class PostController {
     }
 
     @PostMapping(path = "/posts")
-    public ResponseEntity<Post> create(@RequestBody PostDTO postDTO) {
+    public ResponseEntity<Post> create(@Valid @RequestBody PostDTO postDTO) {
         if (postDTO == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -63,7 +64,7 @@ public class PostController {
     }
 
     @PutMapping("posts/{id}")
-    public ResponseEntity<Post> update(@PathVariable("id") Long id, @RequestBody PostDTO postDTO) {
+    public ResponseEntity<Post> update(@PathVariable("id") Long id, @Valid @RequestBody PostDTO postDTO) {
         Post post = postService.update(postDTO, id);
         return ResponseEntity.accepted().body(post);
     }
