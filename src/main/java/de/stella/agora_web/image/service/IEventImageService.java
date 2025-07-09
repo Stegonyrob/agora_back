@@ -26,4 +26,7 @@ public interface IEventImageService {
 
     // ✅ NUEVO MÉTODO PARA VALIDAR ARCHIVOS
     boolean isValidImageFile(MultipartFile file);
+
+    // ✅ NUEVO MÉTODO PARA OBTENER DATOS RAW DE IMAGEN
+    byte[] getEventImageData(Long id);
 }

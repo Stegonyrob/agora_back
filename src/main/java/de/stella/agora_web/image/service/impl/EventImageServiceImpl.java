@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import de.stella.agora_web.events.model.Event;
@@ -63,20 +64,14 @@ public class EventImageServiceImpl implements IEventImageService {
     }
 
     @Override
+    @Transactional // ✅ AÑADIR @Transactional
     public void deleteMultipleEventImages(List<Long> imageIds) {
         if (imageIds == null || imageIds.isEmpty()) {
             return;
         }
-
-        // Verificar que todas las imágenes existen antes de eliminar
-        for (Long id : imageIds) {
-            if (!eventImageRepository.existsById(id)) {
-                throw new EventImageNotFoundException("Event image not found with id: " + id);
-            }
-        }
-
-        // Eliminar todas las imágenes
-        eventImageRepository.deleteAllById(imageIds);
+        // Se eliminan las imágenes que existen en la base de datos
+        List<EventImage> imagesToDelete = eventImageRepository.findAllById(imageIds);
+        eventImageRepository.deleteAll(imagesToDelete);
     }
 
     private EventImageDTO toDTO(EventImage image) {
@@ -153,5 +148,12 @@ public class EventImageServiceImpl implements IEventImageService {
         }
         int lastDotIndex = filename.lastIndexOf('.');
         return (lastDotIndex != -1) ? filename.substring(lastDotIndex + 1) : "";
+    }
+
+    @Override
+    public byte[] getEventImageData(Long id) {
+        EventImage image = eventImageRepository.findById(id)
+                .orElseThrow(() -> new EventImageNotFoundException("Event image not found with id: " + id));
+        return image.getImageData();
     }
 }

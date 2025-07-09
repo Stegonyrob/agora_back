@@ -18,6 +18,8 @@ import de.stella.agora_web.events.repository.UserFavoriteEventRepository;
 import de.stella.agora_web.events.service.IEventService;
 import de.stella.agora_web.image.service.IEventImageService;
 import de.stella.agora_web.security.SecurityUser;
+import de.stella.agora_web.tags.model.Tag;
+import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.repository.UserRepository;
 
@@ -38,6 +40,9 @@ public class EventServiceImpl implements IEventService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ITagService tagService;
 
     private EventDTO toDto(Event event) {
         EventDTO dto = new EventDTO();
@@ -77,6 +82,19 @@ public class EventServiceImpl implements IEventService {
         event.setTitle(eventDTO.getTitle());
         event.setMessage(eventDTO.getMessage());
         event.setArchived(eventDTO.isArchived());
+        event.setCapacity(eventDTO.getCapacity());
+
+        // --- ASIGNACIÓN AUTOMÁTICA DE TAGS EN EDICIÓN ---
+        if (eventDTO.getTags() != null) {
+            List<Tag> tags = eventDTO.getTags().stream()
+                    .filter(name -> name != null && !name.isBlank())
+                    .map(tagService::getOrCreateTagByName)
+                    .filter(java.util.Objects::nonNull)
+                    .collect(java.util.stream.Collectors.toList());
+            event.setTags(tags);
+        } else {
+            event.setTags(new java.util.ArrayList<>());
+        }
 
         Event savedEvent = eventRepository.save(event);
         return eventMapper.toDto(savedEvent);
@@ -132,7 +150,8 @@ public class EventServiceImpl implements IEventService {
 
     @Override
     public Event save(EventDTO eventDTO) {
-        Event event = eventMapper.toEntity(eventDTO);        // Obtener el usuario autenticado
+        Event event = eventMapper.toEntity(eventDTO);
+        // Obtener el usuario autenticado
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof SecurityUser) {
             SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
@@ -151,6 +170,17 @@ public class EventServiceImpl implements IEventService {
             event.setUser(adminUser);
         }
 
+        // --- ASIGNACIÓN AUTOMÁTICA DE TAGS ---
+        if (eventDTO.getTags() != null) {
+            List<Tag> tags = eventDTO.getTags().stream()
+                    .filter(name -> name != null && !name.isBlank())
+                    .map(tagService::getOrCreateTagByName)
+                    .filter(java.util.Objects::nonNull)
+                    .collect(java.util.stream.Collectors.toList());
+            event.setTags(tags);
+        } else {
+            event.setTags(new java.util.ArrayList<>());
+        }
         return eventRepository.save(event);
     }
 

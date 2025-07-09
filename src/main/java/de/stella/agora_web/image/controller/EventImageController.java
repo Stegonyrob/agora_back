@@ -2,7 +2,9 @@ package de.stella.agora_web.image.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +32,40 @@ public class EventImageController {
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<List<EventImageDTO>> getImagesByEvent(@PathVariable Long eventId) {
         return ResponseEntity.ok(eventImageService.getImagesByEventId(eventId));
+    }
+
+    // ✅ ENDPOINT PARA SERVIR DATOS DE IMAGEN (NECESARIO PARA FRONTEND)
+    @GetMapping("/{id}/data")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<byte[]> getEventImageData(@PathVariable Long id) {
+        try {
+            byte[] imageData = eventImageService.getEventImageData(id);
+
+            // Obtener información de la imagen para establecer el content type correcto
+            EventImageDTO imageInfo = eventImageService.getEventImageById(id);
+            String imageName = imageInfo.getImageName();
+
+            // Determinar content type basado en la extensión
+            MediaType mediaType = MediaType.IMAGE_JPEG; // default
+            if (imageName != null) {
+                String extension = imageName.toLowerCase();
+                if (extension.endsWith(".png")) {
+                    mediaType = MediaType.IMAGE_PNG;
+                } else if (extension.endsWith(".gif")) {
+                    mediaType = MediaType.IMAGE_GIF;
+                } else if (extension.endsWith(".webp")) {
+                    mediaType = MediaType.valueOf("image/webp");
+                }
+            }
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(mediaType);
+            headers.setContentLength(imageData.length);
+
+            return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
@@ -63,12 +99,17 @@ public class EventImageController {
     // ✅ ENDPOINT PARA ELIMINAR MÚLTIPLES IMÁGENES
     @DeleteMapping("/delete-multiple")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<Void> deleteMultipleEventImages(@RequestBody List<Long> imageIds) {
+    public ResponseEntity<Void> deleteMultipleEventImages(@RequestBody de.stella.agora_web.image.dtos.ImageIdListDTO dto) {
+        
+            
+        
         try {
-            eventImageService.deleteMultipleEventImages(imageIds);
+                eventImageService.deleteMultipleEventImages(dto.getImageIds());
+                
+                
             return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
         }
     }
-}
