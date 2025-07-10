@@ -70,25 +70,24 @@ public class PostServiceImpl implements IPostService {
         post.setMessage(postDTO.getMessage());
 
         List<Tag> tags = new ArrayList<>();
-        for (String tagName : postDTO.getTags()) {
-            Tag tag = tagService.getTagByName(tagName);
-            if (tag == null) {
-                tag = tagService.createTag(tagName);
+        if (postDTO.getTags() != null) {
+            for (TagSummaryDTO tagDTO : postDTO.getTags()) {
+                Tag tag = null;
+                if (tagDTO.getId() != null) {
+                    tag = tagRepository.findById(tagDTO.getId()).orElse(null);
+                }
+                if (tag == null && tagDTO.getName() != null) {
+                    tag = tagService.getTagByName(tagDTO.getName());
+                    if (tag == null) {
+                        tag = tagService.createTag(tagDTO.getName());
+                    }
+                }
+                if (tag != null) {
+                    tags.add(tag);
+                }
             }
-            tags.add(tag);
         }
-
-        List<String> hashtags = tagService.extractHashtags(post.getMessage());
-        for (String hashtag : hashtags) {
-            Tag tag = tagService.getTagByName(hashtag);
-            if (tag == null) {
-                tag = tagService.createTag(hashtag);
-            }
-            tags.add(tag);
-        }
-
         post.setTags(tags);
-
         return postRepository.save(post);
     }
 
@@ -134,29 +133,40 @@ public class PostServiceImpl implements IPostService {
         Post existingPost = postRepository.findById(postId).orElseThrow();
         existingPost.setTitle(postDTO.getTitle());
         existingPost.setMessage(postDTO.getMessage());
-
         existingPost.getTags().clear();
-
         List<Tag> tags = new ArrayList<>();
-        for (String tagName : postDTO.getTags()) {
-            Tag tag = tagService.getTagByName(tagName);
-            if (tag == null) {
-                tag = tagService.createTag(tagName);
+        if (postDTO.getTags() != null) {
+            for (TagSummaryDTO tagDTO : postDTO.getTags()) {
+                Tag tag = null;
+                if (tagDTO.getId() != null) {
+                    tag = tagRepository.findById(tagDTO.getId()).orElse(null);
+                }
+                if (tag == null && tagDTO.getName() != null) {
+                    tag = tagService.getTagByName(tagDTO.getName());
+                    if (tag == null) {
+                        tag = tagService.createTag(tagDTO.getName());
+                    }
+                }
+                if (tag != null) {
+                    tags.add(tag);
+                }
             }
-            tags.add(tag);
         }
-
-        List<String> hashtags = tagService.extractHashtags(postDTO.getMessage());
-        for (String hashtag : hashtags) {
-            Tag tag = tagService.getTagByName(hashtag);
-            if (tag == null) {
-                tag = tagService.createTag(hashtag);
-            }
-            tags.add(tag);
-        }
-
         existingPost.setTags(tags);
 
+        // Actualizar imágenes igual que en eventos
+        existingPost.getImages().clear();
+        List<PostImage> images = new ArrayList<>();
+        if (postDTO.getImages() != null) {
+            for (String imageName : postDTO.getImages()) {
+                PostImage image = new PostImage();
+                image.setImageName(imageName);
+                image.setMainImage(false); // O lógica para principal
+                image.setPost(existingPost);
+                images.add(image);
+            }
+        }
+        existingPost.setImages(images);
         return postRepository.save(existingPost);
     }
 
@@ -210,25 +220,37 @@ public class PostServiceImpl implements IPostService {
         post.setUser(userService.getUserById(postDTO.getUserId()));
 
         List<Tag> tags = new ArrayList<>();
-        for (String tagName : postDTO.getTags()) {
-            Tag tag = tagService.getTagByName(tagName);
-            if (tag == null) {
-                tag = tagService.createTag(tagName);
+        if (postDTO.getTags() != null) {
+            for (TagSummaryDTO tagDTO : postDTO.getTags()) {
+                Tag tag = null;
+                if (tagDTO.getId() != null) {
+                    tag = tagRepository.findById(tagDTO.getId()).orElse(null);
+                }
+                if (tag == null && tagDTO.getName() != null) {
+                    tag = tagService.getTagByName(tagDTO.getName());
+                    if (tag == null) {
+                        tag = tagService.createTag(tagDTO.getName());
+                    }
+                }
+                if (tag != null) {
+                    tags.add(tag);
+                }
             }
-            tags.add(tag);
         }
-
-        List<String> hashtags = tagService.extractHashtags(postDTO.getMessage());
-        for (String hashtag : hashtags) {
-            Tag tag = tagService.getTagByName(hashtag);
-            if (tag == null) {
-                tag = tagService.createTag(hashtag);
-            }
-            tags.add(tag);
-        }
-
         post.setTags(tags);
 
+        // Manejo de imágenes igual que en eventos
+        List<PostImage> images = new ArrayList<>();
+        if (postDTO.getImages() != null) {
+            for (String imageName : postDTO.getImages()) {
+                PostImage image = new PostImage();
+                image.setImageName(imageName);
+                image.setMainImage(false); // O lógica para principal
+                image.setPost(post);
+                images.add(image);
+            }
+        }
+        post.setImages(images);
         return postRepository.save(post);
     }
 
@@ -282,12 +304,22 @@ public class PostServiceImpl implements IPostService {
 
         // Add tags from tag list
         List<Tag> tags = new ArrayList<>();
-        for (String tagName : postDTO.getTags()) {
-            Tag tag = tagService.getTagByName(tagName);
-            if (tag == null) {
-                tag = tagService.createTag(tagName);
+        if (postDTO.getTags() != null) {
+            for (TagSummaryDTO tagDTO : postDTO.getTags()) {
+                Tag tag = null;
+                if (tagDTO.getId() != null) {
+                    tag = tagRepository.findById(tagDTO.getId()).orElse(null);
+                }
+                if (tag == null && tagDTO.getName() != null) {
+                    tag = tagService.getTagByName(tagDTO.getName());
+                    if (tag == null) {
+                        tag = tagService.createTag(tagDTO.getName());
+                    }
+                }
+                if (tag != null) {
+                    tags.add(tag);
+                }
             }
-            tags.add(tag);
         }
 
         // Add tags from hashtags in post message
@@ -344,9 +376,9 @@ public class PostServiceImpl implements IPostService {
                 .collect(java.util.stream.Collectors.toList());
 
         String username = post.getUser() != null ? post.getUser().getUsername() : "Usuario Anónimo";
-        String fullName = username; // User solo tiene username, no fullName
+        String fullName = username;
 
-        // Obtener nombres de imágenes (PostImage solo tiene imageName, no URL)
+        // Obtener nombres de imágenes (igual que eventos)
         List<String> images = post.getImages() != null
                 ? post.getImages().stream()
                         .map(PostImage::getImageName)
@@ -368,12 +400,12 @@ public class PostServiceImpl implements IPostService {
                 post.getLocation(),
                 post.getCreationDate(),
                 post.isArchived(),
-                false, // published - Post no tiene este campo, por defecto false
+                false,
                 lovesCount,
                 username,
                 fullName,
                 tagDTOs,
-                images, // Unificado con EventResponseDTO
+                images,
                 repliesCount,
                 commentsCount
         );

@@ -7,7 +7,7 @@ import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.roles.model.Role;
-import de.stella.agora_web.tags.model.Tag;
+import de.stella.agora_web.tags.dto.TagSummaryDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +29,7 @@ public class PostDTO {
     private int loves;
     private List<Comment> comments;
     private boolean isArchived;
-    private List<String> tags;
+    private List<TagSummaryDTO> tags; // Ahora array de objetos
     private List<String> images;
     private boolean isPublished;
     private String altImage;
@@ -52,7 +52,9 @@ public class PostDTO {
         this.loves = lovesCount;
         this.userId = post.getUser() != null ? post.getUser().getId() : null;
         this.comments = post.getComments();
-        this.tags = post.getTags().stream().map(Tag::getName).collect(Collectors.toList());
+        this.tags = post.getTags().stream()
+                .map(tag -> new TagSummaryDTO(tag.getId(), tag.getName(), tag.getArchived() != null && tag.getArchived()))
+                .collect(Collectors.toList());
         this.userName = post.getUser() != null ? post.getUser().getUsername() : null;
         this.role = (post.getUser() != null && post.getUser().getRoles() != null)
                 ? (String) post.getUser().getRoles().stream()
@@ -72,13 +74,6 @@ public class PostDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public String[] getTags() {
-        if (tags == null) {
-            return new String[0];
-        }
-        return tags.toArray(String[]::new);
     }
 
     public boolean isArchived() {
