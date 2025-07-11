@@ -3,6 +3,8 @@ package de.stella.agora_web.events.controller.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import de.stella.agora_web.tags.dto.TagSummaryDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +19,9 @@ public class EventResponseDTO {
     private String title;
     private String message;
     private String location;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime creationDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime eventDate;
     private int capacity;
     private boolean archived;

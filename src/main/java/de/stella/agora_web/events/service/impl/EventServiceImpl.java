@@ -87,8 +87,8 @@ public class EventServiceImpl implements IEventService {
         // --- ASIGNACIÓN AUTOMÁTICA DE TAGS EN EDICIÓN ---
         if (eventDTO.getTags() != null) {
             List<Tag> tags = eventDTO.getTags().stream()
-                    .filter(name -> name != null && !name.isBlank())
-                    .map(tagService::getOrCreateTagByName)
+                    .filter(tagDto -> tagDto != null && tagDto.getName() != null && !tagDto.getName().trim().isEmpty())
+                    .map(tagDto -> tagService.getOrCreateTagByName(tagDto.getName()))
                     .filter(java.util.Objects::nonNull)
                     .collect(java.util.stream.Collectors.toList());
             event.setTags(tags);
@@ -173,8 +173,8 @@ public class EventServiceImpl implements IEventService {
         // --- ASIGNACIÓN AUTOMÁTICA DE TAGS ---
         if (eventDTO.getTags() != null) {
             List<Tag> tags = eventDTO.getTags().stream()
-                    .filter(name -> name != null && !name.isBlank())
-                    .map(tagService::getOrCreateTagByName)
+                    .filter(tagDto -> tagDto != null && tagDto.getName() != null && !tagDto.getName().trim().isEmpty())
+                    .map(tagDto -> tagService.getOrCreateTagByName(tagDto.getName()))
                     .filter(java.util.Objects::nonNull)
                     .collect(java.util.stream.Collectors.toList());
             event.setTags(tags);

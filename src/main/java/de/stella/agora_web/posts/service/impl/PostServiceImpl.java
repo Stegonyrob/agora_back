@@ -17,13 +17,13 @@ import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.image.module.PostImage;
 import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.controller.dto.PostResponseDTO;
-import de.stella.agora_web.posts.controller.dto.PostSummaryDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.posts.service.IPostService;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.repository.ReplyRepository;
+import de.stella.agora_web.tags.dto.PostSummaryDTO;
 import de.stella.agora_web.tags.dto.TagSummaryDTO;
 import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.tags.repository.TagRepository;
@@ -339,7 +339,22 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Page<PostSummaryDTO> getAllPostsWithCounts(Pageable pageable) {
-        return postRepository.findAllWithCounts(pageable);
+        Page<Post> posts = postRepository.findAll(pageable);
+        return posts.map(post -> {
+            List<TagSummaryDTO> tagDTOs = post.getTags().stream()
+                    .map(tag -> new TagSummaryDTO(tag.getId(), tag.getName(), tag.getArchived() != null ? tag.getArchived() : false))
+                    .collect(java.util.stream.Collectors.toList());
+            String username = post.getUser() != null ? post.getUser().getUsername() : "Usuario Anónimo";
+            return new PostSummaryDTO(
+                    post.getId(),
+                    post.getTitle(),
+                    post.getMessage(),
+                    post.getCreationDate(),
+                    post.isArchived(),
+                    username,
+                    tagDTOs
+            );
+        });
     }
 
     // ========== MÉTODOS OPTIMIZADOS CON DTOs ==========

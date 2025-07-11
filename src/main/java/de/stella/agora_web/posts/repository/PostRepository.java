@@ -34,6 +34,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("""
         SELECT p.id AS id, p.title AS title, p.message AS message, 
+               p.creationDate AS creationDate,
+               p.archived AS archived,
                (SELECT COUNT(c) FROM Comment c WHERE c.post.id = p.id) AS commentsCount,
                (SELECT COUNT(pl) FROM PostLove pl WHERE pl.post.id = p.id) AS favoritesCount,
                p.user.id AS userId

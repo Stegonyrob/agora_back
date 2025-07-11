@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.controller.dto.PostResponseDTO;
-import de.stella.agora_web.posts.controller.dto.PostSummaryDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.service.IPostService;
+import de.stella.agora_web.tags.dto.PostSummaryDTO;
 import jakarta.validation.Valid;
 
 @RestController

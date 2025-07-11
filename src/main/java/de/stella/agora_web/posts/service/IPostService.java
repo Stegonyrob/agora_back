@@ -9,10 +9,10 @@ import de.stella.agora_web.comment.controller.dto.CommentDTO;
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.controller.dto.PostResponseDTO;
-import de.stella.agora_web.posts.controller.dto.PostSummaryDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.model.Reply;
+import de.stella.agora_web.tags.dto.PostSummaryDTO;
 import de.stella.agora_web.tags.model.Tag;
 
 public interface IPostService {

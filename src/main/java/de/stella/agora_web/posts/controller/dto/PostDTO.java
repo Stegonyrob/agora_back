@@ -39,6 +39,7 @@ public class PostDTO {
     private String userName;
     private String role;
     private String urlAvatar;
+    private java.time.LocalDateTime creationDate;
 
     @SuppressWarnings("rawtypes")
     private List<ReplyDTO> replies;
@@ -62,6 +63,7 @@ public class PostDTO {
                         .findFirst()
                         .orElse(null)
                 : null;
+        this.creationDate = post.getCreationDate();
     }
 
     public PostDTO(Boolean archived) {

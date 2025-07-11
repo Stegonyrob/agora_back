@@ -178,42 +178,42 @@ VALUES
     'Post 1',
     'Comer es un desafío diario para mí. No es solo cuestión de elegir qué quiero comer, sino de superar las barreras que mi cerebro y mi cuerpo me ponen. Tengo selectividad alimentaria por texturas y colores, lo que significa que solo como alimentos que se ajustan a mis estándares de textura y color. La carne debe ser suave y tierna, no puede tener grasa visible ni tener un color demasiado intenso. Las verduras deben ser crujientes y frescas, no pueden estar cocidas ni tener un color demasiado oscuro. Los frutos deben ser dulces y jugosos, no pueden ser ácidos ni tener un color demasiado brillante. Cada comida es un reto, cada bocado una lucha. Me siento aislada en una sociedad que valora la variedad y la experimentación culinaria. Me siento culpable por no poder disfrutar de una comida familiar o compartir un plato con amigos. Me siento frustrada por no poder explicarles a los demás por qué no como ciertas cosas. Me siento sola en mi lucha diaria por encontrar alimentos que se ajusten a mis necesidades. Pero también me siento fuerte por haber aprendido a adaptarme y a encontrar formas de superar mis limitaciones. Me siento orgullosa de haber encontrado una comunidad en línea que entiende mi lucha y me apoya. Comer es un desafío, pero no es imposible. Y aunque sea difícil, vale la pena luchar por encontrar la comida que me hace sentir bien.',
     1,
-    now(),
+    '2024-01-10T09:00:00',
     false
   ),
   (
     'Presunción de Competencia: Un Nuevo Paradigma',
     'La presunción de competencia es un principio fundamental que está revolucionando el apoyo a personas autistas. En lugar de asumir déficits, partimos de la base de que toda persona tiene capacidades innatas que pueden desarrollarse. Este enfoque reconoce que las diferencias en la comunicación o el comportamiento no indican menor inteligencia o capacidad. Muchas personas autistas han demostrado que, cuando se les brinda el apoyo adecuado y se respetan sus formas naturales de procesar el mundo, pueden alcanzar logros extraordinarios. La clave está en encontrar los métodos de comunicación y aprendizaje que mejor se adapten a cada persona, en lugar de forzar adaptaciones a métodos neurotípicos. Este paradigma nos invita a ser más creativos, pacientes y respetuosos en nuestro acompañamiento.',
     1,
-    now(),
+    '2024-01-11T10:00:00',
     false
   ),
   (
     'Más Allá del Capacitismo: Celebrando la Neurodiversidad',
     'El movimiento de neurodiversidad nos ha enseñado a ver el autismo no como algo que necesita ser "curado", sino como una variación natural del cerebro humano. Los enfoques tradicionales, a menudo capacitistas, se centraban en hacer que las personas autistas se vieran "normales", ignorando el estrés y trauma que esto causaba. Hoy sabemos que es más efectivo y respetuoso adaptar el entorno a las necesidades de cada persona. Esto significa crear espacios sensorialmente seguros, respetar los stims (movimientos autorregulatorios), y valorar formas alternativas de comunicación como el uso de tableros de comunicación o tecnología asistiva. Cuando eliminamos las barreras capacitistas, las personas autistas florecen mostrando sus verdaderas habilidades y talentos únicos.',
     1,
-    now(),
+    '2024-01-12T11:00:00',
     false
   ),
   (
     'Post 4',
     'Comer es un desafío diario para mí. No es solo cuestión de elegir qué quiero comer, sino de superar las barreras que mi cerebro y mi cuerpo me ponen. Tengo selectividad alimentaria por texturas y colores, lo que significa que solo como alimentos que se ajustan a mis estándares de textura y color. La carne debe ser suave y tierna, no puede tener grasa visible ni tener un color demasiado intenso. Las verduras deben ser crujientes y frescas, no pueden estar cocidas ni tener un color demasiado oscuro. Los frutos deben ser dulces y jugosos, no pueden ser ácidos ni tener un color demasiado brillante. Cada comida es un reto, cada bocado una lucha. Me siento aislada en una sociedad que valora la variedad y la experimentación culinaria. Me siento culpable por no poder disfrutar de una comida familiar o compartir un plato con amigos. Me siento frustrada por no poder explicarles a los demás por qué no como ciertas cosas. Me siento sola en mi lucha diaria por encontrar alimentos que se ajusten a mis necesidades. Pero también me siento fuerte por haber aprendido a adaptarme y a encontrar formas de superar mis limitaciones. Me siento orgullosa de haber encontrado una comunidad en línea que entiende mi lucha y me apoya. Comer es un desafío, pero no es imposible. Y aunque sea difícil, vale la pena luchar por encontrar la comida que me hace sentir bien.',
     1,
-    now(),
+    '2024-01-13T12:00:00',
     false
   ),
   (
     'Comunicación Alternativa y Aumentativa: Rompiendo Barreras',
     'La comunicación no tiene por qué ser verbal para ser válida y poderosa. Los sistemas de comunicación alternativa y aumentativa (CAA) han abierto un mundo de posibilidades para personas autistas que comunican de formas diferentes. Desde pictogramas y tableros de comunicación hasta aplicaciones tecnológicas avanzadas, estas herramientas permiten que las personas expresen sus pensamientos, necesidades y emociones de manera efectiva. Es fundamental entender que alguien que no habla no es alguien que no tiene nada que decir. De hecho, muchas personas autistas no parlantes tienen pensamientos complejos y profundos que comparten a través de la escritura, los símbolos o la tecnología. El respeto por estas formas de comunicación y la paciencia para aprender a usarlas correctamente es clave para construir relaciones auténticas y significativas.',
     1,
-    now(),
+    '2024-01-14T13:00:00',
     false
   ),
   (
     'Apoyo Centrado en la Persona: Respetando la Autodeterminación',
     'El enfoque centrado en la persona reconoce que cada individuo autista es único, con sus propios intereses, fortalezas y formas de interactuar con el mundo. Este paradigma se aleja de los modelos "talla única" y abraza la personalización del apoyo. Significa escuchar activamente lo que la persona comunica sobre sus necesidades, respetar sus elecciones cuando es posible, y trabajar CON la persona, no SOBRE ella. Incluye valorar los intereses especiales como recursos de aprendizaje y conexión, respetar las necesidades sensoriales, y entender que los comportamientos repetitivos (stims) son formas naturales de autorregulación. Cuando el apoyo se centra verdaderamente en la persona, vemos un aumento en la autoestima, la autonomía y el bienestar general. Este enfoque nos recuerda que nuestro objetivo no es cambiar a la persona, sino crear las condiciones para que pueda prosperar siendo auténticamente ella misma.',
     1,
-    now(),
+    '2024-01-15T14:00:00',
     false
   );
 
@@ -429,7 +429,7 @@ VALUES
     1,
     'Taller de Juegos de Mesa',
     'Un aspecto fundamental del taller es la gestión del tiempo y la paciencia al esperar el turno de juego, promoviendo la escucha activa y la consideración por los demás participantes.',
-    NOW(),
+    '2024-01-10T10:00:00',
     false,
     1,
     30
@@ -438,7 +438,7 @@ VALUES
     2,
     'Escuela de Padres',
     'Programa de formación y apoyo dirigido a padres y madres. Se ofrecen herramientas, estrategias y recursos para afrontar los retos de la crianza, mejorar la comunicación familiar y promover un desarrollo saludable de los hijos.',
-    NOW(),
+    '2024-01-15T18:00:00',
     false,
     1,
     40
