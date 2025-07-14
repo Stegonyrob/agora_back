@@ -3,6 +3,8 @@ package de.stella.agora_web.profiles.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +26,8 @@ import lombok.NonNull;
 @Service
 @AllArgsConstructor
 public class ProfileServiceImpl implements IProfileService {
+
+    private static final Logger log = LoggerFactory.getLogger(ProfileServiceImpl.class);
 
     private final ProfileRepository repository;
     private final PostRepository postRepository;
@@ -67,9 +71,9 @@ public class ProfileServiceImpl implements IProfileService {
                     .ifPresentOrElse(
                             avatar -> {
                                 profile.setAvatar(avatar);
-                                System.out.println("Avatar actualizado: ID=" + avatar.getId() + ", imageName=" + avatar.getImageName());
+                                log.debug("Avatar actualizado: ID={}, imageName={}", avatar.getId(), avatar.getImageName());
                             },
-                            () -> System.out.println("Avatar no encontrado con ID: " + profileDTO.getAvatarId())
+                            () -> log.warn("Avatar no encontrado con ID: {}", profileDTO.getAvatarId())
                     );
         } else {
             // Si no se proporciona avatarId, mantener el avatar actual o usar el default
@@ -77,15 +81,17 @@ public class ProfileServiceImpl implements IProfileService {
                 avatarRepository.findDefaultAvatar()
                         .ifPresent(defaultAvatar -> {
                             profile.setAvatar(defaultAvatar);
-                            System.out.println("Asignado avatar por defecto: " + defaultAvatar.getImageName());
+                            log.debug("Asignado avatar por defecto: {}", defaultAvatar.getImageName());
                         });
             }
         }
 
+        // Asignar avatar por defecto si no tiene
+        if (profile.getAvatar() == null && avatarRepository != null) {
+            avatarRepository.findDefaultAvatar().ifPresent(profile::setAvatar);
+        }
         Profile savedProfile = repository.save(profile);
-        System.out.println("Perfil guardado con avatar ID: "
-                + (savedProfile.getAvatar() != null ? savedProfile.getAvatar().getId() : "null"));
-
+        log.debug("Perfil guardado con avatar ID: {}", (savedProfile.getAvatar() != null ? savedProfile.getAvatar().getId() : "null"));
         return savedProfile;
     }
 

@@ -1,4 +1,4 @@
-/*Users*/
+-- 1. Insertar usuarios
 INSERT INTO
   users (username, password, email, accepted_rules)
 VALUES
@@ -43,27 +43,269 @@ VALUES
     '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
     'user6@gmail.com',
     true
-  ),
-  (
-    'user7',
-    '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
-    'user7@gmail.com',
-    true
   );
 
-/*Profiles*/
+--
+-- Avatares precargados
+INSERT INTO
+  avatars (
+    image_name,
+    image_data,
+    preloaded,
+    is_default,
+    display_name,
+    image_url
+  )
+VALUES
+  (
+    'onron.png',
+    NULL,
+    true,
+    false,
+    'Avatar Onron (Admin)',
+    '/images/avatars/onron.png'
+  ),
+  (
+    '1.png',
+    NULL,
+    true,
+    true,
+    'Avatar amarillo sonriente',
+    '/images/avatars/1.png'
+  ),
+  (
+    '2.png',
+    NULL,
+    true,
+    false,
+    'Avatar marron sonriente',
+    '/images/avatars/2.png'
+  ),
+  (
+    '3.png',
+    NULL,
+    true,
+    false,
+    'Avatar avatar azul cielo sonriente',
+    '/images/avatars/3.png'
+  ),
+  (
+    '4.png',
+    NULL,
+    true,
+    false,
+    'Avatar verde sonriente',
+    '/images/avatars/4.png'
+  ),
+  (
+    '5.png',
+    NULL,
+    true,
+    false,
+    'Avatar 5amarillo sonriente',
+    '/images/avatars/5.png'
+  ),
+  (
+    '6.png',
+    NULL,
+    true,
+    false,
+    'Avatar turquesa sonriente',
+    '/images/avatars/6.png'
+  ),
+  (
+    '7.png',
+    NULL,
+    true,
+    false,
+    'Avatar verde claro sonriente',
+    '/images/avatars/7.png'
+  ),
+  (
+    '8.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul cielo sonriente 2',
+    '/images/avatars/8.png'
+  ),
+  (
+    '9.png',
+    NULL,
+    true,
+    false,
+    'Avatar girs y blanco sonriente',
+    '/images/avatars/9.png'
+  ),
+  (
+    '10.png',
+    NULL,
+    true,
+    false,
+    'Avatar lila sonriente',
+    '/images/avatars/10.png'
+  ),
+  (
+    '11.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul sonriente',
+    '/images/avatars/11.png'
+  ),
+  (
+    '12.png',
+    NULL,
+    true,
+    false,
+    'Avatar amarillo sonriente 2',
+    '/images/avatars/12.png'
+  ),
+  (
+    '13.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul sonriente ojos cerrados',
+    '/images/avatars/13.png'
+  ),
+  (
+    '14.png',
+    NULL,
+    true,
+    false,
+    'Avatar rosa sonriente',
+    '/images/avatars/14.png'
+  ),
+  (
+    '15.png',
+    NULL,
+    true,
+    false,
+    'Avatar marron serio',
+    '/images/avatars/15.png'
+  ),
+  (
+    '16.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul cielo serio',
+    '/images/avatars/16.png'
+  ),
+  (
+    '17.png',
+    NULL,
+    true,
+    false,
+    'Avatar 17',
+    '/images/avatars/17.png'
+  ),
+  (
+    '18.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul feliz',
+    '/images/avatars/18.png'
+  ),
+  (
+    '19.png',
+    NULL,
+    true,
+    false,
+    'Avatar amarillo feliz',
+    '/images/avatars/19.png'
+  ),
+  (
+    '20.png',
+    NULL,
+    true,
+    false,
+    'Avatar verde sonriente',
+    '/images/avatars/20.png'
+  ),
+  (
+    '21.png',
+    NULL,
+    true,
+    false,
+    'Avatar gris sonriente',
+    '/images/avatars/21.png'
+  ),
+  (
+    '22.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul cielo mirando a la izquierda',
+    '/images/avatars/22.png'
+  ),
+  (
+    '23.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul cielo serio',
+    '/images/avatars/23.png'
+  ),
+  (
+    '24.png',
+    NULL,
+    true,
+    false,
+    'Avatar rosa con cuernos sonriente',
+    '/images/avatars/24.png'
+  ),
+  (
+    '25.png',
+    NULL,
+    true,
+    false,
+    'Avatar verde y blanco sonriente',
+    '/images/avatars/25.png'
+  ),
+  (
+    '26.png',
+    NULL,
+    true,
+    false,
+    'Avatar lila serio',
+    '/images/avatars/26.png'
+  ),
+  (
+    '27.png',
+    NULL,
+    true,
+    false,
+    'Avatar azul serio 2',
+    '/images/avatars/27.png'
+  ),
+  (
+    '28.png',
+    NULL,
+    true,
+    false,
+    'Avatar verde pensativo',
+    '/images/avatars/28.png'
+  );
+
+-- 2. Insertar perfiles
 INSERT INTO
   profiles (
     user_id,
-    first_Name,
-    last_Name1,
+    first_name,
+    last_name1,
     last_name2,
     username,
     relationship,
     email,
     password,
     confirm_password,
-    city
+    city,
+    country,
+    phone,
+    avatar_id
   )
 VALUES
   (
@@ -71,106 +313,134 @@ VALUES
     'Ivan',
     'Apellido1',
     'SegApellido1',
-    'TheBoss',
+    'ivanboss',
     'Cool',
     'admin@gmail.com',
     '',
     '',
-    'city'
+    'Gijon',
+    'España',
+    '600000001',
+    (
+      SELECT
+        id
+      FROM
+        avatars
+      WHERE
+        image_name = 'onron.png'
+    )
   ),
   (
     2,
     'Stella',
     'Apellido1',
     'SegApellido1',
-    'TheBoss',
-    'Cool',
-    'admin@gmail.com',
+    'stella',
+    'Sister',
+    'user1@gmail.com',
     '',
     '',
-    'Gijon'
+    'Oviedo',
+    'España',
+    '600000002',
+    (
+      SELECT
+        id
+      FROM
+        avatars
+      WHERE
+        image_name = '1.png'
+    )
   ),
   (
     3,
     'Name3',
     'Apellido1',
     'SegApellido1',
-    'TheBoss',
-    'Cool',
-    'admin@gmail.com',
+    'userthree',
+    'Friend',
+    'user2@gmail.com',
     '',
     '',
-    'city'
+    'Avilés',
+    'España',
+    '600000003',
+    (
+      SELECT
+        id
+      FROM
+        avatars
+      WHERE
+        image_name = '2.png'
+    )
   ),
   (
     4,
     'Name4',
     'Apellido1',
     'SegApellido1',
-    'TheBoss',
-    'Cool',
-    'admin@gmail.com',
+    'userfour',
+    'Brother',
+    'user3@gmail.com',
     '',
     '',
-    'city'
+    'Mieres',
+    'España',
+    '600000004',
+    (
+      SELECT
+        id
+      FROM
+        avatars
+      WHERE
+        image_name = '3.png'
+    )
   ),
   (
     5,
     'Name5',
     'Apellido1',
     'SegApellido1',
-    'TheBoss',
-    'Cool',
-    'admin@gmail.com',
+    'userfive',
+    'Cousin',
+    'user4@gmail.com',
     '',
     '',
-    'city'
+    'Langreo',
+    'España',
+    '600000005',
+    (
+      SELECT
+        id
+      FROM
+        avatars
+      WHERE
+        image_name = '4.png'
+    )
   ),
   (
     6,
-    'Name5',
+    'Name6',
     'Apellido1',
     'SegApellido1',
-    'TheBoss',
-    'Cool',
-    'admin@gmail.com',
+    'usersix',
+    'Friend',
+    'user5@gmail.com',
     '',
     '',
-    'city'
-  ),
-  (
-    7,
-    'Name7',
-    'Apellido1',
-    'SegApellido1',
-    'TheBoss',
-    'Cool',
-    'admin@gmail.com',
-    '',
-    '',
-    'city'
+    'Siero',
+    'España',
+    '600000006',
+    (
+      SELECT
+        id
+      FROM
+        avatars
+      WHERE
+        image_name = '5.png'
+    )
   );
 
--- Inserciones en la tabla 'roles'
-INSERT INTO
-  roles (name)
-VALUES
-  ('ROLE_ADMIN'),
-  ('ROLE_USER');
-
--- Asociación entre usuarios y roles
-INSERT INTO
-  roles_users (role_id, user_id)
-VALUES
-  (1, 1),
-  (2, 2),
-  (2, 3),
-  (2, 4),
-  (2, 5),
-  (2, 6),
-  (2, 7);
-
--- Inserciones en la tabla 'posts'
 INSERT INTO
   posts (title, message, user_id, creation_date, archived)
 VALUES
@@ -803,250 +1073,6 @@ VALUES
 </div>
 <p><strong>Fecha de última actualización:</strong> 26 de Junio de 2025</p>',
     '2025-06-26 00:00:00'
-  );
-
--- Avatares precargados
-INSERT INTO
-  avatars (
-    image_name,
-    image_data,
-    preloaded,
-    is_default,
-    display_name,
-    image_url
-  )
-VALUES
-  (
-    '1.png',
-    NULL,
-    true,
-    true,
-    'Avatar amarillo sonriente',
-    '/images/avatars/1.png'
-  ),
-  (
-    '2.png',
-    NULL,
-    true,
-    false,
-    'Avatar marron sonriente',
-    '/images/avatars/2.png'
-  ),
-  (
-    '3.png',
-    NULL,
-    true,
-    false,
-    'Avatar avatar azul cielo sonriente',
-    '/images/avatars/3.png'
-  ),
-  (
-    '4.png',
-    NULL,
-    true,
-    false,
-    'Avatar verde sonriente',
-    '/images/avatars/4.png'
-  ),
-  (
-    '5.png',
-    NULL,
-    true,
-    false,
-    'Avatar 5amarillo sonriente',
-    '/images/avatars/5.png'
-  ),
-  (
-    '6.png',
-    NULL,
-    true,
-    false,
-    'Avatar turquesa sonriente',
-    '/images/avatars/6.png'
-  ),
-  (
-    '7.png',
-    NULL,
-    true,
-    false,
-    'Avatar verde claro sonriente',
-    '/images/avatars/7.png'
-  ),
-  (
-    '8.png',
-    NULL,
-    true,
-    false,
-    'Avatar azul cielo sonriente 2',
-    '/images/avatars/8.png'
-  ),
-  (
-    '9.png',
-    NULL,
-    true,
-    false,
-    'Avatar girs y blanco sonriente',
-    '/images/avatars/9.png'
-  ),
-  (
-    '10.png',
-    NULL,
-    true,
-    false,
-    'Avatar lila sonriente',
-    '/images/avatars/10.png'
-  ),
-  (
-    '11.png',
-    NULL,
-    true,
-    false,
-    'Avatar azul sonriente',
-    '/images/avatars/11.png'
-  ),
-  (
-    '12.png',
-    NULL,
-    true,
-    false,
-    'Avatar amarillo sonriente 2',
-    '/images/avatars/12.png'
-  ),
-  (
-    '13.png',
-    NULL,
-    true,
-    false,
-    'Avatar azul sonriente ojos cerrados',
-    '/images/avatars/13.png'
-  ),
-  (
-    '14.png',
-    NULL,
-    true,
-    false,
-    'Avatar rosa sonriente',
-    '/images/avatars/14.png'
-  ),
-  (
-    '15.png',
-    NULL,
-    true,
-    false,
-    'Avatar marron serio',
-    '/images/avatars/15.png'
-  ),
-  (
-    '16.png',
-    NULL,
-    true,
-    false,
-    'Avatar azul cielo serio',
-    '/images/avatars/16.png'
-  ),
-  (
-    '17.png',
-    NULL,
-    true,
-    false,
-    'Avatar 17',
-    '/images/avatars/17.png'
-  ),
-  (
-    '18.png',
-    NULL,
-    true,
-    false,
-    'Avatar azul feliz',
-    '/images/avatars/18.png'
-  ),
-  (
-    '19.png',
-    NULL,
-    true,
-    false,
-    'Avatar amarillo feliz',
-    '/images/avatars/19.png'
-  ),
-  (
-    '20.png',
-    NULL,
-    true,
-    false,
-    'Avatar verde sonriente',
-    '/images/avatars/20.png'
-  ),
-  (
-    '21.png',
-    NULL,
-    true,
-    false,
-    'Avatar gris sonriente',
-    '/images/avatars/21.png'
-  ),
-  (
-    '22.png',
-    NULL,
-    true,
-    false,
-    'Avatar azul cielo mirando a la izquierda',
-    '/images/avatars/22.png'
-  ),
-  (
-    '23.png',
-    NULL,
-    true,
-    false,
-    'Avatar azul cielo serio',
-    '/images/avatars/23.png'
-  ),
-  (
-    '24.png',
-    NULL,
-    true,
-    false,
-    'Avatar rosa con cuernos sonriente',
-    '/images/avatars/24.png'
-  ),
-  (
-    '25.png',
-    NULL,
-    true,
-    false,
-    'Avatar verde y blanco sonriente',
-    '/images/avatars/25.png'
-  ),
-  (
-    '26.png',
-    NULL,
-    true,
-    false,
-    'Avatar lila serio',
-    '/images/avatars/26.png'
-  ),
-  (
-    '27.png',
-    NULL,
-    true,
-    false,
-    'Avatar azul serio 2',
-    '/images/avatars/27.png'
-  ),
-  (
-    '28.png',
-    NULL,
-    true,
-    false,
-    'Avatar verde pensativo',
-    '/images/avatars/28.png'
-  ),
-  (
-    'onron.png',
-    NULL,
-    true,
-    false,
-    'Avatar Onron (Admin)',
-    '/images/avatars/onron.png'
   );
 
 -- Inserciones en la tabla 'tags'

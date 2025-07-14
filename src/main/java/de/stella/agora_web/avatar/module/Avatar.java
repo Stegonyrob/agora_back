@@ -1,14 +1,11 @@
 package de.stella.agora_web.avatar.module;
 
-import de.stella.agora_web.profiles.model.Profile;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,20 +47,5 @@ public class Avatar {
     private String displayName;
 
     private String imageUrl; // URL del avatar para uso en frontend
-
-    // Relación con Profile (un avatar puede ser usado por muchos perfiles, pero esta referencia es solo informativa)
-    @OneToOne(mappedBy = "avatar", fetch = FetchType.LAZY)
-    private Profile profile;
-
-    public Avatar(Long id, String imageName, byte[] imageData, boolean preloaded, boolean isDefault, String displayName,
-            String imageUrl) {
-        this.id = id;
-        this.imageName = imageName;
-        this.imageData = imageData;
-        this.preloaded = preloaded;
-        this.isDefault = isDefault;
-        this.displayName = displayName;
-        this.imageUrl = imageUrl;
-    }
 
 }

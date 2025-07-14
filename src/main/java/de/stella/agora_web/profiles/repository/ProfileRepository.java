@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import de.stella.agora_web.avatar.module.Avatar;
 import de.stella.agora_web.profiles.model.Profile;
 
 @Repository
@@ -29,6 +30,8 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     List<Profile> findAllByIdIn(Collection<Long> ids);
 
+    List<Profile> findByUserId(Long userId);
+
     // Consulta optimizada para obtener Profile con User y Roles en una sola consulta
     @Query("SELECT p FROM Profile p "
             + "JOIN FETCH p.user u "
@@ -48,4 +51,8 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
             + "JOIN FETCH p.user u "
             + "WHERE p.id = :id")
     Optional<Profile> findByIdWithUser(@Param("id") Long id);
+
+    // Ejemplo: obtener los avatares personalizados de un usuario
+    @Query("SELECT p.avatar FROM Profile p WHERE p.avatar.preloaded = false AND p.user.id = :userId")
+    List<Avatar> findCustomAvatarsByUserId(@Param("userId") Long userId);
 }

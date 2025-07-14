@@ -26,8 +26,4 @@ public interface AvatarRepository extends JpaRepository<Avatar, Long> {
     // Verificar si existe un avatar precargado por nombre
     boolean existsByImageNameAndPreloadedTrue(String imageName);
 
-    // Obtener avatares personalizados de un usuario específico (simplificado)
-    @Query("SELECT a FROM Avatar a JOIN a.profile p WHERE a.preloaded = false AND p.user.id = :userId")
-    List<Avatar> findCustomAvatarsByUserId(Long userId);
-
 }
