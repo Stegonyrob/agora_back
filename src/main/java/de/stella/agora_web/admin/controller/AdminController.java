@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +41,15 @@ public class AdminController {
     public ResponseEntity<Void> deleteAdmin(@PathVariable Long id) {
         adminService.deleteAdmin(id);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Actualiza los datos de un admin (username, email, phone).
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<AdminUserDTO> updateAdmin(@PathVariable Long id, @RequestBody AdminCreateDTO dto) {
+        AdminUserDTO updated = adminService.updateAdmin(id, dto);
+        return ResponseEntity.ok(updated);
     }
 
     /**

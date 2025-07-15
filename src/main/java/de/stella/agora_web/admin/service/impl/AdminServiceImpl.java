@@ -17,6 +17,27 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminServiceImpl {
 
+    /**
+     * Actualiza los datos de un admin (username, email, phone).
+     */
+    public AdminUserDTO updateAdmin(Long id, AdminCreateDTO dto) {
+        User user = userService.findById(id).orElseThrow();
+        if (!user.isAdmin()) {
+            throw new IllegalArgumentException("El usuario no es administrador");
+        }
+        if (dto.getUsername() != null && !dto.getUsername().isBlank()) {
+            user.setUsername(dto.getUsername());
+        }
+        if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
+            user.setEmail(dto.getEmail());
+        }
+        if (dto.getPhone() != null && !dto.getPhone().isBlank()) {
+            user.setPhone(dto.getPhone());
+        }
+        userService.save(user);
+        return toAdminUserDTO(user);
+    }
+
     private final UserServiceImpl userService;
     private final RoleRepository roleRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
