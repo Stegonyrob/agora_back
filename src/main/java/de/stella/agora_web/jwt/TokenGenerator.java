@@ -80,6 +80,7 @@ public class TokenGenerator {
         TokenDTO tokenDTO = new TokenDTO();
         tokenDTO.setUserId(securityUser.getId());
         tokenDTO.setAccessToken(createAccessToken(authentication));
+        tokenDTO.setRole(securityUser.getRoles());
 
         // Obtiene el token de refresco
         String refreshToken;

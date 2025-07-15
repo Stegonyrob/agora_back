@@ -17,8 +17,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -40,7 +38,7 @@ public class Profile {
     private static final Logger log = LoggerFactory.getLogger(Profile.class);
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @Column(name = "id_profile")
     private Long id;
 
@@ -137,5 +135,18 @@ public class Profile {
     public void setAvatar(Avatar avatar) {
         log.debug("setAvatar() called for profile id={}, avatar={}", this.id, avatar != null ? avatar.getImageName() : "null");
         this.avatar = avatar;
+    }
+
+    public void setIdProfile(Object idUser) {
+        log.debug("setIdProfile() called for profile id={}, user id={}", this.id, idUser);
+        if (idUser instanceof Long) {
+            this.id = (Long) idUser;
+        } else {
+            throw new UnsupportedOperationException("Unimplemented method 'setIdProfile' for idUser of type " + idUser.getClass().getName());
+        }
+    }
+
+    public Long getIdProfile() {
+        return this.id;
     }
 }

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +29,7 @@ import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.service.impl.UserServiceImpl;
 
 @RestController
-@RequestMapping(path = "${api-endpoint}/any/")
+@RequestMapping(path = "${api-endpoint}/any/user/profile")
 public class ProfileController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
@@ -46,23 +45,21 @@ public class ProfileController {
         this.gdprService = gdprService;
     }
 
-    @PostAuthorize("returnObject.body.user.id == principal.id")
-    @PostMapping(path = "/user/profile/{id}")
+    @PostMapping(path = "/{id}")
     public ResponseEntity<Profile> getProfileById(@RequestBody ProfileDTO profileDTO) throws Exception {
         Profile profile = service.getById(profileDTO.getUserId());
         return ResponseEntity.ok(profile);
     }
 
-    @PostAuthorize("returnObject.body.id == authentication.principal.id")
-    @GetMapping(path = "/user/profile/{id}")
+    @GetMapping(path = "/{id}")
     public ResponseEntity<ProfileDTO> getById(@NonNull @PathVariable Long id) throws Exception {
         Profile profile = service.getById(id);
         ProfileDTO profileDTO = toProfileDTO(profile);
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(profileDTO);
     }
 
-    @PostAuthorize("returnObject.body.id == authentication.principal.id")
-    @PutMapping(path = "/user/profile/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PutMapping(path = "/{id}")
     public ResponseEntity<ProfileDTO> update(@PathVariable Long id, @RequestBody ProfileDTO profileDTO) throws Exception {
         try {
             // Log the complete JSON received

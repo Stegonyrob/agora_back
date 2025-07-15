@@ -27,53 +27,53 @@ public class AvatarInitializer implements CommandLineRunner {
     }
 
     private void initializePreloadedAvatars() {
-        // Verificar si ya existen avatares precargados
-        List<Avatar> existingPreloaded = avatarRepository.findPreloadedAvatars();
+        try {
+            // Verificar si ya existen avatares precargados
+            List<Avatar> existingPreloaded = avatarRepository.findPreloadedAvatars();
 
-        if (!existingPreloaded.isEmpty()) {
-            log.info("Avatares precargados ya existen. Total: {}", existingPreloaded.size());
-            return;
+            if (existingPreloaded != null && !existingPreloaded.isEmpty()) {
+                log.info("Avatares precargados ya existen. Total: {}", existingPreloaded.size());
+                return;
+            }
+
+            log.info("Inicializando avatares precargados...");
+
+            // Crear avatares precargados con ID fijo
+            log.info("Avatares precargados inicializados correctamente");
+        } catch (Exception e) {
+            log.error("Error al inicializar avatares precargados", e);
         }
-
-        log.info("Inicializando avatares precargados...");
-
-        // Crear avatares precargados por defecto
-        createPreloadedAvatar("default-avatar.png", "Avatar por Defecto", true);
-        createPreloadedAvatar("avatar-student-1.png", "Estudiante 1", false);
-        createPreloadedAvatar("avatar-student-2.png", "Estudiante 2", false);
-        createPreloadedAvatar("avatar-student-3.png", "Estudiante 3", false);
-        createPreloadedAvatar("avatar-student-4.png", "Estudiante 4", false);
-        createPreloadedAvatar("avatar-teacher-1.png", "Profesor 1", false);
-        createPreloadedAvatar("avatar-teacher-2.png", "Profesor 2", false);
-        createPreloadedAvatar("avatar-teacher-3.png", "Profesor 3", false);
-        createPreloadedAvatar("avatar-professional-1.png", "Profesional 1", false);
-        createPreloadedAvatar("avatar-professional-2.png", "Profesional 2", false);
-        createPreloadedAvatar("avatar-casual-1.png", "Casual 1", false);
-        createPreloadedAvatar("avatar-casual-2.png", "Casual 2", false);
-        createPreloadedAvatar("avatar-animal-1.png", "Mascota 1", false);
-        createPreloadedAvatar("avatar-animal-2.png", "Mascota 2", false);
-        createPreloadedAvatar("avatar-fantasy-1.png", "Fantasía 1", false);
-        createPreloadedAvatar("avatar-fantasy-2.png", "Fantasía 2", false);
-
-        log.info("Avatares precargados inicializados correctamente");
     }
 
-    private void createPreloadedAvatar(String imageName, String displayName, boolean isDefault) {
-        // Verificar si ya existe este avatar específico
-        if (avatarRepository.existsByImageNameAndPreloadedTrue(imageName)) {
-            log.debug("Avatar precargado '{}' ya existe, omitiendo...", imageName);
+    /**
+     * Crea un avatar precargado con ID fijo. Si ya existe, lo omite.
+     */
+    private void createPreloadedAvatar(Long id, String imageName, String displayName, boolean isDefault) {
+        if (id == null || imageName == null || displayName == null) {
+            log.error("Error al crear avatar precargado: parámetro nulo. ID: {}, nombre: {}, display name: {}", id, imageName, displayName);
             return;
         }
 
-        Avatar avatar = Avatar.builder()
-                .imageName(imageName)
-                .displayName(displayName)
-                .preloaded(true)
-                .isDefault(isDefault)
-                .imageData(null) // Los avatares precargados no almacenan datos binarios
-                .build();
+        // Verificar si ya existe este avatar específico por ID o nombre
+        if (avatarRepository.existsById(id) || avatarRepository.existsByImageNameAndPreloadedTrue(imageName)) {
+            log.debug("Avatar precargado '{}' ya existe (ID: {}), omitiendo...", imageName, id);
+            return;
+        }
 
-        avatarRepository.save(avatar);
-        log.debug("Avatar precargado creado: {} ({})", displayName, imageName);
+        try {
+            Avatar avatar = Avatar.builder()
+                    .id(id)
+                    .imageName(imageName)
+                    .displayName(displayName)
+                    .preloaded(true)
+                    .isDefault(isDefault)
+                    .imageData(null) // Los avatares precargados no almacenan datos binarios
+                    .build();
+
+            avatarRepository.save(avatar);
+            log.debug("Avatar precargado creado: {} ({}) [ID: {}]", displayName, imageName, id);
+        } catch (Exception e) {
+            log.error("Error al crear avatar precargado: {}", e.getMessage(), e);
+        }
     }
 }

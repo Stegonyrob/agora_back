@@ -112,4 +112,9 @@ public class User {
     public boolean isAdmin() {
         return hasRole("ROLE_ADMIN");
     }
+
+    public Object getIdUser() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getIdUser'");
+    }
 }

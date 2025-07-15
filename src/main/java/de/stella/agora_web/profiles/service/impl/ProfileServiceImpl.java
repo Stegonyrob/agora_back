@@ -3,9 +3,6 @@ package de.stella.agora_web.profiles.service.impl;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -20,6 +17,7 @@ import de.stella.agora_web.profiles.exceptions.ProfileNotFoundException;
 import de.stella.agora_web.profiles.model.Profile;
 import de.stella.agora_web.profiles.repository.ProfileRepository;
 import de.stella.agora_web.profiles.service.IProfileService;
+import de.stella.agora_web.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
@@ -27,14 +25,43 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class ProfileServiceImpl implements IProfileService {
 
-    private static final Logger log = LoggerFactory.getLogger(ProfileServiceImpl.class);
-
     private final ProfileRepository repository;
     private final PostRepository postRepository;
     private final PostLoveRepository postLoveRepository;
     private final AvatarRepository avatarRepository;
 
-    @PreAuthorize("hasRole('USER')")
+    public Profile createProfileForUser(User user, ProfileDTO profileDTO) {
+        Profile profile = new Profile();
+        profile.setId(user.getId()); // Igualar IDs
+        profile.setUser(user);
+        profile.setFirstName(profileDTO.getFirstName());
+        profile.setLastName1(profileDTO.getLastName1());
+        profile.setLastName2(profileDTO.getLastName2());
+        profile.setUsername(profileDTO.getUsername());
+        profile.setRelationship(profileDTO.getRelationship());
+        profile.setEmail(profileDTO.getEmail());
+        profile.setPassword(profileDTO.getPassword());
+        profile.setConfirmPassword(profileDTO.getConfirmPassword());
+        profile.setCity(profileDTO.getCity());
+        profile.setCountry(profileDTO.getCountry());
+        profile.setPhone(profileDTO.getPhone());
+
+        // Asignar avatar si existe
+        if (profileDTO.getAvatarId() != null) {
+            avatarRepository.findById(profileDTO.getAvatarId())
+                    .ifPresentOrElse(
+                            profile::setAvatar,
+                            () -> {
+                                throw new RuntimeException("Avatar no encontrado con ID: " + profileDTO.getAvatarId());
+                            }
+                    );
+        } else {
+            avatarRepository.findDefaultAvatar().ifPresent(profile::setAvatar);
+        }
+
+        return repository.save(profile);
+    }
+
     @Override
     public Profile getById(@NonNull Long id) throws ProfileNotFoundException {
         // Usar consulta optimizada que incluye User y Roles en una sola consulta
@@ -42,13 +69,11 @@ public class ProfileServiceImpl implements IProfileService {
                 .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
     }
 
-    @PreAuthorize("hasRole('USER')")
     @Override
     public Profile getByEmail(@NonNull String email) throws ProfileNotFoundException {
         return repository.findByEmail(email).orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
     }
 
-    @PreAuthorize("hasRole('USER')")
     @Override
     public Profile updateProfile(ProfileDTO profileDTO, Long id) throws ProfileNotFoundException {
         // Usar consulta optimizada solo con datos de User básicos (sin roles innecesarios para update)
@@ -71,9 +96,9 @@ public class ProfileServiceImpl implements IProfileService {
                     .ifPresentOrElse(
                             avatar -> {
                                 profile.setAvatar(avatar);
-                                log.debug("Avatar actualizado: ID={}, imageName={}", avatar.getId(), avatar.getImageName());
+                                System.out.println("Avatar actualizado: ID=" + avatar.getId() + ", imageName=" + avatar.getImageName());
                             },
-                            () -> log.warn("Avatar no encontrado con ID: {}", profileDTO.getAvatarId())
+                            () -> System.out.println("Avatar no encontrado con ID: " + profileDTO.getAvatarId())
                     );
         } else {
             // Si no se proporciona avatarId, mantener el avatar actual o usar el default
@@ -81,17 +106,15 @@ public class ProfileServiceImpl implements IProfileService {
                 avatarRepository.findDefaultAvatar()
                         .ifPresent(defaultAvatar -> {
                             profile.setAvatar(defaultAvatar);
-                            log.debug("Asignado avatar por defecto: {}", defaultAvatar.getImageName());
+                            System.out.println("Asignado avatar por defecto: " + defaultAvatar.getImageName());
                         });
             }
         }
 
-        // Asignar avatar por defecto si no tiene
-        if (profile.getAvatar() == null && avatarRepository != null) {
-            avatarRepository.findDefaultAvatar().ifPresent(profile::setAvatar);
-        }
         Profile savedProfile = repository.save(profile);
-        log.debug("Perfil guardado con avatar ID: {}", (savedProfile.getAvatar() != null ? savedProfile.getAvatar().getId() : "null"));
+        System.out.println("Perfil guardado con avatar ID: "
+                + (savedProfile.getAvatar() != null ? savedProfile.getAvatar().getId() : "null"));
+
         return savedProfile;
     }
 
@@ -189,4 +212,5 @@ public class ProfileServiceImpl implements IProfileService {
             throw new RuntimeException("Error deleting profile with ID: " + id, e);
         }
     }
+
 }

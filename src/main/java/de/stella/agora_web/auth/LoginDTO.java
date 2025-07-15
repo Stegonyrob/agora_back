@@ -1,30 +1,25 @@
 package de.stella.agora_web.auth;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public class LoginDTO {
 
-    public LoginDTO(@NotBlank @Size(min = 3, max = 50) String username,
-            @NotBlank @Size(min = 3, max = 50) String useremail,
-            @NotBlank @Size(min = 8, max = 100) String password) {
+    @Size(min = 3, max = 50, message = "El username debe tener entre 3 y 50 caracteres")
+    private String username;
+
+    @Size(max = 50, message = "El email debe tener máximo 50 caracteres")
+    private String useremail;
+
+    @Size(min = 8, max = 100, message = "La contraseña debe tener entre 8 y 100 caracteres")
+    private String password;
+
+    private String role;
+
+    public LoginDTO(String username, String useremail, String password) {
         this.username = username;
         this.useremail = useremail;
         this.password = password;
     }
-
-    @NotBlank
-    @Size(min = 3, max = 50)
-    private String username;
-
-    @NotBlank
-    @Size(min = 3, max = 50)
-    private String useremail;
-    @NotBlank
-    @Size(min = 8, max = 100)
-    private String password;
-
-    private String role;
 
     public String getUsername() {
         return username;
@@ -34,11 +29,11 @@ public class LoginDTO {
         this.username = username;
     }
 
-    public String getEmail() {
+    public String getUseremail() {
         return useremail;
     }
 
-    public void setEmail(String useremail) {
+    public void setUseremail(String useremail) {
         this.useremail = useremail;
     }
 
@@ -56,5 +51,15 @@ public class LoginDTO {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isValidLogin() {
+        boolean hasUsername = username != null && !username.isBlank();
+        boolean hasEmail = isValidEmail();
+        return hasUsername || hasEmail;
+    }
+
+    public boolean isValidEmail() {
+        return useremail != null && !useremail.isBlank() && useremail.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
     }
 }

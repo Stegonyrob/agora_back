@@ -1,54 +1,71 @@
+DELETE FROM profiles;
+
+DELETE FROM avatars;
+
+DELETE FROM users;
+
 -- 1. Insertar usuarios
+-- Contraseña bcrypt para "desarolloweb" (válida, 10 caracteres): 
+-- $2b$12$8w3QwYwQw7k9y8T1y8Qw7eQw7k9y8T1y8Qw7k9y8T1y8Qw7k9y8T1y
 INSERT INTO
   users (username, password, email, accepted_rules)
 VALUES
   (
     'admin',
-    '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
+    '$2a$12$uLtwNo2T3itMQEltgwCmQelweoy1oczfbgtrkmCMDVRsqoRmG66vq', -- desarroll0
+    -- '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO', -- hash antiguo (4 caracteres)
     'admin@gmail.com',
     true
   ),
   (
     'user1',
-    '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
+    '$2a$12$uLtwNo2T3itMQEltgwCmQelweoy1oczfbgtrkmCMDVRsqoRmG66vq', -- desarroll0
+    -- '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
     'user1@gmail.com',
     true
   ),
   (
     'user2',
-    '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
+    '$2a$12$uLtwNo2T3itMQEltgwCmQelweoy1oczfbgtrkmCMDVRsqoRmG66vq', -- desarroll0
+    -- '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
     'user2@gmail.com',
     true
   ),
   (
     'user3',
-    '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
+    '$2a$12$uLtwNo2T3itMQEltgwCmQelweoy1oczfbgtrkmCMDVRsqoRmG66vq', -- desarroll0
+    -- '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
     'user3@gmail.com',
     true
   ),
   (
     'user4',
-    '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
+    '$2a$12$uLtwNo2T3itMQEltgwCmQelweoy1oczfbgtrkmCMDVRsqoRmG66vq', -- desarroll0
+    -- '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
     'user4@gmail.com',
     true
   ),
   (
     'user5',
-    '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
+    '$2a$12$uLtwNo2T3itMQEltgwCmQelweoy1oczfbgtrkmCMDVRsqoRmG66vq', -- desarroll0
+    -- '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
     'user5@gmail.com',
     true
   ),
   (
     'user6',
-    '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
+    '$2a$12$uLtwNo2T3itMQEltgwCmQelweoy1oczfbgtrkmCMDVRsqoRmG66vq', -- desarroll0
+    -- '$2a$12$xOx5K0CaHRWkRgaZBRHvZ.tcrVC/AeA3sIjCySnHKk6ZEM9kmuIyO',
     'user6@gmail.com',
     true
   );
 
---
+DELETE FROM avatars;
+
 -- Avatares precargados
 INSERT INTO
   avatars (
+    id,
     image_name,
     image_data,
     preloaded,
@@ -58,6 +75,7 @@ INSERT INTO
   )
 VALUES
   (
+    100000,
     'onron.png',
     NULL,
     true,
@@ -66,6 +84,7 @@ VALUES
     '/images/avatars/onron.png'
   ),
   (
+    1,
     '1.png',
     NULL,
     true,
@@ -74,6 +93,7 @@ VALUES
     '/images/avatars/1.png'
   ),
   (
+    2,
     '2.png',
     NULL,
     true,
@@ -82,14 +102,16 @@ VALUES
     '/images/avatars/2.png'
   ),
   (
+    3,
     '3.png',
     NULL,
     true,
     false,
-    'Avatar avatar azul cielo sonriente',
+    'Avatar azul cielo sonriente',
     '/images/avatars/3.png'
   ),
   (
+    4,
     '4.png',
     NULL,
     true,
@@ -98,14 +120,16 @@ VALUES
     '/images/avatars/4.png'
   ),
   (
+    5,
     '5.png',
     NULL,
     true,
     false,
-    'Avatar 5amarillo sonriente',
+    'Avatar amarillo sonriente',
     '/images/avatars/5.png'
   ),
   (
+    6,
     '6.png',
     NULL,
     true,
@@ -114,6 +138,7 @@ VALUES
     '/images/avatars/6.png'
   ),
   (
+    7,
     '7.png',
     NULL,
     true,
@@ -122,6 +147,7 @@ VALUES
     '/images/avatars/7.png'
   ),
   (
+    8,
     '8.png',
     NULL,
     true,
@@ -130,14 +156,16 @@ VALUES
     '/images/avatars/8.png'
   ),
   (
+    9,
     '9.png',
     NULL,
     true,
     false,
-    'Avatar girs y blanco sonriente',
+    'Avatar gris y blanco sonriente',
     '/images/avatars/9.png'
   ),
   (
+    10,
     '10.png',
     NULL,
     true,
@@ -146,6 +174,7 @@ VALUES
     '/images/avatars/10.png'
   ),
   (
+    11,
     '11.png',
     NULL,
     true,
@@ -154,6 +183,7 @@ VALUES
     '/images/avatars/11.png'
   ),
   (
+    12,
     '12.png',
     NULL,
     true,
@@ -162,6 +192,7 @@ VALUES
     '/images/avatars/12.png'
   ),
   (
+    13,
     '13.png',
     NULL,
     true,
@@ -170,6 +201,7 @@ VALUES
     '/images/avatars/13.png'
   ),
   (
+    14,
     '14.png',
     NULL,
     true,
@@ -178,6 +210,7 @@ VALUES
     '/images/avatars/14.png'
   ),
   (
+    15,
     '15.png',
     NULL,
     true,
@@ -186,6 +219,7 @@ VALUES
     '/images/avatars/15.png'
   ),
   (
+    16,
     '16.png',
     NULL,
     true,
@@ -194,6 +228,7 @@ VALUES
     '/images/avatars/16.png'
   ),
   (
+    17,
     '17.png',
     NULL,
     true,
@@ -202,6 +237,7 @@ VALUES
     '/images/avatars/17.png'
   ),
   (
+    18,
     '18.png',
     NULL,
     true,
@@ -210,6 +246,7 @@ VALUES
     '/images/avatars/18.png'
   ),
   (
+    19,
     '19.png',
     NULL,
     true,
@@ -218,6 +255,7 @@ VALUES
     '/images/avatars/19.png'
   ),
   (
+    20,
     '20.png',
     NULL,
     true,
@@ -226,6 +264,7 @@ VALUES
     '/images/avatars/20.png'
   ),
   (
+    21,
     '21.png',
     NULL,
     true,
@@ -234,6 +273,7 @@ VALUES
     '/images/avatars/21.png'
   ),
   (
+    22,
     '22.png',
     NULL,
     true,
@@ -242,6 +282,7 @@ VALUES
     '/images/avatars/22.png'
   ),
   (
+    23,
     '23.png',
     NULL,
     true,
@@ -250,6 +291,7 @@ VALUES
     '/images/avatars/23.png'
   ),
   (
+    24,
     '24.png',
     NULL,
     true,
@@ -258,6 +300,7 @@ VALUES
     '/images/avatars/24.png'
   ),
   (
+    25,
     '25.png',
     NULL,
     true,
@@ -266,6 +309,7 @@ VALUES
     '/images/avatars/25.png'
   ),
   (
+    26,
     '26.png',
     NULL,
     true,
@@ -274,6 +318,7 @@ VALUES
     '/images/avatars/26.png'
   ),
   (
+    27,
     '27.png',
     NULL,
     true,
@@ -282,6 +327,7 @@ VALUES
     '/images/avatars/27.png'
   ),
   (
+    28,
     '28.png',
     NULL,
     true,
@@ -293,6 +339,7 @@ VALUES
 -- 2. Insertar perfiles
 INSERT INTO
   profiles (
+    id_profile,
     user_id,
     first_name,
     last_name1,
@@ -309,6 +356,7 @@ INSERT INTO
   )
 VALUES
   (
+    1,
     1,
     'Ivan',
     'Apellido1',
@@ -332,6 +380,7 @@ VALUES
   ),
   (
     2,
+    2,
     'Stella',
     'Apellido1',
     'SegApellido1',
@@ -353,6 +402,7 @@ VALUES
     )
   ),
   (
+    3,
     3,
     'Name3',
     'Apellido1',
@@ -376,6 +426,7 @@ VALUES
   ),
   (
     4,
+    4,
     'Name4',
     'Apellido1',
     'SegApellido1',
@@ -397,6 +448,7 @@ VALUES
     )
   ),
   (
+    5,
     5,
     'Name5',
     'Apellido1',
@@ -420,6 +472,7 @@ VALUES
   ),
   (
     6,
+    6,
     'Name6',
     'Apellido1',
     'SegApellido1',
@@ -441,6 +494,54 @@ VALUES
     )
   );
 
+-- Inserciones en la tabla 'roles'
+INSERT INTO
+  roles (id_role, name)
+VALUES
+  (default, 'ROLE_ADMIN');
+
+INSERT INTO
+  roles (id_role, name)
+VALUES
+  (default, 'ROLE_USER');
+
+-- Asociación entre usuarios y roles
+INSERT INTO
+  roles_users (role_id, user_id)
+VALUES
+  (1, 1);
+
+INSERT INTO
+  roles_users (role_id, user_id)
+VALUES
+  (2, 2);
+
+INSERT INTO
+  roles_users (role_id, user_id)
+VALUES
+  (2, 3);
+
+INSERT INTO
+  roles_users (role_id, user_id)
+VALUES
+  (2, 4);
+
+INSERT INTO
+  roles_users (role_id, user_id)
+VALUES
+  (2, 5);
+
+INSERT INTO
+  roles_users (role_id, user_id)
+VALUES
+  (2, 6);
+
+INSERT INTO
+  roles_users (role_id, user_id)
+VALUES
+  (2, 7);
+
+-- Inserción de publicaciones
 INSERT INTO
   posts (title, message, user_id, creation_date, archived)
 VALUES

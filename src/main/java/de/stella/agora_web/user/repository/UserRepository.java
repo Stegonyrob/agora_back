@@ -42,4 +42,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + "LEFT JOIN FETCH p.avatar "
             + "LEFT JOIN FETCH u.banned")
     List<User> findAllWithProfileAndRoles();
+
 }
