@@ -50,6 +50,14 @@ public class User {
 
     private String email;
 
+    // Teléfono (solo requerido para admins a nivel de lógica, no de base de datos)
+    @Column(name = "phone", length = 32)
+    private String phone;
+
+    // Clave secreta TOTP para 2FA (base32, oculta por defecto)
+    @Column(name = "totp_secret", length = 64)
+    private String totpSecret;
+
     @Column(nullable = false)
     private boolean acceptedRules;
 

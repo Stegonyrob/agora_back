@@ -1,7 +1,5 @@
 package de.stella.agora_web.admin.controller;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,11 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.stella.agora_web.admin.controller.dto.AdminCreateDTO;
 import de.stella.agora_web.admin.controller.dto.AdminUserDTO;
 import de.stella.agora_web.admin.service.impl.AdminServiceImpl;
 
 @RestController
-@RequestMapping("${api-endpoint}/admin")
+@RequestMapping("${api-endpoint}/admin/profile")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
@@ -26,19 +25,39 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<List<AdminUserDTO>> getAllUsers() {
-        return ResponseEntity.ok(adminService.getAllUsers());
+    @GetMapping("/{id}")
+    public ResponseEntity<AdminUserDTO> getAdminById(@PathVariable Long id) {
+        return ResponseEntity.ok(adminService.getAdminById(id));
     }
 
-    @PostMapping("/user")
-    public ResponseEntity<AdminUserDTO> createAdmin(@RequestBody AdminUserDTO adminUserDTO) {
-        return ResponseEntity.ok(adminService.createAdmin(adminUserDTO));
+    @PostMapping("/admins")
+    public ResponseEntity<AdminUserDTO> createAdmin(@RequestBody AdminCreateDTO dto) {
+        AdminUserDTO created = adminService.createAndPromoteAdmin(dto);
+        return ResponseEntity.ok(created);
     }
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAdmin(@PathVariable Long id) {
         adminService.deleteAdmin(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Endpoint para obtener el secreto TOTP de un admin (para mostrar QR en
+     * frontend).
+     */
+    @GetMapping("/{id}/2fa-secret")
+    public ResponseEntity<String> getAdminTotpSecret(@PathVariable Long id) {
+        String secret = adminService.getAdminTotpSecret(id);
+        return ResponseEntity.ok(secret);
+    }
+
+    /**
+     * Endpoint para validar un código TOTP enviado por el admin.
+     */
+    @PostMapping("/{id}/2fa-validate")
+    public ResponseEntity<Boolean> validateAdminTotp(@PathVariable Long id, @RequestBody String code) {
+        boolean valid = adminService.validateAdminTotp(id, code);
+        return ResponseEntity.ok(valid);
     }
 }

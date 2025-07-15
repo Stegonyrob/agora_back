@@ -1,16 +1,15 @@
 package de.stella.agora_web.roles.repository;
 
-
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import org.springframework.stereotype.Repository;
 
 import de.stella.agora_web.roles.model.Role;
 
-
 @Repository
+public interface RoleRepository extends JpaRepository<Role, Long> {
 
-public interface RoleRepository extends JpaRepository<Role,Long>{
-    
+    // Busca un rol por su nombre exacto
+    Optional<Role> findByName(String name);
 }
