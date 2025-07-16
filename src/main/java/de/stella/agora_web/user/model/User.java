@@ -28,14 +28,12 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "users")
 public class User {
 
@@ -64,7 +62,7 @@ public class User {
     @BatchSize(size = 10)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
@@ -83,9 +81,14 @@ public class User {
         return roles.stream().anyMatch(r -> r.getName().equals(role));
     }
 
-    public User(String userName, String password) {
+    public User() {
+        this.roles = new HashSet<>();
+    }
+
+    public User(String userName, String password, String email) {
         this.username = userName;
         this.password = password;
+        this.email = email;
         this.acceptedRules = true; // Default to true when creating a user
     }
 
@@ -101,10 +104,7 @@ public class User {
         this.comments = new HashSet<>(comments);
     }
 
-    public Set<Role> getRoles() {
-        return Collections.unmodifiableSet(roles);
-    }
-
+    // Lombok @Getter/@Setter ya genera los métodos
     public String getPassword() {
         return password;
     }

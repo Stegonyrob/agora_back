@@ -7,6 +7,12 @@ import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.admin.controller.dto.AdminCreateDTO;
 import de.stella.agora_web.admin.controller.dto.AdminUserDTO;
+import de.stella.agora_web.avatar.module.Avatar;
+import de.stella.agora_web.avatar.repository.AvatarRepository;
+import de.stella.agora_web.profiles.controller.ProfileController;
+import de.stella.agora_web.profiles.controller.dto.ProfileDTO;
+import de.stella.agora_web.profiles.model.Profile;
+import de.stella.agora_web.profiles.repository.ProfileRepository;
 import de.stella.agora_web.roles.model.Role;
 import de.stella.agora_web.roles.repository.RoleRepository;
 import de.stella.agora_web.user.model.User;
@@ -14,8 +20,48 @@ import de.stella.agora_web.user.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 
 @Service
+
 @RequiredArgsConstructor
 public class AdminServiceImpl {
+
+    private final UserServiceImpl userService;
+    private final RoleRepository roleRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private final ProfileRepository profileRepository;
+    private final AvatarRepository avatarRepository;
+
+    /**
+     * Devuelve todos los perfiles de usuarios con rol ADMIN como ProfileDTO.
+     */
+    public List<ProfileDTO> getAllAdminProfiles() {
+        // Obtener todos los usuarios con rol ADMIN
+        List<User> adminUsers = userService.getAllUsers().stream()
+                .filter(User::isAdmin)
+                .toList();
+        // Obtener los IDs de usuario
+        List<Long> adminUserIds = adminUsers.stream().map(User::getId).toList();
+        // Obtener los perfiles correspondientes
+        List<Profile> adminProfiles = profileRepository.findAllByIdIn(adminUserIds);
+        // Mapear a ProfileDTO
+        return adminProfiles.stream()
+                .map(ProfileController::toProfileDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Devuelve el perfil completo de un admin por ID como ProfileDTO.
+     */
+    public ProfileDTO getAdminProfileById(Long id) {
+        User user = userService.findById(id).orElseThrow();
+        if (!user.isAdmin()) {
+            throw new IllegalArgumentException("El usuario no es administrador");
+        }
+        // Buscar el perfil por userId
+        Profile profile = profileRepository.findByUserId(user.getId())
+                .stream().findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Perfil no encontrado para el admin"));
+        return ProfileController.toProfileDTO(profile);
+    }
 
     /**
      * Actualiza los datos de un admin (username, email, phone).
@@ -38,10 +84,7 @@ public class AdminServiceImpl {
         return toAdminUserDTO(user);
     }
 
-    private final UserServiceImpl userService;
-    private final RoleRepository roleRepository;
-    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
-
+    // ...existing code...
     /**
      * Devuelve todos los usuarios con rol ADMIN.
      */
@@ -57,7 +100,11 @@ public class AdminServiceImpl {
      * lo tiene).
      */
     public AdminUserDTO createAdmin(AdminUserDTO dto) {
-        User user = userService.findById(dto.getId()).orElseThrow();
+        Long userId = dto.getProfile() != null ? dto.getProfile().getUserId() : null;
+        if (userId == null) {
+            throw new IllegalArgumentException("El AdminUserDTO debe contener un profile con userId");
+        }
+        User user = userService.findById(userId).orElseThrow();
         Role adminRole = roleRepository.findByName("ROLE_ADMIN")
                 .orElseThrow(() -> new RuntimeException("Role not found: ROLE_ADMIN"));
         if (user.getRoles().stream().noneMatch(role -> "ROLE_ADMIN".equals(role.getName()))) {
@@ -87,12 +134,14 @@ public class AdminServiceImpl {
      * Convierte un User a AdminUserDTO.
      */
     private AdminUserDTO toAdminUserDTO(User user) {
-        AdminUserDTO dto = new AdminUserDTO();
-        dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
-        dto.setEmail(user.getEmail());
-        dto.setAdmin(user.isAdmin());
-        return dto;
+        Profile profile = user.getProfile();
+        ProfileDTO profileDTO = null;
+        if (profile != null) {
+            profileDTO = de.stella.agora_web.profiles.controller.ProfileController.toProfileDTO(profile);
+        }
+        boolean isAdmin = user.isAdmin();
+        boolean isActive = true; // Puedes ajustar la lógica según tu modelo de usuario
+        return new AdminUserDTO(profileDTO, isAdmin, isActive);
     }
 
     /**
@@ -114,14 +163,39 @@ public class AdminServiceImpl {
         user.setPhone(dto.getPhone());
         user.setTotpSecret(generateTotpSecret());
 
-        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                .orElseThrow(() -> new RuntimeException("Role not found: ROLE_ADMIN"));
+        // Asegura que el set de roles está inicializado
         if (user.getRoles() == null) {
             user.setRoles(new java.util.HashSet<>());
         }
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+                .orElseThrow(() -> new RuntimeException("Role not found: ROLE_ADMIN"));
         user.getRoles().add(adminRole);
-
         userService.save(user);
+
+        // Asignar avatar por defecto si no se especifica
+        Avatar avatar = null;
+        if (dto.getAvatarId() != null) {
+            avatar = avatarRepository.findById(dto.getAvatarId()).orElse(null);
+        } else {
+            avatar = avatarRepository.findById(100000L).orElse(null);
+        }
+
+        Profile profile = new Profile();
+        profile.setId(user.getId());
+        profile.setUser(user);
+        profile.setAvatar(avatar);
+        // Rellenar campos obligatorios de Profile usando los datos de User
+        profile.setUsername(user.getUsername());
+        profile.setEmail(user.getEmail());
+        profile.setPhone(user.getPhone());
+        // Rellenar el resto desde el DTO
+        profile.setFirstName(dto.getFirstName());
+        profile.setLastName1(dto.getLastName1());
+        profile.setLastName2(dto.getLastName2());
+        profile.setCity(dto.getCity());
+        profile.setCountry(dto.getCountry());
+        profile.setRelationship(dto.getRelationship());
+        profileRepository.save(profile);
 
         return toAdminUserDTO(user);
     }

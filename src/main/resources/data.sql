@@ -404,7 +404,7 @@ VALUES
   (
     3,
     3,
-    'Name3',
+    'Paula',
     'Apellido1',
     'SegApellido1',
     'userthree',
@@ -519,7 +519,7 @@ VALUES
 INSERT INTO
   roles_users (role_id, user_id)
 VALUES
-  (2, 3);
+  (1, 3);
 
 INSERT INTO
   roles_users (role_id, user_id)

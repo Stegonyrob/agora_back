@@ -1,5 +1,7 @@
 package de.stella.agora_web.admin.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +26,11 @@ public class AdminController {
 
     public AdminController(AdminServiceImpl adminService) {
         this.adminService = adminService;
+    }
+
+    @GetMapping("/admins")
+    public ResponseEntity<List<AdminUserDTO>> getAllAdmins() {
+        return ResponseEntity.ok(adminService.getAllAdmins());
     }
 
     @GetMapping("/{id}")
