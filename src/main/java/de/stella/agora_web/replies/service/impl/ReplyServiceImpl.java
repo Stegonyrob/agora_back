@@ -1,6 +1,5 @@
 package de.stella.agora_web.replies.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import de.stella.agora_web.replies.kafka.dto.ReplyNotificationDTO;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.repository.ReplyRepository;
 import de.stella.agora_web.replies.service.IReplyService;
-import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.repository.UserRepository;
@@ -65,25 +63,6 @@ public class ReplyServiceImpl implements IReplyService {
         reply.setUser(userRepository.findById(replyDTO.getUserId()).orElse(null));
         reply.setComment(commentRepository.findById(replyDTO.getCommentId()).orElse(null));
 
-        // Asigna tags
-        List<Tag> tags = new ArrayList<>();
-        for (String tagName : replyDTO.getTags()) {
-            Tag tag = tagService.getTagByName(tagName);
-            if (tag == null) {
-                tag = tagService.createTag(tagName);
-            }
-            tags.add(tag);
-        }
-        List<String> hashtags = tagService.extractHashtags(reply.getMessage());
-        for (String hashtag : hashtags) {
-            Tag tag = tagService.getTagByName(hashtag);
-            if (tag == null) {
-                tag = tagService.createTag(hashtag);
-            }
-            tags.add(tag);
-        }
-        reply.setTags(tags);
-
         // Guardar la respuesta
         Reply savedReply = replyRepository.save(reply);
 
@@ -105,27 +84,9 @@ public class ReplyServiceImpl implements IReplyService {
         if (existingReply != null) {
             existingReply.setMessage(replyDTO.getMessage());
             existingReply.getTags().clear();
-
-            List<Tag> tags = new ArrayList<>();
-            for (String tagName : replyDTO.getTags()) {
-                Tag tag = tagService.getTagByName(tagName);
-                if (tag == null) {
-                    tag = tagService.createTag(tagName);
-                }
-                tags.add(tag);
-            }
-            List<String> hashtags = tagService.extractHashtags(replyDTO.getMessage());
-            for (String hashtag : hashtags) {
-                Tag tag = tagService.getTagByName(hashtag);
-                if (tag == null) {
-                    tag = tagService.createTag(hashtag);
-                }
-                tags.add(tag);
-            }
-            existingReply.setTags(tags);
-
             return replyRepository.save(existingReply);
         }
+
         return null;
     }
 

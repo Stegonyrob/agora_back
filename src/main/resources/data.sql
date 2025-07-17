@@ -409,7 +409,7 @@ VALUES
     'SegApellido1',
     'userthree',
     'Friend',
-    'user2@gmail.com',
+    'admin2@gmail.com',
     '',
     '',
     'Avilés',
@@ -421,13 +421,13 @@ VALUES
       FROM
         avatars
       WHERE
-        image_name = '2.png'
+        image_name = '6.png'
     )
   ),
   (
     4,
     4,
-    'Name4',
+    'Name3',
     'Apellido1',
     'SegApellido1',
     'userfour',
@@ -450,7 +450,7 @@ VALUES
   (
     5,
     5,
-    'Name5',
+    'Name4',
     'Apellido1',
     'SegApellido1',
     'userfive',
@@ -473,7 +473,7 @@ VALUES
   (
     6,
     6,
-    'Name6',
+    'Name5',
     'Apellido1',
     'SegApellido1',
     'usersix',

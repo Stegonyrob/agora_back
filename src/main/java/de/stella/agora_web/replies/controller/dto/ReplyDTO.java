@@ -1,42 +1,28 @@
 package de.stella.agora_web.replies.controller.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import de.stella.agora_web.replies.model.Reply; // Ajusta el import según tu estructura
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import de.stella.agora_web.replies.model.Reply;
-import de.stella.agora_web.tags.model.Tag;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
-@Builder
+@Data
+@NoArgsConstructor
 public class ReplyDTO {
 
+    private Long id;
     private String message;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime creationDate;
-    private Long commentId; // Relación directa con Comment
+    private Long commentId;
     private Long userId;
-    private List<String> tags;
-
-    // Métodos utilitarios
-    public String[] getTagsArray() {
-        return tags != null ? tags.toArray(new String[0]) : new String[0];
-    }
 
     public static ReplyDTO fromEntity(Reply reply) {
-        return ReplyDTO.builder()
-                .message(reply.getMessage())
-                .creationDate(reply.getCreationDate())
-                .commentId(reply.getComment() != null ? reply.getComment().getId() : null)
-                .userId(reply.getUser() != null ? reply.getUser().getId() : null)
-                .tags(reply.getTags() != null
-                        ? reply.getTags().stream().map(Tag::getName).toList()
-                        : List.of())
-                .build();
+        ReplyDTO dto = new ReplyDTO();
+        dto.setId(reply.getId());
+        dto.setMessage(reply.getMessage());
+        dto.setCreationDate(reply.getCreationDate());
+        dto.setCommentId(reply.getComment().getId());
+        dto.setUserId(reply.getUser().getId());
+        return dto;
     }
 }

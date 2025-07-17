@@ -110,6 +110,8 @@ public class CommentController {
             return new CommentWithRepliesDTO(
                     comment.getId(),
                     comment.getMessage(),
+                    comment.getCreationDate(),
+                    comment.getUser().getId(),
                     replyDTOs
             );
         });
