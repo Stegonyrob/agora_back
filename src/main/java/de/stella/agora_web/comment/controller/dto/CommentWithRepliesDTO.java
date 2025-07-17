@@ -3,6 +3,8 @@ package de.stella.agora_web.comment.controller.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,7 @@ public class CommentWithRepliesDTO {
 
     private Long id;
     private String message;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime creationDate;
     private Long userId;
     private List<ReplyDTO> replies;

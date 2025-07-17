@@ -2,6 +2,8 @@ package de.stella.agora_web.replies.controller.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import de.stella.agora_web.replies.model.Reply; // Ajusta el import según tu estructura
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,7 @@ public class ReplyDTO {
 
     private Long id;
     private String message;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime creationDate;
     private Long commentId;
     private Long userId;
