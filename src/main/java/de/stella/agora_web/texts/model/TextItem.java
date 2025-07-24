@@ -39,4 +39,11 @@ public class TextItem {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
+    public String getContent() {
+        return description;
+    }
+
+    public void setContent(String content) {
+        this.description = content;
+    }
 }

@@ -36,14 +36,15 @@ public class TextItemServiceImpl implements TextItemService {
     }
 
     @Override
-    public TextItemDTO updateText(Long id, TextItemDTO textItemDTO) {
-        TextItem textItem = textItemRepository.findById(id).orElseThrow(() -> new RuntimeException("Text not found"));
-
-        textItem.setImage(textItemDTO.getImage());
-        textItem.setDescription(textItemDTO.getDescription());
-
-        TextItem updatedText = textItemRepository.save(textItem);
-        return convertToDTO(updatedText);
+    public TextItemDTO updateText(Long id, TextItemDTO dto) {
+        TextItem item = textItemRepository.findById(id).orElseThrow(() -> new RuntimeException("Text not found"));
+        item.setTitle(dto.getTitle());
+        item.setDescription(dto.getDescription());
+        item.setImage(dto.getImage());
+        item.setNameImage(dto.getNameImage());
+        // ...otros campos...
+        TextItem updatedItem = textItemRepository.save(item);
+        return convertToDTO(updatedItem);
     }
 
     @Override

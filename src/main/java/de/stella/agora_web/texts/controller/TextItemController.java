@@ -49,8 +49,9 @@ public class TextItemController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TextItemDTO> updateText(@PathVariable Long id, @RequestBody TextItemDTO textItemDTO) {
-        return ResponseEntity.ok(textItemService.updateText(id, textItemDTO));
+    public ResponseEntity<TextItemDTO> updateText(@PathVariable Long id, @RequestBody TextItemDTO dto) {
+        TextItemDTO updated = textItemService.updateText(id, dto);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
