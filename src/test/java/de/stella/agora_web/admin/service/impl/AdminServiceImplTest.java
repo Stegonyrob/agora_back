@@ -3,8 +3,13 @@ package de.stella.agora_web.admin.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import de.stella.agora_web.admin.controller.dto.AdminCreateDTO;
+import de.stella.agora_web.avatar.repository.AvatarRepository;
+import de.stella.agora_web.profiles.repository.ProfileRepository;
+import de.stella.agora_web.roles.repository.RoleRepository;
+import de.stella.agora_web.user.service.impl.UserServiceImpl;
 
 class AdminServiceImplTest {
 
@@ -21,7 +26,13 @@ class AdminServiceImplTest {
 
     @Test
     void testTotpSecretGeneration() {
-        AdminServiceImpl service = new AdminServiceImpl(null, null, null);
+        // Use mocks or nulls for dependencies as needed
+        UserServiceImpl userService = null;
+        RoleRepository roleRepository = null;
+        PasswordEncoder passwordEncoder = null;
+        ProfileRepository profileRepository = null;
+        AvatarRepository avatarRepository = null;
+        AdminServiceImpl service = new AdminServiceImpl(userService, roleRepository, passwordEncoder, profileRepository, avatarRepository);
         String secret = service.generateTotpSecret();
         assertNotNull(secret);
         assertTrue(secret.length() > 10);

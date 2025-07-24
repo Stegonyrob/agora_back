@@ -1,11 +1,7 @@
 package de.stella.agora_web.integration;
 
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,13 +53,11 @@ public class ReplyModerationIntegrationTest {
         assertNotNull(emailService, "EmailService should be available");
         assertNotNull(pushNotificationService, "PushNotificationService should be available");
 
-        // 2. Crear un DTO de respuesta de prueba usando builder pattern
-        ReplyDTO replyDTO = ReplyDTO.builder()
-                .message("Esta es una respuesta de prueba para integración")
-                .userId(1L)
-                .commentId(1L)
-                .tags(List.of("test", "integration"))
-                .build();
+        // 2. Crear un DTO de respuesta de prueba usando constructor y setters
+        ReplyDTO replyDTO = new ReplyDTO();
+        replyDTO.setMessage("Esta es una respuesta de prueba para integración");
+        replyDTO.setUserId(1L);
+        replyDTO.setCommentId(1L);
 
         // 3. Obtener usuario de prueba
         final User testUser;

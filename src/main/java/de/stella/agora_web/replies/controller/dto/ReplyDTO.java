@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import de.stella.agora_web.replies.model.Reply; // Ajusta el import según tu estructura
-import lombok.Data;
+import de.stella.agora_web.replies.model.Reply;
+import lombok.Data; // Ajusta el import según tu estructura
 import lombok.NoArgsConstructor;
 
 @Data
@@ -28,4 +28,5 @@ public class ReplyDTO {
         dto.setUserId(reply.getUser().getId());
         return dto;
     }
+
 }

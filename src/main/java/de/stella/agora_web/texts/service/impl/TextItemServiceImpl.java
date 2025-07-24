@@ -63,11 +63,11 @@ public class TextItemServiceImpl implements TextItemService {
     }
 
     private TextItem convertToEntity(TextItemDTO dto) {
-        TextItem textItem = new TextItem(null, null, null, null, null);
+        TextItem textItem = new TextItem();
         textItem.setId(dto.getId());
         textItem.setImage(dto.getImage());
         textItem.setTitle(dto.getTitle());
-        textItem.setNameImage(dto.getNameImage);
+        textItem.setNameImage(dto.getNameImage());
         textItem.setDescription(dto.getDescription());
         return textItem;
     }
