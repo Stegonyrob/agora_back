@@ -41,15 +41,18 @@ public class PostServiceImpl implements IPostService {
     private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
+    private final de.stella.agora_web.image.repository.PostImageRepository postImageRepository;
 
     public PostServiceImpl(PostRepository postRepository, UserServiceImpl userService, ITagService tagService,
-            CommentRepository commentRepository, ReplyRepository replyRepository, TagRepository tagRepository) {
+            CommentRepository commentRepository, ReplyRepository replyRepository, TagRepository tagRepository,
+            de.stella.agora_web.image.repository.PostImageRepository postImageRepository) {
         this.postRepository = postRepository;
         this.userService = userService;
         this.tagService = tagService;
         this.commentRepository = commentRepository;
         this.replyRepository = replyRepository;
         this.tagRepository = tagRepository;
+        this.postImageRepository = postImageRepository;
     }
 
     @Override
@@ -393,7 +396,7 @@ public class PostServiceImpl implements IPostService {
         String username = post.getUser() != null ? post.getUser().getUsername() : "Usuario Anónimo";
         String fullName = username;
 
-        // Obtener nombres de imágenes (igual que eventos)
+        // Obtener imágenes asociadas directamente desde la relación en la entidad Post
         List<String> images = post.getImages() != null
                 ? post.getImages().stream()
                         .map(PostImage::getImageName)
