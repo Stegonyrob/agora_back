@@ -2,114 +2,154 @@ package de.stella.agora_web.events.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.events.controller.dto.EventDTO;
 import de.stella.agora_web.events.controller.dto.EventResponseDTO;
+import de.stella.agora_web.events.controller.dto.PublicEventDTO;
 import de.stella.agora_web.events.model.Event;
 import de.stella.agora_web.events.service.IEventService;
+import de.stella.agora_web.events.service.IPublicEventService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Controlador principal para operaciones CRUD básicas de eventos. Cumple con
+ * SRP: Solo maneja operaciones básicas de eventos.
+ */
+@Slf4j
 @RestController
-@RequestMapping(path = "${api-endpoint}/")
+@RequestMapping("${api-endpoint}/events")
+@RequiredArgsConstructor
 public class EventController {
 
     private final IEventService eventService;
+    private final IPublicEventService publicEventService;
 
-    public EventController(IEventService eventService) {
-        this.eventService = eventService;
-    }
-
-    @GetMapping("/events")
-    public ResponseEntity<List<EventDTO>> index() {
+    /**
+     * Obtiene todos los eventos con imágenes (para usuarios autenticados).
+     * Incluye imágenes para que usuarios registrados puedan ver y gestionar el
+     * contenido completo.
+     *
+     * @return Lista de eventos con imágenes
+     */
+    @GetMapping
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<List<PublicEventDTO>> getAllEventsWithImages() {
         try {
-            return ResponseEntity.ok(eventService.getAllEvents());
+            List<PublicEventDTO> events = publicEventService.getAllPublicEventsWithImages();
+            log.info("Se obtuvieron {} eventos con imágenes para usuario autenticado", events.size());
+            return ResponseEntity.ok(events);
         } catch (Exception e) {
-            // Log del error en lugar de printStackTrace
+            log.error("Error al obtener eventos con imágenes: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @GetMapping("/events/{id}")
-    public ResponseEntity<EventResponseDTO> show(@PathVariable Long id) {
-        EventResponseDTO event = eventService.getEventResponseById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(event);
+    /**
+     * ✅ NUEVO: Obtiene eventos paginados con imágenes (para usuarios
+     * autenticados). Soluciona el problema de la ruta /events/paginated.
+     *
+     * @param pageable Parámetros de paginación
+     * @return Página de eventos con imágenes
+     */
+    @GetMapping("/paginated")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<Page<PublicEventDTO>> getPaginatedEventsWithImages(Pageable pageable) {
+        try {
+            Page<PublicEventDTO> eventsPage = publicEventService.getAllPublicEventsWithImagesPaginated(pageable);
+
+            log.info("Se obtuvieron {} eventos paginados (página {}, tamaño {})",
+                    eventsPage.getNumberOfElements(), pageable.getPageNumber(), pageable.getPageSize());
+            return ResponseEntity.ok(eventsPage);
+        } catch (Exception e) {
+            log.error("Error al obtener eventos paginados: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    @PostMapping(path = "/events")
-    @SuppressWarnings("CallToPrintStackTrace")
-    public ResponseEntity<Event> create(@RequestBody EventDTO eventDTO) {
+    /**
+     * Obtiene un evento específico con información detallada.
+     *
+     * @param id ID del evento
+     * @return Evento con información detallada
+     */
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<EventResponseDTO> getEventById(@PathVariable Long id) {
+        try {
+            EventResponseDTO event = eventService.getEventResponseById(id);
+            log.info("Se obtuvo evento con ID: {}", id);
+            return ResponseEntity.ok(event);
+        } catch (RuntimeException e) {
+            log.warn("Evento no encontrado con ID: {}", id);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("Error al obtener evento con ID {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * Crea un nuevo evento.
+     *
+     * @param eventDTO Datos del evento a crear
+     * @return Evento creado
+     */
+    @PostMapping
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<Event> createEvent(@RequestBody EventDTO eventDTO) {
         if (eventDTO == null) {
+            log.warn("Intento de crear evento con datos nulos");
             return ResponseEntity.badRequest().build();
         }
 
         try {
             Event newEvent = eventService.save(eventDTO);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .contentType(org.springframework.http.MediaType.APPLICATION_JSON).body(newEvent);
+            log.info("Evento creado exitosamente con ID: {}", newEvent.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
         } catch (Exception e) {
+            log.error("Error al crear evento: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @PutMapping("events/{id}")
-    public ResponseEntity<EventDTO> update(@PathVariable("id") Long id, @RequestBody EventDTO eventDTO) {
-        EventDTO event = eventService.updateEvent(id, eventDTO);
-        return ResponseEntity.accepted().body(event);
-    }
-
-    @PatchMapping("/events/{id}/archive")
-    public ResponseEntity<Void> archiveEvent(@PathVariable Long id, @RequestParam Boolean archive) {
-        Event event = eventService.getById(id);
-        if (event == null) {
-            return ResponseEntity.notFound().build();
+    /**
+     * Actualiza un evento existente.
+     *
+     * @param id ID del evento a actualizar
+     * @param eventDTO Nuevos datos del evento
+     * @return Evento actualizado
+     */
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<EventDTO> updateEvent(@PathVariable Long id, @RequestBody EventDTO eventDTO) {
+        if (eventDTO == null) {
+            log.warn("Intento de actualizar evento con datos nulos");
+            return ResponseEntity.badRequest().build();
         }
 
         try {
-            if (archive) {
-                eventService.archiveEvent(id);
-            } else {
-                eventService.unArchiveEvent(id);
-            }
-            return ResponseEntity.noContent().build();
+            EventDTO updatedEvent = eventService.updateEvent(id, eventDTO);
+            log.info("Evento actualizado exitosamente con ID: {}", id);
+            return ResponseEntity.ok(updatedEvent);
+        } catch (RuntimeException e) {
+            log.warn("Evento no encontrado para actualizar con ID: {}", id);
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
+            log.error("Error al actualizar evento con ID {}: {}", id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }
-
-    public ResponseEntity<EventDTO> createEvent(EventDTO eventDTO, long userId) {
-        EventDTO newEvent = eventService.createEvent(eventDTO);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .contentType(org.springframework.http.MediaType.APPLICATION_JSON).body(newEvent);
-    }
-// Marcar evento como favorito
-
-    @PutMapping("/events/{eventId}/favorite")
-    public ResponseEntity<Void> favoriteEvent(@PathVariable Long eventId, @RequestParam Long userId) {
-        eventService.addFavorite(eventId, userId);
-        return ResponseEntity.ok().build();
-    }
-
-// Quitar evento de favoritos
-    @PutMapping("/events/{eventId}/unfavorite")
-    public ResponseEntity<Void> unfavoriteEvent(@PathVariable Long eventId, @RequestParam Long userId) {
-        eventService.removeFavorite(eventId, userId);
-        return ResponseEntity.ok().build();
-    }
-
-// Obtener eventos favoritos de un usuario
-    @GetMapping("/users/{userId}/favorite-events")
-    public ResponseEntity<List<EventDTO>> getFavoriteEvents(@PathVariable Long userId) {
-        List<EventDTO> favorites = eventService.getFavoriteEventsByUser(userId);
-        return ResponseEntity.ok(favorites);
     }
 }
