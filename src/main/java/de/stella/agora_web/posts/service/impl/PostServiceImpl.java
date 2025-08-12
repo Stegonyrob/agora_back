@@ -30,29 +30,26 @@ import de.stella.agora_web.tags.repository.TagRepository;
 import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.exceptions.UserNotFoundException;
 import de.stella.agora_web.user.model.User;
-import de.stella.agora_web.user.service.impl.UserServiceImpl;
+import de.stella.agora_web.user.service.IUserService;
 
 @Service
 public class PostServiceImpl implements IPostService {
 
     private final PostRepository postRepository;
-    private final UserServiceImpl userService;
+    private final IUserService userService;
     private final ITagService tagService;
     private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
-    private final de.stella.agora_web.image.repository.PostImageRepository postImageRepository;
 
-    public PostServiceImpl(PostRepository postRepository, UserServiceImpl userService, ITagService tagService,
-            CommentRepository commentRepository, ReplyRepository replyRepository, TagRepository tagRepository,
-            de.stella.agora_web.image.repository.PostImageRepository postImageRepository) {
+    public PostServiceImpl(PostRepository postRepository, IUserService userService, ITagService tagService,
+            CommentRepository commentRepository, ReplyRepository replyRepository, TagRepository tagRepository) {
         this.postRepository = postRepository;
         this.userService = userService;
         this.tagService = tagService;
         this.commentRepository = commentRepository;
         this.replyRepository = replyRepository;
         this.tagRepository = tagRepository;
-        this.postImageRepository = postImageRepository;
     }
 
     @Override
@@ -72,24 +69,8 @@ public class PostServiceImpl implements IPostService {
         post.setTitle(postDTO.getTitle());
         post.setMessage(postDTO.getMessage());
 
-        List<Tag> tags = new ArrayList<>();
-        if (postDTO.getTags() != null) {
-            for (TagSummaryDTO tagDTO : postDTO.getTags()) {
-                Tag tag = null;
-                if (tagDTO.getId() != null) {
-                    tag = tagRepository.findById(tagDTO.getId()).orElse(null);
-                }
-                if (tag == null && tagDTO.getName() != null) {
-                    tag = tagService.getTagByName(tagDTO.getName());
-                    if (tag == null) {
-                        tag = tagService.createTag(tagDTO.getName());
-                    }
-                }
-                if (tag != null) {
-                    tags.add(tag);
-                }
-            }
-        }
+        // ✅ USAR MÉTODO HELPER MEJORADO - Maneja inconsistencias
+        List<Tag> tags = processTagsFromDTO(postDTO);
         post.setTags(tags);
         return postRepository.save(post);
     }
@@ -137,38 +118,14 @@ public class PostServiceImpl implements IPostService {
         existingPost.setTitle(postDTO.getTitle());
         existingPost.setMessage(postDTO.getMessage());
         existingPost.getTags().clear();
-        List<Tag> tags = new ArrayList<>();
-        if (postDTO.getTags() != null) {
-            for (TagSummaryDTO tagDTO : postDTO.getTags()) {
-                Tag tag = null;
-                if (tagDTO.getId() != null) {
-                    tag = tagRepository.findById(tagDTO.getId()).orElse(null);
-                }
-                if (tag == null && tagDTO.getName() != null) {
-                    tag = tagService.getTagByName(tagDTO.getName());
-                    if (tag == null) {
-                        tag = tagService.createTag(tagDTO.getName());
-                    }
-                }
-                if (tag != null) {
-                    tags.add(tag);
-                }
-            }
-        }
+
+        // ✅ USAR MÉTODO HELPER MEJORADO - Maneja inconsistencias
+        List<Tag> tags = processTagsFromDTO(postDTO);
         existingPost.setTags(tags);
 
-        // Actualizar imágenes igual que en eventos
+        // ✅ USAR MÉTODO HELPER para imágenes - Cumple SRP  
         existingPost.getImages().clear();
-        List<PostImage> images = new ArrayList<>();
-        if (postDTO.getImages() != null) {
-            for (String imageName : postDTO.getImages()) {
-                PostImage image = new PostImage();
-                image.setImageName(imageName);
-                image.setMainImage(false); // O lógica para principal
-                image.setPost(existingPost);
-                images.add(image);
-            }
-        }
+        List<PostImage> images = processImagesFromNames(postDTO.getImages(), existingPost);
         existingPost.setImages(images);
         return postRepository.save(existingPost);
     }
@@ -190,7 +147,8 @@ public class PostServiceImpl implements IPostService {
         Post post = postRepository.findById(postId).orElseThrow();
         Comment comment = new Comment();
         comment.setMessage(commentDTO.getMessage());
-        comment.setUser(userService.getUserById(commentDTO.getUserId()));
+        comment.setUser(userService.findById(commentDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + commentDTO.getUserId())));
         comment.setPost(post);
         commentRepository.save(comment);
     }
@@ -200,7 +158,8 @@ public class PostServiceImpl implements IPostService {
         Comment comment = commentRepository.findById(commentId).orElseThrow();
         Reply reply = new Reply();
         reply.setMessage(replyDTO.getMessage());
-        reply.setUser(userService.getUserById(replyDTO.getUserId()));
+        reply.setUser(userService.findById(replyDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + replyDTO.getUserId())));
         reply.setComment(comment);
         replyRepository.save(reply);
     }
@@ -220,39 +179,15 @@ public class PostServiceImpl implements IPostService {
         Post post = new Post();
         post.setTitle(postDTO.getTitle());
         post.setMessage(postDTO.getMessage());
-        post.setUser(userService.getUserById(postDTO.getUserId()));
+        post.setUser(userService.findById(postDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + postDTO.getUserId())));
 
-        List<Tag> tags = new ArrayList<>();
-        if (postDTO.getTags() != null) {
-            for (TagSummaryDTO tagDTO : postDTO.getTags()) {
-                Tag tag = null;
-                if (tagDTO.getId() != null) {
-                    tag = tagRepository.findById(tagDTO.getId()).orElse(null);
-                }
-                if (tag == null && tagDTO.getName() != null) {
-                    tag = tagService.getTagByName(tagDTO.getName());
-                    if (tag == null) {
-                        tag = tagService.createTag(tagDTO.getName());
-                    }
-                }
-                if (tag != null) {
-                    tags.add(tag);
-                }
-            }
-        }
+        // ✅ USAR MÉTODO HELPER MEJORADO - Maneja inconsistencias
+        List<Tag> tags = processTagsFromDTO(postDTO);
         post.setTags(tags);
 
-        // Manejo de imágenes igual que en eventos
-        List<PostImage> images = new ArrayList<>();
-        if (postDTO.getImages() != null) {
-            for (String imageName : postDTO.getImages()) {
-                PostImage image = new PostImage();
-                image.setImageName(imageName);
-                image.setMainImage(false); // O lógica para principal
-                image.setPost(post);
-                images.add(image);
-            }
-        }
+        // ✅ USAR MÉTODO HELPER para imágenes - Cumple SRP
+        List<PostImage> images = processImagesFromNames(postDTO.getImages(), post);
         post.setImages(images);
         return postRepository.save(post);
     }
@@ -345,7 +280,7 @@ public class PostServiceImpl implements IPostService {
         Page<Post> posts = postRepository.findAll(pageable);
         return posts.map(post -> {
             List<TagSummaryDTO> tagDTOs = post.getTags().stream()
-                    .map(tag -> new TagSummaryDTO(tag.getId(), tag.getName(), tag.getArchived() != null ? tag.getArchived() : false))
+                    .map(this::convertToTagSummaryDTO)
                     .collect(java.util.stream.Collectors.toList());
             String username = post.getUser() != null ? post.getUser().getUsername() : "Usuario Anónimo";
             return new PostSummaryDTO(
@@ -456,5 +391,98 @@ public class PostServiceImpl implements IPostService {
     private TagSummaryDTO convertToTagSummaryDTO(Tag tag) {
         boolean archived = tag.getArchived() != null && tag.getArchived();
         return new TagSummaryDTO(tag.getId(), tag.getName(), archived);
+    }
+
+    // ========== MÉTODOS HELPER PARA CUMPLIR SRP ==========
+    /**
+     * Procesa tags desde PostDTO, manejando tanto objetos TagSummaryDTO como
+     * strings simples. ✅ ARREGLA INCONSISTENCIA: Acepta ambos formatos del
+     * frontend.
+     */
+    private List<Tag> processTagsFromDTO(PostDTO postDTO) {
+        List<Tag> tags = new ArrayList<>();
+
+        // Procesar tags como objetos TagSummaryDTO
+        if (postDTO.getTags() != null && !postDTO.getTags().isEmpty()) {
+            tags.addAll(processTagsFromDTOList(postDTO.getTags()));
+        }
+
+        // ✅ NUEVO: Procesar tags como strings simples (para compatibilidad frontend)
+        if (postDTO.getTagNames() != null && !postDTO.getTagNames().isEmpty()) {
+            for (String tagName : postDTO.getTagNames()) {
+                TagSummaryDTO tagDTO = new TagSummaryDTO();
+                tagDTO.setName(tagName);
+                Tag tag = findOrCreateTag(tagDTO);
+                if (tag != null && !tags.contains(tag)) {
+                    tags.add(tag);
+                }
+            }
+        }
+
+        return tags;
+    }
+
+    /**
+     * Procesa una lista de TagSummaryDTO y devuelve las entidades Tag
+     * correspondientes. Separa la lógica de tags del resto del servicio.
+     */
+    private List<Tag> processTagsFromDTOList(List<TagSummaryDTO> tagDTOs) {
+        List<Tag> tags = new ArrayList<>();
+        if (tagDTOs == null) {
+            return tags;
+        }
+
+        for (TagSummaryDTO tagDTO : tagDTOs) {
+            Tag tag = findOrCreateTag(tagDTO);
+            if (tag != null) {
+                tags.add(tag);
+            }
+        }
+        return tags;
+    }
+
+    /**
+     * Busca un tag por ID o nombre, lo crea si no existe. Encapsula la lógica
+     * de búsqueda/creación de tags.
+     */
+    private Tag findOrCreateTag(TagSummaryDTO tagDTO) {
+        Tag tag = null;
+
+        // Buscar por ID si existe
+        if (tagDTO.getId() != null) {
+            tag = tagRepository.findById(tagDTO.getId()).orElse(null);
+        }
+
+        // Buscar por nombre si no se encontró por ID
+        if (tag == null && tagDTO.getName() != null) {
+            tag = tagService.getTagByName(tagDTO.getName());
+
+            // Crear tag si no existe
+            if (tag == null) {
+                tag = tagService.createTag(tagDTO.getName());
+            }
+        }
+
+        return tag;
+    }
+
+    /**
+     * Procesa imágenes a partir de nombres de archivo. Separa la lógica de
+     * imágenes del resto del servicio.
+     */
+    private List<PostImage> processImagesFromNames(List<String> imageNames, Post post) {
+        List<PostImage> images = new ArrayList<>();
+        if (imageNames == null) {
+            return images;
+        }
+
+        for (String imageName : imageNames) {
+            PostImage image = new PostImage();
+            image.setImageName(imageName);
+            image.setMainImage(false);
+            image.setPost(post);
+            images.add(image);
+        }
+        return images;
     }
 }

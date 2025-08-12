@@ -3,6 +3,9 @@ package de.stella.agora_web.posts.controller.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
@@ -28,9 +31,24 @@ public class PostDTO {
     private String location;
     private int loves;
     private List<Comment> comments;
+
+    // ✅ ARREGLA INCONSISTENCIA: Acepta ambos formatos "archived" e "isArchived"
+    @JsonProperty("archived")
+    @JsonAlias({"isArchived", "archived"})
     private boolean isArchived;
-    private List<TagSummaryDTO> tags; // Ahora array de objetos
+
+    private List<TagSummaryDTO> tags; // Para objetos Tag completos
+
+    // ✅ NUEVO: Acepta tags como strings simples (para compatibilidad)
+    @JsonProperty("tagNames")
+    @JsonAlias({"tagNames"})
+    private List<String> tagNames;
+
     private List<String> images;
+
+    // ✅ ARREGLA INCONSISTENCIA: Acepta ambos formatos "published" e "isPublished"
+    @JsonProperty("published")
+    @JsonAlias({"isPublished", "published"})
     private boolean isPublished;
     private String altImage;
     private String sourceImage;
@@ -41,7 +59,6 @@ public class PostDTO {
     private String urlAvatar;
     private java.time.LocalDateTime creationDate;
 
-    @SuppressWarnings("rawtypes")
     private List<ReplyDTO> replies;
 
     public PostDTO(Post post, int lovesCount) {

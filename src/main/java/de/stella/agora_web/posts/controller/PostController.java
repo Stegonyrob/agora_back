@@ -29,8 +29,10 @@ import jakarta.validation.Valid;
 @RequestMapping(path = "${api-endpoint}/")
 public class PostController {
 
+    // ✅ CUMPLE SRP: Solo manejo de endpoints de posts
     private final IPostService postService;
 
+    // ✅ CUMPLE DIP: Inyección por constructor (Spring maneja la interfaz)
     public PostController(IPostService postService) {
         this.postService = postService;
     }
@@ -102,7 +104,8 @@ public class PostController {
     // Marcar un post como favorito (love)
     @PutMapping("/posts/{postId}/love")
     public ResponseEntity<Void> lovePost(@PathVariable Long postId, @RequestParam Long userId) {
-        if (postId == null || userId == null || postId <= 0 || userId <= 0) {
+        // ✅ CUMPLE SRP: Validaciones separadas en método helper
+        if (!isValidLoveRequest(postId, userId)) {
             return ResponseEntity.badRequest().build();
         }
         try {
@@ -116,7 +119,8 @@ public class PostController {
     // Quitar favorito (unlove)
     @PutMapping("/posts/{postId}/unlove")
     public ResponseEntity<Void> unlovePost(@PathVariable Long postId, @RequestParam Long userId) {
-        if (postId == null || userId == null || postId <= 0 || userId <= 0) {
+        // ✅ CUMPLE SRP: Reutilizar método helper de validación
+        if (!isValidLoveRequest(postId, userId)) {
             return ResponseEntity.badRequest().build();
         }
         try {
@@ -141,6 +145,15 @@ public class PostController {
     }
 
     // --- FIN ENDPOINTS LOVES ---
+    // ========== MÉTODOS HELPER PARA CUMPLIR SRP ==========
+    /**
+     * Valida los parámetros para operaciones de love/unlove. Separa la lógica
+     * de validación del endpoint.
+     */
+    private boolean isValidLoveRequest(Long postId, Long userId) {
+        return postId != null && userId != null && postId > 0 && userId > 0;
+    }
+
     public static PostDTO toPostDTO(Post post) {
         if (post == null) {
             return null;

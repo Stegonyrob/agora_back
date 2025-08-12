@@ -77,6 +77,8 @@ public class SecurityConfiguration {
                 .requestMatchers(PathRequest.toH2Console()).permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers(endpoint + "/all/**").permitAll()
+                .requestMatchers(endpoint + "/public/**").permitAll() // ✅ PERMITIR ACCESO PÚBLICO A ENDPOINTS PÚBLICOS
+                .requestMatchers(endpoint + "/any/user/settings/**").permitAll() // ✅ PERMITIR ACCESO PÚBLICO A SETTINGS
                 .requestMatchers(HttpMethod.GET, "/posts/**").hasRole("USER")
                 .requestMatchers("/posts/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/replies/**").hasRole("USER")

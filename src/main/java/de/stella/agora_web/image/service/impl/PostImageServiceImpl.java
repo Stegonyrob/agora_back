@@ -1,10 +1,14 @@
 package de.stella.agora_web.image.service.impl;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import de.stella.agora_web.image.controller.dto.PostImageDTO;
 import de.stella.agora_web.image.module.PostImage;
@@ -12,13 +16,26 @@ import de.stella.agora_web.image.repository.PostImageRepository;
 import de.stella.agora_web.image.service.IPostImageService;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
+import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Servicio para imágenes de posts - CONSISTENTE con EventImageServiceImpl. ✅
+ * MISMA FUNCIONALIDAD: Mismos métodos que events pero para posts privados
+ */
+@Slf4j
 @Service
 @Transactional
 public class PostImageServiceImpl implements IPostImageService {
 
     private final PostImageRepository postImageRepository;
     private final PostRepository postRepository;
+
+    // ✅ CONSISTENTE: Mismas constantes de validación que EventImageService
+    private static final List<String> ALLOWED_CONTENT_TYPES = List.of(
+            "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"
+    );
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    private static final int MAX_IMAGES_PER_POST = 10;
 
     public PostImageServiceImpl(PostImageRepository postImageRepository, PostRepository postRepository) {
         this.postImageRepository = postImageRepository;
@@ -61,7 +78,9 @@ public class PostImageServiceImpl implements IPostImageService {
 
     private PostImageDTO mapToDTO(PostImage postImage) {
         return PostImageDTO.builder().id(postImage.getId()).imageName(postImage.getImageName())
-                .isMainImage(postImage.isMainImage()).postId(postImage.getPost().getId().longValue()).build();
+                .isMainImage(postImage.isMainImage())
+                .postId(postImage.getPost().getId())
+                .build();
     }
 
     @Override
@@ -71,5 +90,119 @@ public class PostImageServiceImpl implements IPostImageService {
         for (PostImage image : images) {
             postImageRepository.deleteById(image.getId());
         }
+    }
+
+    // ✅ NUEVO: Obtener datos binarios de imagen
+    @Override
+    public byte[] getPostImageData(Long id) {
+        PostImage postImage = postImageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("PostImage not found"));
+        return postImage.getImageData();
+    }
+
+    // ✅ NUEVO: Obtener información de imagen por ID
+    @Override
+    public PostImageDTO getPostImageById(Long id) {
+        PostImage postImage = postImageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("PostImage not found"));
+        return mapToDTO(postImage);
+    }
+
+    // ========== MÉTODOS CONSISTENTES CON EVENTIMAGESERVICE ==========
+    /**
+     * ✅ CONSISTENTE: Elimina múltiples imágenes por IDs
+     */
+    @Override
+    @Transactional
+    public void deleteMultiplePostImages(List<Long> imageIds) {
+        for (Long imageId : imageIds) {
+            postImageRepository.deleteById(imageId);
+        }
+        log.info("Eliminadas {} imágenes de posts", imageIds.size());
+    }
+
+    /**
+     * ✅ CONSISTENTE: Procesa y guarda múltiples archivos de imagen
+     */
+    @Override
+    @Transactional
+    public List<PostImageDTO> processAndSaveImages(MultipartFile[] files, Long postId) {
+        List<PostImageDTO> savedImages = new ArrayList<>();
+
+        if (files == null || files.length == 0) {
+            return savedImages;
+        }
+
+        // Verificar que el post existe
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + postId));
+
+        // Verificar límite de imágenes
+        long currentImageCount = postImageRepository.findByPostId(postId).size();
+        if (currentImageCount + files.length > MAX_IMAGES_PER_POST) {
+            throw new IllegalArgumentException("Máximo " + MAX_IMAGES_PER_POST + " imágenes por post");
+        }
+
+        for (MultipartFile file : files) {
+            if (!file.isEmpty() && isValidImageFile(file)) {
+                try {
+                    // Generar nombre único
+                    String originalFilename = file.getOriginalFilename();
+                    String extension = getFileExtension(originalFilename);
+                    String uniqueFilename = UUID.randomUUID().toString() + "." + extension;
+
+                    // Crear y guardar PostImage
+                    PostImage newPostImage = PostImage.builder()
+                            .imageName(uniqueFilename)
+                            .imageData(file.getBytes())
+                            .isMainImage(false)
+                            .post(post)
+                            .build();
+
+                    PostImage savedImage = postImageRepository.save(newPostImage);
+                    savedImages.add(mapToDTO(savedImage));
+
+                } catch (IOException e) {
+                    log.error("Error al procesar imagen: {}", file.getOriginalFilename(), e);
+                    throw new RuntimeException("Error al procesar imagen: " + file.getOriginalFilename(), e);
+                }
+            }
+        }
+
+        log.info("Procesadas {} imágenes para post {}", savedImages.size(), postId);
+        return savedImages;
+    }
+
+    /**
+     * ✅ CONSISTENTE: Valida archivos de imagen
+     */
+    @Override
+    public boolean isValidImageFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return false;
+        }
+
+        // Validar tamaño
+        if (file.getSize() > MAX_FILE_SIZE) {
+            log.warn("Archivo demasiado grande: {} bytes", file.getSize());
+            return false;
+        }
+
+        // Validar tipo MIME
+        String contentType = file.getContentType();
+        if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType.toLowerCase())) {
+            log.warn("Tipo de archivo no permitido: {}", contentType);
+            return false;
+        }
+
+        return true;
+    }
+
+    // ========== MÉTODOS HELPER ==========
+    private String getFileExtension(String filename) {
+        if (filename == null || !filename.contains(".")) {
+            return "jpg";
+        }
+        return filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
     }
 }
