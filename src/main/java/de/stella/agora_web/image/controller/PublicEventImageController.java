@@ -1,5 +1,7 @@
 package de.stella.agora_web.image.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,12 @@ public class PublicEventImageController {
     @GetMapping("/{id}")
     public ResponseEntity<EventImageDTO> getEventImage(@PathVariable Long id) {
         return ResponseEntity.ok(eventImageService.getEventImageById(id));
+    }
+
+    // ✅ NUEVO: Endpoint público para obtener todas las imágenes de un evento
+    @GetMapping("/event/{eventId}")
+    public ResponseEntity<List<EventImageDTO>> getImagesByEvent(@PathVariable Long eventId) {
+        return ResponseEntity.ok(eventImageService.getImagesByEventId(eventId));
     }
 
     // ✅ ENDPOINT PARA SERVIR LA IMAGEN COMO BYTES 

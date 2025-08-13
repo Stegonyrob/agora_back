@@ -2,9 +2,7 @@ package de.stella.agora_web.image.controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,32 +35,16 @@ public class EventImageController {
     // ✅ ENDPOINT PARA SERVIR DATOS DE IMAGEN (NECESARIO PARA FRONTEND)
     @GetMapping("/{id}/data")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
+
     public ResponseEntity<byte[]> getEventImageData(@PathVariable Long id) {
         try {
-            byte[] imageData = eventImageService.getEventImageData(id);
+            EventImageDTO image = eventImageService.getEventImageById(id);
 
-            // Obtener información de la imagen para establecer el content type correcto
-            EventImageDTO imageInfo = eventImageService.getEventImageById(id);
-            String imageName = imageInfo.getImageName();
+            return ResponseEntity.ok()
+                    .header("Content-Type", "image/jpeg") // Podríamos determinar el tipo real
+                    .header("Content-Disposition", "inline; filename=\"" + image.getImageName() + "\"")
+                    .body(image.getImageData());
 
-            // Determinar content type basado en la extensión
-            MediaType mediaType = MediaType.IMAGE_JPEG; // default
-            if (imageName != null) {
-                String extension = imageName.toLowerCase();
-                if (extension.endsWith(".png")) {
-                    mediaType = MediaType.IMAGE_PNG;
-                } else if (extension.endsWith(".gif")) {
-                    mediaType = MediaType.IMAGE_GIF;
-                } else if (extension.endsWith(".webp")) {
-                    mediaType = MediaType.valueOf("image/webp");
-                }
-            }
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(mediaType);
-            headers.setContentLength(imageData.length);
-
-            return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
