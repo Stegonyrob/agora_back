@@ -125,7 +125,11 @@ public class PostServiceImpl implements IPostService {
 
         // ✅ USAR MÉTODO HELPER para imágenes - Cumple SRP  
         existingPost.getImages().clear();
-        List<PostImage> images = processImagesFromNames(postDTO.getImages(), existingPost);
+        List<String> imageNames = new ArrayList<>();
+        if (postDTO.getImages() != null) {
+            postDTO.getImages().forEach(imgDto -> imageNames.add(imgDto.getImageName()));
+        }
+        List<PostImage> images = processImagesFromNames(imageNames, existingPost);
         existingPost.setImages(images);
         return postRepository.save(existingPost);
     }
@@ -187,7 +191,11 @@ public class PostServiceImpl implements IPostService {
         post.setTags(tags);
 
         // ✅ USAR MÉTODO HELPER para imágenes - Cumple SRP
-        List<PostImage> images = processImagesFromNames(postDTO.getImages(), post);
+        List<String> imageNames = new ArrayList<>();
+        if (postDTO.getImages() != null) {
+            postDTO.getImages().forEach(imgDto -> imageNames.add(imgDto.getImageName()));
+        }
+        List<PostImage> images = processImagesFromNames(imageNames, post);
         post.setImages(images);
         return postRepository.save(post);
     }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.stella.agora_web.comment.model.Comment;
+import de.stella.agora_web.image.controller.dto.PostImageDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.roles.model.Role;
@@ -44,7 +45,7 @@ public class PostDTO {
     @JsonAlias({"tagNames"})
     private List<String> tagNames;
 
-    private List<String> images;
+    private List<PostImageDTO> images;
 
     // ✅ ARREGLA INCONSISTENCIA: Acepta ambos formatos "published" e "isPublished"
     @JsonProperty("published")
@@ -81,6 +82,14 @@ public class PostDTO {
                         .orElse(null)
                 : null;
         this.creationDate = post.getCreationDate();
+        this.images = post.getImages() != null ? post.getImages().stream()
+                .map(img -> PostImageDTO.builder()
+                .id(img.getId())
+                .imageName(img.getImageName())
+                .isMainImage(img.isMainImage())
+                .postId(img.getPost() != null ? img.getPost().getId() : null)
+                .build())
+                .collect(Collectors.toList()) : null;
     }
 
     public PostDTO(Boolean archived) {
