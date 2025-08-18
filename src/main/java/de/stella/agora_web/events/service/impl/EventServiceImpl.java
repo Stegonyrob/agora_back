@@ -224,7 +224,7 @@ public class EventServiceImpl implements IEventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found with id: " + id));
 
-        // Agregar logs para depuración
+        // Debug logs for eventDate and eventTime
         System.out.println("[DEBUG] Event Date: " + event.getEventDate());
         System.out.println("[DEBUG] Event Time: " + event.getEventTime());
 
@@ -233,8 +233,8 @@ public class EventServiceImpl implements IEventService {
                 event.getTitle(),
                 event.getMessage(),
                 event.getCreationDate(),
-                event.getEventDate(),
-                event.getEventTime(),
+                event.getEventDate(), // Ensure eventDate is mapped
+                event.getEventTime(), // Ensure eventTime is mapped
                 event.getCapacity(),
                 event.isArchived(),
                 event.getUser() != null ? event.getUser().getUsername() : null,
