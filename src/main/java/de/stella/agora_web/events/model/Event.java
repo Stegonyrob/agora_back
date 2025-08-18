@@ -1,5 +1,6 @@
 package de.stella.agora_web.events.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -52,11 +53,18 @@ public class Event {
     @Column(name = "creation_date")
     private LocalDateTime creationDate = LocalDateTime.now();
 
+    @Column(name = "event_date", nullable = false)
+    private LocalDate eventDate;
+
+    @Column(name = "event_time", nullable = false)
+    private String eventTime;
+
     @Column(name = "archived")
     private boolean archived;
 
     @Column(name = "capacity")
     private int capacity;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
@@ -88,6 +96,8 @@ public class Event {
         this.message = message;
         this.archived = archived;
         this.capacity = capacity;
+        this.creationDate = LocalDateTime.now();
+        // Eliminada inicialización de eventDate
     }
 
     // Getter y Setter para id
@@ -297,5 +307,21 @@ public class Event {
 
     public Set<EventLove> getEventLoves() {
         return eventLoves;
+    }
+
+    public LocalDate getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(LocalDate eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public String getEventTime() {
+        return eventTime;
+    }
+
+    public void setEventTime(String eventTime) {
+        this.eventTime = eventTime;
     }
 }

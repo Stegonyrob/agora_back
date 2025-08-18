@@ -121,8 +121,8 @@ public class User {
         return hasRole("ROLE_ADMIN");
     }
 
-    public Object getIdUser() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIdUser'");
+    public Long getIdUser() {
+        return id;
     }
+
 }

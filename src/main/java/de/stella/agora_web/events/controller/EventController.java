@@ -116,9 +116,16 @@ public class EventController {
         }
 
         try {
-            Event newEvent = eventService.save(eventDTO);
-            log.info("Evento creado exitosamente con ID: {}", newEvent.getId());
-            return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
+            Event newEvent = new Event();
+            newEvent.setTitle(eventDTO.getTitle());
+            newEvent.setMessage(eventDTO.getMessage());
+            newEvent.setEventDate(eventDTO.getEventDate()); // Mapeo del campo eventDate
+            newEvent.setCapacity(eventDTO.getCapacity());
+            newEvent.setArchived(eventDTO.isArchived());
+
+            Event savedEvent = eventService.save(newEvent);
+            log.info("Evento creado exitosamente con ID: {}", savedEvent.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedEvent);
         } catch (Exception e) {
             log.error("Error al crear evento: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

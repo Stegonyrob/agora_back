@@ -1,5 +1,6 @@
 package de.stella.agora_web.events.controller.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,4 +37,16 @@ public class PublicEventDTO {
     private LocalDateTime creationDate;
 
     private Long lovesCount; // ✅ Contador de likes para estadísticas
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate eventDate; // Nueva variable para la fecha del evento
+    private String eventTime; // Nueva variable para la hora del evento
+
+    public LocalDate getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(LocalDate eventDate) {
+        this.eventDate = eventDate;
+    }
 }

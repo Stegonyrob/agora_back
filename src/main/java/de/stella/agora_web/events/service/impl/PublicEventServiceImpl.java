@@ -97,6 +97,10 @@ public class PublicEventServiceImpl implements IPublicEventService {
         dto.setCapacity(event.getCapacity());
         dto.setCreationDate(event.getCreationDate());
 
+        // Map eventDate and eventTime
+        dto.setEventDate(event.getEventDate());
+        dto.setEventTime(event.getEventTime());
+
         // ✅ CARGAR TAGS DE FORMA INDIVIDUAL si no están ya cargados
         if (event.getTags() == null || event.getTags().isEmpty()) {
             Event eventWithTags = eventRepository.findEventWithTags(event.getId()).orElse(event);

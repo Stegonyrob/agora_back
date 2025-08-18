@@ -83,6 +83,7 @@ public class EventServiceImpl implements IEventService {
         event.setMessage(eventDTO.getMessage());
         event.setArchived(eventDTO.isArchived());
         event.setCapacity(eventDTO.getCapacity());
+        event.setEventDate(eventDTO.getEventDate()); // Asegurar asignación de eventDate
 
         // --- ASIGNACIÓN AUTOMÁTICA DE TAGS EN EDICIÓN ---
         if (eventDTO.getTags() != null) {
@@ -223,23 +224,26 @@ public class EventServiceImpl implements IEventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found with id: " + id));
 
+        // Agregar logs para depuración
+        System.out.println("[DEBUG] Event Date: " + event.getEventDate());
+        System.out.println("[DEBUG] Event Time: " + event.getEventTime());
+
         return new EventResponseDTO(
                 event.getId(),
                 event.getTitle(),
                 event.getMessage(),
-                null, // location field doesn't exist in Event model
                 event.getCreationDate(),
-                null, // eventDate field doesn't exist in Event model
+                event.getEventDate(),
+                event.getEventTime(),
                 event.getCapacity(),
                 event.isArchived(),
                 event.getUser() != null ? event.getUser().getUsername() : null,
-                event.getUser() != null ? event.getUser().getUsername() : null, // User doesn't have fullName
                 event.getTags() != null ? event.getTags().stream()
-                .map(tag -> new de.stella.agora_web.tags.dto.TagSummaryDTO(tag.getId(), tag.getName(), false))
-                .collect(Collectors.toList()) : null,
+                        .map(tag -> new de.stella.agora_web.tags.dto.TagSummaryDTO(tag.getId(), tag.getName(), false))
+                        .collect(Collectors.toList()) : null,
                 event.getImages() != null ? event.getImages().stream()
-                .map(img -> "/api/v1/all/event-images/" + img.getId())
-                .collect(Collectors.toList()) : null, // Cambiado a 'images'
+                        .map(img -> "/api/v1/all/event-images/" + img.getId())
+                        .collect(Collectors.toList()) : null,
                 event.getAttendees() != null ? event.getAttendees().size() : 0
         );
     }

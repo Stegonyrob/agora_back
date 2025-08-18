@@ -1,5 +1,6 @@
 package de.stella.agora_web.events.controller.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import de.stella.agora_web.attendee.controller.dto.AttendeeDTO;
@@ -22,6 +23,9 @@ public class EventDTO {
     private int attendeesCount;
     private List<TagSummaryDTO> tags;
     private java.time.LocalDateTime creationDate;
+    @NotBlank(message = "Event date cannot be blank")
+    private LocalDate eventDate;
+    private String eventTime;
 
     public Long getId() {
         return id;
@@ -95,11 +99,27 @@ public class EventDTO {
         this.creationDate = creationDate;
     }
 
+    public LocalDate getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(LocalDate eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public String getEventTime() {
+        return eventTime;
+    }
+
+    public void setEventTime(String eventTime) {
+        this.eventTime = eventTime;
+    }
+
     public EventDTO() {
     }
 
     public EventDTO(Long id, String title, String message, boolean archived, List<AttendeeDTO> attendees, int capacity,
-            int attendeesCount, List<TagSummaryDTO> tags, java.time.LocalDateTime creationDate) {
+            int attendeesCount, List<TagSummaryDTO> tags, java.time.LocalDateTime creationDate, LocalDate eventDate, String eventTime) {
         this.id = id;
         this.title = title;
         this.message = message;
@@ -109,5 +129,7 @@ public class EventDTO {
         this.attendeesCount = attendeesCount;
         this.tags = tags;
         this.creationDate = creationDate;
+        this.eventDate = eventDate;
+        this.eventTime = eventTime;
     }
 }
