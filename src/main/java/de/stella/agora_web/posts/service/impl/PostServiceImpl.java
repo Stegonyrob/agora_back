@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.stella.agora_web.comment.controller.dto.CommentDTO;
 import de.stella.agora_web.comment.model.Comment;
@@ -179,6 +180,7 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
+    @Transactional
     public Post save(PostDTO postDTO) {
         Post post = new Post();
         post.setTitle(postDTO.getTitle());
@@ -239,6 +241,7 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
+    @Transactional
     public Post update(PostDTO postDTO, Long id) {
         Post post = postRepository.findById(id).orElseThrow();
 
@@ -492,5 +495,12 @@ public class PostServiceImpl implements IPostService {
             images.add(image);
         }
         return images;
+    }
+
+    @Override
+    public Post saveSimple(Post post) {
+        // ✅ PATRÓN DE EVENTOS: Guardado simple sin lógica compleja
+        // Solo guarda los campos básicos sin imágenes ni tags complejos
+        return postRepository.save(post);
     }
 }

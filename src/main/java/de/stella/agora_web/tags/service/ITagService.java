@@ -11,6 +11,14 @@ import de.stella.agora_web.tags.model.Tag;
 
 public interface ITagService {
 
+    /**
+     * Crea múltiples tags a partir de un TagListDTO.
+     *
+     * @param tagListDTO lista de tags a crear
+     * @return lista de tags creados
+     */
+    List<Tag> createTagsBulk(de.stella.agora_web.tags.dto.TagListDTO tagListDTO);
+
     List<Tag> getAllTags();
 
     Tag getTagById(Long id);

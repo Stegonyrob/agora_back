@@ -26,6 +26,21 @@ import de.stella.agora_web.tags.service.ITagService;
 @Service
 public class TagServiceImpl implements ITagService {
 
+    @Override
+    public List<Tag> createTagsBulk(de.stella.agora_web.tags.dto.TagListDTO tagListDTO) {
+        List<Tag> createdTags = new ArrayList<>();
+        if (tagListDTO == null || tagListDTO.getTags() == null) {
+            return createdTags;
+        }
+        for (de.stella.agora_web.tags.dto.TagSummaryDTO tagDto : tagListDTO.getTags()) {
+            if (tagDto.getName() != null && !tagDto.getName().isBlank()) {
+                Tag tag = getOrCreateTagByName(tagDto.getName());
+                createdTags.add(tag);
+            }
+        }
+        return createdTags;
+    }
+
     @Autowired
     private TagRepository tagRepository;
     @Autowired

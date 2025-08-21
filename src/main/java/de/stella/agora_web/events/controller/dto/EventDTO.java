@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import de.stella.agora_web.attendee.controller.dto.AttendeeDTO;
-import de.stella.agora_web.tags.dto.TagSummaryDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -21,7 +20,6 @@ public class EventDTO {
     private List<AttendeeDTO> attendees;
     private int capacity;
     private int attendeesCount;
-    private List<TagSummaryDTO> tags;
     private java.time.LocalDateTime creationDate;
     @NotBlank(message = "Event date cannot be blank")
     private LocalDate eventDate;
@@ -83,14 +81,6 @@ public class EventDTO {
         this.attendeesCount = attendeesCount;
     }
 
-    public List<TagSummaryDTO> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<TagSummaryDTO> tags) {
-        this.tags = tags;
-    }
-
     public java.time.LocalDateTime getCreationDate() {
         return creationDate;
     }
@@ -119,7 +109,7 @@ public class EventDTO {
     }
 
     public EventDTO(Long id, String title, String message, boolean archived, List<AttendeeDTO> attendees, int capacity,
-            int attendeesCount, List<TagSummaryDTO> tags, java.time.LocalDateTime creationDate, LocalDate eventDate, String eventTime) {
+            int attendeesCount, java.time.LocalDateTime creationDate, LocalDate eventDate, String eventTime) {
         this.id = id;
         this.title = title;
         this.message = message;
@@ -127,9 +117,24 @@ public class EventDTO {
         this.attendees = attendees;
         this.capacity = capacity;
         this.attendeesCount = attendeesCount;
-        this.tags = tags;
         this.creationDate = creationDate;
         this.eventDate = eventDate;
         this.eventTime = eventTime;
+    }
+
+    @Override
+    public String toString() {
+        return "EventDTO{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", message='" + message + '\''
+                + ", archived=" + archived
+                + ", attendees=" + attendees
+                + ", capacity=" + capacity
+                + ", attendeesCount=" + attendeesCount
+                + ", creationDate=" + creationDate
+                + ", eventDate=" + eventDate
+                + ", eventTime='" + eventTime + '\''
+                + '}';
     }
 }

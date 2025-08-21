@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.stella.agora_web.events.controller.dto.EventDTO;
 import de.stella.agora_web.events.controller.dto.EventResponseDTO;
@@ -18,8 +19,6 @@ import de.stella.agora_web.events.repository.UserFavoriteEventRepository;
 import de.stella.agora_web.events.service.IEventService;
 import de.stella.agora_web.image.service.IEventImageService;
 import de.stella.agora_web.security.SecurityUser;
-import de.stella.agora_web.tags.model.Tag;
-import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.repository.UserRepository;
 
@@ -40,9 +39,6 @@ public class EventServiceImpl implements IEventService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private ITagService tagService;
 
     private EventDTO toDto(Event event) {
         EventDTO dto = new EventDTO();
@@ -79,25 +75,22 @@ public class EventServiceImpl implements IEventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
 
+        // Logs for debugging
+        System.out.println("[DEBUG] EventTime received from frontend: " + eventDTO.getEventTime());
+        System.out.println("[DEBUG] Current EventTime in database: " + event.getEventTime());
+
         event.setTitle(eventDTO.getTitle());
         event.setMessage(eventDTO.getMessage());
         event.setArchived(eventDTO.isArchived());
         event.setCapacity(eventDTO.getCapacity());
-        event.setEventDate(eventDTO.getEventDate()); // Asegurar asignación de eventDate
+        event.setEventDate(eventDTO.getEventDate());
+        event.setEventTime(eventDTO.getEventTime()); // Update eventTime
 
-        // --- ASIGNACIÓN AUTOMÁTICA DE TAGS EN EDICIÓN ---
-        if (eventDTO.getTags() != null) {
-            List<Tag> tags = eventDTO.getTags().stream()
-                    .filter(tagDto -> tagDto != null && tagDto.getName() != null && !tagDto.getName().trim().isEmpty())
-                    .map(tagDto -> tagService.getOrCreateTagByName(tagDto.getName()))
-                    .filter(java.util.Objects::nonNull)
-                    .collect(java.util.stream.Collectors.toList());
-            event.setTags(tags);
-        } else {
-            event.setTags(new java.util.ArrayList<>());
-        }
+        System.out.println("[DEBUG] Updated EventTime in entity: " + event.getEventTime());
 
         Event savedEvent = eventRepository.save(event);
+        System.out.println("[DEBUG] Saved EventTime in database: " + savedEvent.getEventTime());
+
         return eventMapper.toDto(savedEvent);
     }
 
@@ -150,42 +143,30 @@ public class EventServiceImpl implements IEventService {
     }
 
     @Override
+    @Transactional
     public Event save(EventDTO eventDTO) {
         Event event = eventMapper.toEntity(eventDTO);
+
         // Obtener el usuario autenticado
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof SecurityUser) {
             SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
             Long userId = securityUser.getUser().getId();
-
-            // Buscar el usuario en la base de datos
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userId));
-
-            // Asignar el usuario al evento
             event.setUser(user);
         } else {
-            // Fallback: si no hay usuario autenticado, usar admin (ID=1)
             User adminUser = userRepository.findById(1L)
                     .orElseThrow(() -> new RuntimeException("Usuario admin no encontrado"));
             event.setUser(adminUser);
         }
 
-        // --- ASIGNACIÓN AUTOMÁTICA DE TAGS ---
-        if (eventDTO.getTags() != null) {
-            List<Tag> tags = eventDTO.getTags().stream()
-                    .filter(tagDto -> tagDto != null && tagDto.getName() != null && !tagDto.getName().trim().isEmpty())
-                    .map(tagDto -> tagService.getOrCreateTagByName(tagDto.getName()))
-                    .filter(java.util.Objects::nonNull)
-                    .collect(java.util.stream.Collectors.toList());
-            event.setTags(tags);
-        } else {
-            event.setTags(new java.util.ArrayList<>());
-        }
+        // No asociar tags aquí. SRP: la asociación de tags se realiza en el endpoint específico de tags.
         return eventRepository.save(event);
     }
 
     @Override
+    @Transactional
     public Event save(Event event) {
         return eventRepository.save(event);
     }
@@ -224,9 +205,21 @@ public class EventServiceImpl implements IEventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found with id: " + id));
 
-        // Debug logs for eventDate and eventTime
+        // Debug logs for eventDate, eventTime, tags, images
         System.out.println("[DEBUG] Event Date: " + event.getEventDate());
         System.out.println("[DEBUG] Event Time: " + event.getEventTime());
+        if (event.getTags() != null) {
+            System.out.println("[DEBUG] Tags asociadas al evento:");
+            event.getTags().forEach(tag -> System.out.println("  - Tag[id=" + tag.getId() + ", name=" + tag.getName() + "]"));
+        } else {
+            System.out.println("[DEBUG] Tags asociadas al evento: null");
+        }
+        if (event.getImages() != null) {
+            System.out.println("[DEBUG] Imágenes asociadas al evento:");
+            event.getImages().forEach(img -> System.out.println("  - Image[id=" + img.getId() + ", name=" + img.getImageName() + "]"));
+        } else {
+            System.out.println("[DEBUG] Imágenes asociadas al evento: null");
+        }
 
         return new EventResponseDTO(
                 event.getId(),
@@ -239,11 +232,11 @@ public class EventServiceImpl implements IEventService {
                 event.isArchived(),
                 event.getUser() != null ? event.getUser().getUsername() : null,
                 event.getTags() != null ? event.getTags().stream()
-                        .map(tag -> new de.stella.agora_web.tags.dto.TagSummaryDTO(tag.getId(), tag.getName(), false))
-                        .collect(Collectors.toList()) : null,
+                .map(tag -> new de.stella.agora_web.tags.dto.TagSummaryDTO(tag.getId(), tag.getName(), false))
+                .collect(Collectors.toList()) : null,
                 event.getImages() != null ? event.getImages().stream()
-                        .map(img -> "/api/v1/all/event-images/" + img.getId())
-                        .collect(Collectors.toList()) : null,
+                .map(img -> "/api/v1/all/event-images/" + img.getId())
+                .collect(Collectors.toList()) : null,
                 event.getAttendees() != null ? event.getAttendees().size() : 0
         );
     }

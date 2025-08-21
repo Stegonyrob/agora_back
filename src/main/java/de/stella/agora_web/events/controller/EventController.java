@@ -115,11 +115,14 @@ public class EventController {
             return ResponseEntity.badRequest().build();
         }
 
+        log.info("Payload recibido para crear evento: {}", eventDTO);
+
         try {
             Event newEvent = new Event();
             newEvent.setTitle(eventDTO.getTitle());
             newEvent.setMessage(eventDTO.getMessage());
             newEvent.setEventDate(eventDTO.getEventDate()); // Mapeo del campo eventDate
+            newEvent.setEventTime(eventDTO.getEventTime()); // Mapeo del campo eventTime
             newEvent.setCapacity(eventDTO.getCapacity());
             newEvent.setArchived(eventDTO.isArchived());
 

@@ -74,4 +74,7 @@ public interface IPostService {
     PostResponseDTO createPostResponse(PostDTO postDTO);
 
     PostResponseDTO updatePostResponse(PostDTO postDTO, Long id);
+
+    // ✅ NUEVO MÉTODO SIMPLE: Guardado básico sin lógica compleja (patrón de eventos)
+    Post saveSimple(Post post);
 }

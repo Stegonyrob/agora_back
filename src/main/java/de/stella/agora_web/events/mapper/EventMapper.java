@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import de.stella.agora_web.events.controller.dto.EventDTO;
 import de.stella.agora_web.events.model.Event;
-import de.stella.agora_web.tags.dto.TagSummaryDTO;
 
 @Component
 public class EventMapper {
@@ -25,12 +24,6 @@ public class EventMapper {
         dto.setCapacity(event.getCapacity());
         dto.setAttendeesCount(event.getAttendees() != null ? event.getAttendees().size() : 0);
         dto.setCreationDate(event.getCreationDate());
-        // Set tags
-        if (event.getTags() != null) {
-            dto.setTags(event.getTags().stream()
-                    .map(tag -> new TagSummaryDTO(tag.getId(), tag.getName(), tag.getArchived() != null && tag.getArchived()))
-                    .collect(Collectors.toList()));
-        }
         return dto;
     }
 
@@ -55,6 +48,9 @@ public class EventMapper {
         event.setArchived(eventDTO.isArchived());
         event.setCapacity(eventDTO.getCapacity());
         event.setCreationDate(eventDTO.getCreationDate());
+        event.setEventDate(eventDTO.getEventDate());
+        event.setEventTime(eventDTO.getEventTime()); // Map eventTime
+
         // Tags will be set in the service layer, as it requires DB lookup
         return event;
     }

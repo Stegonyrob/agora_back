@@ -24,7 +24,9 @@ import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.service.IPostService;
 import de.stella.agora_web.tags.dto.PostSummaryDTO;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping(path = "${api-endpoint}/")
 public class PostController {
@@ -55,12 +57,25 @@ public class PostController {
     @PostMapping(path = "/posts")
     public ResponseEntity<Post> create(@Valid @RequestBody PostDTO postDTO) {
         if (postDTO == null) {
+            log.warn("Intento de crear post con datos nulos");
             return ResponseEntity.badRequest().build();
         }
+
+        log.info("Payload recibido para crear post: {}", postDTO);
+
         try {
-            Post newPost = postService.save(postDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(newPost);
+            // ✅ APLICAR PATRÓN DE EVENTOS: Mapeo manual simple en el controlador
+            Post newPost = new Post();
+            newPost.setTitle(postDTO.getTitle());
+            newPost.setMessage(postDTO.getMessage());
+            newPost.setArchived(postDTO.isArchived());
+
+            // ✅ SIMPLIFICAR: Usar método básico de guardado sin lógica compleja
+            Post savedPost = postService.saveSimple(newPost);
+            log.info("Post creado exitosamente con ID: {}", savedPost.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(savedPost);
         } catch (Exception e) {
+            log.error("Error al crear post: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

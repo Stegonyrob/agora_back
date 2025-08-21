@@ -20,6 +20,26 @@ import de.stella.agora_web.tags.service.ITagService;
 @RequestMapping("${api-endpoint}/any/tags")
 public class TagController {
 
+    // Asociar múltiples tags a un post (igual que eventos)
+    @PostMapping("/posts/{postId}/tags")
+    public ResponseEntity<String> addTagsToPost(@PathVariable Long postId, @RequestBody de.stella.agora_web.tags.dto.TagListDTO tagListDTO) {
+        if (tagListDTO.getTags() == null || tagListDTO.getTags().isEmpty()) {
+            return ResponseEntity.badRequest().body("No se recibieron tags para asociar");
+        }
+        tagListDTO.getTags().forEach(tagDto -> tagService.addTagToPost(postId, tagDto.getName()));
+        return ResponseEntity.ok("Tags asociados correctamente al post " + postId);
+    }
+
+    // Asociar múltiples tags a un evento
+    @PostMapping("/events/{eventId}/tags")
+    public ResponseEntity<String> addTagsToEvent(@PathVariable Long eventId, @RequestBody de.stella.agora_web.tags.dto.TagListDTO tagListDTO) {
+        if (tagListDTO.getTags() == null || tagListDTO.getTags().isEmpty()) {
+            return ResponseEntity.badRequest().body("No se recibieron tags para asociar");
+        }
+        tagListDTO.getTags().forEach(tagDto -> tagService.addTagToEvent(eventId, tagDto.getName()));
+        return ResponseEntity.ok("Tags asociados correctamente al evento " + eventId);
+    }
+
     @Autowired
     private ITagService tagService;
 
