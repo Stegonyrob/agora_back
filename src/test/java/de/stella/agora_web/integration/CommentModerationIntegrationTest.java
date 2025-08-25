@@ -1,8 +1,7 @@
 package de.stella.agora_web.integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,13 +183,18 @@ class CommentModerationIntegrationTest {
         Comment savedComment = commentRepository.save(comment);
 
         // TODO: Verificar que el mensaje incluye:
-        // - ID del comentario
-        // - Nombre del autor
-        // - Contenido del comentario
-        // - ID del post padre
-        // - Título del post padre
-        // - Timestamp
-        // - URL para moderación directa
+        // - ID del comentario: savedComment.getId()
+        // - Nombre del autor: savedComment.getUser().getUsername()
+        // - Contenido del comentario: savedComment.getMessage()
+        // - ID del post padre: savedComment.getPost().getId()
+        // - Título del post padre: savedComment.getPost().getTitle()
+        // - Timestamp: savedComment.getCreatedAt() o System.currentTimeMillis()
+        // - URL para moderación directa: "/admin/moderation/comment/" + savedComment.getId()
+        // Verificaciones temporales hasta implementar Kafka
         assertNotNull(savedComment.getId());
+        assertEquals("Comentario con contexto para verificar información completa", savedComment.getMessage());
+        assertEquals(testUser.getUsername(), savedComment.getUser().getUsername());
+        assertEquals(testPost.getId(), savedComment.getPost().getId());
+        assertEquals(testPost.getTitle(), savedComment.getPost().getTitle());
     }
 }
