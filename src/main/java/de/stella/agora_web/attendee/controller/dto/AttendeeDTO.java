@@ -12,7 +12,7 @@ public class AttendeeDTO {
     private String name;
 
     @NotBlank(message = "Phone cannot be blank")
-    @Pattern(regexp = "\\d{10}", message = "Phone must be a valid 10-digit number")
+    @Pattern(regexp = "^(\\+?[1-9]\\d{1,14}|\\d{9})$", message = "Phone must be a valid number (Spanish 9-digit or international format with country code)")
     private String phone;
 
     @NotBlank(message = "Email cannot be blank")

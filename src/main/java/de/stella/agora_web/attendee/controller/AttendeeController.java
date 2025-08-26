@@ -27,7 +27,7 @@ public class AttendeeController {
 
     @PostMapping("/{eventId}")
     public ResponseEntity<AttendeeDTO> registerAttendee(@PathVariable Long eventId,
-            @RequestBody AttendeeDTO attendeeDTO) {
+            @RequestBody @Valid AttendeeDTO attendeeDTO) {
 
         AttendeeDTO savedAttendee = attendeeService.registerAttendee(eventId, attendeeDTO);
         return ResponseEntity.ok(savedAttendee);

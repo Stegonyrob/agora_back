@@ -1,15 +1,11 @@
 package de.stella.agora_web.admin.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import de.stella.agora_web.profiles.controller.dto.ProfileDTO;
 
 public class AdminUserDTO {
 
-    private Long id;
-    private String username;
-    private String email;
-    private String phone;
-    private String firstName;
-    private String lastName;
     private ProfileDTO profile;
     private boolean admin;
     private boolean active;
@@ -24,54 +20,6 @@ public class AdminUserDTO {
     }
 
     // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public ProfileDTO getProfile() {
         return profile;
     }
@@ -94,6 +42,37 @@ public class AdminUserDTO {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    // Métodos de conveniencia que delegan al profile
+    @JsonIgnore
+    public Long getId() {
+        return profile != null ? profile.getId() : null;
+    }
+
+    @JsonIgnore
+    public String getUsername() {
+        return profile != null ? profile.getUsername() : null;
+    }
+
+    @JsonIgnore
+    public String getEmail() {
+        return profile != null ? profile.getEmail() : null;
+    }
+
+    @JsonIgnore
+    public String getPhone() {
+        return profile != null ? profile.getPhone() : null;
+    }
+
+    @JsonIgnore
+    public String getFirstName() {
+        return profile != null ? profile.getFirstName() : null;
+    }
+
+    @JsonIgnore
+    public String getLastName() {
+        return profile != null ? profile.getLastName1() : null;
     }
 
     public String getDisplayName() {

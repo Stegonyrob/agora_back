@@ -3,11 +3,14 @@ package de.stella.agora_web.admin.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.admin.controller.dto.AdminCreateDTO;
 import de.stella.agora_web.admin.controller.dto.AdminUserDTO;
 import de.stella.agora_web.admin.service.IAdminService;
+import de.stella.agora_web.avatar.module.Avatar;
+import de.stella.agora_web.avatar.repository.AvatarRepository;
 import de.stella.agora_web.profiles.controller.ProfileController;
 import de.stella.agora_web.profiles.controller.dto.ProfileDTO;
 import de.stella.agora_web.profiles.model.Profile;
@@ -25,12 +28,21 @@ public class AdminServiceImpl implements IAdminService {
     private final RoleRepository roleRepository;
     private final ProfileRepository profileRepository;
     private final ITotpService totpService;
+    private final AvatarRepository avatarRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AdminServiceImpl(IUserService userService, RoleRepository roleRepository, ProfileRepository profileRepository, ITotpService totpService) {
+    public AdminServiceImpl(IUserService userService,
+            RoleRepository roleRepository,
+            ProfileRepository profileRepository,
+            ITotpService totpService,
+            AvatarRepository avatarRepository,
+            PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.roleRepository = roleRepository;
         this.profileRepository = profileRepository;
         this.totpService = totpService;
+        this.avatarRepository = avatarRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -59,26 +71,83 @@ public class AdminServiceImpl implements IAdminService {
 
     @Override
     public void deleteAdmin(Long id) {
+        // Verificar que no sea el último admin
         List<User> admins = userService.getAll().stream()
                 .filter(User::isAdmin)
                 .collect(Collectors.toList());
         if (admins.size() <= 1) {
             throw new IllegalStateException("Debe haber al menos un administrador.");
         }
+
         User user = userService.findById(id).orElseThrow();
+
+        // ✅ CORREGIDO: Eliminar completamente el usuario y su perfil
+        // Primero eliminar el perfil si existe
+        Profile profile = user.getProfile();
+        if (profile != null) {
+            profileRepository.delete(profile);
+        }
+
+        // Luego eliminar el usuario (esto también eliminará las relaciones de roles)
+        userService.deleteById(id);
+    }
+
+    /**
+     * Método específico para degradar admin a usuario común (mantiene la
+     * cuenta)
+     */
+    public void demoteAdminToUser(Long id) {
+        // Verificar que no sea el último admin
+        List<User> admins = userService.getAll().stream()
+                .filter(User::isAdmin)
+                .collect(Collectors.toList());
+        if (admins.size() <= 1) {
+            throw new IllegalStateException("Debe haber al menos un administrador.");
+        }
+
+        User user = userService.findById(id).orElseThrow();
+        // Solo quitar el rol ADMIN (mantener usuario)
         user.getRoles().removeIf(role -> "ROLE_ADMIN".equals(role.getName()));
         userService.save(user);
     }
 
     // Métodos que ahora usan los servicios inyectados
     public AdminUserDTO createAndPromoteAdmin(AdminCreateDTO dto) {
-        // Crear usuario manualmente ya que createAndSaveNewUser no existe
+        // Crear usuario completo con todos los campos necesarios
         User user = new User();
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
         user.setPhone(dto.getPhone());
+        // ✅ CORREGIDO: Codificar la password con BCrypt
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setAcceptedRules(true); // Por defecto para admins
+
         // Usar save en lugar de createAndSaveNewUser
         user = userService.save(user);
+
+        // Crear perfil asociado al usuario
+        Profile profile = new Profile();
+        // ✅ CRÍTICO: Asignar el mismo ID del usuario al perfil
+        profile.setId(user.getId());
+        profile.setFirstName(dto.getFirstName());
+        profile.setLastName1(dto.getLastName1());
+        profile.setLastName2(dto.getLastName2());
+        profile.setEmail(dto.getEmail());
+        profile.setPhone(dto.getPhone());
+        profile.setCity(dto.getCity());
+        profile.setCountry(dto.getCountry());
+        profile.setRelationship(dto.getRelationship());
+        profile.setUsername(dto.getUsername());
+        // ✅ CORREGIDO: Codificar password en profile también
+        profile.setPassword(passwordEncoder.encode(dto.getPassword()));
+        profile.setConfirmPassword(passwordEncoder.encode(dto.getConfirmPassword()));
+
+        if (dto.getAvatarId() != null) {
+            Avatar avatar = avatarRepository.findById(dto.getAvatarId()).orElse(null);
+            profile.setAvatar(avatar);
+        }
+        profile.setUser(user);
+        profileRepository.save(profile);
 
         // El único trabajo aquí es la lógica de "promoción"
         Role adminRole = roleRepository.findByName("ROLE_ADMIN")

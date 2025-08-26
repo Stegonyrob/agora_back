@@ -1,6 +1,8 @@
 package de.stella.agora_web.admin.controller.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 public class AdminCreateDTO {
 
@@ -15,9 +17,11 @@ public class AdminCreateDTO {
     private String confirmPassword;
 
     @NotBlank(message = "El email es obligatorio")
+    @Email(message = "El email debe tener un formato válido")
     private String email;
 
     @NotBlank(message = "El teléfono es obligatorio para administradores")
+    @Pattern(regexp = "^(\\+?[1-9]\\d{1,14}|\\d{9})$", message = "Phone must be a valid number (Spanish 9-digit or international format with country code)")
     private String phone;
 
     // Profile fields

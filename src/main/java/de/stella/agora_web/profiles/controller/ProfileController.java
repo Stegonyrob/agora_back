@@ -113,51 +113,61 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(profile);
     }
 
-    @DeleteMapping(path = "/user/profile/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) throws Exception {
-        String message = service.delete(id);
-        return ResponseEntity.status(200).body(message);
-    }
-
-    // ============= ENDPOINTS ADMINISTRATIVOS =============
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/admin/user/profile/{id}")
-    public ResponseEntity<ProfileDTO> updateProfileAsAdmin(@PathVariable Long id, @RequestBody ProfileDTO profileDTO) {
+    // ============= GESTIÓN DE PERFILES (USER/ADMIN UNIFICADO) =============
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<String> deleteProfile(@PathVariable Long id) throws Exception {
         try {
-            // Log the complete JSON received
-            String jsonReceived = objectMapper.writeValueAsString(profileDTO);
-            logger.info("=== ADMIN PROFILE UPDATE REQUEST ===");
-            logger.info("Profile ID: {}", id);
-            logger.info("JSON received: {}", jsonReceived);
-            logger.info("============================");
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUsername = authentication.getName();
 
-            Profile updatedProfile = service.update(profileDTO, id);
-            ProfileDTO responseDTO = toProfileDTO(updatedProfile);
+            Optional<User> currentUserOpt = userService.findByUsername(currentUsername);
+            if (currentUserOpt.isEmpty()) {
+                return ResponseEntity.status(401).body("Usuario no autenticado");
+            }
 
-            logger.info("Updated profile avatar ID: {}", responseDTO.getAvatarId());
+            User currentUser = currentUserOpt.get();
 
-            return ResponseEntity.accepted().body(responseDTO);
+            // Verificar si es el propio perfil o si es admin
+            boolean isOwnProfile = currentUser.getProfile() != null && currentUser.getProfile().getId().equals(id);
+            boolean isAdmin = currentUser.isAdmin();
+
+            if (!isOwnProfile && !isAdmin) {
+                return ResponseEntity.status(403).body("No tienes permisos para eliminar este perfil");
+            }
+
+            // Si es admin eliminando a otro usuario, verificar que no sea el último admin
+            if (isAdmin && !isOwnProfile) {
+                Optional<User> targetUserOpt = userService.findById(id);
+                if (targetUserOpt.isPresent() && targetUserOpt.get().isAdmin()) {
+                    if (!gdprService.canDeleteUser(targetUserOpt.get().getId())) {
+                        return ResponseEntity.badRequest().body("No se puede eliminar el último administrador del sistema");
+                    }
+                }
+            }
+
+            // Si es eliminación propia, usar GDPR service
+            if (isOwnProfile) {
+                if (!gdprService.canDeleteUser(currentUser.getId())) {
+                    return ResponseEntity.badRequest().body("No se puede eliminar el último administrador del sistema");
+                }
+                gdprService.deleteAllUserData(currentUser.getId());
+                return ResponseEntity.ok("Tu cuenta y todos tus datos han sido eliminados permanentemente conforme al GDPR");
+            } else {
+                // Admin eliminando a otro usuario
+                String message = service.delete(id);
+                return ResponseEntity.ok(message);
+            }
+
         } catch (Exception e) {
-            logger.error("Error updating profile as admin: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/admin/user/profile/{id}")
-    public ResponseEntity<String> deleteProfileAsAdmin(@PathVariable Long id) {
-        try {
-            String message = service.delete(id);
-            return ResponseEntity.ok(message);
-        } catch (Exception e) {
-            logger.error("Error deleting profile as admin: {}", e.getMessage());
+            logger.error("Error deleting profile: {}", e.getMessage());
             return ResponseEntity.badRequest().body("Error al eliminar perfil: " + e.getMessage());
         }
     }
 
-    // ============= ENDPOINTS PARA AUTO-EDICIÓN/ELIMINACIÓN (GDPR) =============
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @PutMapping("/user/profile/me")
+    // ============= ENDPOINTS PARA AUTO-GESTIÓN (GDPR) =============
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PutMapping("/me")
     public ResponseEntity<ProfileDTO> updateSelfProfile(@RequestBody ProfileDTO profileDTO) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -236,8 +246,8 @@ public class ProfileController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @DeleteMapping("/user/profile/me")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @DeleteMapping("/me")
     public ResponseEntity<String> deleteSelfAccount() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
