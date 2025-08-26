@@ -275,6 +275,276 @@ class ModerationSystemTest {
 
 ---
 
+## **FASE 6: CONFIGURACIÓN DE LOGIN SOCIAL (FACEBOOK Y GOOGLE)**
+*Tiempo estimado: 30-35 minutos*
+
+### 🎯 **Objetivo:** Implementar autenticación con redes sociales
+
+#### **6.1 Configuración OAuth2 en application.yml** *(8-10 min)*
+**Archivo:** `src/main/resources/application.yml`
+
+```yaml
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
+            scope:
+              - email
+              - public_profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+            
+          facebook:
+            authorization-uri: https://www.facebook.com/v18.0/dialog/oauth
+            token-uri: https://graph.facebook.com/v18.0/oauth/access_token
+            user-info-uri: https://graph.facebook.com/v18.0/me?fields=id,name,email,picture
+            user-name-attribute: id
+```
+
+#### **6.2 Configurar SecurityConfig** *(8-10 min)*
+**Archivo:** `src/main/java/de/stella/agora_web/security/SecurityConfig.java`
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Autowired
+    private OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/login", "/oauth2/**", "/login/oauth2/**").permitAll()
+                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .loginPage("/login")
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(oauth2UserService)
+                )
+                .successHandler(new OAuth2AuthenticationSuccessHandler())
+                .failureHandler(new OAuth2AuthenticationFailureHandler())
+            )
+            .jwt(jwt -> jwt.jwtDecoder(jwtDecoder()));
+            
+        return http.build();
+    }
+}
+```
+
+#### **6.3 Implementar CustomOAuth2UserService** *(10-12 min)*
+**Archivo:** `src/main/java/de/stella/agora_web/auth/service/CustomOAuth2UserService.java`
+
+```java
+@Service
+public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private ProfileRepository profileRepository;
+    
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Override
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
+        OAuth2User oauth2User = delegate.loadUser(userRequest);
+
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        String userNameAttributeName = userRequest.getClientRegistration()
+                .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
+
+        return processOAuth2User(userRequest, oauth2User, registrationId);
+    }
+
+    private OAuth2User processOAuth2User(OAuth2UserRequest userRequest, 
+                                       OAuth2User oauth2User, 
+                                       String registrationId) {
+        
+        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, oauth2User.getAttributes());
+        
+        if (userInfo.getEmail() == null || userInfo.getEmail().isEmpty()) {
+            throw new OAuth2AuthenticationException("Email not found from OAuth2 provider");
+        }
+
+        Optional<User> userOptional = userRepository.findByEmail(userInfo.getEmail());
+        User user;
+        
+        if (userOptional.isPresent()) {
+            user = userOptional.get();
+            user = updateExistingUser(user, userInfo);
+        } else {
+            user = registerNewUser(userRequest, userInfo);
+        }
+
+        return new SecurityUser(user, oauth2User.getAttributes());
+    }
+
+    private User registerNewUser(OAuth2UserRequest userRequest, OAuth2UserInfo userInfo) {
+        User user = new User();
+        user.setUsername(generateUniqueUsername(userInfo.getName()));
+        user.setEmail(userInfo.getEmail());
+        user.setPassword(""); // OAuth users don't need password
+        user.setAcceptedRules(true);
+        
+        // Asignar rol USER por defecto
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("Role not found: ROLE_USER"));
+        user.getRoles().add(userRole);
+        
+        user = userRepository.save(user);
+
+        // Crear perfil asociado
+        Profile profile = new Profile();
+        profile.setId(user.getId()); // Misma ID que el usuario
+        profile.setFirstName(userInfo.getName());
+        profile.setEmail(userInfo.getEmail());
+        profile.setUsername(user.getUsername());
+        profile.setUser(user);
+        
+        profileRepository.save(profile);
+
+        return user;
+    }
+
+    private User updateExistingUser(User existingUser, OAuth2UserInfo userInfo) {
+        existingUser.setUsername(userInfo.getName());
+        return userRepository.save(existingUser);
+    }
+
+    private String generateUniqueUsername(String name) {
+        String baseUsername = name.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        String username = baseUsername;
+        int counter = 1;
+        
+        while (userRepository.findByUsername(username).isPresent()) {
+            username = baseUsername + counter;
+            counter++;
+        }
+        
+        return username;
+    }
+}
+```
+
+#### **6.4 Crear OAuth2UserInfo Factory** *(4-5 min)*
+**Archivo:** `src/main/java/de/stella/agora_web/auth/oauth2/OAuth2UserInfoFactory.java`
+
+```java
+public class OAuth2UserInfoFactory {
+    
+    public static OAuth2UserInfo getOAuth2UserInfo(String registrationId, Map<String, Object> attributes) {
+        switch (registrationId.toLowerCase()) {
+            case "google":
+                return new GoogleOAuth2UserInfo(attributes);
+            case "facebook":
+                return new FacebookOAuth2UserInfo(attributes);
+            default:
+                throw new OAuth2AuthenticationException("Sorry! Login with " + registrationId + " is not supported yet.");
+        }
+    }
+}
+
+// Interfaces y implementaciones
+public abstract class OAuth2UserInfo {
+    protected Map<String, Object> attributes;
+
+    public OAuth2UserInfo(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
+    public abstract String getId();
+    public abstract String getName();
+    public abstract String getEmail();
+    public abstract String getImageUrl();
+}
+
+public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
+    public GoogleOAuth2UserInfo(Map<String, Object> attributes) {
+        super(attributes);
+    }
+
+    @Override
+    public String getId() {
+        return (String) attributes.get("sub");
+    }
+
+    @Override
+    public String getName() {
+        return (String) attributes.get("name");
+    }
+
+    @Override
+    public String getEmail() {
+        return (String) attributes.get("email");
+    }
+
+    @Override
+    public String getImageUrl() {
+        return (String) attributes.get("picture");
+    }
+}
+
+public class FacebookOAuth2UserInfo extends OAuth2UserInfo {
+    public FacebookOAuth2UserInfo(Map<String, Object> attributes) {
+        super(attributes);
+    }
+
+    @Override
+    public String getId() {
+        return (String) attributes.get("id");
+    }
+
+    @Override
+    public String getName() {
+        return (String) attributes.get("name");
+    }
+
+    @Override
+    public String getEmail() {
+        return (String) attributes.get("email");
+    }
+
+    @Override
+    public String getImageUrl() {
+        Map<String, Object> picture = (Map<String, Object>) attributes.get("picture");
+        if (picture != null) {
+            Map<String, Object> data = (Map<String, Object>) picture.get("data");
+            if (data != null) {
+                return (String) data.get("url");
+            }
+        }
+        return null;
+    }
+}
+```
+
+---
+
 ## 🔧 **OPTIMIZACIONES Y REFACTORIZACIONES**
 
 ### **Mejoras de Performance**
@@ -305,6 +575,32 @@ class ModerationSystemTest {
 - Kafka topics configurados
 - Base de datos con tablas de violaciones
 - Roles de administrador configurados
+- **🆕 Credenciales OAuth2:**
+  - **Google Cloud Console:** Crear proyecto y obtener CLIENT_ID/CLIENT_SECRET
+  - **Facebook Developers:** Crear app y configurar Login con Facebook
+  - **Variables de entorno:** GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, FACEBOOK_CLIENT_ID, FACEBOOK_CLIENT_SECRET
+
+### **🆕 Pasos para Configurar OAuth2:**
+```bash
+# 1. Google Cloud Console
+# - Ir a https://console.cloud.google.com/
+# - Crear nuevo proyecto o usar existente
+# - Habilitar Google+ API
+# - Crear credenciales OAuth 2.0
+# - Agregar redirect URI: http://localhost:8080/login/oauth2/code/google
+
+# 2. Facebook Developers
+# - Ir a https://developers.facebook.com/
+# - Crear nueva app
+# - Configurar Facebook Login
+# - Agregar redirect URI: http://localhost:8080/login/oauth2/code/facebook
+
+# 3. Variables de entorno (application.yml o .env)
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+FACEBOOK_CLIENT_ID=your-facebook-app-id
+FACEBOOK_CLIENT_SECRET=your-facebook-app-secret
+```
 
 ### **Puntos de Atención:**
 - **Performance:** La moderación añade latencia a creación de contenido
@@ -333,7 +629,9 @@ mysql -u root -p -e "SELECT * FROM user_violations ORDER BY violation_date DESC 
 ---
 
 **📅 PRÓXIMA SESIÓN:** Comenzar con FASE 1.2 - Implementar moderación en replies  
-**⏱️ TIEMPO TOTAL ESTIMADO:** 95-120 minutos distribuidos en 5 fases
+**⏱️ TIEMPO TOTAL ESTIMADO:** 125-155 minutos distribuidos en 6 fases
+- **Moderación:** 95-120 minutos (Fases 1-5)
+- **🆕 Login Social:** 30-35 minutos (Fase 6)
 
 ---
 
