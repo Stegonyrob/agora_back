@@ -20,6 +20,7 @@ import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.comment.service.ICommentService;
 import de.stella.agora_web.comment.service.IMessageQueueService;
+import de.stella.agora_web.moderation.service.IModerationService;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.tags.model.Tag;
@@ -44,6 +45,9 @@ public class CommentServiceImpl implements ICommentService {
     private CommentKafkaProducer kafkaProducer;
     @Autowired
     private ITagService tagService;
+
+    @Autowired
+    private IModerationService moderationService;
 
     @Override
     public List<Comment> getCommentsByPostId(Long postId) {
@@ -72,6 +76,13 @@ public class CommentServiceImpl implements ICommentService {
 
             // Inicializar archived a false
             newComment.setArchived(false);
+
+            // ✅ MODERACIÓN: Verificar contenido inapropiado ANTES de guardar
+            var censuredComment = moderationService.moderateComment(newComment);
+            if (censuredComment != null) {
+                // El comentario fue censured por contenido inapropiado
+                throw new IllegalArgumentException("Comentario rechazado por contener contenido inapropiado");
+            }
 
             // Tags
             List<Tag> tags = new ArrayList<>();

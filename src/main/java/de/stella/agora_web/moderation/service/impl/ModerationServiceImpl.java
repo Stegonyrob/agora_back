@@ -20,10 +20,15 @@ public class ModerationServiceImpl implements IModerationService {
 
     @Override
     public CensuredComment moderateComment(Comment comment) {
+        String message = comment.getMessage().toLowerCase();
+
+        // Verificar análisis de sentimientos
         String sentiment = sentimentAnalysisService.analyzeComment(comment.getMessage());
-        if (isOffensive(sentiment)) {
+
+        // Verificar palabras ofensivas específicas
+        if (isOffensive(sentiment) || containsOffensiveWords(message)) {
             CensuredComment censuredComment = new CensuredComment(comment.getId(), comment.getUser(),
-                    "Comentario ofensivo");
+                    "Comentario ofensivo detectado");
             censuredCommentRepository.save(censuredComment);
             return censuredComment;
         }
@@ -32,5 +37,22 @@ public class ModerationServiceImpl implements IModerationService {
 
     private boolean isOffensive(String sentiment) {
         return "offensive".equals(sentiment); // Simplificado para el ejemplo
+    }
+
+    private boolean containsOffensiveWords(String message) {
+        // Lista de palabras ofensivas en español
+        String[] offensiveWords = {
+            "estúpido", "estupido", "tonto", "idiota", "imbécil", "imbecil",
+            "pendejo", "gilipollas", "cabron", "cabrón", "hijo de puta",
+            "jodete", "jódete", "vete a la mierda", "que te jodan",
+            "maricón", "maricon", "gay" // como insulto
+        };
+
+        for (String offensiveWord : offensiveWords) {
+            if (message.contains(offensiveWord)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
