@@ -21,7 +21,4 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
     List<Reply> findByUserId(Long userId);
 
-    List<Reply> findByTags_Name(String tagName);
-
-    List<Reply> findAllByTagsName(String tagName);
 }

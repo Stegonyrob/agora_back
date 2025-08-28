@@ -1,18 +1,20 @@
 package de.stella.agora_web.replies.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.comment.repository.CommentRepository;
+import de.stella.agora_web.moderation.service.IModerationService;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.kafka.component.producer.ReplyKafkaProducer;
 import de.stella.agora_web.replies.kafka.dto.ReplyNotificationDTO;
+import de.stella.agora_web.replies.model.ModeratableReply;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.repository.ReplyRepository;
 import de.stella.agora_web.replies.service.IReplyService;
-import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.repository.UserRepository;
 
@@ -28,11 +30,11 @@ public class ReplyServiceImpl implements IReplyService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private ITagService tagService;
-
     @Autowired // Siempre disponible (real o dummy según kafka.enabled)
     private ReplyKafkaProducer kafkaProducer;
+
+    @Autowired
+    private IModerationService moderationService;
 
     @Override
     public List<Reply> getAllReplies() {
@@ -47,26 +49,27 @@ public class ReplyServiceImpl implements IReplyService {
     @Override
     public Reply createReply(ReplyDTO replyDTO, User user) {
         Reply reply = new Reply();
-
         reply.setMessage(replyDTO.getMessage());
-
-        // Si el DTO trae fecha, úsala; si no, pon la actual
         if (replyDTO.getCreationDate() != null) {
             reply.setCreationDate(replyDTO.getCreationDate());
         } else {
-            reply.setCreationDate(java.time.LocalDateTime.now());
+            reply.setCreationDate(LocalDateTime.now());
         }
-
-        // Siempre marca como no archivado al crear
         reply.setArchived(false);
-
-        reply.setUser(userRepository.findById(replyDTO.getUserId()).orElse(null));
+        User replyUser = userRepository.findById(replyDTO.getUserId()).orElse(null);
+        reply.setUser(replyUser);
         reply.setComment(commentRepository.findById(replyDTO.getCommentId()).orElse(null));
 
-        // Guardar la respuesta
+        // --- MODERACIÓN: Verificar contenido inapropiado antes de guardar ---
+        ModeratableReply moderatableReply = new ModeratableReply(reply.getMessage(), replyUser);
+        var censured = moderationService.moderateComment(moderatableReply);
+        if (censured != null) {
+            throw new IllegalArgumentException("Respuesta rechazada por contenido inapropiado");
+        }
+        // --- FIN MODERACIÓN ---
+
         Reply savedReply = replyRepository.save(reply);
 
-        // Enviar notificación Kafka - Siempre disponible (dummy si kafka está deshabilitado)
         ReplyNotificationDTO notification = new ReplyNotificationDTO();
         notification.setReplyId(savedReply.getId());
         notification.setCommentId(savedReply.getComment().getId());
@@ -83,7 +86,7 @@ public class ReplyServiceImpl implements IReplyService {
         Reply existingReply = replyRepository.findById(id).orElse(null);
         if (existingReply != null) {
             existingReply.setMessage(replyDTO.getMessage());
-            existingReply.getTags().clear();
+
             return replyRepository.save(existingReply);
         }
 
@@ -103,11 +106,6 @@ public class ReplyServiceImpl implements IReplyService {
     @Override
     public List<Reply> getRepliesByUserId(Long userId) {
         return replyRepository.findByUserId(userId);
-    }
-
-    @Override
-    public List<Reply> getRepliesByTagName(String tagName) {
-        return replyRepository.findAllByTagsName(tagName);
     }
 
     @Override

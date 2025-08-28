@@ -3,9 +3,9 @@ package de.stella.agora_web.comment.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import de.stella.agora_web.moderation.model.ModeratableContent;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.replies.model.Reply;
-import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.user.model.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -15,8 +15,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -29,7 +27,17 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "comments")
-public class Comment {
+public class Comment implements ModeratableContent {
+
+    @Override
+    public String getMessage() {
+        return this.message;
+    }
+
+    @Override
+    public User getUser() {
+        return this.user;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,10 +66,6 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
-    @ManyToMany
-    @JoinTable(name = "comment_tags", joinColumns = @JoinColumn(name = "comment_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<Tag> tags;
 
     public Comment() {
     }

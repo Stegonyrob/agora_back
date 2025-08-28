@@ -1,11 +1,9 @@
 package de.stella.agora_web.replies.model;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.posts.model.Post;
-import de.stella.agora_web.tags.model.Tag;
 import de.stella.agora_web.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,8 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -44,10 +40,6 @@ public class Reply {
     @Column(name = "archived")
     private Boolean archived;
 
-    @ManyToMany
-    @JoinTable(name = "reply_tags", joinColumns = @JoinColumn(name = "reply_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<Tag> tags;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -75,10 +67,6 @@ public class Reply {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
     }
 
     public void setComment(Comment comment) {

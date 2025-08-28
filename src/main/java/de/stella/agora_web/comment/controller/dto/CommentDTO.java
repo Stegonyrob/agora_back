@@ -1,7 +1,6 @@
 package de.stella.agora_web.comment.controller.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -19,9 +18,4 @@ public class CommentDTO {
     private LocalDateTime creationDate;
     private Long postId;
     private Long userId;
-    private List<String> tags;
-
-    public String[] getTags() {
-        return tags == null ? new String[0] : tags.toArray(String[]::new);
-    }
 }

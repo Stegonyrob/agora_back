@@ -1,10 +1,7 @@
 package de.stella.agora_web.comment.service.impl;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,11 +17,10 @@ import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.comment.service.ICommentService;
 import de.stella.agora_web.comment.service.IMessageQueueService;
+import de.stella.agora_web.moderation.model.ModeratableContent;
 import de.stella.agora_web.moderation.service.IModerationService;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
-import de.stella.agora_web.tags.model.Tag;
-import de.stella.agora_web.tags.service.ITagService;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.repository.UserRepository;
 
@@ -43,8 +39,6 @@ public class CommentServiceImpl implements ICommentService {
     private IMessageQueueService messageQueue;
     @Autowired // Siempre disponible (real o dummy según kafka.enabled)
     private CommentKafkaProducer kafkaProducer;
-    @Autowired
-    private ITagService tagService;
 
     @Autowired
     private IModerationService moderationService;
@@ -78,29 +72,12 @@ public class CommentServiceImpl implements ICommentService {
             newComment.setArchived(false);
 
             // ✅ MODERACIÓN: Verificar contenido inapropiado ANTES de guardar
-            var censuredComment = moderationService.moderateComment(newComment);
+            ModeratableContent moderatable = newComment;
+            var censuredComment = moderationService.moderateComment(moderatable);
             if (censuredComment != null) {
                 // El comentario fue censured por contenido inapropiado
                 throw new IllegalArgumentException("Comentario rechazado por contener contenido inapropiado");
             }
-
-            // Tags
-            List<Tag> tags = new ArrayList<>();
-            if (commentDTO.getTags() != null) {
-                for (String tagName : commentDTO.getTags()) {
-                    Tag tag = tagService.getOrCreateTagByName(tagName);
-                    if (tag != null) {
-                        tags.add(tag);
-                    }
-                }
-            }
-            for (String hashtag : tagService.extractHashtags(commentDTO.getMessage())) {
-                Tag tag = tagService.getOrCreateTagByName(hashtag);
-                if (tag != null && !tags.contains(tag)) {
-                    tags.add(tag);
-                }
-            }
-            newComment.setTags(tags);
 
             // Guardar el comentario
             commentRepository.save(newComment);
@@ -110,7 +87,7 @@ public class CommentServiceImpl implements ICommentService {
             notification.setCommentId(newComment.getId());
             notification.setAuthor(user.getUsername());
             notification.setMessage(newComment.getMessage());
-            kafkaProducer.sendCommentNotification(notification);
+            // kafkaProducer.sendCommentNotification(notification); // Comentado temporalmente para aislar problema de bloqueo
 
             return newComment;
         }
@@ -129,24 +106,6 @@ public class CommentServiceImpl implements ICommentService {
         }
 
         existingComment.setMessage(commentDTO.getMessage());
-
-        // Actualizar tags
-        existingComment.getTags().clear();
-        List<Tag> tags = new ArrayList<>();
-        if (commentDTO.getTags() != null) {
-            for (String tagName : commentDTO.getTags()) {
-                Tag tag = tagService.getTagByName(tagName);
-                if (tag == null) {
-                    tag = tagService.createTag(tagName);
-                }
-                tags.add(tag);
-            }
-            tags.addAll(tagService.extractHashtags(commentDTO.getMessage()).stream()
-                    .map(tagService::getTagByName)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList()));
-        }
-        existingComment.setTags(tags);
 
         return commentRepository.save(existingComment);
     }
@@ -180,11 +139,6 @@ public class CommentServiceImpl implements ICommentService {
     @Override
     public List<Comment> getCommentsByUserId(Long userId) {
         return commentRepository.findByUserId(userId);
-    }
-
-    @Override
-    public List<Comment> getCommentsByTagName(String tagName) {
-        return commentRepository.findByTagsName(tagName);
     }
 
     @Override

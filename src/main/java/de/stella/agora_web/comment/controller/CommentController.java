@@ -42,7 +42,7 @@ public class CommentController {
     private UserRepository userRepository;
 
     @PostMapping("/comments/create")
-    public ResponseEntity<Comment> createComment(
+    public ResponseEntity<CommentWithRepliesDTO> createComment(
             @RequestBody CommentDTO commentDTO,
             @AuthenticationPrincipal de.stella.agora_web.security.SecurityUser principal) {
 
@@ -50,10 +50,17 @@ public class CommentController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        User user = principal.getUser(); // Accede directamente a tu entidad User
-
+        User user = principal.getUser();
         Comment comment = commentService.createComment(commentDTO, user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(comment);
+        // Construir el DTO seguro (sin replies al crear)
+        CommentWithRepliesDTO dto = new CommentWithRepliesDTO(
+                comment.getId(),
+                comment.getMessage(),
+                comment.getCreationDate(),
+                comment.getUser() != null ? comment.getUser().getId() : null,
+                List.of() // replies vacío al crear
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PutMapping("/comments/{id}")

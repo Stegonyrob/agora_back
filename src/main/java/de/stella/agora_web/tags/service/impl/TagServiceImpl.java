@@ -8,13 +8,11 @@ import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.events.model.Event;
 import de.stella.agora_web.events.repository.EventRepository;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
-import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.repository.ReplyRepository;
 import de.stella.agora_web.tags.dto.EventSummaryDTO;
 import de.stella.agora_web.tags.dto.PostSummaryDTO;
@@ -118,46 +116,6 @@ public class TagServiceImpl implements ITagService {
     }
 
     @Override
-    public void addTagToReply(Long replyId, String tagName) {
-        Reply reply = replyRepository.findById(replyId).orElse(null);
-        Tag tag = getOrCreateTagByName(tagName);
-        if (reply != null && tag != null) {
-            reply.getTags().add(tag);
-            replyRepository.save(reply);
-        }
-    }
-
-    @Override
-    public void removeTagFromReply(Long replyId, String tagName) {
-        Reply reply = replyRepository.findById(replyId).orElse(null);
-        Tag tag = getTagByName(tagName);
-        if (reply != null && tag != null) {
-            reply.getTags().remove(tag);
-            replyRepository.save(reply);
-        }
-    }
-
-    @Override
-    public void addTagToComment(Long commentId, String tagName) {
-        Comment comment = commentRepository.findById(commentId).orElse(null);
-        Tag tag = getOrCreateTagByName(tagName);
-        if (comment != null && tag != null) {
-            comment.getTags().add(tag);
-            commentRepository.save(comment);
-        }
-    }
-
-    @Override
-    public void removeTagFromComment(Long commentId, String tagName) {
-        Comment comment = commentRepository.findById(commentId).orElse(null);
-        Tag tag = getTagByName(tagName);
-        if (comment != null && tag != null) {
-            comment.getTags().remove(tag);
-            commentRepository.save(comment);
-        }
-    }
-
-    @Override
     public Tag createTag(String name) {
         Tag tag = new Tag();
         tag.setName(name);
@@ -179,42 +137,6 @@ public class TagServiceImpl implements ITagService {
         if (post != null && tag != null) {
             post.getTags().remove(tag);
             postRepository.save(post);
-        }
-    }
-
-    public void addTagToReply(Long replyId, Long tagId) {
-        Reply reply = replyRepository.findById(replyId).orElse(null);
-        Tag tag = tagRepository.findById(tagId).orElse(null);
-        if (reply != null && tag != null) {
-            reply.getTags().add(tag);
-            replyRepository.save(reply);
-        }
-    }
-
-    public void removeTagFromReply(Long replyId, Long tagId) {
-        Reply reply = replyRepository.findById(replyId).orElse(null);
-        Tag tag = tagRepository.findById(tagId).orElse(null);
-        if (reply != null && tag != null) {
-            reply.getTags().remove(tag);
-            replyRepository.save(reply);
-        }
-    }
-
-    public void addTagToComment(Long commentId, Long tagId) {
-        Comment comment = commentRepository.findById(commentId).orElse(null);
-        Tag tag = tagRepository.findById(tagId).orElse(null);
-        if (comment != null && tag != null) {
-            comment.getTags().add(tag);
-            commentRepository.save(comment);
-        }
-    }
-
-    public void removeTagFromComment(Long commentId, Long tagId) {
-        Comment comment = commentRepository.findById(commentId).orElse(null);
-        Tag tag = tagRepository.findById(tagId).orElse(null);
-        if (comment != null && tag != null) {
-            comment.getTags().remove(tag);
-            commentRepository.save(comment);
         }
     }
 

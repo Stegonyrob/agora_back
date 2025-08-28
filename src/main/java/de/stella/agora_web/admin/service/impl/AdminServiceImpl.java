@@ -3,6 +3,8 @@ package de.stella.agora_web.admin.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ import de.stella.agora_web.user.service.IUserService;
 
 @Service
 public class AdminServiceImpl implements IAdminService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
 
     private final IUserService userService;
     private final RoleRepository roleRepository;
@@ -47,6 +51,7 @@ public class AdminServiceImpl implements IAdminService {
 
     @Override
     public List<AdminUserDTO> getAllUsers() { // Renombrado a getAllAdmins para claridad
+        logger.debug("Obteniendo todos los usuarios administradores");
         return userService.getAll().stream()
                 .filter(User::isAdmin)
                 .map(this::toAdminUserDTO)
@@ -57,6 +62,7 @@ public class AdminServiceImpl implements IAdminService {
     public AdminUserDTO createAdmin(AdminUserDTO adminUserDTO) {
         Long userId = adminUserDTO.getProfile() != null ? adminUserDTO.getProfile().getUserId() : null;
         if (userId == null) {
+            logger.error("El AdminUserDTO debe contener un profile con userId");
             throw new IllegalArgumentException("El AdminUserDTO debe contener un profile con userId");
         }
         User user = userService.findById(userId).orElseThrow();
@@ -76,6 +82,7 @@ public class AdminServiceImpl implements IAdminService {
                 .filter(User::isAdmin)
                 .collect(Collectors.toList());
         if (admins.size() <= 1) {
+            logger.error("Intento de eliminar el último administrador");
             throw new IllegalStateException("Debe haber al menos un administrador.");
         }
 
@@ -102,6 +109,7 @@ public class AdminServiceImpl implements IAdminService {
                 .filter(User::isAdmin)
                 .collect(Collectors.toList());
         if (admins.size() <= 1) {
+            logger.error("Intento de degradar el último administrador");
             throw new IllegalStateException("Debe haber al menos un administrador.");
         }
 
@@ -161,6 +169,7 @@ public class AdminServiceImpl implements IAdminService {
     public String getAdminTotpSecret(Long id) {
         User user = userService.findById(id).orElseThrow();
         if (!user.isAdmin()) {
+            logger.error("El usuario con id {} no es admin", id);
             throw new IllegalArgumentException("El usuario no es admin");
         }
         // Se delega la lógica de seguridad al servicio TOTP
@@ -170,6 +179,7 @@ public class AdminServiceImpl implements IAdminService {
     public boolean validateAdminTotp(Long id, String code) {
         User user = userService.findById(id).orElseThrow();
         if (!user.isAdmin()) {
+            logger.error("El usuario con id {} no es admin", id);
             throw new IllegalArgumentException("El usuario no es admin");
         }
         String secret = user.getTotpSecret();
@@ -186,6 +196,7 @@ public class AdminServiceImpl implements IAdminService {
         Profile profile = user.getProfile();
         ProfileDTO profileDTO = null;
         if (profile != null) {
+            // Evitar recursión en serialización: ProfileDTO no debe contener referencias circulares
             profileDTO = ProfileController.toProfileDTO(profile);
         }
         boolean isAdmin = user.isAdmin();
@@ -209,6 +220,7 @@ public class AdminServiceImpl implements IAdminService {
     }
 
     public List<AdminUserDTO> getAllAdmins() {
+        logger.debug("Obteniendo todos los administradores");
         return userService.getAll().stream()
                 .filter(User::isAdmin)
                 .map(this::toAdminUserDTO)
@@ -218,6 +230,7 @@ public class AdminServiceImpl implements IAdminService {
     public AdminUserDTO getAdminById(Long id) {
         User user = userService.findById(id).orElseThrow();
         if (!user.isAdmin()) {
+            logger.error("El usuario con id {} no es administrador", id);
             throw new IllegalArgumentException("El usuario no es administrador");
         }
         return toAdminUserDTO(user);

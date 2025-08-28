@@ -57,15 +57,6 @@ public class ReplyController {
                 .toList();
     }
 
-    @GetMapping("/replies/tags/{tagName}")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public List<ReplyDTO> getRepliesByTagName(@PathVariable String tagName) {
-        return replyService.getRepliesByTagName(tagName)
-                .stream()
-                .map(ReplyDTO::fromEntity)
-                .toList();
-    }
-
     @GetMapping("/replies/user/{userId}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public List<ReplyDTO> getRepliesByUserId(@PathVariable Long userId) {

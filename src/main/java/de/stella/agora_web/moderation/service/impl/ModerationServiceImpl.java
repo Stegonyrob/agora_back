@@ -1,16 +1,20 @@
 package de.stella.agora_web.moderation.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.censured.model.CensuredComment;
 import de.stella.agora_web.censured.repository.CensuredCommentRepository;
-import de.stella.agora_web.comment.model.Comment;
+import de.stella.agora_web.moderation.model.ModeratableContent;
 import de.stella.agora_web.moderation.service.IModerationService;
 import de.stella.agora_web.moderation.service.ISentimentAnalysisService;
 
 @Service
 public class ModerationServiceImpl implements IModerationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ModerationServiceImpl.class);
 
     @Autowired
     private CensuredCommentRepository censuredCommentRepository;
@@ -19,16 +23,17 @@ public class ModerationServiceImpl implements IModerationService {
     private ISentimentAnalysisService sentimentAnalysisService;
 
     @Override
-    public CensuredComment moderateComment(Comment comment) {
-        String message = comment.getMessage().toLowerCase();
+    public CensuredComment moderateComment(ModeratableContent content) {
+        String message = content.getMessage().toLowerCase();
 
         // Verificar análisis de sentimientos
-        String sentiment = sentimentAnalysisService.analyzeComment(comment.getMessage());
+        String sentiment = sentimentAnalysisService.analyzeComment(content.getMessage());
 
         // Verificar palabras ofensivas específicas
         if (isOffensive(sentiment) || containsOffensiveWords(message)) {
-            CensuredComment censuredComment = new CensuredComment(comment.getId(), comment.getUser(),
-                    "Comentario ofensivo detectado");
+            logger.info("Mensaje rechazado por contenido inapropiado: '{}' (usuario: {})", content.getMessage(), content.getUser() != null ? content.getUser().getUsername() : "anon");
+            CensuredComment censuredComment = new CensuredComment(null, content.getUser(),
+                    "Contenido ofensivo detectado");
             censuredCommentRepository.save(censuredComment);
             return censuredComment;
         }

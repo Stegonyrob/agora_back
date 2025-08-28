@@ -25,8 +25,6 @@ public interface ICommentService {
 
     List<Comment> getCommentsByUserId(Long userId);
 
-    List<Comment> getCommentsByTagName(String tagName);
-
     Comment findById(Long commentId);
 
     Page<Comment> getCommentsByPostId(Long postId, Pageable pageable);

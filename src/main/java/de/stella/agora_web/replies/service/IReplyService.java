@@ -22,7 +22,5 @@ public interface IReplyService {
 
     List<Reply> getRepliesByUserId(Long userId);
 
-    List<Reply> getRepliesByTagName(String tagName);
-
     List<Reply> getRepliesByTagId(Long tagId);
 }

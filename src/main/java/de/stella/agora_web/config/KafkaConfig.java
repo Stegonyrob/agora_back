@@ -25,7 +25,15 @@ public class KafkaConfig {
         return new CommentKafkaProducer() {
             @Override
             public void sendCommentNotification(CommentNotificationDTO notification) {
-                kafkaTemplate.send("comments", notification);
+                java.util.concurrent.CompletableFuture<org.springframework.kafka.support.SendResult<String, CommentNotificationDTO>> future = kafkaTemplate.send("comments", notification);
+                future.thenAccept(result -> {
+                    org.slf4j.LoggerFactory.getLogger(CommentKafkaProducer.class)
+                            .info("Kafka async send OK: {}", notification);
+                }).exceptionally(ex -> {
+                    org.slf4j.LoggerFactory.getLogger(CommentKafkaProducer.class)
+                            .error("Kafka async send ERROR: {}", notification, ex);
+                    return null;
+                });
             }
         };
     }

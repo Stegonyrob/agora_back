@@ -33,14 +33,6 @@ public interface ITagService {
 
     void removeTagFromPost(Long postId, String tagName);
 
-    void addTagToReply(Long replyId, String tagName);
-
-    void removeTagFromReply(Long replyId, String tagName);
-
-    void addTagToComment(Long commentId, String tagName);
-
-    void removeTagFromComment(Long commentId, String tagName);
-
     // Métodos para gestionar tags de eventos
     void addTagToEvent(Long eventId, String tagName);
 
