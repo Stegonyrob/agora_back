@@ -1,6 +1,7 @@
 package de.stella.agora_web.events.service;
 
 public interface IEventLoveService {
+    void unloveEventAnonymously(Long eventId);
 
     void loveEvent(Long eventId, Long profileId);
 

@@ -36,6 +36,11 @@ import jakarta.validation.constraints.Size;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Table(name = "events")
 public class Event {
+    public void decrementAnonymousLoves() {
+        if (this.anonymousLoves > 0) {
+            this.anonymousLoves--;
+        }
+    }
 
     @Column(name = "anonymous_loves", nullable = false)
     private int anonymousLoves = 0;

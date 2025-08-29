@@ -19,6 +19,16 @@ public class EventLoveServiceImpl implements IEventLoveService {
 
     @Override
     @Transactional
+    public void unloveEventAnonymously(Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Evento no encontrado con ID: " + eventId));
+        event.decrementAnonymousLoves();
+        eventRepository.save(event);
+        log.info("Love anónimo eliminado del evento {}", eventId);
+    }
+
+    @Override
+    @Transactional
     public void loveEventAnonymously(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Evento no encontrado con ID: " + eventId));

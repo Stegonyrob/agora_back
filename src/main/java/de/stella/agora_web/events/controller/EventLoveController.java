@@ -26,6 +26,17 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class EventLoveController {
 
+    @PutMapping("/{eventId}/unlove-anon")
+    public ResponseEntity<Void> unloveEventAnonymously(@PathVariable Long eventId) {
+        try {
+            eventLoveService.unloveEventAnonymously(eventId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Error al quitar love anónimo al evento {}: {}", eventId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @PutMapping("/{eventId}/love-anon")
     public ResponseEntity<Void> loveEventAnonymously(@PathVariable Long eventId) {
         try {
