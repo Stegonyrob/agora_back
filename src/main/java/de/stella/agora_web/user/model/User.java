@@ -1,3 +1,4 @@
+// ...existing code...
 package de.stella.agora_web.user.model;
 
 import java.util.Collections;
@@ -36,6 +37,33 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "users")
 public class User {
+
+    // Estado de sanción
+    @Column(name = "sanction_status")
+    private SanctionStatus sanctionStatus = SanctionStatus.NONE;
+
+    // Tipo de sanción y fecha de expiración (si aplica)
+    @Column(name = "sanction_type")
+    private SanctionType sanctionType = SanctionType.NONE;
+
+    @Column(name = "sanction_expiration")
+    private java.time.LocalDateTime sanctionExpiration;
+// Enums para el estado y tipo de sanción
+
+    public enum SanctionStatus {
+        NONE,
+        WARNING,
+        SUSPENDED,
+        EXPELLED
+    }
+
+    public enum SanctionType {
+        NONE,
+        WARNING,
+        SUSPENSION_1WEEK,
+        SUSPENSION_1MONTH,
+        EXPELLED
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

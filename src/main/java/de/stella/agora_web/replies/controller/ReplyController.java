@@ -2,10 +2,13 @@ package de.stella.agora_web.replies.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,10 +21,13 @@ import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.service.IReplyService;
 import de.stella.agora_web.user.model.User;
+import de.stella.agora_web.user.model.User.SanctionStatus;
 
 @RestController
 @RequestMapping(path = "${api-endpoint}/any")
 public class ReplyController {
+
+    private static final Logger auditLogger = LoggerFactory.getLogger("AuditLogger");
 
     private final IReplyService replyService;
 
@@ -35,6 +41,16 @@ public class ReplyController {
             @RequestBody ReplyDTO replyDTO,
             @AuthenticationPrincipal User user
     ) {
+        if (user.getSanctionStatus() == SanctionStatus.EXPELLED) {
+            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó crear respuesta", user.getId());
+            auditLogger.warn(msg);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+        if (user.getSanctionStatus() == SanctionStatus.SUSPENDED) {
+            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó crear respuesta", user.getId());
+            auditLogger.warn(msg);
+            return ResponseEntity.status(HttpStatus.LOCKED).body(null);
+        }
         Reply reply = replyService.createReply(replyDTO, user);
         ReplyDTO responseDTO = ReplyDTO.fromEntity(reply);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
@@ -70,10 +86,41 @@ public class ReplyController {
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<ReplyDTO> update(
             @PathVariable Long id,
-            @RequestBody ReplyDTO replyDTO
+            @RequestBody ReplyDTO replyDTO,
+            @AuthenticationPrincipal User user
     ) {
+        if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
+            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó editar respuesta %d", user.getId(), id);
+            auditLogger.warn(msg);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+        if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
+            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó editar respuesta %d", user.getId(), id);
+            auditLogger.warn(msg);
+            return ResponseEntity.status(HttpStatus.LOCKED).body(null);
+        }
         Reply reply = replyService.updateReply(id, replyDTO);
         ReplyDTO dto = ReplyDTO.fromEntity(reply);
         return ResponseEntity.accepted().body(dto);
+    }
+
+    @DeleteMapping("/replies/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<Void> deleteReply(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user
+    ) {
+        if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
+            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó borrar respuesta %d", user.getId(), id);
+            auditLogger.warn(msg);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
+            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó borrar respuesta %d", user.getId(), id);
+            auditLogger.warn(msg);
+            return ResponseEntity.status(HttpStatus.LOCKED).build();
+        }
+        replyService.deleteReply(id);
+        return ResponseEntity.noContent().build();
     }
 }

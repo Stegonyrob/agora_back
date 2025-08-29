@@ -19,6 +19,7 @@ import de.stella.agora_web.profiles.service.IProfileService;
 import de.stella.agora_web.roles.model.Role;
 import de.stella.agora_web.security.SecurityUser;
 import de.stella.agora_web.user.model.User;
+import de.stella.agora_web.user.model.User.SanctionStatus;
 import de.stella.agora_web.user.service.IUserService;
 
 @Service
@@ -75,6 +76,11 @@ public class SocialAuthService {
         } else {
             // Crear nuevo usuario
             user = createUserFromSocialLogin(email, name, provider);
+        }
+
+        // Lógica de sanción: expulsados no pueden acceder, suspendidos pueden acceder pero no participar
+        if (user.getSanctionStatus() == SanctionStatus.EXPELLED) {
+            throw new RuntimeException("Usuario expulsado. Acceso denegado.");
         }
 
         // Crear autenticación

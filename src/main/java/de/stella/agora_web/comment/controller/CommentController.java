@@ -2,6 +2,8 @@ package de.stella.agora_web.comment.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,11 +27,14 @@ import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.service.IReplyService;
 import de.stella.agora_web.user.model.User;
+import de.stella.agora_web.user.model.User.SanctionStatus;
 import de.stella.agora_web.user.repository.UserRepository;
 
 @RestController
 @RequestMapping(path = "${api-endpoint}/")
 public class CommentController {
+
+    private static final Logger auditLogger = LoggerFactory.getLogger("AuditLogger");
 
     @Autowired
     private ICommentService commentService;
@@ -51,6 +56,16 @@ public class CommentController {
         }
 
         User user = principal.getUser();
+        if (user.getSanctionStatus() == SanctionStatus.EXPELLED) {
+            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó crear comentario", user.getId());
+            auditLogger.warn(msg);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+        if (user.getSanctionStatus() == SanctionStatus.SUSPENDED) {
+            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó crear comentario", user.getId());
+            auditLogger.warn(msg);
+            return ResponseEntity.status(HttpStatus.LOCKED).body(null);
+        }
         Comment comment = commentService.createComment(commentDTO, user);
         // Construir el DTO seguro (sin replies al crear)
         CommentWithRepliesDTO dto = new CommentWithRepliesDTO(
@@ -74,12 +89,21 @@ public class CommentController {
         }
 
         User user = principal.getUser();
+        if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
+            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó editar comentario %d", user.getId(), id);
+            auditLogger.warn(msg);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+        if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
+            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó editar comentario %d", user.getId(), id);
+            auditLogger.warn(msg);
+            return ResponseEntity.status(HttpStatus.LOCKED).body(null);
+        }
         Comment comment = commentService.getCommentById(id);
         // Solo el dueño o admin puede modificar
         if (!comment.getUser().getId().equals(user.getId()) && !principal.getRoles().contains("ROLE_ADMIN")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-
         Comment updated = commentService.updateComment(id, commentDTO, user);
         return ResponseEntity.accepted().body(updated);
     }
@@ -94,12 +118,21 @@ public class CommentController {
         }
 
         User user = principal.getUser();
+        if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
+            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó borrar comentario %d", user.getId(), id);
+            auditLogger.warn(msg);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
+            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó borrar comentario %d", user.getId(), id);
+            auditLogger.warn(msg);
+            return ResponseEntity.status(HttpStatus.LOCKED).build();
+        }
         Comment comment = commentService.getCommentById(id);
         // Solo el dueño o admin puede borrar
         if (!comment.getUser().getId().equals(user.getId()) && !principal.getRoles().contains("ROLE_ADMIN")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-
         commentService.deleteComment(id, user);
         return ResponseEntity.noContent().build();
     }

@@ -19,37 +19,37 @@ import lombok.Setter;
 @Table(name = "censured_comments")
 public class CensuredComment {
 
-  public CensuredComment(Long long1, Long userId) {
-  }
+    public CensuredComment(Long long1, Long userId) {
+    }
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @ManyToOne
-  @JoinColumn(name = "comment_id")
-  private Comment comment;
+    @ManyToOne
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id")
-  private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-  @Column(name = "reason")
-  private String reason;
+    @Column(name = "reason")
+    private String reason;
 
-  @Column(name = "notification_sent")
-  private Boolean notificationSent;
+    @Column(name = "notification_sent")
+    private Boolean notificationSent;
 
-  public CensuredComment() {
-  }
+    public CensuredComment() {
+    }
 
-  public CensuredComment(Long commentId, User user, String reason) {
-    this.id = commentId;
-    this.user = user;
-    this.reason = reason;
-  }
+    public CensuredComment(Long commentId, User user, String reason) {
+        this.id = commentId;
+        this.user = user;
+        this.reason = reason;
+    }
 
-  public Object getId() {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
+    public Long getId() {
+        return this.id;
+    }
 }

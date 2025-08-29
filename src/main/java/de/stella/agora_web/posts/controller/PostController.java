@@ -3,6 +3,7 @@ package de.stella.agora_web.posts.controller;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.controller.dto.PostResponseDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.service.IPostService;
+import de.stella.agora_web.profiles.repository.ProfileRepository;
 import de.stella.agora_web.tags.dto.PostSummaryDTO;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping(path = "${api-endpoint}/")
 public class PostController {
+
+    @Autowired
+    private ProfileRepository profileRepository;
 
     // ✅ CUMPLE SRP: Solo manejo de endpoints de posts
     private final IPostService postService;
@@ -113,60 +118,6 @@ public class PostController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(posts);
-    }
-
-    // --- NUEVOS ENDPOINTS PARA LOVES ---
-    // Marcar un post como favorito (love)
-    @PutMapping("/posts/{postId}/love")
-    public ResponseEntity<Void> lovePost(@PathVariable Long postId, @RequestParam Long userId) {
-        // ✅ CUMPLE SRP: Validaciones separadas en método helper
-        if (!isValidLoveRequest(postId, userId)) {
-            return ResponseEntity.badRequest().build();
-        }
-        try {
-            postService.lovePost(postId, userId);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    // Quitar favorito (unlove)
-    @PutMapping("/posts/{postId}/unlove")
-    public ResponseEntity<Void> unlovePost(@PathVariable Long postId, @RequestParam Long userId) {
-        // ✅ CUMPLE SRP: Reutilizar método helper de validación
-        if (!isValidLoveRequest(postId, userId)) {
-            return ResponseEntity.badRequest().build();
-        }
-        try {
-            postService.unlovePost(postId, userId);
-            return ResponseEntity.ok().build();
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    // Obtener el número de favoritos (loves) de un post
-    @GetMapping("/posts/{postId}/loves/count")
-    public ResponseEntity<Integer> getLoveCount(@PathVariable Long postId) {
-        try {
-            Integer count = postService.getLoveCount(postId);
-            return ResponseEntity.ok(count);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    // --- FIN ENDPOINTS LOVES ---
-    // ========== MÉTODOS HELPER PARA CUMPLIR SRP ==========
-    /**
-     * Valida los parámetros para operaciones de love/unlove. Separa la lógica
-     * de validación del endpoint.
-     */
-    private boolean isValidLoveRequest(Long postId, Long userId) {
-        return postId != null && userId != null && postId > 0 && userId > 0;
     }
 
     public static PostDTO toPostDTO(Post post) {

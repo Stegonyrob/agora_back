@@ -1,3 +1,4 @@
+// ...existing code...
 package de.stella.agora_web.events.model;
 
 import java.time.LocalDate;
@@ -35,6 +36,21 @@ import jakarta.validation.constraints.Size;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Table(name = "events")
 public class Event {
+
+    @Column(name = "anonymous_loves", nullable = false)
+    private int anonymousLoves = 0;
+
+    public int getAnonymousLoves() {
+        return anonymousLoves;
+    }
+
+    public void setAnonymousLoves(int anonymousLoves) {
+        this.anonymousLoves = anonymousLoves;
+    }
+
+    public void incrementAnonymousLoves() {
+        this.anonymousLoves++;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -97,8 +113,7 @@ public class Event {
         this.archived = archived;
         this.capacity = capacity;
         this.creationDate = LocalDateTime.now();
-        // Eliminada inicialización de eventDate
-    }
+        }
 
     // Getter y Setter para id
     public Long getId() {

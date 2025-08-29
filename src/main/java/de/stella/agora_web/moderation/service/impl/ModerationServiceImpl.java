@@ -1,5 +1,7 @@
 package de.stella.agora_web.moderation.service.impl;
 
+import java.time.LocalDateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,9 @@ import de.stella.agora_web.censured.repository.CensuredCommentRepository;
 import de.stella.agora_web.moderation.model.ModeratableContent;
 import de.stella.agora_web.moderation.service.IModerationService;
 import de.stella.agora_web.moderation.service.ISentimentAnalysisService;
+import de.stella.agora_web.violations.controller.dto.UserViolationDTO;
+import de.stella.agora_web.violations.model.ViolationType;
+import de.stella.agora_web.violations.service.IUserViolationService;
 
 @Service
 public class ModerationServiceImpl implements IModerationService {
@@ -21,6 +26,9 @@ public class ModerationServiceImpl implements IModerationService {
 
     @Autowired
     private ISentimentAnalysisService sentimentAnalysisService;
+
+    @Autowired
+    private IUserViolationService userViolationService;
 
     @Override
     public CensuredComment moderateComment(ModeratableContent content) {
@@ -35,6 +43,18 @@ public class ModerationServiceImpl implements IModerationService {
             CensuredComment censuredComment = new CensuredComment(null, content.getUser(),
                     "Contenido ofensivo detectado");
             censuredCommentRepository.save(censuredComment);
+
+            // Registrar violación si hay usuario
+            if (content.getUser() != null) {
+                UserViolationDTO violationDTO = new UserViolationDTO(
+                        null,
+                        content.getUser().getId(),
+                        ViolationType.OFFENSIVE_COMMENT,
+                        censuredComment.getId(),
+                        LocalDateTime.now()
+                );
+                userViolationService.registerViolation(violationDTO);
+            }
             return censuredComment;
         }
         return null;
