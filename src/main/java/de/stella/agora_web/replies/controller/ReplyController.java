@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.stella.agora_web.common.dto.SanctionInfoResponse;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.replies.service.IReplyService;
@@ -37,19 +38,29 @@ public class ReplyController {
 
     @PostMapping("/replies/create")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<ReplyDTO> createReply(
+    public ResponseEntity<Object> createReply(
             @RequestBody ReplyDTO replyDTO,
             @AuthenticationPrincipal User user
     ) {
         if (user.getSanctionStatus() == SanctionStatus.EXPELLED) {
             String msg = String.format("Intento bloqueado: usuario %d expulsado intentó crear respuesta", user.getId());
             auditLogger.warn(msg);
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes participar porque has sido expulsado. Contacta a soporte si crees que es un error."
+            );
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
         }
         if (user.getSanctionStatus() == SanctionStatus.SUSPENDED) {
             String msg = String.format("Intento bloqueado: usuario %d suspendido intentó crear respuesta", user.getId());
             auditLogger.warn(msg);
-            return ResponseEntity.status(HttpStatus.LOCKED).body(null);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes participar porque estás suspendido hasta la fecha indicada."
+            );
+            return ResponseEntity.status(HttpStatus.LOCKED).body(sanctionInfo);
         }
         Reply reply = replyService.createReply(replyDTO, user);
         ReplyDTO responseDTO = ReplyDTO.fromEntity(reply);
@@ -84,7 +95,7 @@ public class ReplyController {
 
     @PutMapping("/replies/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<ReplyDTO> update(
+    public ResponseEntity<Object> update(
             @PathVariable Long id,
             @RequestBody ReplyDTO replyDTO,
             @AuthenticationPrincipal User user
@@ -92,12 +103,22 @@ public class ReplyController {
         if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
             String msg = String.format("Intento bloqueado: usuario %d expulsado intentó editar respuesta %d", user.getId(), id);
             auditLogger.warn(msg);
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes editar respuestas porque has sido expulsado. Contacta a soporte si crees que es un error."
+            );
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
         }
         if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
             String msg = String.format("Intento bloqueado: usuario %d suspendido intentó editar respuesta %d", user.getId(), id);
             auditLogger.warn(msg);
-            return ResponseEntity.status(HttpStatus.LOCKED).body(null);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes editar respuestas porque estás suspendido hasta la fecha indicada."
+            );
+            return ResponseEntity.status(HttpStatus.LOCKED).body(sanctionInfo);
         }
         Reply reply = replyService.updateReply(id, replyDTO);
         ReplyDTO dto = ReplyDTO.fromEntity(reply);
@@ -106,19 +127,29 @@ public class ReplyController {
 
     @DeleteMapping("/replies/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<Void> deleteReply(
+    public ResponseEntity<Object> deleteReply(
             @PathVariable Long id,
             @AuthenticationPrincipal User user
     ) {
         if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
             String msg = String.format("Intento bloqueado: usuario %d expulsado intentó borrar respuesta %d", user.getId(), id);
             auditLogger.warn(msg);
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes borrar respuestas porque has sido expulsado. Contacta a soporte si crees que es un error."
+            );
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
         }
         if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
             String msg = String.format("Intento bloqueado: usuario %d suspendido intentó borrar respuesta %d", user.getId(), id);
             auditLogger.warn(msg);
-            return ResponseEntity.status(HttpStatus.LOCKED).build();
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes borrar respuestas porque estás suspendido hasta la fecha indicada."
+            );
+            return ResponseEntity.status(HttpStatus.LOCKED).body(sanctionInfo);
         }
         replyService.deleteReply(id);
         return ResponseEntity.noContent().build();
