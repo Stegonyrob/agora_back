@@ -11,6 +11,7 @@ import lombok.Setter;
 public class TextItemDTO {
 
     private Long id;
+    private String category;
 
     @NotBlank(message = "Image URL cannot be blank")
     @Size(max = 255, message = "Image URL must be less than 255 characters")
@@ -63,11 +64,14 @@ public class TextItemDTO {
 
     public static TextItemDTO fromEntity(TextItem entity) {
         TextItemDTO dto = new TextItemDTO();
-        // Assuming fields: id, title, content, etc.
         dto.setId(entity.getId());
+        dto.setCategory(entity.getCategory());
         dto.setTitle(entity.getTitle());
+        dto.setImage(entity.getImage());
+        dto.setNameImage(entity.getNameImage());
+        dto.setDescription(entity.getDescription());
         dto.setContent(entity.getContent());
-        // Add other field mappings as needed
         return dto;
     }
+    
 }

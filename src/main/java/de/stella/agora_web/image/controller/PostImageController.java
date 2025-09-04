@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import de.stella.agora_web.image.controller.dto.ImageIdListDTO;
 import de.stella.agora_web.image.controller.dto.PostImageDTO;
 import de.stella.agora_web.image.service.IPostImageService;
 import lombok.RequiredArgsConstructor;
@@ -145,7 +146,7 @@ public class PostImageController {
      */
     @DeleteMapping("/delete-multiple")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteMultiplePostImages(@RequestBody de.stella.agora_web.image.dtos.ImageIdListDTO dto) {
+    public ResponseEntity<Void> deleteMultiplePostImages(@RequestBody ImageIdListDTO dto) {
         try {
             postImageService.deleteMultiplePostImages(dto.getImageIds());
             return ResponseEntity.noContent().build();

@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 import de.stella.agora_web.texts.controller.dto.TextItemDTO;
 import de.stella.agora_web.texts.model.TextItem;
 import de.stella.agora_web.texts.repository.TextItemRepository;
-import de.stella.agora_web.texts.service.TextItemService;
+import de.stella.agora_web.texts.service.ITextItemService;
 
 @Service
-public class TextItemServiceImpl implements TextItemService {
+public class TextItemServiceImpl implements ITextItemService {
 
     @Autowired
     private TextItemRepository textItemRepository;
@@ -55,6 +55,7 @@ public class TextItemServiceImpl implements TextItemService {
     private TextItemDTO convertToDTO(TextItem textItem) {
         TextItemDTO dto = new TextItemDTO();
         dto.setId(textItem.getId());
+        dto.setCategory(textItem.getCategory());
         dto.setNameImage(textItem.getNameImage());
         dto.setTitle(textItem.getTitle());
         dto.setImage(textItem.getImage());
@@ -65,6 +66,7 @@ public class TextItemServiceImpl implements TextItemService {
     private TextItem convertToEntity(TextItemDTO dto) {
         TextItem textItem = new TextItem();
         textItem.setId(dto.getId());
+        textItem.setCategory(dto.getCategory());
         textItem.setImage(dto.getImage());
         textItem.setTitle(dto.getTitle());
         textItem.setNameImage(dto.getNameImage());

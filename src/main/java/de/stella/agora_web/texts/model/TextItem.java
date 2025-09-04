@@ -1,5 +1,7 @@
 package de.stella.agora_web.texts.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,6 +26,9 @@ public class TextItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "category", nullable = false, length = 64)
+    private String category;
+
     @Column(name = "title", nullable = false, length = 255)
     private String title;
 
@@ -38,6 +43,9 @@ public class TextItem {
     @NotBlank(message = "Description cannot be blank")
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public String getContent() {
         return description;

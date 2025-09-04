@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import de.stella.agora_web.image.controller.dto.EventImageDTO;
+import de.stella.agora_web.image.controller.dto.ImageIdListDTO;
 import de.stella.agora_web.image.service.IEventImageService;
 import lombok.RequiredArgsConstructor;
 
@@ -81,7 +82,7 @@ public class EventImageController {
     // ✅ ENDPOINT PARA ELIMINAR MÚLTIPLES IMÁGENES
     @DeleteMapping("/delete-multiple")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<Void> deleteMultipleEventImages(@RequestBody de.stella.agora_web.image.dtos.ImageIdListDTO dto) {
+    public ResponseEntity<Void> deleteMultipleEventImages(@RequestBody ImageIdListDTO dto) {
 
         try {
             eventImageService.deleteMultipleEventImages(dto.getImageIds());
