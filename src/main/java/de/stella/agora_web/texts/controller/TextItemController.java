@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.stella.agora_web.image.service.ITextImageService;
 import de.stella.agora_web.texts.controller.dto.TextItemDTO;
 import de.stella.agora_web.texts.service.ITextItemService;
+import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"})
@@ -29,8 +31,14 @@ public class TextItemController {
     @Autowired
     private ITextItemService textItemService;
 
+    @Autowired
+    private ITextImageService textImageService;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TextItemController.class);
 
+    /**
+     * Obtiene todos los textos (público).
+     */
     @GetMapping
     public List<TextItemDTO> getAllTexts() {
         LOGGER.info("Retrieving all texts");
@@ -39,28 +47,75 @@ public class TextItemController {
         return allTexts;
     }
 
+    /**
+     * Obtiene un texto por ID (público).
+     */
     @GetMapping("/{id}")
     public ResponseEntity<TextItemDTO> getTextById(@PathVariable Long id) {
-        return ResponseEntity.ok(textItemService.getTextById(id));
+        try {
+            TextItemDTO dto = textItemService.getTextById(id);
+            return ResponseEntity.ok(dto);
+        } catch (RuntimeException e) {
+            LOGGER.warn("Text not found with id {}: {}", id, e.getMessage());
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            LOGGER.error("Error retrieving text with id {}: {}", id, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
+    /**
+     * Crea un nuevo texto (solo ADMIN).
+     */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TextItemDTO> createText(@RequestBody TextItemDTO textItemDTO) {
-        return ResponseEntity.ok(textItemService.createText(textItemDTO));
+    public ResponseEntity<TextItemDTO> createText(@Valid @RequestBody TextItemDTO textItemDTO) {
+        try {
+            TextItemDTO created = textItemService.createText(textItemDTO);
+            LOGGER.info("Text created with id {}", created.getId());
+            return ResponseEntity.ok(created);
+        } catch (Exception e) {
+            LOGGER.error("Error creating text: {}", e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
+    /**
+     * Actualiza un texto existente (solo ADMIN).
+     *
+     */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TextItemDTO> updateText(@PathVariable Long id, @RequestBody TextItemDTO dto) {
-        TextItemDTO updated = textItemService.updateText(id, dto);
-        return ResponseEntity.ok(updated);
+    public ResponseEntity<TextItemDTO> updateText(@PathVariable Long id, @Valid @RequestBody TextItemDTO dto) {
+        try {
+            TextItemDTO updated = textItemService.updateText(id, dto);
+            LOGGER.info("Text updated with id {}", updated.getId());
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            LOGGER.warn("Text not found for update with id {}: {}", id, e.getMessage());
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            LOGGER.error("Error updating text with id {}: {}", id, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
+    /**
+     * Elimina un texto (solo ADMIN).
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteText(@PathVariable Long id) {
-        textItemService.deleteText(id);
-        return ResponseEntity.noContent().build();
+        try {
+            textItemService.deleteText(id);
+            LOGGER.info("Text deleted with id {}", id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            LOGGER.warn("Text not found for delete with id {}: {}", id, e.getMessage());
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            LOGGER.error("Error deleting text with id {}: {}", id, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

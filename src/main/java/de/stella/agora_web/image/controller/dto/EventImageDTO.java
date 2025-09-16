@@ -12,8 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class EventImageDTO {
+
     private Long id;
     private String imageName;
-    private byte[] imageData;
+    private String imagePath;
     private Long eventId;
 }

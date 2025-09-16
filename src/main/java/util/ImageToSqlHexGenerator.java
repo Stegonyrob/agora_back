@@ -20,7 +20,7 @@ public class ImageToSqlHexGenerator {
     private static final String IMAGE_DIR = "D:/GITHUB/ÁGORA/Proyecto Personal/agora_frontend/public/images/img";
     private static final String OPTIMIZED_DIR = IMAGE_DIR + "/img_optimizada";
     private static final String OUTPUT_SQL = "D:/GITHUB/ÁGORA/Proyecto Personal/agora_back/src/main/resources/insert_images.sql";
-    private static final int EVENT_ID = 1; // Cambia según tu lógica
+    private static final int TEXT_ID = 1; // Cambia según tu lógica
     private static final long MIN_SIZE = 1000; // bytes
     private static final long MAX_SIZE = 500_000; // 500 KB
 
@@ -36,7 +36,7 @@ public class ImageToSqlHexGenerator {
                 outDir.mkdirs();
             }
             StringBuilder sql = new StringBuilder();
-            sql.append("INSERT INTO event_images (image_name, image_data, event_id) VALUES\n");
+            sql.append("INSERT INTO text_images (text_id, image_data) VALUES\n");
             boolean first = true;
             int count = 0;
             for (File file : dir.listFiles()) {
@@ -50,6 +50,8 @@ public class ImageToSqlHexGenerator {
                 File optimized = new File(outDir, file.getName());
                 long size = file.length();
                 byte[] data;
+                boolean needsValidation = false;
+
                 if (size > MAX_SIZE) {
                     // Intentar comprimir la imagen
                     data = compressImage(file, optimized, MAX_SIZE);
@@ -58,20 +60,25 @@ public class ImageToSqlHexGenerator {
                         continue;
                     }
                     System.out.printf("[INFO] %s fue comprimida a %d bytes.\n", file.getName(), data.length);
+                    needsValidation = true; // Solo validar imágenes comprimidas
                 } else {
-                    // Copiar imagen tal cual si está en rango
+                    // Copiar imagen tal cual si está en rango (≤ 5MB)
                     Files.copy(file.toPath(), optimized.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                     data = Files.readAllBytes(optimized.toPath());
+                    System.out.printf("[INFO] %s usada sin comprimir (%d bytes).\n", file.getName(), data.length);
+                    // No necesita validación adicional porque ya cumple ser ≤ 5MB
                 }
-                if (data.length < MIN_SIZE || data.length > MAX_SIZE) {
-                    System.out.printf("[ADVERTENCIA] %s tamaño %d bytes fuera de rango tras optimizar. No se incluirá en el SQL.\n", file.getName(), data.length);
+
+                // Solo validar rango para imágenes que fueron comprimidas
+                if (needsValidation && (data.length < MIN_SIZE || data.length > MAX_SIZE)) {
+                    System.out.printf("[ADVERTENCIA] %s tamaño %d bytes fuera de rango tras comprimir. No se incluirá en el SQL.\n", file.getName(), data.length);
                     continue;
                 }
                 String hex = bytesToHex(data);
                 if (!first) {
                     sql.append(",\n");
                 }
-                sql.append(String.format("  ('%s', UNHEX('%s'), %d)", file.getName(), hex, EVENT_ID));
+                sql.append(String.format("  ('%s', UNHEX('%s'), %d)", file.getName(), hex, TEXT_ID));
                 first = false;
                 count++;
             }

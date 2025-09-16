@@ -1,6 +1,9 @@
 package de.stella.agora_web.texts.controller.dto;
 
-import de.stella.agora_web.texts.model.TextItem;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import de.stella.agora_web.image.controller.dto.TextImageDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -11,67 +14,25 @@ import lombok.Setter;
 public class TextItemDTO {
 
     private Long id;
+
+    @NotBlank(message = "Category cannot be blank")
+    @Size(max = 64, message = "Category must be less than 64 characters")
     private String category;
 
-    @NotBlank(message = "Image URL cannot be blank")
-    @Size(max = 255, message = "Image URL must be less than 255 characters")
-    private String image;
-
-    @NotBlank(message = "Name to image cannot be blank")
-    @Size(max = 255, message = "Name to image must be less than 255 characters")
-    private String nameImage;
-
-    @Size(max = 255, message = "Name must be less than 255 characters")
+    @NotBlank(message = "Title cannot be blank")
+    @Size(max = 255, message = "Title must be less than 255 characters")
     private String title;
 
-    @NotBlank(message = "Description cannot be blank")
-    @Size(max = 1000, message = "Description must be less than 1000 characters")
-    private String description;
+    @NotBlank(message = "Message cannot be blank")
+    @Size(max = 2000, message = "Message must be less than 2000 characters")
+    private String message;
 
-    @Size(max = 2000, message = "Content must be less than 2000 characters")
-    private String content;
+    /**
+     * Lista de imágenes asociadas al texto (OPCIONAL - se obtiene por separado para eficiencia).
+     * Patrón consistente con Posts y Events: imágenes separadas del JSON principal.
+     */
+    private List<TextImageDTO> images;
 
-    public String getNameImage;
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public static TextItemDTO fromEntity(TextItem entity) {
-        TextItemDTO dto = new TextItemDTO();
-        dto.setId(entity.getId());
-        dto.setCategory(entity.getCategory());
-        dto.setTitle(entity.getTitle());
-        dto.setImage(entity.getImage());
-        dto.setNameImage(entity.getNameImage());
-        dto.setDescription(entity.getDescription());
-        dto.setContent(entity.getContent());
-        return dto;
-    }
-    
+    // Fecha de creación solo informativa, la asigna el backend
+    private LocalDateTime createdAt;
 }

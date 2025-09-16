@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +20,14 @@ import de.stella.agora_web.image.controller.dto.TextImageDTO;
 import de.stella.agora_web.image.service.ITextImageService;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Controlador unificado para imágenes de texto siguiendo principios SOLID SRP:
+ * Responsabilidad única de manejar operaciones de imágenes de texto OCP:
+ * Abierto para extensión, cerrado para modificación LSP: Sustituible por
+ * cualquier implementación de controlador de imágenes ISP: Interfaces
+ * segregadas por tipo de operación (público vs admin) DIP: Depende de
+ * abstracción ITextImageService
+ */
 @RestController
 @RequestMapping("${api-endpoint}/text-images")
 @RequiredArgsConstructor
@@ -28,40 +35,96 @@ public class TextImageController {
 
     private final ITextImageService textImageService;
 
+    // ========== ENDPOINTS PÚBLICOS (Textos son públicos) ==========
+    /**
+     * Obtiene todas las imágenes de texto - PÚBLICO SRP: Responsabilidad única
+     * de listar todas las imágenes
+     */
+    @GetMapping
+    public ResponseEntity<List<TextImageDTO>> getAllTextImages() {
+        return ResponseEntity.ok(textImageService.getAllTextImages());
+    }
+
+    /**
+     * Obtiene todas las imágenes de un texto - PÚBLICO SRP: Responsabilidad
+     * única de listar imágenes por texto
+     */
     @GetMapping("/text/{textId}")
     public ResponseEntity<List<TextImageDTO>> getImagesByText(@PathVariable Long textId) {
         return ResponseEntity.ok(textImageService.getImagesByTextId(textId));
     }
 
+    /**
+     * Obtiene información de una imagen específica - PÚBLICO SRP:
+     * Responsabilidad única de obtener metadata de imagen
+     */
     @GetMapping("/{id}")
     public ResponseEntity<TextImageDTO> getTextImage(@PathVariable Long id) {
         return ResponseEntity.ok(textImageService.getTextImageById(id));
     }
 
+    /**
+     * Sirve los datos binarios de una imagen - PÚBLICO SRP: Responsabilidad
+     * única de servir contenido binario OCP: Extensible para diferentes tipos
+     * de imagen
+     */
     @GetMapping("/{id}/data")
     public ResponseEntity<byte[]> getTextImageData(@PathVariable Long id) {
-        byte[] imageData = textImageService.getTextImageData(id);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        headers.setContentLength(imageData.length);
-        return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
+        try {
+            String imagePath = textImageService.getTextImagePath(id);
+            java.nio.file.Path path = java.nio.file.Paths.get(imagePath);
+            byte[] imageData = java.nio.file.Files.readAllBytes(path);
+            TextImageDTO imageInfo = textImageService.getTextImageById(id);
+
+            // Determinar content type basado en extensión
+            String contentType = determineContentType(imageInfo.getImageName());
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", contentType);
+            headers.add("Content-Disposition", "inline; filename=\"" + imageInfo.getImageName() + "\"");
+            headers.setContentLength(imageData.length);
+
+            return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
+    // ========== ENDPOINTS ADMINISTRATIVOS ==========
+    /**
+     * Crea una imagen para un texto - SOLO ADMIN SRP: Responsabilidad única de
+     * crear imagen ISP: Interfaz segregada para operaciones administrativas
+     */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TextImageDTO> uploadTextImage(@RequestBody TextImageDTO dto) {
+    public ResponseEntity<TextImageDTO> createTextImage(@RequestBody TextImageDTO dto) {
         return ResponseEntity.ok(textImageService.createTextImage(dto));
     }
 
+    /**
+     * Sube múltiples imágenes desde archivos - SOLO ADMIN SRP: Responsabilidad
+     * única de procesar múltiples archivos DIP: Depende de abstracción
+     * ITextImageService
+     */
     @PostMapping("/upload")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TextImageDTO>> uploadMultipleTextImages(
             @RequestParam("files") MultipartFile[] files,
             @RequestParam("textId") Long textId) {
-        List<TextImageDTO> savedImages = textImageService.processAndSaveImages(files, textId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedImages);
+
+        try {
+            List<TextImageDTO> savedImages = textImageService.processAndSaveImages(files, textId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedImages);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
+    /**
+     * Elimina una imagen específica - SOLO ADMIN SRP: Responsabilidad única de
+     * eliminar imagen
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteTextImage(@PathVariable Long id) {
@@ -69,10 +132,53 @@ public class TextImageController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Elimina múltiples imágenes - SOLO ADMIN SRP: Responsabilidad única de
+     * eliminar múltiples imágenes
+     */
     @DeleteMapping("/delete-multiple")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteMultipleTextImages(@RequestBody List<Long> imageIds) {
-        textImageService.deleteMultipleTextImages(imageIds);
+        try {
+            textImageService.deleteMultipleTextImages(imageIds);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * Elimina todas las imágenes de un texto - SOLO ADMIN SRP: Responsabilidad
+     * única de limpiar imágenes por texto
+     */
+    @DeleteMapping("/text/{textId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteImagesByText(@PathVariable Long textId) {
+        textImageService.deleteImagesByTextId(textId);
         return ResponseEntity.noContent().build();
+    }
+
+    // ========== MÉTODOS HELPER (SRP) ==========
+    /**
+     * Determina el content type basado en la extensión del archivo SRP:
+     * Responsabilidad única de determinar tipo de contenido OCP: Abierto para
+     * extensión de nuevos tipos
+     */
+    private String determineContentType(String imageName) {
+        if (imageName == null) {
+            return "image/jpeg"; // default
+        }
+
+        String extension = imageName.toLowerCase();
+        if (extension.endsWith(".png")) {
+            return "image/png";
+        } else if (extension.endsWith(".gif")) {
+            return "image/gif";
+        } else if (extension.endsWith(".webp")) {
+            return "image/webp";
+        } else if (extension.endsWith(".bmp")) {
+            return "image/bmp";
+        }
+        return "image/jpeg"; // default
     }
 }

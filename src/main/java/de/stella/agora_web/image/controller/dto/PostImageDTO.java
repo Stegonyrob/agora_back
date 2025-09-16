@@ -12,8 +12,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class PostImageDTO {
+
     private Long id;
     private String imageName;
+    private String imagePath;
     private boolean isMainImage;
     private Long postId;
 }

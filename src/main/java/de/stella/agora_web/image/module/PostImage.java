@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -36,9 +35,8 @@ public class PostImage {
     @Column(name = "is_main_image", nullable = false)
     private boolean isMainImage;
 
-    @Lob
-    @Column(name = "image_data", nullable = false, columnDefinition = "LONGBLOB")
-    private byte[] imageData; // Almacenar los datos binarios de la imagen
+    @Column(name = "image_path", nullable = false, length = 512)
+    private String imagePath;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)

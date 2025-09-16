@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import de.stella.agora_web.image.entity.TextImage;
+import de.stella.agora_web.image.module.TextImage;
 
 @Repository
 public interface TextImageRepository extends JpaRepository<TextImage, Long> {

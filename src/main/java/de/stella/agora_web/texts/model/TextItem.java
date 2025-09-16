@@ -32,26 +32,18 @@ public class TextItem {
     @Column(name = "title", nullable = false, length = 255)
     private String title;
 
-    @NotBlank(message = "Image URL cannot be blank")
-    @Column(nullable = false, length = 255)
-    private String image;
-
-    @NotBlank(message = "Name to image cannot be blank")
-    @Column(name = "name_image", nullable = false, length = 255)
-    private String nameImage;
-
-    @NotBlank(message = "Description cannot be blank")
+    @NotBlank(message = "Message cannot be blank")
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String description;
+    private String message;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public String getContent() {
-        return description;
+        return message;
     }
 
     public void setContent(String content) {
-        this.description = content;
+        this.message = content;
     }
 }

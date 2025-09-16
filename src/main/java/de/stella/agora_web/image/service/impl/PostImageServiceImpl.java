@@ -1,9 +1,7 @@
 package de.stella.agora_web.image.service.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -14,6 +12,7 @@ import de.stella.agora_web.image.controller.dto.PostImageDTO;
 import de.stella.agora_web.image.module.PostImage;
 import de.stella.agora_web.image.repository.PostImageRepository;
 import de.stella.agora_web.image.service.IPostImageService;
+import de.stella.agora_web.image.service.ImageStorageService;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +28,7 @@ public class PostImageServiceImpl implements IPostImageService {
 
     private final PostImageRepository postImageRepository;
     private final PostRepository postRepository;
+    private final ImageStorageService imageStorageService;
 
     // ✅ CONSISTENTE: Mismas constantes de validación que EventImageService
     private static final List<String> ALLOWED_CONTENT_TYPES = List.of(
@@ -37,9 +37,10 @@ public class PostImageServiceImpl implements IPostImageService {
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
     private static final int MAX_IMAGES_PER_POST = 10;
 
-    public PostImageServiceImpl(PostImageRepository postImageRepository, PostRepository postRepository) {
+    public PostImageServiceImpl(PostImageRepository postImageRepository, PostRepository postRepository, ImageStorageService imageStorageService) {
         this.postImageRepository = postImageRepository;
         this.postRepository = postRepository;
+        this.imageStorageService = imageStorageService;
     }
 
     @Override
@@ -76,31 +77,7 @@ public class PostImageServiceImpl implements IPostImageService {
         return postImageRepository.findByPostId(postId).stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
-    private PostImageDTO mapToDTO(PostImage postImage) {
-        return PostImageDTO.builder().id(postImage.getId()).imageName(postImage.getImageName())
-                .isMainImage(postImage.isMainImage())
-                .postId(postImage.getPost().getId())
-                .build();
-    }
-
-    @Override
-    @Transactional
-    public void deleteImagesByPostId(Long postId) {
-        List<PostImage> images = postImageRepository.findByPostId(postId);
-        for (PostImage image : images) {
-            postImageRepository.deleteById(image.getId());
-        }
-    }
-
-    // ✅ NUEVO: Obtener datos binarios de imagen
-    @Override
-    public byte[] getPostImageData(Long id) {
-        PostImage postImage = postImageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("PostImage not found"));
-        return postImage.getImageData();
-    }
-
-    // ✅ NUEVO: Obtener información de imagen por ID
+    // NUEVO: Obtener información de imagen por ID
     @Override
     public PostImageDTO getPostImageById(Long id) {
         PostImage postImage = postImageRepository.findById(id)
@@ -146,15 +123,11 @@ public class PostImageServiceImpl implements IPostImageService {
         for (MultipartFile file : files) {
             if (!file.isEmpty() && isValidImageFile(file)) {
                 try {
-                    // Generar nombre único
-                    String originalFilename = file.getOriginalFilename();
-                    String extension = getFileExtension(originalFilename);
-                    String uniqueFilename = UUID.randomUUID().toString() + "." + extension;
+                    String relativePath = imageStorageService.storeImage(file);
 
-                    // Crear y guardar PostImage
                     PostImage newPostImage = PostImage.builder()
-                            .imageName(uniqueFilename)
-                            .imageData(file.getBytes())
+                            .imageName(file.getOriginalFilename())
+                            .imagePath(relativePath)
                             .isMainImage(false)
                             .post(post)
                             .build();
@@ -162,7 +135,7 @@ public class PostImageServiceImpl implements IPostImageService {
                     PostImage savedImage = postImageRepository.save(newPostImage);
                     savedImages.add(mapToDTO(savedImage));
 
-                } catch (IOException e) {
+                } catch (RuntimeException e) {
                     log.error("Error al procesar imagen: {}", file.getOriginalFilename(), e);
                     throw new RuntimeException("Error al procesar imagen: " + file.getOriginalFilename(), e);
                 }
@@ -204,5 +177,30 @@ public class PostImageServiceImpl implements IPostImageService {
             return "jpg";
         }
         return filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+    }
+
+    private PostImageDTO mapToDTO(PostImage postImage) {
+        return PostImageDTO.builder()
+                .id(postImage.getId())
+                .imageName(postImage.getImageName())
+                .imagePath(postImage.getImagePath())
+                .postId(postImage.getPost().getId())
+                .build();
+    }
+
+    @Override
+    public void deleteImagesByPostId(Long postId) {
+        List<PostImage> postImages = postImageRepository.findByPostId(postId);
+        for (PostImage postImage : postImages) {
+            postImageRepository.deleteById(postImage.getId());
+        }
+    }
+
+    @Override
+    public byte[] getPostImageData(Long id) {
+        PostImage postImage = postImageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("PostImage not found with id " + id));
+
+        return imageStorageService.loadImage(postImage.getImagePath());
     }
 }

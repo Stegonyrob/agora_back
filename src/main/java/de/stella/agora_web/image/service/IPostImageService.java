@@ -23,9 +23,6 @@ public interface IPostImageService {
 
     void deleteImagesByPostId(Long postId);
 
-    // ✅ MÉTODO para obtener datos binarios de imagen (necesario para mostrar imágenes)
-    byte[] getPostImageData(Long id);
-
     // ✅ MÉTODO para obtener información de imagen por ID
     PostImageDTO getPostImageById(Long id);
 
@@ -38,4 +35,12 @@ public interface IPostImageService {
 
     // ✅ CONSISTENTE: Método para validar archivos de imagen
     boolean isValidImageFile(MultipartFile file);
+
+    /**
+     * Obtiene los datos binarios de una imagen de post por su ID.
+     *
+     * @param id Identificador de la imagen de post.
+     * @return Datos binarios de la imagen.
+     */
+    byte[] getPostImageData(Long id);
 }

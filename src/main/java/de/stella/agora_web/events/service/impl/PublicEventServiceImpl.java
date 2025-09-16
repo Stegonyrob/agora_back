@@ -177,7 +177,7 @@ public class PublicEventServiceImpl implements IPublicEventService {
         dto.setEventId(image.getEvent().getId());
         dto.setImageName(image.getImageName());
         // ✅ NO incluir imageData para reducir payload
-        dto.setImageData(null);
+        dto.setImagePath(null);
         return dto;
     }
 }
