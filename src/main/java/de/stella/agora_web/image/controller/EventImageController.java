@@ -20,6 +20,11 @@ import de.stella.agora_web.image.controller.dto.ImageIdListDTO;
 import de.stella.agora_web.image.service.IEventImageService;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Controlador para imágenes de eventos - REPLICANDO TextImageController ✅
+ * DIFERENCIA: Events son públicos para GET, resto ADMIN PATRÓN: Exactamente
+ * igual que TextImageController pero eventos públicos
+ */
 @RestController
 @RequestMapping("${api-endpoint}/event-images")
 @RequiredArgsConstructor
@@ -27,10 +32,10 @@ public class EventImageController {
 
     private final IEventImageService eventImageService;
 
-    // ========== ENDPOINTS PÚBLICOS (Eventos son públicos) ==========
+    // ========== ENDPOINTS PÚBLICOS - SIGUIENDO PATRÓN TEXT-IMAGES ==========
     /**
-     * Obtiene todas las imágenes de un evento - PÚBLICO SRP: Responsabilidad
-     * única de listar imágenes por evento
+     * Obtiene todas las imágenes de un evento - PÚBLICO PATRÓN: Exactamente
+     * igual que TextImageController.getImagesByTextId()
      */
     @GetMapping("/event/{eventId}")
     public ResponseEntity<List<EventImageDTO>> getImagesByEvent(@PathVariable Long eventId) {
@@ -38,44 +43,18 @@ public class EventImageController {
     }
 
     /**
-     * Obtiene información de una imagen específica - PÚBLICO SRP:
-     * Responsabilidad única de obtener metadata de imagen
+     * Obtiene información de una imagen específica - PÚBLICO PATRÓN:
+     * Exactamente igual que TextImageController.getTextImage()
      */
     @GetMapping("/{id}")
     public ResponseEntity<EventImageDTO> getEventImage(@PathVariable Long id) {
         return ResponseEntity.ok(eventImageService.getEventImageById(id));
     }
 
+    // ========== ENDPOINTS ADMINISTRATIVOS - SIGUIENDO PATRÓN TEXT-IMAGES ==========
     /**
-     * Sirve los datos binarios de una imagen - PÚBLICO SRP: Responsabilidad
-     * única de servir contenido binario OCP: Extensible para diferentes tipos
-     * de imagen
-     */
-    @GetMapping("/{id}/data")
-    public ResponseEntity<byte[]> getEventImageData(@PathVariable Long id) {
-        try {
-            EventImageDTO image = eventImageService.getEventImageById(id);
-
-            // Cargar datos binarios desde la ruta de la imagen
-            byte[] imageData = eventImageService.getEventImageData(id);
-
-            // Determinar content type basado en extensión
-            String contentType = determineContentType(image.getImageName());
-
-            return ResponseEntity.ok()
-                    .header("Content-Type", contentType)
-                    .header("Content-Disposition", "inline; filename=\"" + image.getImageName() + "\"")
-                    .body(imageData);
-
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    // ========== ENDPOINTS ADMINISTRATIVOS ==========
-    /**
-     * Crea una imagen para un evento - SOLO ADMIN SRP: Responsabilidad única de
-     * crear imagen ISP: Interfaz segregada para operaciones administrativas
+     * Crea una imagen para un evento - SOLO ADMIN PATRÓN: Exactamente igual que
+     * TextImageController.createTextImage()
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -84,9 +63,8 @@ public class EventImageController {
     }
 
     /**
-     * Sube múltiples imágenes desde archivos - SOLO ADMIN SRP: Responsabilidad
-     * única de procesar múltiples archivos DIP: Depende de abstracción
-     * IEventImageService
+     * Sube múltiples imágenes desde archivos - SOLO ADMIN PATRÓN: Exactamente
+     * igual que TextImageController.uploadMultipleTextImages()
      */
     @PostMapping("/upload")
     @PreAuthorize("hasRole('ADMIN')")
@@ -103,8 +81,8 @@ public class EventImageController {
     }
 
     /**
-     * Elimina una imagen específica - SOLO ADMIN SRP: Responsabilidad única de
-     * eliminar imagen
+     * Elimina una imagen específica - SOLO ADMIN PATRÓN: Exactamente igual que
+     * TextImageController.deleteTextImage()
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -114,8 +92,8 @@ public class EventImageController {
     }
 
     /**
-     * Elimina múltiples imágenes - SOLO ADMIN SRP: Responsabilidad única de
-     * eliminar múltiples imágenes
+     * Elimina múltiples imágenes - SOLO ADMIN PATRÓN: Igual que
+     * TextImageController pero usando ImageIdListDTO (ya existente)
      */
     @DeleteMapping("/delete-multiple")
     @PreAuthorize("hasRole('ADMIN')")
@@ -126,29 +104,5 @@ public class EventImageController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }
-
-    // ========== MÉTODOS HELPER (SRP) ==========
-    /**
-     * Determina el content type basado en la extensión del archivo SRP:
-     * Responsabilidad única de determinar tipo de contenido OCP: Abierto para
-     * extensión de nuevos tipos
-     */
-    private String determineContentType(String imageName) {
-        if (imageName == null) {
-            return "image/jpeg"; // default
-        }
-
-        String extension = imageName.toLowerCase();
-        if (extension.endsWith(".png")) {
-            return "image/png";
-        } else if (extension.endsWith(".gif")) {
-            return "image/gif";
-        } else if (extension.endsWith(".webp")) {
-            return "image/webp";
-        } else if (extension.endsWith(".bmp")) {
-            return "image/bmp";
-        }
-        return "image/jpeg"; // default
     }
 }

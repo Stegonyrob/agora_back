@@ -2,9 +2,7 @@ package de.stella.agora_web.image.controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,9 +21,10 @@ import de.stella.agora_web.image.service.IPostImageService;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Controlador para imágenes de posts - CONSISTENTE con EventImageController. ✅
- * DIFERENCIA CLAVE: Posts son PRIVADOS (requieren autenticación) ✅ MISMO
- * PATRÓN: Mismos endpoints que events pero con seguridad privada
+ * Controlador para imágenes de posts - REPLICANDO TextImageController ✅
+ * DIFERENCIA: Posts requieren autenticación USER/ADMIN para GET, resto ADMIN
+ * PATRÓN: Mismo que TextImageController pero con autenticación para posts
+ * privados
  */
 @RestController
 @RequestMapping("${api-endpoint}/post-images")
@@ -34,11 +33,10 @@ public class PostImageController {
 
     private final IPostImageService postImageService;
 
-    // ========== ENDPOINTS CONSISTENTES CON EVENTIMAGECONTROLLER ==========
+    // ========== ENDPOINTS SIGUIENDO PATRÓN DE TEXT-IMAGES ==========
     /**
-     * Obtiene todas las imágenes de un post específico. ✅ CONSISTENTE con
-     * EventImageController.getImagesByEvent() ✅ DIFERENCIA: Requiere
-     * autenticación (posts privados)
+     * Obtiene todas las imágenes de un post específico. PATRÓN: Igual que
+     * TextImageController pero requiere autenticación (posts privados)
      */
     @GetMapping("/post/{postId}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
@@ -47,9 +45,8 @@ public class PostImageController {
     }
 
     /**
-     * Obtiene información específica de una imagen por ID. ✅ CONSISTENTE con
-     * EventImageController (info de imagen) ✅ DIFERENCIA: Requiere
-     * autenticación (posts privados)
+     * Obtiene información específica de una imagen por ID. PATRÓN: Igual que
+     * TextImageController pero requiere autenticación (posts privados)
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
@@ -57,50 +54,10 @@ public class PostImageController {
         return ResponseEntity.ok(postImageService.getPostImageById(id));
     }
 
+    // ========== ENDPOINTS ADMINISTRATIVOS - SIGUIENDO PATRÓN TEXT-IMAGES ==========
     /**
-     * Obtiene los datos binarios de una imagen específica para mostrarla. ✅
-     * CONSISTENTE con EventImageController.getEventImageData() ✅ DIFERENCIA:
-     * Requiere autenticación (posts privados)
-     */
-    @GetMapping("/{id}/data")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<byte[]> getPostImageData(@PathVariable Long id) {
-        try {
-            byte[] imageData = postImageService.getPostImageData(id);
-
-            // Obtener información de la imagen para establecer el content type correcto
-            PostImageDTO imageInfo = postImageService.getPostImageById(id);
-            String imageName = imageInfo.getImageName();
-
-            // Determinar content type basado en la extensión
-            MediaType mediaType = MediaType.IMAGE_JPEG; // default
-            if (imageName != null) {
-                String extension = imageName.toLowerCase();
-                if (extension.endsWith(".png")) {
-                    mediaType = MediaType.IMAGE_PNG;
-                } else if (extension.endsWith(".gif")) {
-                    mediaType = MediaType.IMAGE_GIF;
-                } else if (extension.endsWith(".webp")) {
-                    mediaType = MediaType.valueOf("image/webp");
-                }
-            }
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(mediaType);
-            headers.setContentLength(imageData.length);
-            // ✅ CONSISTENTE: Mismo formato que events pero con inline
-            headers.add("Content-Disposition", "inline; filename=\"" + imageName + "\"");
-
-            return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    /**
-     * Crea una imagen individual para un post. ✅ CONSISTENTE con
-     * EventImageController.uploadEventImage() ✅ DIFERENCIA: Solo ADMIN (más
-     * restrictivo que events)
+     * Crea una imagen para un post - SOLO ADMIN PATRÓN: Exactamente igual que
+     * TextImageController
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -109,9 +66,8 @@ public class PostImageController {
     }
 
     /**
-     * Sube múltiples imágenes a un post desde archivos. ✅ CONSISTENTE con
-     * EventImageController.uploadMultipleEventImages() ✅ DIFERENCIA: Solo ADMIN
-     * (más restrictivo que events)
+     * Sube múltiples imágenes desde archivos - SOLO ADMIN PATRÓN: Exactamente
+     * igual que TextImageController
      */
     @PostMapping("/upload")
     @PreAuthorize("hasRole('ADMIN')")
@@ -128,9 +84,8 @@ public class PostImageController {
     }
 
     /**
-     * Elimina una imagen específica. ✅ CONSISTENTE con
-     * EventImageController.deleteEventImage() ✅ DIFERENCIA: Solo ADMIN (más
-     * restrictivo que events)
+     * Elimina una imagen específica - SOLO ADMIN PATRÓN: Exactamente igual que
+     * TextImageController
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -140,9 +95,8 @@ public class PostImageController {
     }
 
     /**
-     * Elimina múltiples imágenes por IDs. ✅ CONSISTENTE con
-     * EventImageController.deleteMultipleEventImages() ✅ DIFERENCIA: Solo ADMIN
-     * (más restrictivo que events)
+     * Elimina múltiples imágenes por IDs - SOLO ADMIN PATRÓN: Igual que
+     * TextImageController pero usando ImageIdListDTO (ya existente)
      */
     @DeleteMapping("/delete-multiple")
     @PreAuthorize("hasRole('ADMIN')")
@@ -153,5 +107,16 @@ public class PostImageController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    /**
+     * Elimina todas las imágenes de un post - SOLO ADMIN PATRÓN: Siguiendo el
+     * patrón de TextImageController y EventImageController
+     */
+    @DeleteMapping("/post/{postId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteImagesByPostId(@PathVariable Long postId) {
+        postImageService.deleteImagesByPostId(postId);
+        return ResponseEntity.noContent().build();
     }
 }

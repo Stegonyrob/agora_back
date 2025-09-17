@@ -79,9 +79,9 @@ public class SecurityConfiguration {
                 .requestMatchers(endpoint + "/all/**").permitAll()
                 .requestMatchers(endpoint + "/public/**").permitAll() // ✅ PERMITIR ACCESO PÚBLICO A ENDPOINTS PÚBLICOS
                 .requestMatchers(endpoint + "/any/user/settings/**").permitAll() // ✅ PERMITIR ACCESO PÚBLICO A SETTINGS
-                .requestMatchers(HttpMethod.GET, "/posts/**").hasRole("USER")
+                .requestMatchers(HttpMethod.GET, "/posts/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/posts/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/replies/**").hasRole("USER")
+                .requestMatchers(HttpMethod.GET, "/replies/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/replies/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/comments/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers(HttpMethod.PUT, "/comments/**").hasAnyRole("ADMIN", "USER")
@@ -91,6 +91,18 @@ public class SecurityConfiguration {
                 .requestMatchers(endpoint + "/user/**").hasRole("USER")
                 .requestMatchers(HttpMethod.GET, "/legal/**").hasRole("USER") // <-- aquí
                 .requestMatchers("/legal/**").hasRole("ADMIN") // <-- aquí
+                // ========== CONFIGURACIÓN DE IMÁGENES ESTÁTICAS ==========
+                .requestMatchers(HttpMethod.GET, "/temp_images/**").permitAll() // Allow public access to static images
+                // ========== CONFIGURACIÓN DE ENDPOINTS DE IMÁGENES - REPLICANDO PATRÓN TEXT-IMAGES ==========
+                // Event-images: GET públicos (igual que text-images), resto ADMIN
+                .requestMatchers(HttpMethod.GET, endpoint + "/event-images/**").permitAll()
+                .requestMatchers(endpoint + "/event-images/**").hasRole("ADMIN")
+                // Post-images: GET requiere autenticación USER/ADMIN (posts privados), resto ADMIN  
+                .requestMatchers(HttpMethod.GET, endpoint + "/post-images/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers(endpoint + "/post-images/**").hasRole("ADMIN")
+                // Text-images: GET públicos (ya configurado implícitamente), resto ADMIN
+                .requestMatchers(HttpMethod.GET, endpoint + "/text-images/**").permitAll()
+                .requestMatchers(endpoint + "/text-images/**").hasRole("ADMIN")
                 .anyRequest().permitAll()
                 )
                 .userDetailsService(jpaUserDetailsService).httpBasic(basic -> basic.disable())
