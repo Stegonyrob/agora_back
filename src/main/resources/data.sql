@@ -623,79 +623,79 @@ INSERT INTO
   texts (category, title, message, created_at)
 VALUES
   (
-    'nosotros',
+    'agora',
     '¿Quiénes Somos?',
     'Somos un centro educativo que trabaja en el ámbito de la neurodiversidad así como en el refuerzo educativo individualizado. Nuestro objetivo principal es el desarrollo de personas respetando su individualidad y concentrándonos en sus potencialidades, priorizando a la persona como elemento clave de la intervención.',
     NOW()
   ),
   (
-    'nosotros',
+    'agora',
     'Dónde Estamos',
     'Nos encontramos en la zona Oeste de Gijón, más exactamente en La Calzada en Calle Nicaragua al 16.',
     NOW()
   ),
   (
-    'servicios',
+    'services',
     'Nuestros Servicios',
     'Nuestros servicios están diseñados para atender las necesidades de cada estudiante de manera individualizada, promoviendo su desarrollo integral y bienestar. Los cuales son entre otros: Reeducación pedagógica, Educación psicomotriz, Refuerzo de inglés en grupos reducidos, Refuerzo educativo especializado en grupos pequeños, Talleres temáticos educativos (vacaciones), Taller juegos de mesa, Escuela de familias.',
     NOW()
   ),
   (
-    'servicios',
+    'services',
     'Reeducación Pedagógica',
     'Apoyo educativo, Intervención en NEE y NEAE, Cuidado especializado por horas, Intervención educativa con familias y en el hogar, Coordinación multidisciplinar con centros educativos y particulares. Somos beneficiarios de las becas de reeducación pedagógica de NEAE y NEE.',
     NOW()
   ),
   (
-    'servicios',
+    'services',
     'Educación Psicomotriz',
     'Sesiones diseñadas para fomentar el desarrollo integral de los niños a través del movimiento y la interacción con el entorno. Se trabaja la coordinación, el equilibrio, la conciencia corporal y otras habilidades motoras fundamentales para el aprendizaje y el bienestar.',
     NOW()
   ),
   (
-    'servicios',
+    'services',
     'Refuerzo de Inglés en Grupos Reducidos',
     'Clases de apoyo para el aprendizaje del inglés, impartidas en grupos pequeños para garantizar una atención más personalizada. Se refuerzan los contenidos curriculares, se trabajan las habilidades comunicativas y se fomenta la confianza en el uso del idioma.',
     NOW()
   ),
   (
-    'servicios',
+    'services',
     'Refuerzo Educativo Especializado',
     'Apoyo académico individualizado o en grupos muy reducidos para alumnos con necesidades educativas especiales o dificultades de aprendizaje. Se adaptan las estrategias y los materiales para atender las particularidades de cada estudiante y facilitar su progreso.',
     NOW()
   ),
   (
-    'servicios',
+    'services',
     'Talleres Temáticos Educativos',
     'Programas especiales durante los periodos vacacionales con temáticas diversas y educativas. Estos talleres buscan ofrecer un espacio de aprendizaje lúdico y creativo, explorando diferentes áreas de conocimiento y desarrollando nuevas habilidades de manera divertida.',
     NOW()
   ),
   (
-    'servicios',
+    'services',
     'Taller Juegos de Mesa',
     'Espacio dedicado al aprendizaje y desarrollo a través de los juegos de mesa. Se fomenta el pensamiento estratégico, la resolución de problemas, la cooperación, el respeto por las normas y las habilidades sociales en un ambiente divertido y participativo.',
     NOW()
   ),
   (
-    'servicios',
+    'services',
     'Escuela de Familias',
     'Programa de formación y apoyo dirigido a padres y madres. Se ofrecen herramientas, estrategias y recursos para afrontar los retos de la crianza, mejorar la comunicación familiar y promover un desarrollo saludable de los hijos.',
     NOW()
   ),
   (
-    'equipo',
+    'team',
     'Equipo Profesional',
     'Soy un profesional apasionado por la educación y el desarrollo integral de los niños. Con una formación sólida en pedagogía y psicología infantil, he dedicado mi carrera a crear entornos de aprendizaje inclusivos y estimulantes.',
     NOW()
   ),
   (
-    'neurodiversidad',
+    'neurodiversity',
     'Neurodiversidad ¿Qué es?',
     'La neurodiversidad se define como la variabilidad natural del cerebro humano, que abarca una amplia gama de diferencias neurológicas y cognitivas. Esta perspectiva reconoce que las variaciones en el funcionamiento cerebral son normales y valiosas.',
     NOW()
   ),
   (
-    'neurodiversidad',
+    'neurodiversity',
     'Nuestra Visión de la Neurodiversidad',
     'Nuestra visión de la neurodiversidad se basa en el respeto y la valoración de las diferencias individuales. Creemos que cada persona tiene un potencial único y que la diversidad cognitiva enriquece nuestras comunidades.',
     NOW()
@@ -713,49 +713,49 @@ VALUES
     NOW()
   ),
   (
-    'atencion',
+    'tda_tdh',
     'Trastorno del Déficit de Atención (TDA)',
     'El trastorno del déficit de atención (TDA) es una condición del neurodesarrollo que se caracteriza por dificultades en la atención. Estas dificultades pueden afectar el rendimiento académico y las relaciones interpersonales.',
     NOW()
   ),
   (
-    'atencion',
+    'tda_tdh',
     'Trastorno del Déficit de Atención con Hiperactividad (TDAH)',
     'El TDAH es una condición del neurodesarrollo que se caracteriza por dificultades en la atención, la hiperactividad y la impulsividad. Es importante abordar el TDAH con estrategias adecuadas y un enfoque comprensivo.',
     NOW()
   ),
   (
-    'aprendizaje',
+    'learning_difficulties',
     'Dificultades del Aprendizaje',
     'Las dificultades del aprendizaje son condiciones que afectan la capacidad de una persona para adquirir, procesar o utilizar información de manera efectiva. Es fundamental identificar y abordar estas dificultades de manera temprana.',
     NOW()
   ),
   (
-    'aprendizaje',
+    'learning_difficulties',
     'Desafíos del Aprendizaje',
     'Los desafíos del aprendizaje son obstáculos que pueden dificultar el proceso educativo de los estudiantes. Estos desafíos pueden ser de naturaleza cognitiva, emocional o social.',
     NOW()
   ),
   (
-    'desarrollo',
+    'development_conditions',
     'Condiciones del Desarrollo',
     'Las condiciones del desarrollo son un conjunto de factores que influyen en el crecimiento y la evolución de los niños. Estos factores pueden ser biológicos, psicológicos o sociales.',
     NOW()
   ),
   (
-    'desarrollo',
+    'development_conditions',
     'Importancia de las Condiciones del Desarrollo',
     'La comprensión de las condiciones del desarrollo es esencial para ofrecer un apoyo adecuado a los estudiantes. Es fundamental abordar cada caso de manera individualizada.',
     NOW()
   ),
   (
-    'comunicacion',
+    'communication',
     'Trastornos de la Comunicación',
     'Los trastornos de la comunicación son condiciones que afectan la capacidad de una persona para comunicarse de manera efectiva. La intervención temprana y el apoyo adecuado son clave.',
     NOW()
   ),
   (
-    'comunicacion',
+    'communication',
     'Importancia de los Trastornos de la Comunicación',
     'La comprensión de los trastornos de la comunicación es esencial para ofrecer un apoyo adecuado a los estudiantes. La correcta identificación y tratamiento puede marcar una gran diferencia.',
     NOW()
