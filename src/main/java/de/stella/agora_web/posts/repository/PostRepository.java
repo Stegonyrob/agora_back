@@ -32,6 +32,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p JOIN p.tags t WHERE t.name = :tagName")
     List<Post> findByTagsName(@Param("tagName") String tagName);
 
+    // ✅ Consulta optimizada SEGURA para evitar N+1 sin afectar persistencia
+    @Query("SELECT DISTINCT p FROM Post p LEFT JOIN FETCH p.tags WHERE p.id IN :postIds")
+    List<Post> findByIdsWithTags(@Param("postIds") List<Long> postIds);
+
     @Query("""
         SELECT p.id AS id, p.title AS title, p.message AS message, 
                p.creationDate AS creationDate,

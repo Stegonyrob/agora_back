@@ -86,9 +86,8 @@ public class PostServiceImpl implements IPostService {
                 reply.setArchived(true);
             }
         }
-        for (Tag tag : post.getTags()) {
-            tag.getPosts().remove(post);
-        }
+        // ✅ NO eliminar relaciones con tags al archivar
+        // Las tags deben mantenerse asociadas al post archivado
         postRepository.save(post);
     }
 
@@ -102,9 +101,8 @@ public class PostServiceImpl implements IPostService {
                 reply.setArchived(false);
             }
         }
-        for (Tag tag : post.getTags()) {
-            tag.getPosts().add(post);
-        }
+        // ✅ NO modificar relaciones con tags al desarchivar
+        // Las tags ya están correctamente asociadas
         postRepository.save(post);
     }
 
@@ -248,40 +246,33 @@ public class PostServiceImpl implements IPostService {
         post.setTitle(postDTO.getTitle());
         post.setMessage(postDTO.getMessage());
 
-        // Remove existing tags
-        post.getTags().clear();
+        // ❌ NO LIMPIAR TAGS AUTOMÁTICAMENTE
+        // El frontend maneja las tags por separado con POST/DELETE
+        // Solo actualizar si el DTO incluye tags explícitamente
+        if (postDTO.getTags() != null && !postDTO.getTags().isEmpty()) {
+            // Solo limpiar si hay tags nuevas que agregar
+            post.getTags().clear();
 
-        // Add tags from tag list
-        List<Tag> tags = new ArrayList<>();
-        if (postDTO.getTags() != null) {
-            for (TagSummaryDTO tagDTO : postDTO.getTags()) {
-                Tag tag = null;
-                if (tagDTO.getId() != null) {
-                    tag = tagRepository.findById(tagDTO.getId()).orElse(null);
-                }
-                if (tag == null && tagDTO.getName() != null) {
-                    tag = tagService.getTagByName(tagDTO.getName());
-                    if (tag == null) {
-                        tag = tagService.createTag(tagDTO.getName());
-                    }
-                }
-                if (tag != null) {
-                    tags.add(tag);
-                }
-            }
+            // ✅ USAR MÉTODO HELPER MEJORADO - Maneja inconsistencias
+            List<Tag> tags = processTagsFromDTO(postDTO);
+            post.setTags(tags);
         }
 
-        // Add tags from hashtags in post message
+        // ✅ PROCESAR HASHTAGS DEL MENSAJE (funcionalidad adicional)
         List<String> hashtags = tagService.extractHashtags(postDTO.getMessage());
-        for (String hashtag : hashtags) {
-            Tag tag = tagService.getTagByName(hashtag);
-            if (tag == null) {
-                tag = tagService.createTag(hashtag);
+        if (!hashtags.isEmpty()) {
+            List<Tag> currentTags = new ArrayList<>(post.getTags());
+            for (String hashtag : hashtags) {
+                Tag tag = tagService.getTagByName(hashtag);
+                if (tag == null) {
+                    tag = tagService.createTag(hashtag);
+                }
+                if (!currentTags.contains(tag)) {
+                    currentTags.add(tag);
+                }
             }
-            tags.add(tag);
+            post.setTags(currentTags);
         }
-
-        post.setTags(tags);
 
         return postRepository.save(post);
     }

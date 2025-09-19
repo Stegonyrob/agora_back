@@ -2,6 +2,9 @@ package de.stella.agora_web.tags.model;
 
 import java.util.List;
 
+import org.hibernate.annotations.BatchSize;
+
+import de.stella.agora_web.events.model.Event;
 import de.stella.agora_web.posts.model.Post;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,8 +32,15 @@ public class Tag {
     @Column(name = "archived")
     private Boolean archived = false;
 
+    @BatchSize(size = 20)  // ✅ Optimización segura para relaciones
     @ManyToMany(mappedBy = "tags")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Post> posts;
+
+    @BatchSize(size = 20)  // ✅ Optimización segura para relaciones
+    @ManyToMany(mappedBy = "tags")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<Event> events;
 
     public Tag() {
         this.archived = false;

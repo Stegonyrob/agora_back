@@ -59,8 +59,7 @@ public class Comment implements ModeratableContent {
     @com.fasterxml.jackson.annotation.JsonBackReference
     private Post post;
 
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
-    @com.fasterxml.jackson.annotation.JsonManagedReference
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Reply> replies;
 
     @ManyToOne(fetch = FetchType.LAZY)

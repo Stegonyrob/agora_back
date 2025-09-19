@@ -33,10 +33,14 @@ public interface ITagService {
 
     void removeTagFromPost(Long postId, String tagName);
 
+    void removeAllTagsFromPost(Long postId);
+
     // Métodos para gestionar tags de eventos
     void addTagToEvent(Long eventId, String tagName);
 
     void removeTagFromEvent(Long eventId, String tagName);
+
+    void removeAllTagsFromEvent(Long eventId);
 
     void addTagToEvent(Long eventId, Long tagId);
 
@@ -53,4 +57,9 @@ public interface ITagService {
     List<EventSummaryDTO> getEventsSummaryByTagName(String tagName);
 
     List<TagSummaryDTO> getAllTagsSummary();
+
+    // Métodos para obtener tags por entidad (REQUERIDOS POR FRONTEND)
+    List<TagSummaryDTO> getTagsByPostId(Long postId);
+
+    List<TagSummaryDTO> getTagsByEventId(Long eventId);
 }

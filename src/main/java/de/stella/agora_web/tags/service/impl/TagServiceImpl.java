@@ -116,6 +116,15 @@ public class TagServiceImpl implements ITagService {
     }
 
     @Override
+    public void removeAllTagsFromPost(Long postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post != null) {
+            post.getTags().clear();
+            postRepository.save(post);
+        }
+    }
+
+    @Override
     public Tag createTag(String name) {
         Tag tag = new Tag();
         tag.setName(name);
@@ -177,6 +186,15 @@ public class TagServiceImpl implements ITagService {
         Tag tag = tagRepository.findById(tagId).orElse(null);
         if (event != null && tag != null) {
             event.getTags().remove(tag);
+            eventRepository.save(event);
+        }
+    }
+
+    @Override
+    public void removeAllTagsFromEvent(Long eventId) {
+        Event event = eventRepository.findById(eventId).orElse(null);
+        if (event != null) {
+            event.getTags().clear();
             eventRepository.save(event);
         }
     }
@@ -249,6 +267,31 @@ public class TagServiceImpl implements ITagService {
     public List<PostSummaryDTO> getPostsSummaryByTagName(String tagName) {
         return postRepository.findByTagsName(tagName).stream()
                 .map(this::convertToPostSummaryDTO)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    // ========== MÉTODOS PARA OBTENER TAGS POR ENTIDAD ==========
+    @Override
+    public List<TagSummaryDTO> getTagsByPostId(Long postId) {
+        // Verificar que el post existe sin cargar toda la entidad
+        if (!postRepository.existsById(postId)) {
+            throw new RuntimeException("Post not found with id: " + postId);
+        }
+        // Usar consulta directa para evitar problemas de serialización circular
+        return tagRepository.findByPostId(postId).stream()
+                .map(this::convertToTagSummaryDTO)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    public List<TagSummaryDTO> getTagsByEventId(Long eventId) {
+        // Verificar que el evento existe sin cargar toda la entidad
+        if (!eventRepository.existsById(eventId)) {
+            throw new RuntimeException("Event not found with id: " + eventId);
+        }
+        // Usar consulta directa para evitar problemas de serialización circular
+        return tagRepository.findByEventId(eventId).stream()
+                .map(this::convertToTagSummaryDTO)
                 .collect(java.util.stream.Collectors.toList());
     }
 }
