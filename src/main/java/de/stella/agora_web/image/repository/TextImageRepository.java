@@ -11,4 +11,5 @@ import de.stella.agora_web.image.module.TextImage;
 public interface TextImageRepository extends JpaRepository<TextImage, Long> {
 
     List<TextImage> findByTextId(Long textId);
+
 }

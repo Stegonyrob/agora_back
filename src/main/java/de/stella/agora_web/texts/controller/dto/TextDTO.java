@@ -11,7 +11,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TextItemDTO {
+public class TextDTO {
 
     private Long id;
 
@@ -28,8 +28,9 @@ public class TextItemDTO {
     private String message;
 
     /**
-     * Lista de imágenes asociadas al texto (OPCIONAL - se obtiene por separado para eficiencia).
-     * Patrón consistente con Posts y Events: imágenes separadas del JSON principal.
+     * Lista de imágenes asociadas al texto (OPCIONAL - se obtiene por separado
+     * para eficiencia). Patrón consistente con Posts y Events: imágenes
+     * separadas del JSON principal.
      */
     private List<TextImageDTO> images;
 

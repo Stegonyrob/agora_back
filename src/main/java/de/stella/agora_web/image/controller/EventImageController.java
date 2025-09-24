@@ -34,21 +34,21 @@ public class EventImageController {
 
     // ========== ENDPOINTS PÚBLICOS - SIGUIENDO PATRÓN TEXT-IMAGES ==========
     /**
-     * Obtiene todas las imágenes de un evento - PÚBLICO PATRÓN: Exactamente
-     * igual que TextImageController.getImagesByTextId()
-     */
-    @GetMapping("/event/{eventId}")
-    public ResponseEntity<List<EventImageDTO>> getImagesByEvent(@PathVariable Long eventId) {
-        return ResponseEntity.ok(eventImageService.getImagesByEventId(eventId));
-    }
-
-    /**
      * Obtiene información de una imagen específica - PÚBLICO PATRÓN:
      * Exactamente igual que TextImageController.getTextImage()
      */
-    @GetMapping("/{id}")
+    @GetMapping("/image/{id}")
     public ResponseEntity<EventImageDTO> getEventImage(@PathVariable Long id) {
         return ResponseEntity.ok(eventImageService.getEventImageById(id));
+    }
+
+    /**
+     * Obtiene todas las imágenes de un evento - PÚBLICO PATRÓN: Exactamente
+     * igual que TextImageController.getImagesByTextId()
+     */
+    @GetMapping("/{eventId}")
+    public ResponseEntity<List<EventImageDTO>> getImagesByEvent(@PathVariable Long eventId) {
+        return ResponseEntity.ok(eventImageService.getImagesByEventId(eventId));
     }
 
     // ========== ENDPOINTS ADMINISTRATIVOS - SIGUIENDO PATRÓN TEXT-IMAGES ==========
@@ -84,7 +84,7 @@ public class EventImageController {
      * Elimina una imagen específica - SOLO ADMIN PATRÓN: Exactamente igual que
      * TextImageController.deleteTextImage()
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/image/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteEventImage(@PathVariable Long id) {
         eventImageService.deleteEventImage(id);
@@ -104,5 +104,16 @@ public class EventImageController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    /**
+     * Elimina todas las imágenes de un evento - SOLO ADMIN PATRÓN: Siguiendo el
+     * patrón de TextImageController
+     */
+    @DeleteMapping("/{eventId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteImagesByEventId(@PathVariable Long eventId) {
+        eventImageService.deleteImagesByEventId(eventId);
+        return ResponseEntity.noContent().build();
     }
 }

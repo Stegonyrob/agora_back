@@ -115,7 +115,9 @@ public class EventImageServiceImpl implements IEventImageService {
 
     @Override
     public byte[] getEventImageData(Long id) {
-        throw new UnsupportedOperationException("Binary image data is no longer supported.");
+        EventImage eventImage = eventImageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("EventImage not found"));
+        return imageStorageService.loadImage(eventImage.getImagePath());
     }
 
     private EventImageDTO mapToDTO(EventImage eventImage) {

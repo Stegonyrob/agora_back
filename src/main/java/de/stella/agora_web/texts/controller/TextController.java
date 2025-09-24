@@ -18,31 +18,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.image.service.ITextImageService;
-import de.stella.agora_web.texts.controller.dto.TextItemDTO;
-import de.stella.agora_web.texts.service.ITextItemService;
+import de.stella.agora_web.texts.controller.dto.TextDTO;
+import de.stella.agora_web.texts.service.ITextService;
 import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"})
 @RequestMapping(path = "${api-endpoint}/all/texts")
 
-public class TextItemController {
+public class TextController {
 
     @Autowired
-    private ITextItemService textItemService;
+    private ITextService textItemService;
 
     @Autowired
     private ITextImageService textImageService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TextItemController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TextController.class);
 
     /**
      * Obtiene todos los textos (público).
      */
     @GetMapping
-    public List<TextItemDTO> getAllTexts() {
+    public List<TextDTO> getAllTexts() {
         LOGGER.info("Retrieving all texts");
-        List<TextItemDTO> allTexts = textItemService.getAllTexts();
+        List<TextDTO> allTexts = textItemService.getAllTexts();
         LOGGER.info("Retrieved {} texts", allTexts.size());
         return allTexts;
     }
@@ -51,9 +51,9 @@ public class TextItemController {
      * Obtiene un texto por ID (público).
      */
     @GetMapping("/{id}")
-    public ResponseEntity<TextItemDTO> getTextById(@PathVariable Long id) {
+    public ResponseEntity<TextDTO> getTextById(@PathVariable Long id) {
         try {
-            TextItemDTO dto = textItemService.getTextById(id);
+            TextDTO dto = textItemService.getTextById(id);
             return ResponseEntity.ok(dto);
         } catch (RuntimeException e) {
             LOGGER.warn("Text not found with id {}: {}", id, e.getMessage());
@@ -69,9 +69,9 @@ public class TextItemController {
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TextItemDTO> createText(@Valid @RequestBody TextItemDTO textItemDTO) {
+    public ResponseEntity<TextDTO> createText(@Valid @RequestBody TextDTO textItemDTO) {
         try {
-            TextItemDTO created = textItemService.createText(textItemDTO);
+            TextDTO created = textItemService.createText(textItemDTO);
             LOGGER.info("Text created with id {}", created.getId());
             return ResponseEntity.ok(created);
         } catch (Exception e) {
@@ -86,9 +86,9 @@ public class TextItemController {
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TextItemDTO> updateText(@PathVariable Long id, @Valid @RequestBody TextItemDTO dto) {
+    public ResponseEntity<TextDTO> updateText(@PathVariable Long id, @Valid @RequestBody TextDTO dto) {
         try {
-            TextItemDTO updated = textItemService.updateText(id, dto);
+            TextDTO updated = textItemService.updateText(id, dto);
             LOGGER.info("Text updated with id {}", updated.getId());
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {

@@ -35,23 +35,23 @@ public class PostImageController {
 
     // ========== ENDPOINTS SIGUIENDO PATRÓN DE TEXT-IMAGES ==========
     /**
-     * Obtiene todas las imágenes de un post específico. PATRÓN: Igual que
-     * TextImageController pero requiere autenticación (posts privados)
-     */
-    @GetMapping("/post/{postId}")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<List<PostImageDTO>> getImagesByPost(@PathVariable Long postId) {
-        return ResponseEntity.ok(postImageService.getImagesByPostId(postId));
-    }
-
-    /**
      * Obtiene información específica de una imagen por ID. PATRÓN: Igual que
      * TextImageController pero requiere autenticación (posts privados)
      */
-    @GetMapping("/{id}")
+    @GetMapping("/image/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<PostImageDTO> getPostImage(@PathVariable Long id) {
         return ResponseEntity.ok(postImageService.getPostImageById(id));
+    }
+
+    /**
+     * Obtiene todas las imágenes de un post específico. PATRÓN: Igual que
+     * TextImageController pero requiere autenticación (posts privados)
+     */
+    @GetMapping("/{postId}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<List<PostImageDTO>> getImagesByPost(@PathVariable Long postId) {
+        return ResponseEntity.ok(postImageService.getImagesByPostId(postId));
     }
 
     // ========== ENDPOINTS ADMINISTRATIVOS - SIGUIENDO PATRÓN TEXT-IMAGES ==========
@@ -87,7 +87,7 @@ public class PostImageController {
      * Elimina una imagen específica - SOLO ADMIN PATRÓN: Exactamente igual que
      * TextImageController
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/image/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletePostImage(@PathVariable Long id) {
         postImageService.deletePostImage(id);
@@ -113,7 +113,7 @@ public class PostImageController {
      * Elimina todas las imágenes de un post - SOLO ADMIN PATRÓN: Siguiendo el
      * patrón de TextImageController y EventImageController
      */
-    @DeleteMapping("/post/{postId}")
+    @DeleteMapping("/{postId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteImagesByPostId(@PathVariable Long postId) {
         postImageService.deleteImagesByPostId(postId);

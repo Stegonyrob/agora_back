@@ -2,7 +2,7 @@ package de.stella.agora_web.image.module;
 
 import java.time.LocalDateTime;
 
-import de.stella.agora_web.texts.model.TextItem;
+import de.stella.agora_web.texts.model.Text;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -41,10 +41,7 @@ public class TextImage {
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "text_id", insertable = false, updatable = false)
-    private Long textId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "text_id", nullable = false)
-    private TextItem textItem;
+    private Text text;
 }

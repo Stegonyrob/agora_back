@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "texts")
-public class TextItem {
+public class Text {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

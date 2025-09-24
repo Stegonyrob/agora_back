@@ -8,16 +8,16 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.stella.agora_web.texts.repository.TextItemRepository;
+import de.stella.agora_web.texts.repository.TextRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class TextItemControllerIntegrationTest {
+class TextControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private TextItemRepository textItemRepository;
+    private TextRepository textItemRepository;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -33,7 +33,6 @@ class TextItemControllerIntegrationTest {
 //         createDto.setDescription("Test Desc");
 //         createDto.setImage("img.png");
 //         createDto.setNameImage("nameImg");
-
 //         // Create
 //         ResultActions result = mockMvc.perform(
 //                 post("/api/v1/texts")
@@ -43,14 +42,12 @@ class TextItemControllerIntegrationTest {
 //         result.andExpect(status().isCreated());
 //         String responseBody = result.andReturn().getResponse().getContentAsString();
 //         TextItemDTO createdDto = objectMapper.readValue(responseBody, TextItemDTO.class);
-
 //         // Get
 //         mockMvc.perform(get("/api/v1/texts/" + createdDto.getId()))
 //                 .andExpect(status().isOk())
 //                 .andExpect(jsonPath("$.title").value("Test Title"))
 //                 .andExpect(jsonPath("$.description").value("Test Desc"));
 //     }
-
 //     // @Test
 //     // void testUpdateText() throws Exception {
 //     //     TextItem item = new TextItem();
@@ -59,13 +56,11 @@ class TextItemControllerIntegrationTest {
 //     //     item.setImage("old.png");
 //     //     item.setNameImage("oldName");
 //     //     item = textItemRepository.save(item);
-
 //     //     TextItemDTO dto = new TextItemDTO();
 //     //     dto.setTitle("New Title");
 //     //     dto.setDescription("New Desc");
 //     //     dto.setImage("new.png");
 //     //     dto.setNameImage("newName");
-
 //     //     mockMvc.perform(put("/api/v1/texts/" + item.getId())
 //     //             .contentType(MediaType.APPLICATION_JSON)
 //     //             .content(objectMapper.writeValueAsString(dto)))
@@ -73,7 +68,6 @@ class TextItemControllerIntegrationTest {
 //     //             .andExpect(jsonPath("$.title").value("New Title"))
 //     //             .andExpect(jsonPath("$.description").value("New Desc"));
 //     // }
-
 //     // @Test
 //     // void testDeleteText() throws Exception {
 //     //     TextItem item = new TextItem();
@@ -82,7 +76,6 @@ class TextItemControllerIntegrationTest {
 //     //     item.setImage("img.png");
 //     //     item.setNameImage("nameImg");
 //     //     item = textItemRepository.save(item);
-
 //     //     mockMvc.perform(delete("/api/v1/texts/" + item.getId()))
 //     //             .andExpect(status().isNoContent());
 //     //     assertFalse(textItemRepository.findById(item.getId()).isPresent());

@@ -14,6 +14,8 @@ import de.stella.agora_web.image.module.TextImage;
 import de.stella.agora_web.image.repository.TextImageRepository;
 import de.stella.agora_web.image.service.ITextImageService;
 import de.stella.agora_web.image.service.ImageStorageService;
+import de.stella.agora_web.texts.model.Text;
+import de.stella.agora_web.texts.repository.TextRepository;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -36,6 +38,7 @@ public class TextImageServiceImpl implements ITextImageService {
 
     private final TextImageRepository textImageRepository;
     private final ImageStorageService imageStorageService;
+    private final TextRepository textItemRepository;
 
     @Override
     public List<TextImageDTO> getAllTextImages() {
@@ -60,12 +63,16 @@ public class TextImageServiceImpl implements ITextImageService {
 
     @Override
     public TextImageDTO createTextImage(TextImageDTO dto) {
+        // Cargar el Text
+        Text text = textItemRepository.findById(dto.getTextId())
+                .orElseThrow(() -> new IllegalArgumentException("Text not found with id: " + dto.getTextId()));
+
         TextImage textImage = new TextImage();
-        textImage.setTextId(dto.getTextId());
+        textImage.setText(text);
         textImage.setImageName(dto.getImageName());
 
         TextImage saved = textImageRepository.save(textImage);
-        log.info("Imagen de texto creada: {} para texto {}", saved.getId(), saved.getTextId());
+        log.info("Imagen de texto creada: {} para texto {}", saved.getId(), saved.getText().getId());
         return mapToDTO(saved);
     }
 
@@ -76,8 +83,8 @@ public class TextImageServiceImpl implements ITextImageService {
             return savedImages;
         }
 
-        // Verificar que el texto existe
-        textImageRepository.findById(textId)
+        // Cargar el TextItem
+        Text textItem = textItemRepository.findById(textId)
                 .orElseThrow(() -> new IllegalArgumentException("Text not found with id: " + textId));
 
         // Verificar límite de imágenes
@@ -94,7 +101,7 @@ public class TextImageServiceImpl implements ITextImageService {
                     TextImage textImage = TextImage.builder()
                             .imageName(file.getOriginalFilename())
                             .imagePath(relativePath)
-                            .textId(textId)
+                            .text(textItem)
                             .build();
 
                     TextImage savedImage = textImageRepository.save(textImage);
@@ -162,7 +169,7 @@ public class TextImageServiceImpl implements ITextImageService {
     private TextImageDTO mapToDTO(TextImage textImage) {
         return TextImageDTO.builder()
                 .id(textImage.getId())
-                .textId(textImage.getTextId())
+                .textId(textImage.getText().getId())
                 .imageName(textImage.getImageName())
                 .imagePath(textImage.getImagePath())
                 .build();
@@ -184,7 +191,8 @@ public class TextImageServiceImpl implements ITextImageService {
      * validación de archivos OCP: Extensible para nuevos criterios de
      * validación
      */
-    private boolean isValidImageFile(MultipartFile file) {
+    @Override
+    public boolean isValidImageFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             return false;
         }
@@ -203,6 +211,13 @@ public class TextImageServiceImpl implements ITextImageService {
         }
 
         return true;
+    }
+
+    @Override
+    public byte[] getTextImageData(Long id) {
+        TextImage textImage = textImageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("TextImage not found with id " + id));
+        return imageStorageService.loadImage(textImage.getImagePath());
     }
 
 }

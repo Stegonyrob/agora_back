@@ -48,9 +48,18 @@ public class TextImageController {
      * Obtiene información de una imagen específica - PÚBLICO SRP:
      * Responsabilidad única de obtener metadata de imagen
      */
-    @GetMapping("/{id}")
+    @GetMapping("/image/{id}")
     public ResponseEntity<TextImageDTO> getTextImage(@PathVariable Long id) {
         return ResponseEntity.ok(textImageService.getTextImageById(id));
+    }
+
+    /**
+     * Obtiene todas las imágenes asociadas a un texto específico - PÚBLICO SRP:
+     * Responsabilidad única de obtener imágenes por textId
+     */
+    @GetMapping("/{textId}")
+    public ResponseEntity<List<TextImageDTO>> getImagesByTextId(@PathVariable Long textId) {
+        return ResponseEntity.ok(textImageService.getImagesByTextId(textId));
     }
 
     // ========== ENDPOINTS ADMINISTRATIVOS ==========
@@ -87,7 +96,7 @@ public class TextImageController {
      * Elimina una imagen específica - SOLO ADMIN SRP: Responsabilidad única de
      * eliminar imagen
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/image/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteTextImage(@PathVariable Long id) {
         textImageService.deleteTextImage(id);
@@ -118,29 +127,5 @@ public class TextImageController {
     public ResponseEntity<Void> deleteImagesByText(@PathVariable Long textId) {
         textImageService.deleteImagesByTextId(textId);
         return ResponseEntity.noContent().build();
-    }
-
-    // ========== MÉTODOS HELPER (SRP) ==========
-    /**
-     * Determina el content type basado en la extensión del archivo SRP:
-     * Responsabilidad única de determinar tipo de contenido OCP: Abierto para
-     * extensión de nuevos tipos
-     */
-    private String determineContentType(String imageName) {
-        if (imageName == null) {
-            return "image/jpeg"; // default
-        }
-
-        String extension = imageName.toLowerCase();
-        if (extension.endsWith(".png")) {
-            return "image/png";
-        } else if (extension.endsWith(".gif")) {
-            return "image/gif";
-        } else if (extension.endsWith(".webp")) {
-            return "image/webp";
-        } else if (extension.endsWith(".bmp")) {
-            return "image/bmp";
-        }
-        return "image/jpeg"; // default
     }
 }

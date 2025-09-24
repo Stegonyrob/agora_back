@@ -39,4 +39,20 @@ public interface ITextImageService {
      * @return Ruta de la imagen de texto.
      */
     String getTextImagePath(Long id);
+
+    /**
+     * Valida si un archivo es una imagen válida.
+     *
+     * @param file Archivo a validar.
+     * @return true si es válido, false en caso contrario.
+     */
+    boolean isValidImageFile(MultipartFile file);
+
+    /**
+     * Obtiene los datos binarios de una imagen de texto por su ID.
+     *
+     * @param id Identificador de la imagen de texto.
+     * @return Datos binarios de la imagen.
+     */
+    byte[] getTextImageData(Long id);
 }
