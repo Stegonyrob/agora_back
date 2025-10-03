@@ -10,11 +10,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.image.service.ITextImageService;
@@ -115,6 +117,35 @@ public class TextController {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             LOGGER.error("Error deleting text with id {}: {}", id, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Archiva o desarchivar un texto (solo ADMIN).
+     *
+     * @param id ID del texto
+     * @param archive true para archivar, false para desarchivar
+     * @return ResponseEntity vacío
+     */
+    @PatchMapping("/{id}/archive")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> archiveText(@PathVariable Long id, @RequestParam Boolean archive) {
+        try {
+            if (archive) {
+                textItemService.archiveText(id);
+                LOGGER.info("Text archived with id {}", id);
+            } else {
+                textItemService.unArchiveText(id);
+                LOGGER.info("Text unarchived with id {}", id);
+            }
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            LOGGER.warn("Text not found for archive operation with id {}: {}", id, e.getMessage());
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            LOGGER.error("Error {} text with id {}: {}",
+                    archive ? "archiving" : "unarchiving", id, e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }

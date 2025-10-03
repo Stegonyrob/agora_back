@@ -39,11 +39,26 @@ public class Text {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "archived")
+    private boolean archived = false;
+
     public String getContent() {
         return message;
     }
 
     public void setContent(String content) {
         this.message = content;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
+
+    public boolean getArchived() {
+        return isArchived();
     }
 }

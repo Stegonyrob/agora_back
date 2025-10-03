@@ -36,4 +36,7 @@ public class TextDTO {
 
     // Fecha de creación solo informativa, la asigna el backend
     private LocalDateTime createdAt;
+
+    // Campo para archivar/desarchivar textos (siguiendo patrón de Post y Event)
+    private boolean archived = false;
 }

@@ -15,4 +15,8 @@ public interface ITextService {
     TextDTO updateText(Long id, TextDTO textDTO);
 
     void deleteText(Long id);
+
+    void archiveText(Long id);
+
+    void unArchiveText(Long id);
 }

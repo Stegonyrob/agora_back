@@ -45,6 +45,7 @@ public class TextServiceImpl implements ITextService {
         item.setTitle(dto.getTitle());
         item.setMessage(dto.getMessage());
         item.setCategory(dto.getCategory());
+        item.setArchived(dto.isArchived());
         // No se maneja image como string, las imágenes se gestionan por separado
         Text updatedText = textRepository.save(item);
         return convertToDTO(updatedText);
@@ -53,6 +54,22 @@ public class TextServiceImpl implements ITextService {
     @Override
     public void deleteText(Long id) {
         textRepository.deleteById(id);
+    }
+
+    @Override
+    public void archiveText(Long id) {
+        Text text = textRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Text not found"));
+        text.setArchived(true);
+        textRepository.save(text);
+    }
+
+    @Override
+    public void unArchiveText(Long id) {
+        Text text = textRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Text not found"));
+        text.setArchived(false);
+        textRepository.save(text);
     }
 
     /**
@@ -65,6 +82,7 @@ public class TextServiceImpl implements ITextService {
         dto.setCategory(text.getCategory());
         dto.setTitle(text.getTitle());
         dto.setMessage(text.getMessage());
+        dto.setArchived(text.isArchived());
         // NO incluimos imágenes - se obtienen por separado
         dto.setCreatedAt(text.getCreatedAt());
         return dto;
@@ -79,6 +97,7 @@ public class TextServiceImpl implements ITextService {
         textItem.setCategory(dto.getCategory());
         textItem.setTitle(dto.getTitle());
         textItem.setMessage(dto.getMessage());
+        textItem.setArchived(dto.isArchived());
         // No se maneja image como string
         return textItem;
     }
