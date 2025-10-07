@@ -1,18 +1,26 @@
 package de.stella.agora_web.posts.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import de.stella.agora_web.image.module.PostImage;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 
 @SpringBootTest
+@ActiveProfiles("h2")
+@TestPropertySource(properties = {
+    "spring.h2.console.enabled=false",
+    "spring.jpa.hibernate.ddl-auto=create-drop"
+})
 class PostServiceImplImageIntegrationTest {
 
     @Autowired

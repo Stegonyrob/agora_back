@@ -1,7 +1,8 @@
 package de.stella.agora_web.integration;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +28,11 @@ import de.stella.agora_web.user.repository.UserRepository;
  * -> Kafka notification -> Email notification
  */
 @SpringBootTest
+@ActiveProfiles("h2")
 @TestPropertySource(properties = {
-    "spring.kafka.bootstrap-servers=localhost:9092",
-    "spring.kafka.consumer.group-id=integration-test-group"
+    "spring.jpa.hibernate.ddl-auto=create-drop",
+    "spring.h2.console.enabled=false",
+    "spring.kafka.enabled=false"
 })
 @Transactional
 class CommentModerationIntegrationTest {

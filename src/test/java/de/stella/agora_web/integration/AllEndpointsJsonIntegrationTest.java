@@ -1,16 +1,17 @@
 package de.stella.agora_web.integration;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,9 +20,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Tests de integración para verificar que TODOS los endpoints principales
  * devuelvan JSON bien formados y optimizados sin redundancia excesiva.
  */
-@SpringBootTest
-@AutoConfigureWebMvc
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
 @ActiveProfiles("h2")
+@TestPropertySource(properties = {
+    "spring.h2.console.enabled=false",
+    "spring.jpa.hibernate.ddl-auto=create-drop"
+})
 public class AllEndpointsJsonIntegrationTest {
 
     @Autowired
@@ -43,7 +48,7 @@ public class AllEndpointsJsonIntegrationTest {
         testEndpoint("Posts - Obtener todos (paginado)", "/api/posts", 100000);
 
         // 3. Test endpoints de events
-        testEndpoint("Events - Obtener todos (paginado)", "/api/events", 100000);
+        testEndpoint("Events - Obtener todos (públicos)", "/api/v1/public/events", 100000);
 
         // 4. Test endpoints específicos con IDs dinámicos
         testEndpointsWithDynamicIds();
@@ -117,16 +122,16 @@ public class AllEndpointsJsonIntegrationTest {
 
         // Obtener un ID de event válido
         try {
-            MvcResult eventsResult = mockMvc.perform(get("/api/events"))
+            MvcResult eventsResult = mockMvc.perform(get("/api/v1/public/events"))
                     .andExpect(status().isOk())
                     .andReturn();
 
             JsonNode eventsNode = objectMapper.readTree(eventsResult.getResponse().getContentAsString());
-            JsonNode content = eventsNode.get("content");
 
-            if (content.isArray() && content.size() > 0) {
-                Long eventId = content.get(0).get("id").asLong();
-                testEndpoint("Events - Event individual", "/api/events/" + eventId, 50000);
+            // Para endpoints públicos que devuelven arrays directos
+            if (eventsNode.isArray() && eventsNode.size() > 0) {
+                Long eventId = eventsNode.get(0).get("id").asLong();
+                testEndpoint("Events - Event individual", "/api/v1/public/events/" + eventId, 50000);
             }
         } catch (Exception e) {
             System.out.println("⚠️  No se pudo probar endpoint de event individual: " + e.getMessage());

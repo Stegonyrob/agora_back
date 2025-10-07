@@ -1,17 +1,24 @@
 package de.stella.agora_web.gdpr.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.anyLong;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import de.stella.agora_web.banned.service.IBannedService;
 import de.stella.agora_web.comment.service.ICommentService;
@@ -20,6 +27,10 @@ import de.stella.agora_web.replies.service.IReplyService;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.service.impl.UserServiceImpl;
 
+@ActiveProfiles("h2")
+@TestPropertySource(properties = {
+    "spring.h2.console.enabled=false"
+})
 class GdprServiceTest {
 
     @Mock

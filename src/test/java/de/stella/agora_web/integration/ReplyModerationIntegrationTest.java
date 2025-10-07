@@ -1,10 +1,13 @@
 package de.stella.agora_web.integration;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +25,11 @@ import de.stella.agora_web.user.service.impl.UserServiceImpl;
  * (replies)
  */
 @SpringBootTest
+@ActiveProfiles("h2")
 @TestPropertySource(properties = {
-    "kafka.enabled=false"
+    "kafka.enabled=false",
+    "spring.h2.console.enabled=false",
+    "spring.jpa.hibernate.ddl-auto=create-drop"
 })
 @Transactional
 public class ReplyModerationIntegrationTest {

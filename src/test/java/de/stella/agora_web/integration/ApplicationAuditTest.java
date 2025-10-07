@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import de.stella.agora_web.avatar.repository.AvatarRepository;
@@ -22,9 +23,11 @@ import de.stella.agora_web.user.repository.UserRepository;
  * componentes principales están funcionando correctamente
  */
 @SpringBootTest
+@ActiveProfiles("h2")
 @TestPropertySource(properties = {
     "spring.jpa.hibernate.ddl-auto=create-drop",
-    "spring.sql.init.mode=always"
+    "spring.sql.init.mode=always",
+    "spring.h2.console.enabled=false"
 })
 @DisplayName("🔍 Auditoría Completa del Sistema")
 class ApplicationAuditTest {
