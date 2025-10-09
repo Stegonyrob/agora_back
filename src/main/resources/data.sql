@@ -616,70 +616,118 @@ VALUES
   (
     'agora',
     '¿Quiénes Somos?',
-    'Somos un centro educativo que trabaja en el ámbito de la neurodiversidad así como en el refuerzo educativo individualizado. Nuestro objetivo principal es el desarrollo de personas respetando su individualidad y concentrándonos en sus potencialidades, priorizando a la persona como elemento clave de la intervención.',
+    'Somos un centro educativo que trabaja de forma integral en el ámbito de la neurodiversidad y el refuerzo educativo individualizado y personalizado. Nuestra misión se cimienta en una profunda comprensión: cada mente es única, con sus propios ritmos, desafíos y, lo más importante, talentos extraordinarios. Lejos de aplicar un modelo de talla única, adoptamos un enfoque inclusivo y diferencial que celebra las distintas formas en que las personas aprenden y procesan la información, reconociendo condiciones como el TDAH, la dislexia, el espectro autista, y otras. Nuestro objetivo principal es el desarrollo pleno de cada persona, respetando intrínsecamente su individualidad y concentrándonos estratégicamente en sus potencialidades. Priorizamos a la persona como el elemento clave de toda intervención educativa. Esto significa que nuestros programas no se limitan a cubrir carencias académicas, sino que están diseñados para fomentar la autoconciencia, la regulación emocional y las habilidades sociales necesarias para una vida autónoma y satisfactoria.
+
+Nuestra Metodología: Respeto y Competencia
+La metodología que empleamos se basa en la evaluación continua y la flexibilidad curricular. Cada plan de refuerzo se construye tras un análisis detallado de las fortalezas cognitivas y emocionales del estudiante, utilizando herramientas y estrategias didácticas que se adaptan a su estilo de aprendizaje específico. Implementamos el aprendizaje multisensorial, la gamificación o el uso de apoyos visuales, buscando siempre el canal de comunicación más efectivo. Creemos firmemente que el éxito no se mide solo por las calificaciones, sino por la capacidad de la persona para desenvolverse en el mundo y alcanzar su máximo potencial dentro de su propio marco de bienestar. Al centrarnos en las potencialidades, transformamos lo que a menudo se percibe como una "dificultad" en un punto de partida para una habilidad o un interés especial. Nuestro compromiso es ser un catalizador para la confianza y la autoeficacia.
+
+Compromiso Ético: Por qué No Aplicamos ABA (Análisis de Comportamiento Aplicado)
+Como principio rector fundacional de nuestra identidad, hemos tomado la decisión de no aplicar técnicas basadas en el Análisis de Comportamiento Aplicado (ABA), especialmente en su modalidad conductual intensiva. Esta postura ética se alinea con nuestra filosofía de presunción de competencia y respeto incondicional a la identidad personal:
+
+Priorizamos la Autorregulación Interna: El ABA tradicional se centra en la modificación conductual externa mediante refuerzos para ajustarse a normas neurotípicas. Nosotros, en cambio, priorizamos la autorregulación interna y el manejo emocional, respetando la motivación intrínseca de la persona.
+Rechazo al Enmascaramiento (Masking): Las terapias enfocadas en la normalización obligan a la persona neurodivergente a enmascarar sus rasgos naturales (como movimientos auto-reguladores o stimming). Este proceso es reportado por la comunidad autista como una fuente de ansiedad crónica y daño a la identidad a largo plazo. Nuestro enfoque valida y respeta las formas propias de regulación de cada individuo.
+Enfoque en la Autonomía: El modelo ABA puede enfocar el éxito en la obediencia. Nosotros nos enfocamos en la autonomía, la autodeterminación y la enseñanza de habilidades que permitan a la persona tomar decisiones informadas y expresar sus necesidades, promoviendo su liderazgo sobre su propia vida.
+
+En resumen, optamos por intervenciones educativas y psicopedagógicas que fomenten la competencia, la autoaceptación y la calidad de vida de la persona, en lugar de intentar imponer un estándar de comportamiento neurotípico. Nuestro compromiso es asegurar que cada estudiante se sienta visto, valorado y equipado para trazar su propio camino de forma auténtica.',
     NOW(),
     false
   ),
   (
     'agora',
     'Dónde Estamos',
-    'Nos encontramos en la zona Oeste de Gijón, más exactamente en La Calzada en Calle Nicaragua al 16.',
+    'Nos encontramos en la zona Oeste de Gijón, más exactamente en La Calzada en Calle Nicaragua al 16. Nuestros Horarios de atención son de Septiembre a Junio de  Lunes a Viernes de 16:00 a 21:00 , Sabádos de 10:00 a 14:00 , Domingo Cerrado y en periodo de Verano de Lunes a Viernes de 9:00 a 14:00 , Sabados 10:00 a 14:00 Domingo Cerrados. Estamos aquí para ofrecerte el mejor apoyo educativo y acompañamiento personalizado en un entorno accesible y acogedor.',
     NOW(),
     false
   ),
   (
     'services',
     'Nuestros Servicios',
-    'Nuestros servicios están diseñados para atender las necesidades de cada estudiante de manera individualizada, promoviendo su desarrollo integral y bienestar. Los cuales son entre otros: Reeducación pedagógica, Educación psicomotriz, Refuerzo de inglés en grupos reducidos, Refuerzo educativo especializado en grupos pequeños, Talleres temáticos educativos (vacaciones), Taller juegos de mesa, Escuela de familias.',
+    'Nuestros servicios están meticulosamente diseñados para atender las necesidades únicas de cada estudiante de manera individualizada, asegurando la promoción de su desarrollo integral y bienestar emocional y académico.
+
+Ofrecemos una gama de intervenciones especializadas y programas de apoyo continuo. Entre ellos destacan: la Reeducación Pedagógica, enfocada en optimizar los procesos de aprendizaje y las funciones ejecutivas; y la Educación Psicomotriz, crucial para el desarrollo de la coordinación y la conciencia corporal, elementos fundamentales para el aprendizaje.
+
+Además, proporcionamos Refuerzo de Inglés en grupos reducidos y Refuerzo Educativo Especializado en grupos pequeños para garantizar una atención personalizada y efectiva en materias curriculares.
+
+Para fomentar habilidades sociales y el aprendizaje lúdico, organizamos Talleres Temáticos Educativos durante periodos vacacionales y un Taller de Juegos de Mesa. Reconociendo la importancia del entorno familiar, facilitamos una Escuela de Familias, ofreciendo herramientas y estrategias a los padres para un acompañamiento efectivo en el proceso educativo de sus hijos. Cada servicio está alineado con nuestra filosofía de respeto a la individualidad.',
     NOW(),
     false
   ),
   (
     'services',
     'Reeducación Pedagógica',
-    'Apoyo educativo, Intervención en NEE y NEAE, Cuidado especializado por horas, Intervención educativa con familias y en el hogar, Coordinación multidisciplinar con centros educativos y particulares. Somos beneficiarios de las becas de reeducación pedagógica de NEAE y NEE.',
+    'Apoyo educativo, Intervención en NEE y NEAE, Cuidado especializado por horas, Intervención educativa con familias y en el hogar, Coordinación multidisciplinar con centros educativos y particulares. Somos beneficiarios de las becas de reeducación pedagógica de NEAE y NEE.
+
+Nuestra propuesta de valor se centra en un Apoyo Educativo exhaustivo y una Intervención especializada en Necesidades Específicas de Apoyo Educativo (NEAE) y Necesidades Educativas Especiales (NEE). Abordamos cada caso desde la premisa de la neurodiversidad, entendiendo que la variabilidad cerebral es una riqueza, no una deficiencia. Esto se traduce en planes de intervención diseñados a medida que maximizan las fortalezas y respetan los ritmos individuales de cada estudiante. Ofrecemos Cuidado Especializado por Horas, proporcionando un entorno seguro y estimulante que se adapta a las rutinas familiares. Además, extendemos nuestro compromiso con la Intervención Educativa con Familias y en el Hogar, creando un puente coherente entre el centro y el entorno natural del estudiante.
+
+La Coordinación Multidisciplinar es fundamental, manteniendo una comunicación activa y fluida con centros educativos y otros profesionales particulares para garantizar una visión unificada y efectiva. Es un orgullo ser beneficiarios de las becas de reeducación pedagógica de NEAE y NEE, un reconocimiento que valida la calidad y el enfoque de nuestros programas. Nuestro equipo está altamente capacitado para transformar los desafíos de aprendizaje en oportunidades de desarrollo, promoviendo siempre la autonomía, la confianza y el desarrollo de la identidad de la persona neurodiversa.',
     NOW(),
     false
   ),
   (
     'services',
     'Educación Psicomotriz',
-    'Sesiones diseñadas para fomentar el desarrollo integral de los niños a través del movimiento y la interacción con el entorno. Se trabaja la coordinación, el equilibrio, la conciencia corporal y otras habilidades motoras fundamentales para el aprendizaje y el bienestar.',
+    'Sesiones diseñadas para fomentar el desarrollo integral de los niños a través del movimiento y la interacción con el entorno. Se trabaja la coordinación, el equilibrio, la conciencia corporal y otras habilidades motoras fundamentales para el aprendizaje y el bienestar.
+
+Nuestras sesiones de Educación Psicomotriz están diseñadas con un profundo respeto por el proceso de desarrollo integral y la neurodiversidad de cada niño. Entendemos el movimiento no solo como una actividad física, sino como el lenguaje primario a través del cual el niño se relaciona, aprende y organiza su pensamiento. Por ello, las sesiones fomentan una interacción rica y segura con el entorno, permitiendo que cada niño explore a su propio ritmo. Trabajamos en la mejora de la coordinación motriz fina y gruesa, el equilibrio y, de manera crucial, la conciencia corporal.
+
+Estas habilidades motoras son fundamentales, ya que sientan las bases neurológicas para procesos cognitivos superiores, incluyendo la atención, la lectoescritura y el razonamiento lógico. Más allá del beneficio físico, la psicomotricidad es un espacio de desarrollo emocional donde se potencia la autoestima, la gestión de la frustración y el bienestar general. Nuestro enfoque es siempre lúdico y no directivo, valorando la expresión espontánea y la creatividad del niño. Respetamos la individualidad de su desarrollo sensoriomotor, asegurando que el proceso sea una experiencia de éxito y empoderamiento que refuerce la conexión entre el cuerpo, la emoción y el conocimiento.
+
+',
     NOW(),
     false
   ),
   (
     'services',
     'Refuerzo de Inglés en Grupos Reducidos',
-    'Clases de apoyo para el aprendizaje del inglés, impartidas en grupos pequeños para garantizar una atención más personalizada. Se refuerzan los contenidos curriculares, se trabajan las habilidades comunicativas y se fomenta la confianza en el uso del idioma.',
+    'Clases de apoyo para el aprendizaje del inglés, impartidas en grupos pequeños para garantizar una atención más personalizada. Se refuerzan los contenidos curriculares, se trabajan las habilidades comunicativas y se fomenta la confianza en el uso del idioma.
+
+El aprendizaje de un segundo idioma, como el inglés, se aborda en nuestro centro con un enfoque altamente sensible a la neurodiversidad y a los distintos estilos de procesamiento lingüístico. Nuestras clases de apoyo se imparten en grupos muy reducidos, lo que no solo garantiza una atención personalizada, sino que también crea un entorno de aprendizaje seguro y de baja presión, esencial para alumnos con diferencias de procesamiento o ansiedad ante el rendimiento. Reforzamos los contenidos curriculares siguiendo una metodología adaptada que incorpora múltiples canales sensoriales, como el aprendizaje visual, kinestésico y auditivo, para asegurar que la información sea accesible para todos.
+
+El objetivo principal va más allá de aprobar un examen: nos concentramos en desarrollar las habilidades comunicativas prácticas (escucha, habla, lectura y escritura) de forma integrada. Ponemos especial énfasis en fomentar la confianza en el uso del idioma. Para un estudiante neurodiverso, el éxito en la comunicación se logra a través de la aceptación de errores como parte natural del aprendizaje. Celebramos cada progreso y utilizamos estrategias lúdicas y basadas en el interés del estudiante para hacer del inglés una herramienta útil y divertida. Promovemos un entorno donde cada voz es valorada, respetando los tiempos de respuesta y la forma de expresión individual.',
     NOW(),
     false
   ),
   (
     'services',
     'Refuerzo Educativo Especializado',
-    'Apoyo académico individualizado o en grupos muy reducidos para alumnos con necesidades educativas especiales o dificultades de aprendizaje. Se adaptan las estrategias y los materiales para atender las particularidades de cada estudiante y facilitar su progreso.',
+    'Apoyo académico individualizado o en grupos muy reducidos para alumnos con necesidades educativas especiales o dificultades de aprendizaje. Se adaptan las estrategias y los materiales para atender las particularidades de cada estudiante y facilitar su progreso.
+
+Nuestro programa de Apoyo Académico es el núcleo de nuestra filosofía de respeto a la neurodiversidad. Está diseñado específicamente para alumnos con Necesidades Educativas Especiales (NEE) y diversas Dificultades de Aprendizaje (DA), ofreciendo sesiones individuales o en grupos muy pequeños. Partimos de la firme creencia de que cada desafío en el aprendizaje es una señal de que el sistema o la metodología deben adaptarse a la persona, y no al revés. La clave de nuestro éxito reside en la adaptación profunda de estrategias y materiales.
+
+Esto implica ir más allá de la simple ayuda con los deberes; significa construir un perfil de aprendizaje detallado de cada estudiante, identificando sus fortalezas cognitivas y utilizando herramientas compensatorias que promuevan su autonomía. Ya sea mediante apoyos visuales, software adaptado o técnicas de organización basadas en su estilo neurológico, el objetivo es facilitar su progreso académico y su desarrollo personal. Presumimos competencia en cada estudiante, actuando como facilitadores que les enseñan a aprender, a autorregularse y a utilizar sus diferencias como ventajas. Nuestro enfoque es holístico y se centra en el empoderamiento, asegurando que el alumno gane las habilidades metacognitivas necesarias para ser el protagonista activo de su propio aprendizaje.',
     NOW(),
     false
   ),
   (
     'services',
     'Talleres Temáticos Educativos',
-    'Programas especiales durante los periodos vacacionales con temáticas diversas y educativas. Estos talleres buscan ofrecer un espacio de aprendizaje lúdico y creativo, explorando diferentes áreas de conocimiento y desarrollando nuevas habilidades de manera divertida.',
+    'Programas especiales durante los periodos vacacionales con temáticas diversas y educativas. Estos talleres buscan ofrecer un espacio de aprendizaje lúdico y creativo, explorando diferentes áreas de conocimiento y desarrollando nuevas habilidades de manera divertida.
+
+Los Talleres Temáticos Educativos que ofrecemos durante los periodos vacacionales son una extensión de nuestra filosofía de aprendizaje lúdico y respetuoso con la neurodiversidad. Lejos del formato de la escuela tradicional, estos programas están diseñados para ser un espacio de aprendizaje creativo y desestructurado, donde se minimiza la presión de rendimiento y se maximiza el disfrute. A través de temáticas diversas y atractivas, buscamos explorar diferentes áreas de conocimiento que quizás no se aborden en el currículo estándar, permitiendo a los participantes desarrollar nuevas habilidades en un ambiente relajado.
+
+El enfoque es intrínsecamente inclusivo, utilizando una metodología activa y participativa que se adapta a las distintas formas de interacción y procesamiento. Por ejemplo, un taller de ciencia puede enfocarse en la experimentación práctica para estudiantes kinestésicos, mientras que uno de arte puede ofrecer diferentes medios de expresión para adaptarse a sensibilidades sensoriales. El objetivo principal es que el niño o adolescente asocie el aprendizaje con la diversión, la curiosidad y el éxito personal. Fomentamos la interacción social positiva, el respeto mutuo y la aceptación de las diferencias, asegurando que cada participante pueda expresarse y desarrollarse de manera auténtica.',
     NOW(),
     false
   ),
   (
     'services',
     'Taller Juegos de Mesa',
-    'Espacio dedicado al aprendizaje y desarrollo a través de los juegos de mesa. Se fomenta el pensamiento estratégico, la resolución de problemas, la cooperación, el respeto por las normas y las habilidades sociales en un ambiente divertido y participativo.',
+    'Espacio dedicado al aprendizaje y desarrollo a través de los juegos de mesa. Se fomenta el pensamiento estratégico, la resolución de problemas, la cooperación, el respeto por las normas y las habilidades sociales en un ambiente divertido y participativo.
+
+Nuestro Taller de Juegos de Mesa es una herramienta poderosa y lúdica para el desarrollo de habilidades cognitivas y sociales, totalmente alineado con el respeto a la neurodiversidad. Los juegos de mesa son, por naturaleza, entornos controlados y estructurados que facilitan el entrenamiento de funciones ejecutivas cruciales. Este espacio está dedicado a fomentar el pensamiento estratégico y la resolución de problemas de una manera tangible y motivadora. La naturaleza intrínsecamente divertida y participativa del taller reduce la ansiedad y facilita el engagement en tareas que requieren concentración.
+
+Más allá de lo cognitivo, el taller es un laboratorio social esencial. Promovemos activamente la cooperación (en juegos de equipo) y el respeto por las normas, lo cual es una habilidad vital para la vida y el autocontrol. Además, ofrece un marco seguro para practicar habilidades sociales, como esperar el turno, manejar la frustración de perder y celebrar el éxito ajeno. Para las personas neurodiversas, el juego de mesa ofrece un conjunto de reglas claras y previsibles, un "guion" social que reduce la incertidumbre y facilita la interacción, permitiéndoles practicar y generalizar estas habilidades a otros contextos de forma natural y respetuosa con su forma de ser.',
     NOW(),
     false
   ),
   (
     'services',
     'Escuela de Familias',
-    'Programa de formación y apoyo dirigido a padres y madres. Se ofrecen herramientas, estrategias y recursos para afrontar los retos de la crianza, mejorar la comunicación familiar y promover un desarrollo saludable de los hijos.',
+    'Programa de formación y apoyo dirigido a padres y madres. Se ofrecen herramientas, estrategias y recursos para afrontar los retos de la crianza, mejorar la comunicación familiar y promover un desarrollo saludable de los hijos.
+
+Nuestra Escuela de Familias es un programa esencial que reconoce a los padres y madres como los principales agentes de cambio y apoyo para sus hijos. El programa está diseñado para ofrecer una formación y apoyo de alta calidad, centrada en la comprensión y el respeto a la neurodiversidad. Entendemos que la crianza de un hijo neurodiverso presenta retos únicos, y nuestra misión es equipar a las familias con las herramientas, estrategias y recursos necesarios para afrontarlos con competencia y amor.
+
+Se abordan temas cruciales como la gestión conductual positiva, la mejora de la comunicación familiar adaptada a los estilos comunicativos específicos del hijo, y el fomento de la autonomía. Nuestro enfoque es siempre empático y sin juicio, creando un espacio de intercambio seguro donde las familias pueden compartir experiencias y sentirse validadas. Al promover una comprensión profunda de las necesidades y fortalezas únicas de sus hijos, ayudamos a los padres a pasar de un modelo centrado en la "corrección" a uno centrado en la validación y el apoyo al desarrollo saludable. El objetivo final es fortalecer la unidad familiar, reducir el estrés parental y asegurar que el hogar sea un entorno de aceptación incondicional y crecimiento.',
     NOW(),
     false
   ),
@@ -693,84 +741,136 @@ VALUES
   (
     'neurodiversity',
     'Neurodiversidad ¿Qué es?',
-    'La neurodiversidad se define como la variabilidad natural del cerebro humano, que abarca una amplia gama de diferencias neurológicas y cognitivas. Esta perspectiva reconoce que las variaciones en el funcionamiento cerebral son normales y valiosas.',
+    'La neurodiversidad se define como la variabilidad natural del cerebro humano, que abarca una amplia gama de diferencias neurológicas y cognitivas. Esta perspectiva reconoce que las variaciones en el funcionamiento cerebral son normales y valiosas.
+
+La Neurodiversidad es el principio fundamental que guía toda nuestra filosofía y metodología. Se define como la variabilidad natural y deseable del cerebro humano, una perspectiva que abarca y celebra la amplia gama de diferencias neurológicas y cognitivas que existen entre las personas. Esta visión es esencialmente un movimiento por la justicia social que despatologiza las diferencias. Reconocemos que variaciones en el procesamiento de la información, el timing social, la atención o el aprendizaje —como se manifiestan en el Autismo, el TDAH o la Dislexia—, son formas de ser tan normales y válidas como cualquier otra.
+
+Nuestra adopción de esta perspectiva implica un cambio radical: las dificultades no son inherentes a la persona, sino el resultado de la falta de adaptación y accesibilidad en el entorno. Al abrazar la neurodiversidad, afirmamos que estas variaciones en el funcionamiento cerebral no solo son normales, sino valiosas, aportando talentos, perspectivas y soluciones únicas a nuestra comunidad. Nuestro trabajo se enfoca en crear entornos educativos y sociales inclusivos que permitan que la persona neurodivergente prospere, utilice sus fortalezas únicas y desarrolle una identidad positiva y competente.',
     NOW(),
     false
   ),
   (
     'neurodiversity',
     'Nuestra Visión de la Neurodiversidad',
-    'Nuestra visión de la neurodiversidad se basa en el respeto y la valoración de las diferencias individuales. Creemos que cada persona tiene un potencial único y que la diversidad cognitiva enriquece nuestras comunidades.',
+    'Nuestra visión de la neurodiversidad se basa en el respeto y la valoración de las diferencias individuales. Creemos que cada persona tiene un potencial único y que la diversidad cognitiva enriquece nuestras comunidades.
+
+Nuestra visión institucional de la neurodiversidad es un compromiso inquebrantable con el respeto incondicional y la valoración activa de las diferencias individuales. Para nosotros, no se trata solo de ser "tolerantes", sino de presumir competencia y buscar activamente las fortalezas inherentes a cada configuración neurológica. Creemos firmemente que cada persona neurodivergente posee un potencial único y significativo, talentos que a menudo son invisibles en entornos educativos rígidos. Nuestra labor es ser el catalizador que ayude a descubrir y cultivar ese potencial, concentrando nuestra intervención en las habilidades que la persona ya tiene para construir desde una base de éxito.
+
+Afirmamos con convicción que la diversidad cognitiva —esta gama de cerebros que piensan, sienten y aprenden de manera diferente— enriquece inmensamente nuestras comunidades. Esta visión nos impulsa a diseñar estrategias individualizadas que no buscan "normalizar" a la persona, sino crear un entorno que sea flexible, accesible y validante para ella. El respeto a la neurodiversidad es, por lo tanto, la base ética para fomentar una autoestima fuerte y una identidad positiva, asegurando que cada estudiante sepa que su forma de ser no solo es aceptada, sino celebrada.',
     NOW(),
     false
   ),
   (
     'cea',
     'Condición del Espectro Autista',
-    'La condición del espectro autista (CEA) es una condición del neurodesarrollo que afecta la comunicación, la interacción social y el comportamiento. Se manifiesta de diversas formas y con diferentes grados de intensidad.',
+    'La condición del espectro autista (CEA) es una condición del neurodesarrollo que afecta la comunicación, la interacción social y el comportamiento. Se manifiesta de diversas formas y con diferentes grados de intensidad.
+
+La Condición del Espectro Autista (CEA) se entiende en nuestro centro como una variación del neurodesarrollo que impacta la forma en que una persona se relaciona con el mundo. Es fundamental reconocer que el CEA es un espectro, lo que significa que se manifiesta de innumerables formas y con diferentes grados de intensidad, haciendo que la experiencia de cada persona autista sea única. Si bien tradicionalmente se ha definido por diferencias en la comunicación, la interacción social y los patrones de comportamiento (incluyendo intereses restringidos o comportamientos repetitivos), nuestra aproximación se enfoca en las fortalezas que a menudo acompañan a esta neurotipo.
+
+Estas fortalezas pueden incluir una atención excepcional al detalle, un pensamiento lógico superior, una gran honestidad o la capacidad para una inmersión profunda en temas de interés. Nuestro enfoque se centra en adaptar la comunicación a los estilos de procesamiento autista (por ejemplo, usando apoyos visuales y lenguaje directo), y en enseñar habilidades sociales en el contexto de las normas sociales neurotípicas, siempre respetando la necesidad de espacios y el estilo de interacción preferido del individuo. Abogamos por la autonomía y el respeto a la identidad autista, proporcionando las herramientas necesarias para que puedan navegar el mundo sin presiones de enmascaramiento innecesarias.',
     NOW(),
     false
   ),
   (
     'cea',
     'Evolución de la CEA',
-    'La condición del espectro autista, antiguamente considerada un trastorno (TEA), ha evolucionado en su comprensión y enfoque. Actualmente, se reconoce que cada persona con CEA es única.',
+    '
+
+La condición del espectro autista, antiguamente considerada un trastorno (TEA), ha evolucionado en su comprensión y enfoque. Actualmente, se reconoce que cada persona con CEA es única.
+
+La comprensión de la Condición del Espectro Autista (CEA) ha experimentado una evolución fundamental, pasando de ser vista meramente como un Trastorno del Espectro Autista (TEA) —una terminología más antigua y patologizante— a ser reconocida como una condición del neurodesarrollo y una manifestación de la neurodiversidad. Este cambio de enfoque es vital para nuestra práctica. Rechazamos la idea de que el autismo es algo que debe ser "curado" o "normalizado". En su lugar, reconocemos que el autismo es una forma de ser, de percibir y de interactuar.
+
+La clave de nuestra intervención es el reconocimiento de que cada persona con CEA es única. Las estrategias que funcionan para un individuo pueden no ser adecuadas para otro. Por ello, la intervención es siempre personalizada y centrada en los objetivos y el bienestar de la persona autista. Nos enfocamos en enseñar habilidades compensatorias y en crear entornos accesibles, en lugar de intentar modificar el núcleo de la identidad autista. Esta visión respeta la autodeterminación y promueve una identidad autista positiva, donde las fortalezas y los intereses especiales son valorados como recursos.',
     NOW(),
     false
   ),
   (
     'tda_tdh',
     'Trastorno del Déficit de Atención (TDA)',
-    'El trastorno del déficit de atención (TDA) es una condición del neurodesarrollo que se caracteriza por dificultades en la atención. Estas dificultades pueden afectar el rendimiento académico y las relaciones interpersonales.',
+    'El trastorno del déficit de atención (TDA) es una condición del neurodesarrollo que se caracteriza por dificultades en la atención. Estas dificultades pueden afectar el rendimiento académico y las relaciones interpersonales.
+
+El Trastorno del Déficit de Atención (TDA), sin hiperactividad, se considera una condición del neurodesarrollo caracterizada principalmente por diferencias significativas en la regulación de la atención. Lejos de ser un déficit de capacidad, se entiende como una dificultad para dirigir y mantener la atención de forma consistente, especialmente en tareas que no son intrínsecamente estimulantes o interesantes. Estas diferencias en la función ejecutiva pueden, efectivamente, afectar el rendimiento académico y, en ocasiones, las relaciones interpersonales, debido a despistes o dificultades para seguir instrucciones largas.
+
+Nuestra intervención se basa en la presunción de competencia. Sabemos que el cerebro con TDA es capaz de una hiperconcentración asombrosa cuando el interés es alto. Por lo tanto, nuestro trabajo se enfoca en enseñar estrategias de gestión de la atención y habilidades organizativas que se adapten a este perfil. Utilizamos herramientas como el chunking (dividir tareas grandes), la gamificación, y el uso de señales visuales y checklists. El objetivo es proporcionar al estudiante el "andamiaje" externo necesario para compensar las diferencias en su función ejecutiva, fomentando su autonomía y transformando el desafío atencional en una habilidad de enfoque autodirigido.',
     NOW(),
     false
   ),
   (
     'tda_tdh',
     'Trastorno del Déficit de Atención con Hiperactividad (TDAH)',
-    'El TDAH es una condición del neurodesarrollo que se caracteriza por dificultades en la atención, la hiperactividad y la impulsividad. Es importante abordar el TDAH con estrategias adecuadas y un enfoque comprensivo.',
+    'El TDAH es una condición del neurodesarrollo que se caracteriza por dificultades en la atención, la hiperactividad y la impulsividad. Es importante abordar el TDAH con estrategias adecuadas y un enfoque comprensivo.
+
+El Trastorno por Déficit de Atención e Hiperactividad (TDAH) es una condición del neurodesarrollo que implica diferencias en la atención, la hiperactividad (o inquietud motriz/mental) y la impulsividad. Abordamos el TDAH con un enfoque profundamente comprensivo y respetuoso, reconociendo las fortalezas que a menudo acompañan a este neurotipo, como la energía, la creatividad, el pensamiento rápido y la capacidad de actuar bajo presión. La hiperactividad y la impulsividad no se ven como comportamientos a erradicar, sino como manifestaciones de un sistema nervioso que necesita una estimulación o descarga diferente.
+
+Nuestra intervención se centra en dotar al estudiante de estrategias de autorregulación y herramientas de coaching. Esto incluye técnicas para gestionar la impulsividad mediante pausas estructuradas, el uso de movimiento para optimizar el focus (como el fidgeting discreto) y la enseñanza de habilidades de planificación ejecutiva. Es fundamental que la persona con TDAH se sienta vista y aceptada. Mediante un abordaje integral, que incluye la colaboración con la familia, garantizamos que el estudiante reciba el apoyo necesario para canalizar su energía y creatividad, transformando las diferencias en una fuente de competencia y autoeficacia.',
     NOW(),
     false
   ),
   (
     'learning_difficulties',
     'Dificultades del Aprendizaje',
-    'Las dificultades del aprendizaje son condiciones que afectan la capacidad de una persona para adquirir, procesar o utilizar información de manera efectiva. Es fundamental identificar y abordar estas dificultades de manera temprana.',
+    'Las dificultades del aprendizaje son condiciones que afectan la capacidad de una persona para adquirir, procesar o utilizar información de manera efectiva. Es fundamental identificar y abordar estas dificultades de manera temprana.
+
+Las Dificultades del Aprendizaje (DA) son condiciones intrínsecas que afectan la manera en que una persona adquiere, procesa o utiliza la información de manera efectiva, afectando áreas como la lectura (dislexia), la escritura (disgrafía) o las matemáticas (discalculia). Desde nuestra perspectiva de neurodiversidad, entendemos que estas no reflejan una falta de inteligencia, sino una diferencia en el cableado neuronal para procesar información específica. Es fundamental identificar y abordar estas dificultades de manera temprana para prevenir el bajo rendimiento, la frustración y la disminución de la autoestima.
+
+Nuestra intervención se basa en un diagnóstico funcional que va más allá de la etiqueta, buscando comprender cómo aprende el estudiante. Desarrollamos programas de reeducación que utilizan metodologías multisensoriales y estructuradas para crear nuevas vías de procesamiento. En lugar de forzar a un estudiante disléxico a leer más, le enseñamos estrategias compensatorias y utilizamos tecnología de apoyo. Nuestro objetivo es que el estudiante comprenda sus diferencias, se sienta competente y aprenda a navegar el sistema educativo utilizando sus fortalezas, asegurando que su capacidad intelectual no se vea limitada por un obstáculo específico en el aprendizaje.
+
+',
     NOW(),
     false
   ),
   (
     'learning_difficulties',
     'Desafíos del Aprendizaje',
-    'Los desafíos del aprendizaje son obstáculos que pueden dificultar el proceso educativo de los estudiantes. Estos desafíos pueden ser de naturaleza cognitiva, emocional o social.',
+    'Los desafíos del aprendizaje son obstáculos que pueden dificultar el proceso educativo de los estudiantes. Estos desafíos pueden ser de naturaleza cognitiva, emocional o social.
+
+Los Desafíos del Aprendizaje representan los obstáculos multifacéticos que pueden dificultar el proceso educativo de cualquier estudiante, con o sin un diagnóstico específico. Reconocemos que estos desafíos pueden ser de naturaleza cognitiva (relacionados con la memoria, la atención o el procesamiento), emocional (como la ansiedad ante los exámenes o la baja autoestima) o social (dificultades en la interacción con compañeros o profesores). Nuestro enfoque es integral y siempre respeta la individualidad del estudiante, entendiendo que un desafío rara vez es puramente académico.
+
+Abordamos estos obstáculos mediante la creación de un entorno de apoyo seguro y a través de la enseñanza de habilidades de afrontamiento y metacognición. Si la ansiedad es el obstáculo, trabajamos en la regulación emocional; si es la organización, en la función ejecutiva. Para los estudiantes neurodiversos, estos desafíos pueden intensificarse debido a la falta de adaptaciones en el sistema. Por ello, trabajamos en la adaptación del entorno y en dotar al estudiante de la confianza y las estrategias necesarias para superar activamente estos obstáculos, fomentando una mentalidad de crecimiento y la resiliencia académica y personal.',
     NOW(),
     false
   ),
   (
     'development_conditions',
     'Condiciones del Desarrollo',
-    'Las condiciones del desarrollo son un conjunto de factores que influyen en el crecimiento y la evolución de los niños. Estos factores pueden ser biológicos, psicológicos o sociales.',
+    'Las condiciones del desarrollo son un conjunto de factores que influyen en el crecimiento y la evolución de los niños. Estos factores pueden ser biológicos, psicológicos o sociales.
+
+El término Condiciones del Desarrollo hace referencia al amplio conjunto de factores (biológicos, psicológicos y sociales) que modelan la trayectoria de crecimiento y evolución de los niños. En nuestro centro, entendemos estas condiciones desde una perspectiva de trayectoria individualizada. Los factores biológicos incluyen la dotación genética y las diferencias neurológicas; los psicológicos abarcan el temperamento, la personalidad y las experiencias emocionales; y los sociales se refieren al entorno familiar, escolar y comunitario. Todos interactúan dinámicamente.
+
+Al trabajar bajo el prisma de la neurodiversidad, reconocemos que muchas de las "condiciones" tradicionalmente vistas como "trastornos" son, de hecho, diferencias biológicas que requieren un entorno social y educativo adaptado. Nuestro objetivo es comprender esta compleja interacción de factores. Al individualizar la intervención, nos aseguramos de que el apoyo no se limite a tratar un síntoma, sino a nutrir el desarrollo en todos los ámbitos, potenciando las capacidades de adaptación y la construcción de una identidad fuerte y positiva, respetando profundamente el ritmo y el estilo evolutivo único de cada niño.',
     NOW(),
     false
   ),
   (
     'development_conditions',
     'Importancia de las Condiciones del Desarrollo',
-    'La comprensión de las condiciones del desarrollo es esencial para ofrecer un apoyo adecuado a los estudiantes. Es fundamental abordar cada caso de manera individualizada.',
+    'La comprensión de las condiciones del desarrollo es esencial para ofrecer un apoyo adecuado a los estudiantes. Es fundamental abordar cada caso de manera individualizada.
+
+La Comprensión profunda de las Condiciones del Desarrollo es, para nuestro equipo, la piedra angular de un apoyo educativo ético y efectivo. No basta con conocer la etiqueta diagnóstica; es esencial entender cómo se manifiestan esas condiciones en la vida diaria de un estudiante y cómo interactúan con su entorno. Esto implica un análisis funcional detallado de los factores biológicos, psicológicos y sociales que influyen en su aprendizaje y bienestar. Reconocemos que una comprensión superficial lleva a intervenciones generalizadas e ineficaces.
+
+Por ello, la premisa de abordar cada caso de manera individualizada es innegociable. No aplicamos protocolos genéricos, sino que diseñamos un Plan de Intervención Personalizado (PIP) que es único para cada estudiante, honrando su estilo cognitivo, sus intereses y sus necesidades. Este enfoque garantiza que el apoyo sea pertinente y motivador. Al basar nuestra práctica en el respeto a la neurodiversidad, aseguramos que las estrategias implementadas no busquen el conformismo, sino la autorregulación y el empoderamiento, permitiendo que cada estudiante avance desde una posición de competencia y autoaceptación.',
     NOW(),
     false
   ),
   (
     'communication',
     'Trastornos de la Comunicación',
-    'Los trastornos de la comunicación son condiciones que afectan la capacidad de una persona para comunicarse de manera efectiva. La intervención temprana y el apoyo adecuado son clave.',
+    'Los trastornos de la comunicación son condiciones que afectan la capacidad de una persona para comunicarse de manera efectiva. La intervención temprana y el apoyo adecuado son clave.
+
+Los Trastornos de la Comunicación son condiciones que afectan la habilidad de una persona para comprender (lenguaje receptivo) o expresar (lenguaje expresivo) información de manera efectiva, tanto a nivel verbal como no verbal. Estas dificultades, que abarcan desde el desarrollo del lenguaje hasta la fluidez (tartamudez) o la articulación, impactan directamente la capacidad del individuo para participar plenamente en entornos sociales y académicos. En línea con nuestra filosofía, entendemos que estas no son fallas, sino diferencias en el procesamiento del lenguaje.
+
+La Intervención Temprana es crucial, pues optimiza la plasticidad cerebral y sienta las bases para el desarrollo futuro. Nuestro apoyo adecuado se materializa en terapias de lenguaje personalizadas, que respetan el ritmo de cada persona y utilizan métodos de comunicación aumentativa y alternativa (CAA) cuando es necesario. Es fundamental que la intervención no solo se centre en la producción verbal, sino en la capacidad funcional de comunicarse, valorando todas las formas de expresión. Al actuar de forma temprana y respetuosa, mitigamos la frustración comunicativa y fomentamos la confianza y la competencia social del individuo.',
     NOW(),
     false
   ),
   (
     'communication',
     'Importancia de los Trastornos de la Comunicación',
-    'La comprensión de los trastornos de la comunicación es esencial para ofrecer un apoyo adecuado a los estudiantes. La correcta identificación y tratamiento puede marcar una gran diferencia.',
+    'La comprensión de los trastornos de la comunicación es esencial para ofrecer un apoyo adecuado a los estudiantes. La correcta identificación y tratamiento puede marcar una gran diferencia.
+
+Una Comprensión exhaustiva de los Trastornos de la Comunicación es esencial para el éxito educativo y social de nuestros estudiantes. La correcta identificación de la naturaleza y el grado del desafío comunicativo es el primer paso para diseñar un programa de apoyo adecuado y verdaderamente individualizado. En nuestro enfoque, valoramos las diferencias en la comunicación como parte de la neurodiversidad, y nuestro objetivo es facilitar la conexión efectiva, no imponer un único estilo comunicativo.
+
+Entendemos que el tratamiento debe ser integral y que el éxito se mide por la mejora en la calidad de vida y las oportunidades de participación del estudiante. La intervención no se aísla, sino que se integra en el entorno educativo y familiar, asegurando la generalización de las habilidades. Una identificación y un apoyo tempranos pueden marcar una gran diferencia no solo en el rendimiento académico, sino en la autoestima, la prevención del bullying y el desarrollo de relaciones significativas. Nos comprometemos a capacitar a cada persona para que su voz, en la forma que sea, sea escuchada y valorada.',
     NOW(),
     false
   );
