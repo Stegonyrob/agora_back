@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
+import de.stella.agora_web.config.TestConfig;
 import de.stella.agora_web.replies.kafka.component.producer.ReplyKafkaProducer;
 import de.stella.agora_web.replies.kafka.dto.ReplyNotificationDTO;
 
@@ -22,6 +24,7 @@ import de.stella.agora_web.replies.kafka.dto.ReplyNotificationDTO;
     "spring.h2.console.enabled=false",
     "spring.jpa.hibernate.ddl-auto=create-drop"
 })
+@Import(TestConfig.class)
 public class ReplyModerationKafkaTest {
 
     // Nota: Este test funcionará tanto con Kafka habilitado como deshabilitado

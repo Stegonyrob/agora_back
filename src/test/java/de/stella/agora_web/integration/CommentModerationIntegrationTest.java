@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.comment.repository.CommentRepository;
+import de.stella.agora_web.config.TestConfig;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.replies.model.Reply;
@@ -35,6 +37,7 @@ import de.stella.agora_web.user.repository.UserRepository;
     "spring.kafka.enabled=false"
 })
 @Transactional
+@Import(TestConfig.class)
 class CommentModerationIntegrationTest {
 
     @Autowired

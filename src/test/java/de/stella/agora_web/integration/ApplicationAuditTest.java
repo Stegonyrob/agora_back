@@ -7,11 +7,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import de.stella.agora_web.avatar.repository.AvatarRepository;
 import de.stella.agora_web.comment.repository.CommentRepository;
+import de.stella.agora_web.config.TestConfig;
 import de.stella.agora_web.legal_text.repository.LegalTextRepository;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.profiles.repository.ProfileRepository;
@@ -29,6 +31,7 @@ import de.stella.agora_web.user.repository.UserRepository;
     "spring.sql.init.mode=always",
     "spring.h2.console.enabled=false"
 })
+@Import(TestConfig.class)
 @DisplayName("🔍 Auditoría Completa del Sistema")
 class ApplicationAuditTest {
 

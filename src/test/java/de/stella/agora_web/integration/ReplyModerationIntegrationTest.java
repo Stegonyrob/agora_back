@@ -7,12 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.stella.agora_web.comment.kafka.service.IEmailService;
 import de.stella.agora_web.comment.kafka.service.IPushNotificationService;
+import de.stella.agora_web.config.TestConfig;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.kafka.component.producer.ReplyKafkaProducer;
 import de.stella.agora_web.replies.kafka.dto.ReplyNotificationDTO;
@@ -32,6 +34,7 @@ import de.stella.agora_web.user.service.impl.UserServiceImpl;
     "spring.jpa.hibernate.ddl-auto=create-drop"
 })
 @Transactional
+@Import(TestConfig.class)
 public class ReplyModerationIntegrationTest {
 
     @Autowired

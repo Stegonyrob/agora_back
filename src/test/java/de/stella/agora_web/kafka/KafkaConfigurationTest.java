@@ -8,11 +8,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+
+import de.stella.agora_web.config.TestConfig;
 
 /**
  * Tests para verificar la configuración de Kafka Validar que: 1. Kafka Producer
@@ -29,6 +32,7 @@ import org.springframework.test.context.TestPropertySource;
     "spring.h2.console.enabled=false",
     "spring.jpa.hibernate.ddl-auto=create-drop"
 })
+@Import(TestConfig.class)
 class KafkaConfigurationTest {
 
     @Autowired

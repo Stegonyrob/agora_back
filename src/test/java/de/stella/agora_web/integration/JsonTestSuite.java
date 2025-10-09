@@ -2,8 +2,11 @@ package de.stella.agora_web.integration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+
+import de.stella.agora_web.config.TestConfig;
 
 /**
  * Suite simple de tests para verificar JSON de endpoints.
@@ -16,6 +19,7 @@ import org.springframework.test.context.TestPropertySource;
     "spring.h2.console.enabled=false",
     "spring.jpa.hibernate.ddl-auto=create-drop"
 })
+@Import(TestConfig.class)
 public class JsonTestSuite {
 
     @Test
