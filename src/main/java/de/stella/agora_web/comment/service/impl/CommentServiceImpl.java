@@ -105,7 +105,14 @@ public class CommentServiceImpl implements ICommentService {
             throw new SecurityException("No tienes permiso para editar este comentario.");
         }
 
+        // ✅ MODERACIÓN: Verificar contenido inapropiado ANTES de actualizar
         existingComment.setMessage(commentDTO.getMessage());
+        ModeratableContent moderatable = existingComment;
+        var censuredComment = moderationService.moderateComment(moderatable);
+        if (censuredComment != null) {
+            // El comentario editado fue censurado por contenido inapropiado
+            throw new IllegalArgumentException("Comentario editado rechazado por contener contenido inapropiado");
+        }
 
         return commentRepository.save(existingComment);
     }

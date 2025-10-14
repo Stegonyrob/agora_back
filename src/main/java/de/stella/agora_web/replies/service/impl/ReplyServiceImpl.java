@@ -85,7 +85,13 @@ public class ReplyServiceImpl implements IReplyService {
     public Reply updateReply(Long id, ReplyDTO replyDTO) {
         Reply existingReply = replyRepository.findById(id).orElse(null);
         if (existingReply != null) {
+            // ✅ MODERACIÓN: Verificar contenido inapropiado ANTES de actualizar
             existingReply.setMessage(replyDTO.getMessage());
+            ModeratableReply moderatableReply = new ModeratableReply(existingReply.getMessage(), existingReply.getUser());
+            var censured = moderationService.moderateComment(moderatableReply);
+            if (censured != null) {
+                throw new IllegalArgumentException("Respuesta editada rechazada por contenido inapropiado");
+            }
 
             return replyRepository.save(existingReply);
         }

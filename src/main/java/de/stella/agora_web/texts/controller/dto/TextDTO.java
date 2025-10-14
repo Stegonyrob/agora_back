@@ -24,7 +24,7 @@ public class TextDTO {
     private String title;
 
     @NotBlank(message = "Message cannot be blank")
-    @Size(max = 2000, message = "Message must be less than 2000 characters")
+    @Size(max = 8000, message = "Message must be less than 8000 characters")
     private String message;
 
     /**
