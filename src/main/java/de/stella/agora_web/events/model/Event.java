@@ -3,6 +3,7 @@ package de.stella.agora_web.events.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +37,7 @@ import jakarta.validation.constraints.Size;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Table(name = "events")
 public class Event {
+
     public void decrementAnonymousLoves() {
         if (this.anonymousLoves > 0) {
             this.anonymousLoves--;
@@ -78,7 +80,7 @@ public class Event {
     private LocalDate eventDate;
 
     @Column(name = "event_time", nullable = false)
-    private String eventTime;
+    private LocalTime eventTime;
 
     @Column(name = "archived")
     private boolean archived;
@@ -118,7 +120,7 @@ public class Event {
         this.archived = archived;
         this.capacity = capacity;
         this.creationDate = LocalDateTime.now();
-        }
+    }
 
     // Getter y Setter para id
     public Long getId() {
@@ -338,10 +340,14 @@ public class Event {
     }
 
     public String getEventTime() {
-        return eventTime;
+        return eventTime != null ? eventTime.toString() : null;
     }
 
     public void setEventTime(String eventTime) {
-        this.eventTime = eventTime;
+        this.eventTime = eventTime != null ? LocalTime.parse(eventTime) : null;
+    }
+
+    public void setEventTime(LocalTime eventTime2) {
+        this.eventTime = eventTime2;
     }
 }

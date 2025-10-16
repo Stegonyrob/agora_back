@@ -18,4 +18,15 @@ public class CommentDTO {
     private LocalDateTime creationDate;
     private Long postId;
     private Long userId;
+
+    public CommentDTO() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public CommentDTO(String message, LocalDateTime creationDate, Long postId, Long userId) {
+        this.message = message;
+        this.creationDate = creationDate;
+        this.postId = postId;
+        this.userId = userId;
+    }
 }
