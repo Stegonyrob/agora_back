@@ -6,8 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import de.stella.agora_web.comment.model.Comment;
 import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.moderation.service.IModerationService;
+import de.stella.agora_web.posts.model.Post;
+import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.kafka.component.producer.ReplyKafkaProducer;
 import de.stella.agora_web.replies.kafka.dto.ReplyNotificationDTO;
@@ -26,6 +29,9 @@ public class ReplyServiceImpl implements IReplyService {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private PostRepository postRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -70,11 +76,18 @@ public class ReplyServiceImpl implements IReplyService {
 
         Reply savedReply = replyRepository.save(reply);
 
+        // 📧 NOTIFICACIÓN KAFKA: Preparar datos completos para email al admin
+        Comment parentComment = savedReply.getComment();
+        Post post = parentComment.getPost();
+
         ReplyNotificationDTO notification = new ReplyNotificationDTO();
         notification.setReplyId(savedReply.getId());
-        notification.setCommentId(savedReply.getComment().getId());
-        notification.setAuthor(user.getUsername());
-        notification.setMessage(savedReply.getMessage());
+        notification.setCommentId(parentComment.getId());
+        notification.setPostId(post.getId());
+        notification.setPostTitle(post.getTitle());
+        notification.setUserName(replyUser.getUsername());
+        notification.setReplyContent(savedReply.getMessage());
+        notification.setCreatedAt(savedReply.getCreationDate());
 
         kafkaProducer.sendReplyNotification(notification);
 

@@ -1,88 +1,99 @@
 package de.stella.agora_web.comment.kafka.dto;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDateTime;
 
-import de.stella.agora_web.comment.model.Comment;
-import de.stella.agora_web.comment.repository.CommentRepository;
-import de.stella.agora_web.user.model.User;
-
+/**
+ * DTO para notificaciones de comentarios via Kafka Se envía cuando se crea un
+ * nuevo comentario para notificar al admin por email
+ */
 public class CommentNotificationDTO {
 
     private Long commentId;
-    private String author;
-    private String message;
-    @Autowired
-    private CommentRepository commentRepository;
+    private Long postId;
+    private String postTitle;
+    private String userName;
+    private String commentContent;
+    private LocalDateTime createdAt;
 
-    public void setCommentId(Long id) {
-        this.commentId = id;
+    // Constructores
+    public CommentNotificationDTO() {
     }
 
-    public void setAuthor(String username) {
-        this.author = username;
+    public CommentNotificationDTO(Long commentId, Long postId, String postTitle,
+            String userName, String commentContent, LocalDateTime createdAt) {
+        this.commentId = commentId;
+        this.postId = postId;
+        this.postTitle = postTitle;
+        this.userName = userName;
+        this.commentContent = commentContent;
+        this.createdAt = createdAt;
     }
 
-    public void setMessage(String message2) {
-        this.message = message2;
+    // Getters y Setters
+    public Long getCommentId() {
+        return commentId;
     }
 
-    public String getMessage() {
-        return this.message;
+    public void setCommentId(Long commentId) {
+        this.commentId = commentId;
     }
 
-    public String getAuthor() {
-        return this.author;
+    public Long getPostId() {
+        return postId;
     }
 
-    public Comment getComment() {
-        if (this.commentId == null) {
-            throw new IllegalArgumentException("commentId is null");
-        }
-
-        Comment comment = new Comment();
-        comment.setId(this.commentId);
-        if (this.author == null) {
-            throw new IllegalArgumentException("author is null");
-        }
-        User user = new User();
-        user.setId(commentId);
-        user.setUsername(this.author);
-        comment.setUser(user);
-        if (this.message == null) {
-            throw new IllegalArgumentException("message is null");
-        }
-        comment.setMessage(this.message);
-        return comment;
+    public void setPostId(Long postId) {
+        this.postId = postId;
     }
 
     public String getPostTitle() {
-        // Get the post title from the database
-        // Check for invalid commentId
-        if (this.commentId == null) {
-            throw new IllegalArgumentException("commentId is null");
-        }
-
-        // Get the comment from the database
-        Comment comment = commentRepository.findById(this.commentId).orElse(null);
-
-        // Check if comment doesn't exist
-        if (comment == null) {
-            throw new IllegalArgumentException("commentId is invalid");
-        }
-
-        // Check if post doesn't exist
-        if (comment.getPost() == null) {
-            throw new IllegalArgumentException("post is null");
-        }
-
-        // Get the post title
-        String postTitle = comment.getPost().getTitle();
-
-        // Check if post title is null
-        if (postTitle == null) {
-            throw new IllegalArgumentException("post title is null");
-        }
-
         return postTitle;
+    }
+
+    public void setPostTitle(String postTitle) {
+        this.postTitle = postTitle;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getCommentContent() {
+        return commentContent;
+    }
+
+    public void setCommentContent(String commentContent) {
+        this.commentContent = commentContent;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    // Para debugging y logging
+    @Override
+    public String toString() {
+        return String.format("CommentNotificationDTO{commentId=%d, postId=%d, postTitle='%s', userName='%s', content='%s'}",
+                commentId, postId, postTitle, userName, commentContent);
+    }
+
+    public String getMessage() {
+        return commentContent;
+    }
+
+    public String getAuthor() {
+        return userName;
+    }
+
+    public String getComment() {
+        return commentContent;
     }
 }

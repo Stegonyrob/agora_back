@@ -19,17 +19,20 @@ import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.profiles.repository.ProfileRepository;
 import de.stella.agora_web.replies.repository.ReplyRepository;
 import de.stella.agora_web.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 
 /**
  * Tests de auditoría completa de la aplicación Verificar que todos los
  * componentes principales están funcionando correctamente
  */
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("h2")
 @TestPropertySource(properties = {
     "spring.jpa.hibernate.ddl-auto=create-drop",
     "spring.sql.init.mode=always",
-    "spring.h2.console.enabled=false"
+    "spring.h2.console.enabled=false",
+    "kafka.enabled=false",
+    "spring.kafka.enabled=false"
 })
 @Import(TestConfig.class)
 @DisplayName("🔍 Auditoría Completa del Sistema")
@@ -91,6 +94,7 @@ class ApplicationAuditTest {
 
     @Test
     @DisplayName("🔒 Verificar configuración de seguridad básica")
+    @Transactional
     void testBasicSecurityConfiguration() {
         // Verificar que hay usuarios con diferentes roles
         var users = userRepository.findAll();

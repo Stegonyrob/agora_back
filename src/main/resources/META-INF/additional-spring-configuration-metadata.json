@@ -19,6 +19,16 @@
       "name": "access-token.public",
       "type": "java.lang.String",
       "description": "A description for 'access-token.public'"
+    },
+    {
+      "name": "rate-limiting.requests-per-minute",
+      "type": "java.lang.String",
+      "description": "A description for 'rate-limiting.requests-per-minute'"
+    },
+    {
+      "name": "access-token.private",
+      "type": "java.lang.String",
+      "description": "A description for 'access-token.private'"
     }
   ],
   "additionalProperties": [
@@ -41,6 +51,65 @@
       "name": "refresh-token.private",
       "type": "java.lang.String",
       "description": "A description for 'refresh-token.private'"
+    },
+    {
+      "name": "jwt-audience",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt-audience'"
+    },
+    {
+      "name": "jwt-audience",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt-audience'"
+    },
+    {
+      "name": "jwt-audience",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt-audience'"
+    },
+    {
+      "name": "jwt-audience",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt-audience'"
+    },
+    {
+      "name": "jwt-audience",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt-audience'"
+    },
+    {
+      "name": "jwt-audience",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt-audience'"
+    },
+    {
+      "name": "jwt-audience",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt-audience'"
+    },
+    {
+      "name": "jwt-audience",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt-audience'"
+    },
+    {
+      "name": "jwt-audience",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt-audience'"
+    },
+    {
+      "name": "jwt-audience",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt-audience'"
+    },
+    {
+      "name": "jwt-audience",
+      "type": "java.lang.String",
+      "description": "A description for 'jwt-audience'"
+    },
+    {
+      "type": "java.lang.String",
+      "description": "A description for 'jwt-audience'"
     },
     {
       "name": "jwt-audience",

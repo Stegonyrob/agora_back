@@ -82,12 +82,17 @@ public class CommentServiceImpl implements ICommentService {
             // Guardar el comentario
             commentRepository.save(newComment);
 
-            // Notificación Kafka - Siempre disponible (dummy si kafka está deshabilitado)
+            // Notificación Kafka - Enviar notificación al admin por email
             CommentNotificationDTO notification = new CommentNotificationDTO();
             notification.setCommentId(newComment.getId());
-            notification.setAuthor(user.getUsername());
-            notification.setMessage(newComment.getMessage());
-            // kafkaProducer.sendCommentNotification(notification); // Comentado temporalmente para aislar problema de bloqueo
+            notification.setPostId(post.getId());
+            notification.setPostTitle(post.getTitle());
+            notification.setUserName(user.getUsername());
+            notification.setCommentContent(newComment.getMessage());
+            notification.setCreatedAt(newComment.getCreationDate());
+
+            // Enviar notificación via Kafka para que el admin sea notificado por email
+            kafkaProducer.sendCommentNotification(notification);
 
             return newComment;
         }

@@ -1,8 +1,7 @@
 package de.stella.agora_web.kafka;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -75,7 +74,7 @@ public class ReplyModerationKafkaTest {
 
     @Test
     public void testReplyNotificationDTOConstructor() {
-        ReplyNotificationDTO notification = new ReplyNotificationDTO(1L, 2L, "author", "message");
+        ReplyNotificationDTO notification = new ReplyNotificationDTO(1L, 2L, null, "author", "message", null, null);
 
         assertEquals(1L, notification.getReplyId());
         assertEquals(2L, notification.getCommentId());

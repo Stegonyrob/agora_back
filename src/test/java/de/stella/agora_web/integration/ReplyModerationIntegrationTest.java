@@ -115,7 +115,7 @@ public class ReplyModerationIntegrationTest {
     public void testReplyNotificationDTOFunctionality() {
         // Test para verificar la funcionalidad del DTO de notificación
 
-        ReplyNotificationDTO dto = new ReplyNotificationDTO(123L, 456L, "testauthor", "test message");
+        ReplyNotificationDTO dto = new ReplyNotificationDTO(123L, 456L, null, "testauthor", "test message", null, null);
 
         assertNotNull(dto, "DTO should be created");
         assertEquals(123L, dto.getReplyId());

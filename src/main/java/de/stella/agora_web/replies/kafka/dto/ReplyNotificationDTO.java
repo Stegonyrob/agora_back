@@ -1,36 +1,41 @@
 package de.stella.agora_web.replies.kafka.dto;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDateTime;
 
-import de.stella.agora_web.comment.model.Comment;
-import de.stella.agora_web.comment.repository.CommentRepository;
+import de.stella.agora_web.replies.controller.dto.ReplyDTO;
 import de.stella.agora_web.replies.model.Reply;
-import de.stella.agora_web.user.model.User;
 
 /**
- * DTO para notificaciones de replies mediante Kafka
+ * DTO para notificaciones de respuestas via Kafka Se envía cuando se crea una
+ * nueva respuesta para notificar al admin por email
  */
 public class ReplyNotificationDTO {
 
     private Long replyId;
     private Long commentId;
-    private String author;
-    private String message;
+    private Long postId;
+    private String postTitle;
+    private String userName;
+    private String replyContent;
+    private LocalDateTime createdAt;
+    private Reply reply;
 
-    @Autowired
-    private CommentRepository commentRepository;
-
+    // Constructores
     public ReplyNotificationDTO() {
     }
 
-    public ReplyNotificationDTO(Long replyId, Long commentId, String author, String message) {
+    public ReplyNotificationDTO(Long replyId, Long commentId, Long postId, String postTitle, String userName,
+            String replyContent, LocalDateTime createdAt) {
         this.replyId = replyId;
         this.commentId = commentId;
-        this.author = author;
-        this.message = message;
+        this.postId = postId;
+        this.postTitle = postTitle;
+        this.userName = userName;
+        this.replyContent = replyContent;
+        this.createdAt = createdAt;
     }
 
-    // Getters and Setters
+    // Getters y Setters
     public Long getReplyId() {
         return replyId;
     }
@@ -47,74 +52,71 @@ public class ReplyNotificationDTO {
         this.commentId = commentId;
     }
 
-    public String getAuthor() {
-        return author;
+    public Long getPostId() {
+        return postId;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setPostId(Long postId) {
+        this.postId = postId;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    /**
-     * Obtiene el título del post asociado al comentario de esta respuesta
-     */
     public String getPostTitle() {
-        if (this.commentId == null) {
-            throw new IllegalArgumentException("commentId is null");
-        }
-
-        Comment comment = commentRepository.findById(this.commentId).orElse(null);
-        if (comment == null) {
-            throw new IllegalArgumentException("Comment not found with id: " + this.commentId);
-        }
-
-        if (comment.getPost() == null) {
-            throw new IllegalArgumentException("Post is null for comment: " + this.commentId);
-        }
-
-        String postTitle = comment.getPost().getTitle();
-        if (postTitle == null) {
-            throw new IllegalArgumentException("Post title is null");
-        }
-
         return postTitle;
     }
 
-    /**
-     * Construye un objeto Reply a partir de los datos del DTO
-     */
-    public Reply getReply() {
-        if (this.replyId == null) {
-            throw new IllegalArgumentException("replyId is null");
-        }
+    public void setPostTitle(String postTitle) {
+        this.postTitle = postTitle;
+    }
 
-        Reply reply = new Reply();
-        reply.setId(this.replyId);
+    public String getUserName() {
+        return userName;
+    }
 
-        if (this.author != null) {
-            User user = new User();
-            user.setUsername(this.author);
-            reply.setUser(user);
-        }
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
-        if (this.message != null) {
-            reply.setMessage(this.message);
-        }
+    public String getReplyContent() {
+        return replyContent;
+    }
 
-        if (this.commentId != null) {
-            Comment comment = new Comment();
-            comment.setId(this.commentId);
-            reply.setComment(comment);
-        }
+    public void setReplyContent(String replyContent) {
+        this.replyContent = replyContent;
+    }
 
-        return reply;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    // Para debugging y logging
+    @Override
+    public String toString() {
+        return String.format(
+                "ReplyNotificationDTO{replyId=%d, commentId=%d, postId=%d, postTitle='%s', userName='%s', content='%s'}",
+                replyId, commentId, postId, postTitle, userName, replyContent);
+    }
+
+    public void setAuthor(String author) {
+        this.userName = author;
+    }
+
+    public void setMessage(String message) {
+        this.replyContent = message;
+    }
+
+    public String getAuthor() {
+        return this.userName;
+    }
+
+    public String getMessage() {
+        return this.replyContent;
+    }
+
+    public ReplyDTO getReply() {
+        return ReplyDTO.fromEntity(this.reply);
     }
 }
