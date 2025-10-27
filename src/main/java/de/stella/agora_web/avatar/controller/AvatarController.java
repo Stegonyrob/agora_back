@@ -19,14 +19,16 @@ import de.stella.agora_web.avatar.controller.dto.AvatarDTO;
 import de.stella.agora_web.avatar.dto.AvatarSelectorDTO;
 import de.stella.agora_web.avatar.service.IAvatarService;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("${api-endpoint}/any/avatars")
-@RequiredArgsConstructor
 public class AvatarController {
 
     private final IAvatarService avatarService;
+
+    public AvatarController(IAvatarService avatarService) {
+        this.avatarService = avatarService;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<AvatarDTO> getAvatar(@PathVariable Long id) {
@@ -56,7 +58,7 @@ public class AvatarController {
     @GetMapping("/{id}/image")
     public ResponseEntity<byte[]> getAvatarImage(
             @PathVariable Long id,
-            @RequestParam(value = "token", required = false) String token,
+            @RequestParam(required = false) String token,
             HttpServletRequest request) {
 
         // Aquí puedes agregar validación adicional del token si es necesario
@@ -84,8 +86,8 @@ public class AvatarController {
 
     @PostMapping("/upload")
     public ResponseEntity<AvatarDTO> uploadAvatar(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "displayName", required = false) String displayName) {
+            @RequestParam MultipartFile file,
+            @RequestParam(required = false) String displayName) {
 
         try {
             String fileName = file.getOriginalFilename();

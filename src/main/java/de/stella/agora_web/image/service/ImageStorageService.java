@@ -3,12 +3,13 @@ package de.stella.agora_web.image.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ImageStorageService {
@@ -23,7 +24,7 @@ public class ImageStorageService {
             String uniqueFilename = UUID.randomUUID().toString() + "." + extension;
 
             // Define the target path
-            Path targetPath = Paths.get(UPLOAD_DIR + uniqueFilename);
+            Path targetPath = Path.of(UPLOAD_DIR + uniqueFilename);
 
             // Copy the file to the target directory
             Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
@@ -31,7 +32,7 @@ public class ImageStorageService {
             // Return the relative path to be stored in the database
             return "/images/" + uniqueFilename;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to store image: " + file.getOriginalFilename(), e);
+            throw new EntityNotFoundException("Failed to store image: " + file.getOriginalFilename(), e);
         }
     }
 
@@ -44,10 +45,10 @@ public class ImageStorageService {
 
     public byte[] loadImage(String path) {
         try {
-            Path imagePath = Paths.get(UPLOAD_DIR + path);
+            Path imagePath = Path.of(UPLOAD_DIR + path);
             return Files.readAllBytes(imagePath);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load image from path: " + path, e);
+            throw new EntityNotFoundException("Failed to load image from path: " + path, e);
         }
     }
 }

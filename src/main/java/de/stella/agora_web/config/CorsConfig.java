@@ -9,12 +9,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+@SuppressWarnings("unused")
 @Configuration
 public class CorsConfig {
 
     @Bean
     @Profile("dev")
-    public CorsConfigurationSource corsConfigurationSourceDev() {
+    CorsConfigurationSource corsConfigurationSourceDev() {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // CORS para desarrollo - compatible con credenciales
@@ -35,9 +36,10 @@ public class CorsConfig {
         return source;
     }
 
+    // Para todos los perfiles excepto 'dev'
     @Bean
-    @Profile("!dev") // Para todos los perfiles excepto 'dev'
-    public CorsConfigurationSource corsConfigurationSourceProd() {
+    @Profile("!dev")
+    CorsConfigurationSource corsConfigurationSourceProd() {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // CORS más permisivo para producción (incluye Swagger)

@@ -78,7 +78,7 @@ public class ImageToSqlHexGenerator {
                 if (!first) {
                     sql.append(",\n");
                 }
-                sql.append(String.format("  ('%s', UNHEX('%s'), %d)", file.getName(), hex, TEXT_ID));
+                sql.append("  ('%s', UNHEX('%s'), %d)".formatted(file.getName(), hex, TEXT_ID));
                 first = false;
                 count++;
             }
@@ -142,7 +142,7 @@ public class ImageToSqlHexGenerator {
     private static String bytesToHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder(bytes.length * 2);
         for (byte b : bytes) {
-            sb.append(String.format("%02X", b));
+            sb.append("%02X".formatted(b));
         }
         return sb.toString();
     }

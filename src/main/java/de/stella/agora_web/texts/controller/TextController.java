@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,13 +26,11 @@ import jakarta.validation.Valid;
 @RestController
 @CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"})
 @RequestMapping(path = "${api-endpoint}/all/texts")
-
+@SuppressWarnings("unused")
 public class TextController {
 
-    @Autowired
     private ITextService textItemService;
 
-    @Autowired
     private ITextImageService textImageService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TextController.class);
@@ -132,7 +129,7 @@ public class TextController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> archiveText(@PathVariable Long id, @RequestParam Boolean archive) {
         try {
-            if (archive) {
+            if (Boolean.TRUE.equals(archive)) {
                 textItemService.archiveText(id);
                 LOGGER.info("Text archived with id {}", id);
             } else {
@@ -145,7 +142,7 @@ public class TextController {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             LOGGER.error("Error {} text with id {}: {}",
-                    archive ? "archiving" : "unarchiving", id, e.getMessage());
+                    Boolean.TRUE.equals(archive) ? "archiving" : "unarchiving", id, e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }

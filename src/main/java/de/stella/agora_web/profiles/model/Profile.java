@@ -139,8 +139,8 @@ public class Profile {
 
     public void setIdProfile(Object idUser) {
         log.debug("setIdProfile() called for profile id={}, user id={}", this.id, idUser);
-        if (idUser instanceof Long) {
-            this.id = (Long) idUser;
+        if (idUser instanceof Long long1) {
+            this.id = long1;
         } else {
             throw new UnsupportedOperationException("Unimplemented method 'setIdProfile' for idUser of type " + idUser.getClass().getName());
         }

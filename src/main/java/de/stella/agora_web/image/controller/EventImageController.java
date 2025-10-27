@@ -69,8 +69,8 @@ public class EventImageController {
     @PostMapping("/upload")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<EventImageDTO>> uploadMultipleEventImages(
-            @RequestParam("files") MultipartFile[] files,
-            @RequestParam("eventId") Long eventId) {
+            @RequestParam MultipartFile[] files,
+            @RequestParam Long eventId) {
 
         try {
             List<EventImageDTO> savedImages = eventImageService.processAndSaveImages(files, eventId);

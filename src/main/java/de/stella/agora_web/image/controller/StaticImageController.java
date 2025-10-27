@@ -2,7 +2,6 @@ package de.stella.agora_web.image.controller;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -40,7 +39,7 @@ public class StaticImageController {
     public ResponseEntity<Resource> getStaticImage(@PathVariable String filename) {
         try {
             // Construir la ruta al archivo
-            Path imagePath = Paths.get(staticImagesPath, filename);
+            Path imagePath = Path.of(staticImagesPath, filename);
 
             // Verificar que el archivo existe
             if (!Files.exists(imagePath)) {

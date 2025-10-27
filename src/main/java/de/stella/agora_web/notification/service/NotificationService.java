@@ -2,7 +2,6 @@ package de.stella.agora_web.notification.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -15,13 +14,15 @@ public class NotificationService {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
-    @Autowired(required = false) // No es obligatorio si Kafka no está disponible
-    private KafkaTemplate<String, String> kafkaTemplate;
-
-    @Value("${kafka.enabled:false}")
-    private boolean kafkaEnabled;
-
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final boolean kafkaEnabled;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    public NotificationService(@Value("${kafka.enabled:false}") boolean kafkaEnabled,
+            KafkaTemplate<String, String> kafkaTemplate) {
+        this.kafkaEnabled = kafkaEnabled;
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     /**
      * Envía notificación por email solo si Kafka está disponible
@@ -47,12 +48,14 @@ public class NotificationService {
      */
     public void notifyNewCommentForModeration(String postTitle, String commentContent, String authorEmail) {
         String subject = "🔍 Nuevo comentario para moderar";
-        String body = String.format(
-                "Se ha recibido un nuevo comentario que requiere moderación:\n\n"
-                + "📝 Post: %s\n"
-                + "💬 Comentario: %s\n"
-                + "👤 Autor: %s\n\n"
-                + "Por favor, revisa el panel de administración para moderar este contenido.",
+        String body = ("""
+                Se ha recibido un nuevo comentario que requiere moderación:
+                
+                📝 Post: %s
+                💬 Comentario: %s
+                👤 Autor: %s
+                
+                Por favor, revisa el panel de administración para moderar este contenido.""").formatted(
                 postTitle, commentContent, authorEmail
         );
 
@@ -65,13 +68,15 @@ public class NotificationService {
      */
     public void notifyNewReplyForModeration(String postTitle, String commentContent, String replyContent, String authorEmail) {
         String subject = "🔍 Nueva respuesta para moderar";
-        String body = String.format(
-                "Se ha recibido una nueva respuesta que requiere moderación:\n\n"
-                + "📝 Post: %s\n"
-                + "💬 Comentario original: %s\n"
-                + "↳ Respuesta: %s\n"
-                + "👤 Autor: %s\n\n"
-                + "Por favor, revisa el panel de administración para moderar este contenido.",
+        String body = ("""
+                Se ha recibido una nueva respuesta que requiere moderación:
+                
+                📝 Post: %s
+                💬 Comentario original: %s
+                ↳ Respuesta: %s
+                👤 Autor: %s
+                
+                Por favor, revisa el panel de administración para moderar este contenido.""").formatted(
                 postTitle, commentContent, replyContent, authorEmail
         );
 
@@ -86,18 +91,35 @@ public class NotificationService {
     }
 
     // Clase interna para la estructura del email
+    @SuppressWarnings("unused")
     private static class EmailNotification {
 
-        public String toAddress;
-        public String subject;
-        public String body;
-        public long timestamp;
+        private final String toAddress;
+        private final String subject;
+        private final String body;
+        private final long timestamp;
 
         public EmailNotification(String toAddress, String subject, String body) {
             this.toAddress = toAddress;
             this.subject = subject;
             this.body = body;
             this.timestamp = System.currentTimeMillis();
+        }
+
+        public String getToAddress() {
+            return toAddress;
+        }
+
+        public String getSubject() {
+            return subject;
+        }
+
+        public String getBody() {
+            return body;
+        }
+
+        public long getTimestamp() {
+            return timestamp;
         }
     }
 }

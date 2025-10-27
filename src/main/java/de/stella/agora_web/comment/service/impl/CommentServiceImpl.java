@@ -3,12 +3,12 @@ package de.stella.agora_web.comment.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import de.stella.agora_web.censured.model.CensuredComment;
 import de.stella.agora_web.comment.controller.dto.CommentDTO;
 import de.stella.agora_web.comment.exceptions.CommentNotFoundException;
 import de.stella.agora_web.comment.kafka.component.producer.CommentKafkaProducer;
@@ -27,20 +27,16 @@ import de.stella.agora_web.user.repository.UserRepository;
 @Service
 public class CommentServiceImpl implements ICommentService {
 
-    @Autowired
     private CommentRepository commentRepository;
 
-    @Autowired
     private PostRepository postRepository;
-    @Autowired
+
     private UserRepository userRepository;
 
-    @Autowired
     private IMessageQueueService messageQueue;
-    @Autowired // Siempre disponible (real o dummy según kafka.enabled)
+    // Siempre disponible (real o dummy según kafka.enabled)
     private CommentKafkaProducer kafkaProducer;
 
-    @Autowired
     private IModerationService moderationService;
 
     @Override
@@ -56,7 +52,8 @@ public class CommentServiceImpl implements ICommentService {
             Comment newComment = new Comment();
 
             // Asignar post
-            Post post = postRepository.findById(commentDTO.getPostId()).orElse(null);
+            Post post = postRepository.findById(commentDTO.getPostId())
+                    .orElseThrow(() -> new IllegalArgumentException("Publicación no encontrada"));
             newComment.setPost(post);
 
             // Asignar usuario autenticado (siempre desde la base de datos)
@@ -73,7 +70,7 @@ public class CommentServiceImpl implements ICommentService {
 
             // ✅ MODERACIÓN: Verificar contenido inapropiado ANTES de guardar
             ModeratableContent moderatable = newComment;
-            var censuredComment = moderationService.moderateComment(moderatable);
+            CensuredComment censuredComment = moderationService.moderateComment(moderatable);
             if (censuredComment != null) {
                 // El comentario fue censured por contenido inapropiado
                 throw new IllegalArgumentException("Comentario rechazado por contener contenido inapropiado");
@@ -113,7 +110,7 @@ public class CommentServiceImpl implements ICommentService {
         // ✅ MODERACIÓN: Verificar contenido inapropiado ANTES de actualizar
         existingComment.setMessage(commentDTO.getMessage());
         ModeratableContent moderatable = existingComment;
-        var censuredComment = moderationService.moderateComment(moderatable);
+        CensuredComment censuredComment = moderationService.moderateComment(moderatable);
         if (censuredComment != null) {
             // El comentario editado fue censurado por contenido inapropiado
             throw new IllegalArgumentException("Comentario editado rechazado por contener contenido inapropiado");

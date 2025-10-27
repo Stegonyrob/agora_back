@@ -2,7 +2,6 @@ package de.stella.agora_web.image.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +15,7 @@ import de.stella.agora_web.image.service.ITextImageService;
 import de.stella.agora_web.image.service.ImageStorageService;
 import de.stella.agora_web.texts.model.Text;
 import de.stella.agora_web.texts.repository.TextRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -31,10 +31,10 @@ public class TextImageServiceImpl implements ITextImageService {
 
     private static final Logger log = LoggerFactory.getLogger(TextImageServiceImpl.class);
     private static final int MAX_IMAGES_PER_TEXT = 10;
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-    private static final java.util.Set<String> ALLOWED_CONTENT_TYPES = java.util.Set.of(
-            "image/jpeg", "image/png", "image/gif", "image/bmp", "image/webp"
-    );
+    private static final long MAX_FILE_SIZE = 5L * 1024 * 1024; // 5 MB
+    private static final java.util.Set<String> ALLOWED_CONTENT_TYPES = java.util.Set.of("image/jpeg", "image/png",
+            "image/gif", "image/bmp", "image/webp");
+    private static final String TEXT_IMAGE_NOT_FOUND_PREFIX = "TextImage not found with id ";
 
     private final TextImageRepository textImageRepository;
     private final ImageStorageService imageStorageService;
@@ -42,30 +42,26 @@ public class TextImageServiceImpl implements ITextImageService {
 
     @Override
     public List<TextImageDTO> getAllTextImages() {
-        return textImageRepository.findAll().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return textImageRepository.findAll().stream().map(this::mapToDTO).toList();
     }
 
     @Override
     public List<TextImageDTO> getImagesByTextId(Long textId) {
-        return textImageRepository.findByTextId(textId).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return textImageRepository.findByTextId(textId).stream().map(this::mapToDTO).toList();
     }
 
     @Override
     public TextImageDTO getTextImageById(Long id) {
         return textImageRepository.findById(id)
                 .map(this::mapToDTO)
-                .orElseThrow(() -> new RuntimeException("TextImage not found with id " + id));
+                .orElseThrow(() -> new EntityNotFoundException(TEXT_IMAGE_NOT_FOUND_PREFIX + id));
     }
 
     @Override
     public TextImageDTO createTextImage(TextImageDTO dto) {
         // Cargar el Text
         Text text = textItemRepository.findById(dto.getTextId())
-                .orElseThrow(() -> new IllegalArgumentException("Text not found with id: " + dto.getTextId()));
+                .orElseThrow(() -> new EntityNotFoundException("Text not found with id: " + dto.getTextId()));
 
         TextImage textImage = new TextImage();
         textImage.setText(text);
@@ -85,7 +81,7 @@ public class TextImageServiceImpl implements ITextImageService {
 
         // Cargar el TextItem
         Text textItem = textItemRepository.findById(textId)
-                .orElseThrow(() -> new IllegalArgumentException("Text not found with id: " + textId));
+                .orElseThrow(() -> new EntityNotFoundException("Text not found with id: " + textId));
 
         // Verificar límite de imágenes
         long currentImageCount = textImageRepository.findByTextId(textId).size();
@@ -108,7 +104,8 @@ public class TextImageServiceImpl implements ITextImageService {
                     savedImages.add(mapToDTO(savedImage));
 
                 } catch (RuntimeException e) {
-                    throw new RuntimeException("Error al procesar imagen: " + file.getOriginalFilename(), e);
+                    log.error("Error al procesar imagen: {}", file.getOriginalFilename(), e);
+                    throw new IllegalStateException("Error al procesar imagen: " + file.getOriginalFilename(), e);
                 }
             }
         }
@@ -134,7 +131,7 @@ public class TextImageServiceImpl implements ITextImageService {
     @Override
     public TextImageDTO updateTextImage(Long id, TextImageDTO dto) {
         TextImage existingImage = textImageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("TextImage not found with id " + id));
+                .orElseThrow(() -> new EntityNotFoundException(TEXT_IMAGE_NOT_FOUND_PREFIX + id));
 
         if (dto.getImageName() != null) {
             existingImage.setImageName(dto.getImageName());
@@ -158,7 +155,7 @@ public class TextImageServiceImpl implements ITextImageService {
     public String getTextImagePath(Long id) {
         return textImageRepository.findById(id)
                 .map(TextImage::getImagePath)
-                .orElseThrow(() -> new RuntimeException("TextImage not found with id " + id));
+                .orElseThrow(() -> new EntityNotFoundException(TEXT_IMAGE_NOT_FOUND_PREFIX + id));
     }
 
     // ========== MÉTODOS HELPER (SRP) ==========
@@ -167,18 +164,15 @@ public class TextImageServiceImpl implements ITextImageService {
      * entidad-DTO
      */
     private TextImageDTO mapToDTO(TextImage textImage) {
-        return TextImageDTO.builder()
-                .id(textImage.getId())
-                .textId(textImage.getText().getId())
-                .imageName(textImage.getImageName())
-                .imagePath(textImage.getImagePath())
-                .build();
+        return TextImageDTO.builder().id(textImage.getId()).textId(textImage.getText().getId())
+                .imageName(textImage.getImageName()).imagePath(textImage.getImagePath()).build();
     }
 
     /**
      * Obtiene la extensión del archivo SRP: Responsabilidad única de extraer
      * extensión OCP: Extensible para nuevos formatos
      */
+    @SuppressWarnings("unused")
     private String getFileExtension(String originalFilename) {
         if (originalFilename == null || !originalFilename.contains(".")) {
             return "jpg";
@@ -216,8 +210,7 @@ public class TextImageServiceImpl implements ITextImageService {
     @Override
     public byte[] getTextImageData(Long id) {
         TextImage textImage = textImageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("TextImage not found with id " + id));
+                .orElseThrow(() -> new EntityNotFoundException(TEXT_IMAGE_NOT_FOUND_PREFIX + id));
         return imageStorageService.loadImage(textImage.getImagePath());
     }
-
 }

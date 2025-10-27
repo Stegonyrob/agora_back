@@ -21,7 +21,7 @@ public class TestConfig {
      */
     @Bean
     @Primary
-    public H2ConsoleProperties h2ConsoleProperties() {
+    H2ConsoleProperties h2ConsoleProperties() {
         H2ConsoleProperties properties = new H2ConsoleProperties();
         properties.setEnabled(false); // Deshabilitado en tests
         return properties;

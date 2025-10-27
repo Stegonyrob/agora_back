@@ -81,8 +81,8 @@ public class TextImageController {
     @PostMapping("/upload")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TextImageDTO>> uploadMultipleTextImages(
-            @RequestParam("files") MultipartFile[] files,
-            @RequestParam("textId") Long textId) {
+            @RequestParam MultipartFile[] files,
+            @RequestParam Long textId) {
 
         try {
             List<TextImageDTO> savedImages = textImageService.processAndSaveImages(files, textId);

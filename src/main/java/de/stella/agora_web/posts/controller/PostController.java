@@ -3,7 +3,6 @@ package de.stella.agora_web.posts.controller;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -29,11 +28,11 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping(path = "${api-endpoint}/")
 public class PostController {
 
-    @Autowired
     private ProfileRepository profileRepository;
 
     // ✅ CUMPLE SRP: Solo manejo de endpoints de posts
@@ -86,13 +85,13 @@ public class PostController {
     }
 
     @PutMapping("posts/{id}")
-    public ResponseEntity<Post> update(@PathVariable("id") Long id, @Valid @RequestBody PostDTO postDTO) {
+    public ResponseEntity<Post> update(@PathVariable Long id, @Valid @RequestBody PostDTO postDTO) {
         Post post = postService.update(postDTO, id);
         return ResponseEntity.accepted().body(post);
     }
 
     @PatchMapping("/posts/{id}/archive")
-    public ResponseEntity<Void> archivePost(@PathVariable Long id, @RequestParam Boolean archive) {
+    public ResponseEntity<Void> archivePost(@PathVariable Long id, @RequestParam(name = "archive", required = true) boolean archive) {
         try {
             Post post = postService.getById(id);
             if (post == null) {
@@ -107,6 +106,7 @@ public class PostController {
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
+            log.error("Error archiving/unarchiving post with id {}: {}", id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

@@ -158,8 +158,7 @@ class CommentModerationKafkaTest {
         public void sendCommentModerationNotification(Long commentId, String authorName,
                 String content, String postTitle) {
             // Esta implementación será creada después de los tests
-            String message = String.format(
-                    "{\"type\":\"NEW_COMMENT\",\"commentId\":%d,\"author\":\"%s\",\"content\":\"%s\",\"postTitle\":\"%s\",\"timestamp\":%d}",
+            String message = "{\"type\":\"NEW_COMMENT\",\"commentId\":%d,\"author\":\"%s\",\"content\":\"%s\",\"postTitle\":\"%s\",\"timestamp\":%d}".formatted(
                     commentId, authorName, content, postTitle, System.currentTimeMillis()
             );
             kafkaTemplate.send("comment-moderation", "comment-" + commentId, message);
@@ -167,8 +166,7 @@ class CommentModerationKafkaTest {
 
         public void sendReplyModerationNotification(Long replyId, String authorName,
                 String content, Long parentCommentId) {
-            String message = String.format(
-                    "{\"type\":\"NEW_REPLY\",\"replyId\":%d,\"author\":\"%s\",\"content\":\"%s\",\"parentCommentId\":%d,\"timestamp\":%d}",
+            String message = "{\"type\":\"NEW_REPLY\",\"replyId\":%d,\"author\":\"%s\",\"content\":\"%s\",\"parentCommentId\":%d,\"timestamp\":%d}".formatted(
                     replyId, authorName, content, parentCommentId, System.currentTimeMillis()
             );
             kafkaTemplate.send("reply-moderation", "reply-" + replyId, message);

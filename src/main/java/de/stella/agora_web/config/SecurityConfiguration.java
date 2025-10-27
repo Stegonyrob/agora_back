@@ -3,7 +3,6 @@ package de.stella.agora_web.config;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -43,6 +42,7 @@ import de.stella.agora_web.security.JpaUserDetailsService;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
+@SuppressWarnings("unused")
 public class SecurityConfiguration {
 
     @Value("${api-endpoint}")
@@ -131,15 +131,12 @@ public class SecurityConfiguration {
         return new NimbusJwtEncoder(jwks);
     }
 
-    @Bean
-    @Qualifier("jwtRefreshTokenDecoder")
+    @Bean("jwtRefreshTokenDecoder")
     JwtDecoder jwtRefreshTokenDecoder() {
         return NimbusJwtDecoder.withPublicKey(keyUtils.getRefreshTokenPublicKey()).build();
     }
 
-    @Bean
-    @Qualifier("jwtRefreshTokenEncoder")
-    @SuppressWarnings("unused")
+    @Bean("jwtRefreshTokenEncoder")
     JwtEncoder jwtRefreshTokenEncoder() {
         JWK jwk = new RSAKey.Builder(keyUtils.getRefreshTokenPublicKey()).privateKey(keyUtils.getRefreshTokenPrivateKey())
                 .build();
@@ -147,8 +144,7 @@ public class SecurityConfiguration {
         return new NimbusJwtEncoder(jwks);
     }
 
-    @Bean
-    @Qualifier("jwtRefreshTokenAuthProvider")
+    @Bean("jwtRefreshTokenAuthProvider")
     JwtAuthenticationProvider jwtRefreshTokenAuthProvider() {
         JwtAuthenticationProvider provider = new JwtAuthenticationProvider(jwtRefreshTokenDecoder());
         provider.setJwtAuthenticationConverter(jwtToUserConverter);
@@ -157,9 +153,8 @@ public class SecurityConfiguration {
 
     @Bean
     DaoAuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(jpaUserDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(jpaUserDetailsService);
         return provider;
     }
 

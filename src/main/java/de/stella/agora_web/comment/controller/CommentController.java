@@ -58,7 +58,7 @@ public class CommentController {
 
         User user = principal.getUser();
         if (user.getSanctionStatus() == SanctionStatus.EXPELLED) {
-            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó crear comentario", user.getId());
+            String msg = "Intento bloqueado: usuario %d expulsado intentó crear comentario".formatted(user.getId());
             auditLogger.warn(msg);
             SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
                     user.getSanctionType().name(),
@@ -68,7 +68,7 @@ public class CommentController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
         }
         if (user.getSanctionStatus() == SanctionStatus.SUSPENDED) {
-            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó crear comentario", user.getId());
+            String msg = "Intento bloqueado: usuario %d suspendido intentó crear comentario".formatted(user.getId());
             auditLogger.warn(msg);
             SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
                     user.getSanctionType().name(),
@@ -101,7 +101,7 @@ public class CommentController {
 
         User user = principal.getUser();
         if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
-            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó editar comentario %d", user.getId(), id);
+            String msg = "Intento bloqueado: usuario %d expulsado intentó editar comentario %d".formatted(user.getId(), id);
             auditLogger.warn(msg);
             SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
                     user.getSanctionType().name(),
@@ -111,7 +111,7 @@ public class CommentController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
         }
         if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
-            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó editar comentario %d", user.getId(), id);
+            String msg = "Intento bloqueado: usuario %d suspendido intentó editar comentario %d".formatted(user.getId(), id);
             auditLogger.warn(msg);
             SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
                     user.getSanctionType().name(),
@@ -140,7 +140,7 @@ public class CommentController {
 
         User user = principal.getUser();
         if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
-            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó borrar comentario %d", user.getId(), id);
+            String msg = "Intento bloqueado: usuario %d expulsado intentó borrar comentario %d".formatted(user.getId(), id);
             auditLogger.warn(msg);
             SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
                     user.getSanctionType().name(),
@@ -150,7 +150,7 @@ public class CommentController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
         }
         if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
-            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó borrar comentario %d", user.getId(), id);
+            String msg = "Intento bloqueado: usuario %d suspendido intentó borrar comentario %d".formatted(user.getId(), id);
             auditLogger.warn(msg);
             SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
                     user.getSanctionType().name(),

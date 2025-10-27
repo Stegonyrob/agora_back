@@ -20,26 +20,24 @@ import de.stella.agora_web.replies.kafka.dto.ReplyNotificationDTO;
 @EnableKafka
 public class KafkaConfig {
 
+    @SuppressWarnings("unused")
     @Bean
-    public CommentKafkaProducer commentKafkaProducer(@Autowired KafkaTemplate<String, CommentNotificationDTO> kafkaTemplate) {
-        return new CommentKafkaProducer() {
-            @Override
-            public void sendCommentNotification(CommentNotificationDTO notification) {
-                java.util.concurrent.CompletableFuture<org.springframework.kafka.support.SendResult<String, CommentNotificationDTO>> future = kafkaTemplate.send("comments", notification);
-                future.thenAccept(result -> {
-                    org.slf4j.LoggerFactory.getLogger(CommentKafkaProducer.class)
-                            .info("Kafka async send OK: {}", notification);
-                }).exceptionally(ex -> {
-                    org.slf4j.LoggerFactory.getLogger(CommentKafkaProducer.class)
-                            .error("Kafka async send ERROR: {}", notification, ex);
-                    return null;
-                });
-            }
+    CommentKafkaProducer commentKafkaProducer(@Autowired KafkaTemplate<String, CommentNotificationDTO> kafkaTemplate) {
+        return (CommentNotificationDTO notification) -> {
+            java.util.concurrent.CompletableFuture<org.springframework.kafka.support.SendResult<String, CommentNotificationDTO>> future = kafkaTemplate.send("comments", notification);
+            future.thenAccept(result -> org.slf4j.LoggerFactory.getLogger(CommentKafkaProducer.class)
+                    .info("Kafka async send OK: {}", notification)
+            ).exceptionally(ex -> {
+                org.slf4j.LoggerFactory.getLogger(CommentKafkaProducer.class)
+                        .error("Kafka async send ERROR: {}", notification, ex);
+                return null;
+            });
         };
     }
 
     @Bean
-    public ReplyKafkaProducer replyKafkaProducer(@Autowired KafkaTemplate<String, ReplyNotificationDTO> kafkaTemplate) {
+    @SuppressWarnings("unused")
+    ReplyKafkaProducer replyKafkaProducer(@Autowired KafkaTemplate<String, ReplyNotificationDTO> kafkaTemplate) {
         return new ReplyKafkaProducer() {
             @Override
             public void sendReplyNotification(ReplyNotificationDTO notification) {
@@ -53,6 +51,7 @@ public class KafkaConfig {
  * Configuración para cuando Kafka está deshabilitado
  */
 @Configuration
+@SuppressWarnings("unused")
 @ConditionalOnProperty(name = "kafka.enabled", havingValue = "false", matchIfMissing = true)
 class KafkaDisabledConfig {
 
@@ -60,12 +59,9 @@ class KafkaDisabledConfig {
      * Bean dummy que no hace nada cuando Kafka está deshabilitado
      */
     @Bean
-    public CommentKafkaProducer commentKafkaProducer() {
-        return new CommentKafkaProducer() {
-            @Override
-            public void sendCommentNotification(CommentNotificationDTO notification) {
-                // No hacer nada cuando Kafka está deshabilitado
-            }
+    CommentKafkaProducer commentKafkaProducer() {
+        return (CommentNotificationDTO notification) -> {
+            // No hacer nada cuando Kafka está deshabilitado
         };
     }
 
@@ -73,7 +69,7 @@ class KafkaDisabledConfig {
      * Bean dummy para Reply producer cuando Kafka está deshabilitado
      */
     @Bean
-    public ReplyKafkaProducer replyKafkaProducer() {
+    ReplyKafkaProducer replyKafkaProducer() {
         return new ReplyKafkaProducer() {
             @Override
             public void sendReplyNotification(ReplyNotificationDTO notification) {

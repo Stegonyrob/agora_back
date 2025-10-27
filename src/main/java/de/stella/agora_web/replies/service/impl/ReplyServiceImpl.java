@@ -3,7 +3,6 @@ package de.stella.agora_web.replies.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.comment.model.Comment;
@@ -24,22 +23,17 @@ import de.stella.agora_web.user.repository.UserRepository;
 @Service
 public class ReplyServiceImpl implements IReplyService {
 
-    @Autowired
     private ReplyRepository replyRepository;
 
-    @Autowired
     private CommentRepository commentRepository;
 
-    @Autowired
+    @SuppressWarnings("unused")
     private PostRepository postRepository;
 
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired // Siempre disponible (real o dummy según kafka.enabled)
     private ReplyKafkaProducer kafkaProducer;
 
-    @Autowired
     private IModerationService moderationService;
 
     @Override
@@ -63,6 +57,14 @@ public class ReplyServiceImpl implements IReplyService {
         }
         reply.setArchived(false);
         User replyUser = userRepository.findById(replyDTO.getUserId()).orElse(null);
+        // Fall back to the authenticated user parameter if the DTO user is missing
+        if (replyUser == null) {
+            replyUser = user;
+        }
+        // If we still don't have a user, fail fast with a clear exception
+        if (replyUser == null) {
+            throw new IllegalArgumentException("User not found for reply");
+        }
         reply.setUser(replyUser);
         reply.setComment(commentRepository.findById(replyDTO.getCommentId()).orElse(null));
 

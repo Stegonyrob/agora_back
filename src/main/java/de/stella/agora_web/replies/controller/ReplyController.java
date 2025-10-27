@@ -43,7 +43,7 @@ public class ReplyController {
             @AuthenticationPrincipal User user
     ) {
         if (user.getSanctionStatus() == SanctionStatus.EXPELLED) {
-            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó crear respuesta", user.getId());
+            String msg = "Intento bloqueado: usuario %d expulsado intentó crear respuesta".formatted(user.getId());
             auditLogger.warn(msg);
             SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
                     user.getSanctionType().name(),
@@ -53,7 +53,7 @@ public class ReplyController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
         }
         if (user.getSanctionStatus() == SanctionStatus.SUSPENDED) {
-            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó crear respuesta", user.getId());
+            String msg = "Intento bloqueado: usuario %d suspendido intentó crear respuesta".formatted(user.getId());
             auditLogger.warn(msg);
             SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
                     user.getSanctionType().name(),
@@ -101,7 +101,7 @@ public class ReplyController {
             @AuthenticationPrincipal User user
     ) {
         if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
-            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó editar respuesta %d", user.getId(), id);
+            String msg = "Intento bloqueado: usuario %d expulsado intentó editar respuesta %d".formatted(user.getId(), id);
             auditLogger.warn(msg);
             SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
                     user.getSanctionType().name(),
@@ -111,7 +111,7 @@ public class ReplyController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
         }
         if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
-            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó editar respuesta %d", user.getId(), id);
+            String msg = "Intento bloqueado: usuario %d suspendido intentó editar respuesta %d".formatted(user.getId(), id);
             auditLogger.warn(msg);
             SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
                     user.getSanctionType().name(),
@@ -132,7 +132,7 @@ public class ReplyController {
             @AuthenticationPrincipal User user
     ) {
         if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
-            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó borrar respuesta %d", user.getId(), id);
+            String msg = "Intento bloqueado: usuario %d expulsado intentó borrar respuesta %d".formatted(user.getId(), id);
             auditLogger.warn(msg);
             SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
                     user.getSanctionType().name(),
@@ -142,7 +142,7 @@ public class ReplyController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
         }
         if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
-            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó borrar respuesta %d", user.getId(), id);
+            String msg = "Intento bloqueado: usuario %d suspendido intentó borrar respuesta %d".formatted(user.getId(), id);
             auditLogger.warn(msg);
             SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
                     user.getSanctionType().name(),

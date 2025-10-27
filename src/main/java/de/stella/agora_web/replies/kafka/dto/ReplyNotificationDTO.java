@@ -95,8 +95,7 @@ public class ReplyNotificationDTO {
     // Para debugging y logging
     @Override
     public String toString() {
-        return String.format(
-                "ReplyNotificationDTO{replyId=%d, commentId=%d, postId=%d, postTitle='%s', userName='%s', content='%s'}",
+        return "ReplyNotificationDTO{replyId=%d, commentId=%d, postId=%d, postTitle='%s', userName='%s', content='%s'}".formatted(
                 replyId, commentId, postId, postTitle, userName, replyContent);
     }
 

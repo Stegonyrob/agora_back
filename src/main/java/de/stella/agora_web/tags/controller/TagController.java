@@ -49,8 +49,8 @@ public class TagController {
                     }
 
                     tagsList.forEach(tagObj -> {
-                        if (tagObj instanceof String) {
-                            tagService.addTagToPost(postId, (String) tagObj);
+                        if (tagObj instanceof String string) {
+                            tagService.addTagToPost(postId, string);
                         } else if (tagObj instanceof java.util.Map) {
                             @SuppressWarnings("unchecked")
                             java.util.Map<String, Object> tagMap = (java.util.Map<String, Object>) tagObj;

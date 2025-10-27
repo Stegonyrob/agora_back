@@ -2,7 +2,6 @@ package de.stella.agora_web.image.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +14,7 @@ import de.stella.agora_web.image.service.IPostImageService;
 import de.stella.agora_web.image.service.ImageStorageService;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -34,7 +34,7 @@ public class PostImageServiceImpl implements IPostImageService {
     private static final List<String> ALLOWED_CONTENT_TYPES = List.of(
             "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"
     );
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    private static final long MAX_FILE_SIZE = 5L * 1024 * 1024; // 5MB
     private static final int MAX_IMAGES_PER_POST = 10;
 
     public PostImageServiceImpl(PostImageRepository postImageRepository, PostRepository postRepository, ImageStorageService imageStorageService) {
@@ -73,8 +73,9 @@ public class PostImageServiceImpl implements IPostImageService {
     }
 
     @Override
+
     public List<PostImageDTO> getImagesByPostId(Long postId) {
-        return postImageRepository.findByPostId(postId).stream().map(this::mapToDTO).collect(Collectors.toList());
+        return postImageRepository.findByPostId(postId).stream().map(this::mapToDTO).toList();
     }
 
     // NUEVO: Obtener información de imagen por ID
@@ -137,7 +138,7 @@ public class PostImageServiceImpl implements IPostImageService {
 
                 } catch (RuntimeException e) {
                     log.error("Error al procesar imagen: {}", file.getOriginalFilename(), e);
-                    throw new RuntimeException("Error al procesar imagen: " + file.getOriginalFilename(), e);
+                    throw new EntityNotFoundException("Error al procesar imagen: " + file.getOriginalFilename(), e);
                 }
             }
         }
@@ -171,6 +172,7 @@ public class PostImageServiceImpl implements IPostImageService {
         return true;
     }
 
+    @SuppressWarnings("unused")
     // ========== MÉTODOS HELPER ==========
     private String getFileExtension(String filename) {
         if (filename == null || !filename.contains(".")) {

@@ -72,8 +72,8 @@ public class PostImageController {
     @PostMapping("/upload")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PostImageDTO>> uploadMultiplePostImages(
-            @RequestParam("files") MultipartFile[] files,
-            @RequestParam("postId") Long postId) {
+            @RequestParam MultipartFile[] files,
+            @RequestParam Long postId) {
 
         try {
             List<PostImageDTO> savedImages = postImageService.processAndSaveImages(files, postId);

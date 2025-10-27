@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
@@ -124,7 +124,7 @@ public class ImageToHexSqlGenerator {
                 });
 
         try {
-            Files.write(Paths.get(outputSql), sqlBuilder.toString().getBytes());
+            Files.write(Path.of(outputSql), sqlBuilder.toString().getBytes());
 
             System.out.println("\n=== RESUMEN ===");
             System.out.println("✅ Archivo SQL generado: " + outputSql);
@@ -167,7 +167,7 @@ public class ImageToHexSqlGenerator {
             byte[] bytes = fis.readAllBytes();
             StringBuilder sb = new StringBuilder();
             for (byte b : bytes) {
-                sb.append(String.format("%02X", b));
+                sb.append("%02X".formatted(b));
             }
             return sb.toString();
         } catch (IOException e) {

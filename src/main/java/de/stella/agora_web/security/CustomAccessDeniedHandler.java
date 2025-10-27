@@ -1,36 +1,39 @@
 package de.stella.agora_web.security;
 
-import jakarta.servlet.ServletException;
 import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+/**
+ * Custom handler for access denied exceptions.
+ * Logs access denied attempts and returns HTTP 403 Forbidden response.
+ */
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-  public void handle(
-    HttpServletRequest request,
-    HttpServletResponse response,
-    AccessDeniedException accessDeniedException
-  ) throws IOException {
-    // Registrar información sobre el acceso denegado
-    System.out.println("Acceso denegado a la URL: " + request.getRequestURI());
-    System.out.println("Usuario: " + request.getUserPrincipal());
-    System.out.println("Error: " + accessDeniedException.getMessage());
+    private static final Logger logger = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
 
-    // Enviar respuesta 403
-    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado");
-  }
+    @Override
+    public void handle(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AccessDeniedException accessDeniedException
+    ) throws IOException, ServletException {
+        // Registrar información sobre el acceso denegado
+        logger.warn("Acceso denegado a la URL: {} | Usuario: {} | Error: {}",
+                request.getRequestURI(),
+                request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : "anonymous",
+                accessDeniedException.getMessage());
 
-  @Override
-  public void handle(
-    jakarta.servlet.http.HttpServletRequest request,
-    jakarta.servlet.http.HttpServletResponse response,
-    AccessDeniedException accessDeniedException
-  ) throws IOException, ServletException {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
+        // Enviar respuesta 403
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado");
+    }
 }

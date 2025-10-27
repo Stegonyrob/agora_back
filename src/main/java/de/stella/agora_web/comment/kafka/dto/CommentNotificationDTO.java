@@ -81,19 +81,7 @@ public class CommentNotificationDTO {
     // Para debugging y logging
     @Override
     public String toString() {
-        return String.format("CommentNotificationDTO{commentId=%d, postId=%d, postTitle='%s', userName='%s', content='%s'}",
+        return "CommentNotificationDTO{commentId=%d, postId=%d, postTitle='%s', userName='%s', content='%s'}".formatted(
                 commentId, postId, postTitle, userName, commentContent);
-    }
-
-    public String getMessage() {
-        return commentContent;
-    }
-
-    public String getAuthor() {
-        return userName;
-    }
-
-    public String getComment() {
-        return commentContent;
     }
 }

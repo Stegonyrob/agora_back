@@ -48,6 +48,7 @@ public class AvatarInitializer implements CommandLineRunner {
     /**
      * Crea un avatar precargado con ID fijo. Si ya existe, lo omite.
      */
+    @SuppressWarnings("unused")
     private void createPreloadedAvatar(Long id, String imageName, String displayName, boolean isDefault) {
         if (id == null || imageName == null || displayName == null) {
             log.error("Error al crear avatar precargado: parámetro nulo. ID: {}, nombre: {}, display name: {}", id, imageName, displayName);
