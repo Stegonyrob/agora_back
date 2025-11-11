@@ -17,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,7 +28,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -55,8 +55,7 @@ import de.stella.agora_web.user.service.impl.UserServiceImpl;
     "spring.jpa.hibernate.ddl-auto=create-drop"
 })
 @Import(TestConfig.class)
-@Transactional
-
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ProfileControllerTest {
 
     @Value("${api-endpoint}")
@@ -80,6 +79,9 @@ public class ProfileControllerTest {
     @Autowired
     private de.stella.agora_web.comment.repository.CommentRepository commentRepository;
 
+    @Autowired
+    private de.stella.agora_web.events.repository.EventRepository eventRepository;
+
     @MockBean
     private ProfileServiceImpl profileService;
 
@@ -96,8 +98,9 @@ public class ProfileControllerTest {
 
     @BeforeEach
     void setUp() {
-        // Limpiar datos en orden correcto (comentarios primero para evitar violaciones de integridad referencial)
+        // Limpiar datos en orden correcto (evitar violaciones de integridad referencial)
         commentRepository.deleteAll();
+        eventRepository.deleteAll(); // Eliminar eventos antes de usuarios
         profileRepository.deleteAll();
         userRepository.deleteAll();
         roleRepository.deleteAll();
@@ -111,16 +114,17 @@ public class ProfileControllerTest {
         adminRole.setName("ADMIN");
         adminRole = roleRepository.save(adminRole);
 
-        // Crear usuario de prueba
+        // Crear usuario de prueba SIN perfil inicialmente
         testUser = new User();
         testUser.setUsername("testuser");
         testUser.setEmail("test@example.com");
         testUser.setPassword("password123");
         testUser.getRoles().add(userRole);
-        testUser = userRepository.save(testUser);
+        testUser = userRepository.saveAndFlush(testUser);
 
-        // Crear perfil de prueba
+        // Crear perfil de prueba con referencia al usuario
         testProfile = new Profile();
+        testProfile.setId(testUser.getId()); // ID compartido
         testProfile.setUser(testUser);
         testProfile.setFirstName("Test");
         testProfile.setLastName1("User");
@@ -131,11 +135,7 @@ public class ProfileControllerTest {
         testProfile.setCountry("España");
         testProfile.setPhone("123456789");
         testProfile.setRelationship("Single");
-        testProfile = profileRepository.save(testProfile);
-
-        // Actualizar usuario con perfil
-        testUser.setProfile(testProfile);
-        testUser = userRepository.save(testUser);
+        testProfile = profileRepository.saveAndFlush(testProfile);
     }
 
     // ============ TESTS GET PROFILE BY ID ============

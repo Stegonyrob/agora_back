@@ -29,11 +29,16 @@ import jakarta.validation.Valid;
 @SuppressWarnings("unused")
 public class TextController {
 
-    private ITextService textItemService;
+    private final ITextService textItemService;
 
-    private ITextImageService textImageService;
+    private final ITextImageService textImageService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TextController.class);
+
+    public TextController(ITextService textItemService, ITextImageService textImageService) {
+        this.textItemService = textItemService;
+        this.textImageService = textImageService;
+    }
 
     /**
      * Obtiene todos los textos (público).

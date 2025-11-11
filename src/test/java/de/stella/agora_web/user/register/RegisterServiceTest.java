@@ -2,15 +2,15 @@ package de.stella.agora_web.user.register;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import de.stella.agora_web.auth.SignUpDTO;
 import de.stella.agora_web.roles.model.Role;
@@ -18,6 +18,7 @@ import de.stella.agora_web.roles.service.RoleService;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.repository.UserRepository;
 
+@ExtendWith(MockitoExtension.class)
 class RegisterServiceTest {
 
     @Mock
@@ -29,11 +30,6 @@ class RegisterServiceTest {
 
     @InjectMocks
     private RegisterService registerService;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void testRegisterUser() {

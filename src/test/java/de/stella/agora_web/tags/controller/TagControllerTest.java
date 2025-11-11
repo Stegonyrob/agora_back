@@ -17,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,6 +37,9 @@ import de.stella.agora_web.tags.service.ITagService;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("h2")
+@TestPropertySource(properties = {
+    "spring.h2.console.enabled=false"
+})
 public class TagControllerTest {
 
     @Autowired

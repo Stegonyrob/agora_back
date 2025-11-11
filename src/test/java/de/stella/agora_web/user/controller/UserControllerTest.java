@@ -19,6 +19,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,7 +29,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -55,7 +55,7 @@ import de.stella.agora_web.user.service.impl.UserServiceImpl;
     "spring.jpa.hibernate.ddl-auto=create-drop"
 })
 @Import(TestConfig.class)
-@Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UserControllerTest {
 
     @Autowired
@@ -95,7 +95,12 @@ public class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        // Limpiar datos
+        // Limpiar datos en orden correcto
+        // Primero limpiar la relación ManyToMany
+        userRepository.findAll().forEach(user -> {
+            user.getRoles().clear();
+            userRepository.save(user);
+        });
         userRepository.deleteAll();
         roleRepository.deleteAll();
 
