@@ -1,17 +1,13 @@
 package de.stella.agora_web.kafka;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -35,6 +31,7 @@ class CommentModerationKafkaTest {
     private CommentModerationService commentModerationService;
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setUp() {
         MockitoAnnotations.openMocks(this);
         commentModerationService = new CommentModerationService(kafkaTemplate);
@@ -137,7 +134,7 @@ class CommentModerationKafkaTest {
             commentModerationService.sendCommentModerationNotification(
                     commentId, authorName, content, postTitle
             );
-        } catch (Exception e) {
+        } catch (Exception _) {
             // El servicio debe manejar la excepción internamente
             // y posiblemente logear el error
         }

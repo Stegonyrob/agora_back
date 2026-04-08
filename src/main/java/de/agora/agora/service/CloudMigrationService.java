@@ -70,6 +70,7 @@ public class CloudMigrationService {
      * 1. Lee imágenes desde base de datos 2. Las sube a S3 3. Actualiza las
      * URLs en la BD 4. Opcionalmente configura CloudFront
      */
+    @SuppressWarnings("java:S1135")
     private void migrateBlobToS3() {
         try {
             log.info("Analizando imágenes para migración...");

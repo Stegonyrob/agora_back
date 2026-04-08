@@ -79,7 +79,7 @@ public class PublicEventController {
             PublicEventDTO event = publicEventService.getPublicEventWithImages(id);
             log.info("Se obtuvo el evento público con ID: {}", id);
             return ResponseEntity.ok(event);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException _) {
             log.warn("Evento público no encontrado con ID: {}", id);
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

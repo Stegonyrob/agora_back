@@ -57,7 +57,7 @@ public class UserSettingsController {
         try {
             UserSettingsDTO settings = userSettingsService.getSettings(userId);
             return ResponseEntity.ok(settings);
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Si no existen settings o hay error, devolver settings por defecto
             return ResponseEntity.ok(publicSettingsService.getDefaultSettings());
         }

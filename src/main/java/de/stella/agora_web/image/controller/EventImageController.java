@@ -75,7 +75,7 @@ public class EventImageController {
         try {
             List<EventImageDTO> savedImages = eventImageService.processAndSaveImages(files, eventId);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedImages);
-        } catch (Exception e) {
+        } catch (Exception _) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -101,7 +101,7 @@ public class EventImageController {
         try {
             eventImageService.deleteMultipleEventImages(dto.getImageIds());
             return ResponseEntity.noContent().build();
-        } catch (Exception e) {
+        } catch (Exception _) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

@@ -87,7 +87,7 @@ public class TextImageController {
         try {
             List<TextImageDTO> savedImages = textImageService.processAndSaveImages(files, textId);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedImages);
-        } catch (Exception e) {
+        } catch (Exception _) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -113,7 +113,7 @@ public class TextImageController {
         try {
             textImageService.deleteMultipleTextImages(imageIds);
             return ResponseEntity.noContent().build();
-        } catch (Exception e) {
+        } catch (Exception _) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

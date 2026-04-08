@@ -1,6 +1,7 @@
 package de.stella.agora_web.comment.kafka.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,14 @@ import de.stella.agora_web.messages.EmailMessage;
 @Service // Habilitado para trabajar con Kafka
 public class EmailServiceImpl implements IEmailService {
 
-    @Autowired // Habilitado para trabajar con Kafka
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private static final Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
+
+    private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    public EmailServiceImpl(KafkaTemplate<String, String> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     @Override
     public void sendEmail(String toAddress, String subject, String body) {
@@ -24,10 +30,9 @@ public class EmailServiceImpl implements IEmailService {
         try {
             String emailMessageJson = objectMapper.writeValueAsString(emailMessage);
             kafkaTemplate.send("emails", emailMessageJson);
-            System.out.println("Email notification sent to Kafka topic 'emails': " + emailMessageJson);
+            log.info("Email notification sent to Kafka topic 'emails': {}", emailMessageJson);
         } catch (JsonProcessingException e) {
-            System.err.println("Error serializing email message: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error serializing email message: {}", e.getMessage(), e);
         }
     }
 }

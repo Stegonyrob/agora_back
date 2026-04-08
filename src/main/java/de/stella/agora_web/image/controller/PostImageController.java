@@ -78,7 +78,7 @@ public class PostImageController {
         try {
             List<PostImageDTO> savedImages = postImageService.processAndSaveImages(files, postId);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedImages);
-        } catch (Exception e) {
+        } catch (Exception _) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -104,7 +104,7 @@ public class PostImageController {
         try {
             postImageService.deleteMultiplePostImages(dto.getImageIds());
             return ResponseEntity.noContent().build();
-        } catch (Exception e) {
+        } catch (Exception _) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

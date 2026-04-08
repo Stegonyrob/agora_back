@@ -1,10 +1,11 @@
 package de.stella.agora_web.kafka;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.util.List;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -82,7 +83,7 @@ class KafkaConfigurationTest {
         // No debe lanzar excepción
         try {
             kafkaTemplate.send(topic, message);
-        } catch (Exception e) {
+        } catch (Exception _) {
             // En entorno de test sin Kafka real, puede fallar
             // pero al menos verificamos que la configuración no causa errores de inyección
         }

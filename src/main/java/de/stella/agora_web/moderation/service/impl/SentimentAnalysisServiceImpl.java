@@ -1,21 +1,20 @@
 package de.stella.agora_web.moderation.service.impl;
 
-import java.util.logging.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import ai.djl.ModelException;
-import ai.djl.translate.TranslateException;
 import de.stella.agora_web.moderation.model.SentimentAnalysis;
 import de.stella.agora_web.moderation.service.ISentimentAnalysisService;
 
 @Service
 public class SentimentAnalysisServiceImpl implements ISentimentAnalysisService {
 
-    private final SentimentAnalysis sentimentAnalysis;
-    private static final Logger LOGGER = Logger.getLogger(SentimentAnalysisServiceImpl.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(SentimentAnalysisServiceImpl.class);
 
-    public SentimentAnalysisServiceImpl() throws ModelException {
+    private final SentimentAnalysis sentimentAnalysis;
+
+    public SentimentAnalysisServiceImpl() {
         this.sentimentAnalysis = new SentimentAnalysis();
     }
 
@@ -23,8 +22,8 @@ public class SentimentAnalysisServiceImpl implements ISentimentAnalysisService {
     public String analyzeComment(String comment) {
         try {
             return sentimentAnalysis.analyzeComment(comment);
-        } catch (TranslateException e) {
-            LOGGER.severe("Error analyzing comment: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Error analyzing comment: {}", e.getMessage(), e);
             return "neutral";
         }
     }

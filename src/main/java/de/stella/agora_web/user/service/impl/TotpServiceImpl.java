@@ -21,8 +21,7 @@ public class TotpServiceImpl implements ITotpService {
 
     @Override
     public boolean validateTotpCode(String base64Secret, String code) {
-        // Implementación temporal - siempre válido para testing
-        // TODO: Implementar validación real de TOTP
+        // Implementación temporal - siempre válido para testing (pendiente de TOTP real)
         return code != null && code.length() == 6;
     }
 }

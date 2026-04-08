@@ -4,7 +4,6 @@ import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +16,18 @@ import de.stella.agora_web.legal_text.service.ILegalTextService;
 public class LegalTextServiceImpl implements ILegalTextService {
 
     private static final Logger logger = LoggerFactory.getLogger(LegalTextServiceImpl.class);
+    private static final String NOT_FOUND_MESSAGE = "No existe el texto legal para: ";
 
-    @Autowired
-    private LegalTextRepository repository;
+    private final LegalTextRepository repository;
+
+    public LegalTextServiceImpl(LegalTextRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public LegalTextDTO getByType(String type) {
         LegalText entity = repository.findByType(type)
-                .orElseThrow(() -> new NoSuchElementException("No existe el texto legal para: " + type));
+                .orElseThrow(() -> new NoSuchElementException(NOT_FOUND_MESSAGE + type));
         LegalTextDTO dto = new LegalTextDTO();
         dto.setType(entity.getType());
         dto.setTitle(entity.getTitle());
@@ -41,7 +44,7 @@ public class LegalTextServiceImpl implements ILegalTextService {
                     dto.getTitle(), dto.getContent() != null ? dto.getContent().length() : "null");
 
             LegalText entity = repository.findByType(type)
-                    .orElseThrow(() -> new NoSuchElementException("No existe el texto legal para: " + type));
+                    .orElseThrow(() -> new NoSuchElementException(NOT_FOUND_MESSAGE + type));
 
             logger.info("Found existing entity with ID: {}", entity.getId());
 
@@ -61,9 +64,8 @@ public class LegalTextServiceImpl implements ILegalTextService {
 
             dto.setType(savedEntity.getType());
             return dto;
-        } catch (Exception e) {
-            logger.error("Error updating legal text for type {}: {}", type, e.getMessage(), e);
-            throw e;
+        } catch (NoSuchElementException | IllegalArgumentException e) {
+            throw new IllegalStateException("Error updating legal text for type " + type + ": " + e.getMessage(), e);
         }
     }
 
@@ -93,7 +95,7 @@ public class LegalTextServiceImpl implements ILegalTextService {
     @Override
     public void deleteByType(String type) {
         LegalText entity = repository.findByType(type)
-                .orElseThrow(() -> new NoSuchElementException("No existe el texto legal para: " + type));
+                .orElseThrow(() -> new NoSuchElementException(NOT_FOUND_MESSAGE + type));
         repository.delete(entity);
     }
 }

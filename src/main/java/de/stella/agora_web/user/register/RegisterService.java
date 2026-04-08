@@ -3,6 +3,8 @@ package de.stella.agora_web.user.register;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -19,6 +21,8 @@ import de.stella.agora_web.user.repository.UserRepository;
 
 @Service
 public class RegisterService {
+
+    private static final Logger log = LoggerFactory.getLogger(RegisterService.class);
 
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
@@ -134,6 +138,7 @@ public class RegisterService {
         return profile;
     }
 
+    @SuppressWarnings("java:S6809")
     @Transactional
     public String createUser(SignUpDTO signupDTO) {
         // Verificar si ya existe un usuario con ese username o email
@@ -150,8 +155,7 @@ public class RegisterService {
             return "Usuario creado exitosamente: " + user.getUsername();
         } catch (Exception e) {
             // Log del error específico para debug
-            System.err.println("Error específico en creación de usuario: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error específico en creación de usuario: {}", e.getMessage(), e);
             return "Error al crear usuario: " + e.getMessage();
         }
     }

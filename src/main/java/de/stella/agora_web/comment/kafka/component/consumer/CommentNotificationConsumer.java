@@ -1,6 +1,7 @@
 package de.stella.agora_web.comment.kafka.component.consumer;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -17,21 +18,26 @@ import de.stella.agora_web.moderation.service.impl.ModerationServiceImpl;
 @Component // Habilitado para trabajar con Kafka
 public class CommentNotificationConsumer {
 
-    @Autowired // Habilitado para trabajar con Kafka
-    private IEmailService emailService;
+    private static final Logger log = LoggerFactory.getLogger(CommentNotificationConsumer.class);
 
-    @Autowired // Habilitado para trabajar con Kafka  
-    private CensuredCommentServiceImpl censuredCommentService;
+    private final IEmailService emailService;
+    private final CensuredCommentServiceImpl censuredCommentService;
+    private final ModerationServiceImpl moderationService;
+    private final IPushNotificationService pushNotificationService;
 
-    @Autowired // Habilitado para trabajar con Kafka
-    private ModerationServiceImpl moderationService;
-
-    @Autowired // Habilitado para trabajar con Kafka
-    private IPushNotificationService pushNotificationService;
+    public CommentNotificationConsumer(IEmailService emailService,
+            CensuredCommentServiceImpl censuredCommentService,
+            ModerationServiceImpl moderationService,
+            IPushNotificationService pushNotificationService) {
+        this.emailService = emailService;
+        this.censuredCommentService = censuredCommentService;
+        this.moderationService = moderationService;
+        this.pushNotificationService = pushNotificationService;
+    }
 
     @KafkaListener(topics = "comments") // Habilitado para trabajar con Kafka
     public void consume(CommentNotificationDTO notification) {
-        System.out.println("Processing comment notification: " + notification.getMessage());
+        log.info("Processing comment notification: {}", notification.getMessage());
 
         try {
             // Moderamos el comentario
@@ -58,8 +64,7 @@ public class CommentNotificationConsumer {
                         + ": \"" + notification.getMessage() + "\"");
             }
         } catch (Exception e) {
-            System.err.println("Error processing comment notification: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error processing comment notification: {}", e.getMessage(), e);
         }
     }
 }

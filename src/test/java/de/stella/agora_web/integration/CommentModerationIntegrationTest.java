@@ -60,9 +60,8 @@ class CommentModerationIntegrationTest {
     private Comment testComment;
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setUp() {
-        // Crear datos de prueba
-        testUser = new User();
         testUser.setUsername("testuser");
         testUser.setEmail("test@example.com");
         testUser.setPassword("password");

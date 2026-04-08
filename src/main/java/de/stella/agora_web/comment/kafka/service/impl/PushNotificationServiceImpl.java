@@ -1,6 +1,7 @@
 package de.stella.agora_web.comment.kafka.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +14,13 @@ import de.stella.agora_web.messages.PushNotificationMessage;
 @Service // Habilitado para trabajar con Kafka
 public class PushNotificationServiceImpl implements IPushNotificationService {
 
-    @Autowired // Habilitado para trabajar con Kafka
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private static final Logger log = LoggerFactory.getLogger(PushNotificationServiceImpl.class);
+
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    public PushNotificationServiceImpl(KafkaTemplate<String, String> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     @Override
     public void sendPushNotification(String topic, String title, String message) {
@@ -25,10 +31,9 @@ public class PushNotificationServiceImpl implements IPushNotificationService {
         try {
             jsonMessage = mapper.writeValueAsString(pushNotificationMessage);
             kafkaTemplate.send("push-notifications", jsonMessage);
-            System.out.println("Push notification sent to Kafka topic 'push-notifications': " + jsonMessage);
+            log.info("Push notification sent to Kafka topic 'push-notifications': {}", jsonMessage);
         } catch (JsonProcessingException e) {
-            System.err.println("Error serializing push notification message: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error serializing push notification message: {}", e.getMessage(), e);
         }
     }
 }

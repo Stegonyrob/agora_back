@@ -104,7 +104,7 @@ public class AvatarController {
             );
 
             return ResponseEntity.status(HttpStatus.CREATED).body(savedAvatar);
-        } catch (java.io.IOException e) {
+        } catch (java.io.IOException _) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -114,7 +114,7 @@ public class AvatarController {
         try {
             avatarService.deleteAvatar(id);
             return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException _) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }

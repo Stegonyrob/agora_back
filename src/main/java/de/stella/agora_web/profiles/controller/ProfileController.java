@@ -33,6 +33,7 @@ import de.stella.agora_web.user.service.impl.UserServiceImpl;
 public class ProfileController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
+    private static final String LAST_ADMIN_ERROR = "No se puede eliminar el último administrador del sistema";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     ProfileServiceImpl service;
@@ -46,13 +47,13 @@ public class ProfileController {
     }
 
     @PostMapping(path = "/{id}")
-    public ResponseEntity<Profile> getProfileById(@RequestBody ProfileDTO profileDTO) throws Exception {
+    public ResponseEntity<Profile> getProfileById(@RequestBody ProfileDTO profileDTO) {
         Profile profile = service.getById(profileDTO.getUserId());
         return ResponseEntity.ok(profile);
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<ProfileDTO> getById(@NonNull @PathVariable Long id) throws Exception {
+    public ResponseEntity<ProfileDTO> getById(@NonNull @PathVariable Long id) {
         Profile profile = service.getById(id);
         ProfileDTO profileDTO = toProfileDTO(profile);
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(profileDTO);
@@ -60,17 +61,17 @@ public class ProfileController {
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PutMapping(path = "/{id}")
-    public ResponseEntity<ProfileDTO> update(@PathVariable Long id, @RequestBody ProfileDTO profileDTO) throws Exception {
+    public ResponseEntity<ProfileDTO> update(@PathVariable Long id, @RequestBody ProfileDTO profileDTO) {
         try {
             // Log the complete JSON received
             String jsonReceived = objectMapper.writeValueAsString(profileDTO);
             logger.info("=== PROFILE UPDATE REQUEST ===");
             logger.info("Profile ID: {}", id);
             logger.info("JSON received: {}", jsonReceived);
-            logger.info("ProfileDTO toString: {}", profileDTO.toString());
+            logger.info("ProfileDTO toString: {}", profileDTO);
             logger.info("Avatar ID in request: {}", profileDTO.getAvatarId());
             logger.info("============================");
-        } catch (Exception e) {
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             logger.error("Error logging ProfileDTO: {}", e.getMessage());
         }
 
@@ -83,7 +84,7 @@ public class ProfileController {
     }
 
     @PutMapping(path = "/user/profile/favorite/{id}")
-    public ResponseEntity<String> addRemoveFavorite(@PathVariable Long id) throws Exception {
+    public ResponseEntity<String> addRemoveFavorite(@PathVariable Long id) {
 
         String message = service.updateFavorites(id);
 
@@ -91,13 +92,14 @@ public class ProfileController {
     }
 
     @GetMapping(path = "/user/profile/favorite/{id}")
-    public ResponseEntity<Profile> getFavorite(@PathVariable Long id) throws Exception {
+    public ResponseEntity<Profile> getFavorite(@PathVariable Long id) {
         Profile profile = service.getFavorites(id);
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(profile);
     }
 
+    @SuppressWarnings("java:S4144")
     @DeleteMapping(path = "/user/profile/favorite/{id}")
-    public ResponseEntity<String> deleteFavorite(@PathVariable Long id) throws Exception {
+    public ResponseEntity<String> deleteFavorite(@PathVariable Long id) {
 
         String message = service.updateFavorites(id);
 
@@ -105,7 +107,7 @@ public class ProfileController {
     }
 
     @PostMapping(path = "/user/profile/favorite/{id}")
-    public ResponseEntity<Profile> Favorite(@PathVariable Long id) throws Exception {
+    public ResponseEntity<Profile> favorite(@PathVariable Long id) {
         Profile profile = service.getFavorites(id);
         if (profile == null) {
             return ResponseEntity.status(404).body(null);
@@ -116,7 +118,7 @@ public class ProfileController {
     // ============= GESTIÓN DE PERFILES (USER/ADMIN UNIFICADO) =============
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<String> deleteProfile(@PathVariable Long id) throws Exception {
+    public ResponseEntity<String> deleteProfile(@PathVariable Long id) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String currentUsername = authentication.getName();
@@ -139,17 +141,16 @@ public class ProfileController {
             // Si es admin eliminando a otro usuario, verificar que no sea el último admin
             if (isAdmin && !isOwnProfile) {
                 Optional<User> targetUserOpt = userService.findById(id);
-                if (targetUserOpt.isPresent() && targetUserOpt.get().isAdmin()) {
-                    if (!gdprService.canDeleteUser(targetUserOpt.get().getId())) {
-                        return ResponseEntity.badRequest().body("No se puede eliminar el último administrador del sistema");
-                    }
+                if (targetUserOpt.isPresent() && targetUserOpt.get().isAdmin()
+                        && !gdprService.canDeleteUser(targetUserOpt.get().getId())) {
+                    return ResponseEntity.badRequest().body(LAST_ADMIN_ERROR);
                 }
             }
 
             // Si es eliminación propia, usar GDPR service
             if (isOwnProfile) {
                 if (!gdprService.canDeleteUser(currentUser.getId())) {
-                    return ResponseEntity.badRequest().body("No se puede eliminar el último administrador del sistema");
+                    return ResponseEntity.badRequest().body(LAST_ADMIN_ERROR);
                 }
                 gdprService.deleteAllUserData(currentUser.getId());
                 return ResponseEntity.ok("Tu cuenta y todos tus datos han sido eliminados permanentemente conforme al GDPR");
@@ -167,6 +168,7 @@ public class ProfileController {
 
     // ============= ENDPOINTS PARA AUTO-GESTIÓN (GDPR) =============
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @SuppressWarnings("java:S3776")
     @PutMapping("/me")
     public ResponseEntity<ProfileDTO> updateSelfProfile(@RequestBody ProfileDTO profileDTO) {
         try {
@@ -240,7 +242,7 @@ public class ProfileController {
             Profile updatedProfile = service.update(updatedProfileDTO, existingProfile.getId());
 
             return ResponseEntity.ok(toProfileDTO(updatedProfile));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logger.error("Error updating self profile: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
@@ -261,7 +263,7 @@ public class ProfileController {
             User user = userOptional.get();
 
             if (!gdprService.canDeleteUser(user.getId())) {
-                return ResponseEntity.badRequest().body("No se puede eliminar el último administrador del sistema");
+                return ResponseEntity.badRequest().body(LAST_ADMIN_ERROR);
             }
 
             // Usar GdprService para eliminación completa en cascada

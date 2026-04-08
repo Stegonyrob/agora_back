@@ -92,7 +92,7 @@ public class EventController {
             EventResponseDTO event = eventService.getEventResponseById(id);
             log.info("Se obtuvo evento con ID: {}", id);
             return ResponseEntity.ok(event);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException _) {
             log.warn("Evento no encontrado con ID: {}", id);
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
@@ -154,7 +154,7 @@ public class EventController {
             EventDTO updatedEvent = eventService.updateEvent(id, eventDTO);
             log.info("Evento actualizado exitosamente con ID: {}", id);
             return ResponseEntity.ok(updatedEvent);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException _) {
             log.warn("Evento no encontrado para actualizar con ID: {}", id);
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

@@ -3,10 +3,16 @@ package de.stella.agora_web.moderation.model;
 import java.util.Arrays;
 import java.util.List;
 
-import ai.djl.ModelException;
-import ai.djl.translate.TranslateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SentimentAnalysis {
+
+    private static final Logger log = LoggerFactory.getLogger(SentimentAnalysis.class);
+
+    private static final String NEUTRAL = "neutral";
+    private static final String POSITIVE = "positive";
+    private static final String OFFENSIVE = "offensive";
 
     // Lists of offensive and positive words for basic sentiment analysis
     private static final List<String> OFFENSIVE_WORDS = Arrays.asList(
@@ -30,14 +36,14 @@ public class SentimentAnalysis {
             "good morning", "good afternoon", "good evening", "hi", "hey"
     );
 
-    public SentimentAnalysis() throws ModelException {
+    public SentimentAnalysis() {
         // Basic implementation without external model for now
         // In future, this could be enhanced with actual ML models
     }
 
-    public String analyzeComment(String comment) throws TranslateException {
+    public String analyzeComment(String comment) {
         if (comment == null || comment.trim().isEmpty()) {
-            return "neutral";
+            return NEUTRAL;
         }
 
         String lowerComment = comment.toLowerCase().trim();
@@ -45,14 +51,14 @@ public class SentimentAnalysis {
         // Check for safe greetings first
         for (String greeting : SAFE_GREETINGS) {
             if (lowerComment.equals(greeting) || lowerComment.startsWith(greeting + " ")) {
-                return "positive";
+                return POSITIVE;
             }
         }
 
         // Check for offensive content
         for (String offensiveWord : OFFENSIVE_WORDS) {
             if (lowerComment.contains(offensiveWord)) {
-                return "offensive";
+                return OFFENSIVE;
             }
         }
 
@@ -66,21 +72,21 @@ public class SentimentAnalysis {
 
         // Simple scoring system
         if (positiveScore > 0) {
-            return "positive";
+            return POSITIVE;
         }
 
         // Check for question patterns (usually neutral/positive intent)
         if (lowerComment.contains("?") || lowerComment.startsWith("¿")) {
-            return "neutral";
+            return NEUTRAL;
         }
 
         // Check for thank you patterns
         if (lowerComment.contains("gracias") || lowerComment.contains("thank")) {
-            return "positive";
+            return POSITIVE;
         }
 
         // Default to neutral for unknown content
-        return "neutral";
+        return NEUTRAL;
     }
 
     /**
@@ -106,12 +112,8 @@ public class SentimentAnalysis {
         }
 
         // Aggressive capitalization (all caps with length > 10)
-        if (comment.length() > 10 && comment.equals(comment.toUpperCase())
-                && !comment.matches(".*[0-9].*")) { // Not if it contains numbers
-            return true;
-        }
-
-        return false;
+        return comment.length() > 10 && comment.equals(comment.toUpperCase())
+                && !comment.matches(".*\\d.*"); // Not if it contains numbers
     }
 
     private boolean isSpamPattern(String comment) {
@@ -138,28 +140,25 @@ public class SentimentAnalysis {
         return false;
     }
 
-    public static void main(String[] args) throws TranslateException {
-        try {
-            SentimentAnalysis sentimentAnalysis = new SentimentAnalysis();
+    @SuppressWarnings("java:S1172")
+    public static void main(String[] args) {
+        SentimentAnalysis sentimentAnalysis = new SentimentAnalysis();
 
-            // Test cases
-            String[] testCases = {
-                "hola",
-                "buenos días",
-                "gracias por tu ayuda",
-                "estúpido",
-                "eres un idiota",
-                "me gusta esta explicación",
-                "¿puedes ayudarme?",
-                "excelente trabajo"
-            };
+        // Test cases
+        String[] testCases = {
+            "hola",
+            "buenos días",
+            "gracias por tu ayuda",
+            "estúpido",
+            "eres un idiota",
+            "me gusta esta explicación",
+            "¿puedes ayudarme?",
+            "excelente trabajo"
+        };
 
-            for (String test : testCases) {
-                String result = sentimentAnalysis.analyzeComment(test);
-                System.out.println("'" + test + "' -> " + result);
-            }
-        } catch (ModelException e) {
-            e.printStackTrace();
+        for (String test : testCases) {
+            String result = sentimentAnalysis.analyzeComment(test);
+            log.info("'{}' -> {}", test, result);
         }
     }
 }

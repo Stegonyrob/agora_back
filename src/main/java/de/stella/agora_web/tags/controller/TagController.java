@@ -2,7 +2,6 @@ package de.stella.agora_web.tags.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +20,17 @@ import de.stella.agora_web.tags.service.ITagService;
 @RequestMapping("${api-endpoint}/any/tags")
 public class TagController {
 
+    private static final String NO_TAGS_ERROR = "No se recibieron tags para asociar";
+    private static final String TAG_PREFIX = "Tag '";
+
+    private final ITagService tagService;
+
+    public TagController(ITagService tagService) {
+        this.tagService = tagService;
+    }
+
     // Asociar múltiples tags a un post - ACEPTA AMBOS FORMATOS
+    @SuppressWarnings("java:S3776")
     @PostMapping("/posts/{postId}/tags")
     public ResponseEntity<String> addTagsToPost(@PathVariable Long postId, @RequestBody Object requestBody) {
         try {
@@ -30,7 +39,7 @@ public class TagController {
                 @SuppressWarnings("unchecked")
                 List<String> tagNames = (List<String>) requestBody;
                 if (tagNames.isEmpty()) {
-                    return ResponseEntity.badRequest().body("No se recibieron tags para asociar");
+                    return ResponseEntity.badRequest().body(NO_TAGS_ERROR);
                 }
                 tagNames.forEach(tagName -> tagService.addTagToPost(postId, tagName));
                 return ResponseEntity.ok("Tags asociados correctamente al post " + postId);
@@ -45,15 +54,15 @@ public class TagController {
                     @SuppressWarnings("unchecked")
                     List<Object> tagsList = (List<Object>) tagsObj;
                     if (tagsList.isEmpty()) {
-                        return ResponseEntity.badRequest().body("No se recibieron tags para asociar");
+                        return ResponseEntity.badRequest().body(NO_TAGS_ERROR);
                     }
 
                     tagsList.forEach(tagObj -> {
-                        if (tagObj instanceof String) {
-                            tagService.addTagToPost(postId, (String) tagObj);
-                        } else if (tagObj instanceof java.util.Map) {
+                        if (tagObj instanceof String tagStr) {
+                            tagService.addTagToPost(postId, tagStr);
+                        } else if (tagObj instanceof java.util.Map<?, ?> rawTagMap) {
                             @SuppressWarnings("unchecked")
-                            java.util.Map<String, Object> tagMap = (java.util.Map<String, Object>) tagObj;
+                            java.util.Map<String, Object> tagMap = (java.util.Map<String, Object>) rawTagMap;
                             String tagName = (String) tagMap.get("name");
                             if (tagName != null) {
                                 tagService.addTagToPost(postId, tagName);
@@ -96,14 +105,11 @@ public class TagController {
     @PostMapping("/events/{eventId}/tags")
     public ResponseEntity<String> addTagsToEvent(@PathVariable Long eventId, @RequestBody de.stella.agora_web.tags.dto.TagListDTO tagListDTO) {
         if (tagListDTO.getTags() == null || tagListDTO.getTags().isEmpty()) {
-            return ResponseEntity.badRequest().body("No se recibieron tags para asociar");
+            return ResponseEntity.badRequest().body(NO_TAGS_ERROR);
         }
         tagListDTO.getTags().forEach(tagDto -> tagService.addTagToEvent(eventId, tagDto.getName()));
         return ResponseEntity.ok("Tags asociados correctamente al evento " + eventId);
     }
-
-    @Autowired
-    private ITagService tagService;
 
     // ========== ENDPOINTS DE LECTURA PRIVADOS ==========
     // Obtener posts por tag - REQUIERE AUTENTICACIÓN (OPTIMIZADO)
@@ -129,6 +135,7 @@ public class TagController {
 
     // ========== ENDPOINTS ADMINISTRATIVOS ==========
     // Crear nuevo tag - SOLO ADMIN
+    @SuppressWarnings("java:S4684")
     @PostMapping
     public ResponseEntity<Tag> createTag(@RequestBody Tag tag) {
         Tag createdTag = tagService.createTag(tag.getName());
@@ -140,14 +147,14 @@ public class TagController {
     @PostMapping("/events/{eventId}/tags/{tagName}")
     public ResponseEntity<String> addTagToEvent(@PathVariable Long eventId, @PathVariable String tagName) {
         tagService.addTagToEvent(eventId, tagName);
-        return ResponseEntity.ok("Tag '" + tagName + "' agregado al evento " + eventId);
+        return ResponseEntity.ok(TAG_PREFIX + tagName + "' agregado al evento " + eventId);
     }
 
     // Agregar tag a post
     @PostMapping("/posts/{postId}/tags/{tagName}")
     public ResponseEntity<String> addTagToPost(@PathVariable Long postId, @PathVariable String tagName) {
         tagService.addTagToPost(postId, tagName);
-        return ResponseEntity.ok("Tag '" + tagName + "' agregado al post " + postId);
+        return ResponseEntity.ok(TAG_PREFIX + tagName + "' agregado al post " + postId);
     }
 
     // ========== ENDPOINTS PARA QUITAR TAGS ==========
@@ -155,13 +162,13 @@ public class TagController {
     @DeleteMapping("/events/{eventId}/tags/{tagName}")
     public ResponseEntity<String> removeTagFromEvent(@PathVariable Long eventId, @PathVariable String tagName) {
         tagService.removeTagFromEvent(eventId, tagName);
-        return ResponseEntity.ok("Tag '" + tagName + "' eliminado del evento " + eventId);
+        return ResponseEntity.ok(TAG_PREFIX + tagName + "' eliminado del evento " + eventId);
     }
 
     // Quitar tag de post
     @DeleteMapping("/posts/{postId}/tags/{tagName}")
     public ResponseEntity<String> removeTagFromPost(@PathVariable Long postId, @PathVariable String tagName) {
         tagService.removeTagFromPost(postId, tagName);
-        return ResponseEntity.ok("Tag '" + tagName + "' eliminado del post " + postId);
+        return ResponseEntity.ok(TAG_PREFIX + tagName + "' eliminado del post " + postId);
     }
 }

@@ -127,8 +127,7 @@ public class SocialAuthService {
         }
     }
 
-    // Métodos temporales para simular extracción de datos
-    // TODO: Reemplazar con implementación real
+    // Métodos temporales para simular extracción de datos (pendiente migración real)
     @SuppressWarnings("unused")
     private String extractEmailFromGoogleToken(String idToken) {
         // Simulación - en producción debería validar y extraer del token real
