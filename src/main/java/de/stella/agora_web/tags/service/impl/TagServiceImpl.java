@@ -46,8 +46,10 @@ public class TagServiceImpl implements ITagService {
     @Autowired
     private EventRepository eventRepository;
     @Autowired
+    @SuppressWarnings("unused")
     private ReplyRepository replyRepository;
     @Autowired
+    @SuppressWarnings("unused")
     private CommentRepository commentRepository;
 
     @Override

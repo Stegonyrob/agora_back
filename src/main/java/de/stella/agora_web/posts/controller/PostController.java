@@ -3,7 +3,6 @@ package de.stella.agora_web.posts.controller;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,6 @@ import de.stella.agora_web.posts.controller.dto.PostDTO;
 import de.stella.agora_web.posts.controller.dto.PostResponseDTO;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.service.IPostService;
-import de.stella.agora_web.profiles.repository.ProfileRepository;
 import de.stella.agora_web.tags.dto.PostSummaryDTO;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping(path = "${api-endpoint}/")
 public class PostController {
-
-    @Autowired
-    private ProfileRepository profileRepository;
 
     // ✅ CUMPLE SRP: Solo manejo de endpoints de posts
     private final IPostService postService;

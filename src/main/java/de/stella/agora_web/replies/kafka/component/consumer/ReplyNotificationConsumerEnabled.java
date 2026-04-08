@@ -1,5 +1,7 @@
 package de.stella.agora_web.replies.kafka.component.consumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -16,13 +18,17 @@ import de.stella.agora_web.replies.kafka.dto.ReplyNotificationDTO;
 @Component // Habilitado para trabajar con Kafka
 public class ReplyNotificationConsumerEnabled {
 
+    private static final Logger log = LoggerFactory.getLogger(ReplyNotificationConsumerEnabled.class);
+
     @Autowired // Habilitado para trabajar con Kafka
     private IEmailService emailService;
 
     @Autowired // Habilitado para trabajar con Kafka
+    @SuppressWarnings("unused")
     private CensuredCommentServiceImpl censuredCommentService;
 
     @Autowired // Habilitado para trabajar con Kafka
+    @SuppressWarnings("unused")
     private ModerationServiceImpl moderationService;
 
     @Autowired // Habilitado para trabajar con Kafka
@@ -30,7 +36,7 @@ public class ReplyNotificationConsumerEnabled {
 
     @KafkaListener(topics = "replies") // Habilitado para trabajar con Kafka
     public void consume(ReplyNotificationDTO notification) {
-        System.out.println("Processing reply notification: " + notification.getMessage());
+        log.info("Processing reply notification: {}", notification.getMessage());
 
         try {
             // Moderamos la respuesta usando el servicio de moderación (basado en comentarios)
@@ -50,9 +56,7 @@ public class ReplyNotificationConsumerEnabled {
                     + ": \"" + notification.getMessage() + "\"");
 
         } catch (Exception e) {
-            // Log de error en caso de fallo al procesar la notificación
-            System.err.println("Error processing reply notification: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error processing reply notification: {}", e.getMessage(), e);
         }
     }
 }

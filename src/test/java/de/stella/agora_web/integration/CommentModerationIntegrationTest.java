@@ -7,12 +7,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.stella.agora_web.comment.model.Comment;
@@ -52,7 +52,7 @@ class CommentModerationIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    @MockBean
+    @MockitoBean
     private KafkaTemplate<String, String> kafkaTemplate;
 
     private User testUser;
@@ -129,14 +129,6 @@ class CommentModerationIntegrationTest {
         // Este test verifica el formato del mensaje que se debe enviar
         // cuando se crea un nuevo comentario
 
-        String expectedMessagePattern = ".*\"type\":\"NEW_COMMENT\".*"
-                + ".*\"commentId\":\\d+.*"
-                + ".*\"author\":\".*\".*"
-                + ".*\"content\":\".*\".*"
-                + ".*\"postId\":\\d+.*"
-                + ".*\"postTitle\":\".*\".*"
-                + ".*\"timestamp\":\\d+.*";
-
         // TODO: Implementar cuando tengamos el servicio real
         // assertTrue(actualMessage.matches(expectedMessagePattern));
         assertTrue(true); // Placeholder hasta implementar
@@ -146,14 +138,6 @@ class CommentModerationIntegrationTest {
     void testKafkaMessageFormatForReplyModeration() {
         // Este test verifica el formato del mensaje que se debe enviar
         // cuando se crea una nueva respuesta
-
-        String expectedMessagePattern = ".*\"type\":\"NEW_REPLY\".*"
-                + ".*\"replyId\":\\d+.*"
-                + ".*\"author\":\".*\".*"
-                + ".*\"content\":\".*\".*"
-                + ".*\"commentId\":\\d+.*"
-                + ".*\"postId\":\\d+.*"
-                + ".*\"timestamp\":\\d+.*";
 
         // TODO: Implementar cuando tengamos el servicio real
         assertTrue(true); // Placeholder hasta implementar

@@ -29,7 +29,7 @@ public class NotificationService {
     public void sendEmailNotification(String toAddress, String subject, String body) {
         if (kafkaTemplate != null && kafkaEnabled) {
             try {
-                EmailNotification email = new EmailNotification(toAddress, subject, body);
+                EmailNotification email = new EmailNotification(toAddress, subject, body, System.currentTimeMillis());
                 String emailJson = objectMapper.writeValueAsString(email);
                 kafkaTemplate.send("admin-notifications", emailJson);
                 logger.info("Notificación enviada al administrador: {}", subject);
@@ -86,18 +86,7 @@ public class NotificationService {
     }
 
     // Clase interna para la estructura del email
-    private static class EmailNotification {
+    private record EmailNotification(String toAddress, String subject, String body, long timestamp) {
 
-        public String toAddress;
-        public String subject;
-        public String body;
-        public long timestamp;
-
-        public EmailNotification(String toAddress, String subject, String body) {
-            this.toAddress = toAddress;
-            this.subject = subject;
-            this.body = body;
-            this.timestamp = System.currentTimeMillis();
-        }
     }
 }

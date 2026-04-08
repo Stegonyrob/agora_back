@@ -29,7 +29,6 @@ import de.stella.agora_web.config.TestConfig;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.replies.controller.dto.ReplyDTO;
-import de.stella.agora_web.replies.repository.ReplyRepository;
 import de.stella.agora_web.user.model.User;
 import de.stella.agora_web.user.repository.UserRepository;
 
@@ -52,9 +51,6 @@ public class ReplyControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private ReplyRepository replyRepository;
 
     @Autowired
     private CommentRepository commentRepository;
@@ -166,7 +162,7 @@ public class ReplyControllerTest {
     void testUpdateReply_ShouldSucceedWithValidData() throws Exception {
         // Usar un ID de reply de prueba
         Long replyId = 1L;
-        
+
         ReplyDTO updateDTO = new ReplyDTO();
         updateDTO.setMessage("Updated reply message");
 

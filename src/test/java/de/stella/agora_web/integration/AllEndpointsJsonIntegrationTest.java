@@ -252,7 +252,7 @@ public class AllEndpointsJsonIntegrationTest {
                 System.out.println("📏 Tamaño actual: " + jsonSize + " caracteres");
 
                 // Verificar que el JSON sea parseable
-                JsonNode rootNode = objectMapper.readTree(jsonResponse);
+                objectMapper.readTree(jsonResponse);
 
                 // Verificar que no sea excesivamente grande
                 if (jsonSize > 200000) { // 200KB

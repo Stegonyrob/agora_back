@@ -38,6 +38,7 @@ public class CommentServiceImpl implements ICommentService {
     @Autowired
     private IMessageQueueService messageQueue;
     @Autowired // Siempre disponible (real o dummy según kafka.enabled)
+    @SuppressWarnings("unused")
     private CommentKafkaProducer kafkaProducer;
 
     @Autowired

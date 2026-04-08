@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.admin.controller.dto.AdminCreateDTO;
 import de.stella.agora_web.admin.controller.dto.AdminUserDTO;
-import de.stella.agora_web.avatar.repository.AvatarRepository;
 import de.stella.agora_web.profiles.controller.ProfileController;
 import de.stella.agora_web.profiles.controller.dto.ProfileDTO;
 import de.stella.agora_web.profiles.model.Profile;
@@ -20,7 +19,6 @@ public class AdminServiceProfileImpl {
 
     private final UserServiceImpl userService;
     private final ProfileRepository profileRepository;
-    private final AvatarRepository avatarRepository;
 
     /**
      * Devuelve el perfil completo de un admin por ID como ProfileDTO.

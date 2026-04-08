@@ -34,6 +34,7 @@ public class TextController {
     private ITextService textItemService;
 
     @Autowired
+    @SuppressWarnings("unused")
     private ITextImageService textImageService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TextController.class);

@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.stella.agora_web.comment.controller.dto.CommentDTO;
-import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.config.TestConfig;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
@@ -50,9 +49,6 @@ public class CommentControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private CommentRepository commentRepository;
 
     @Autowired
     private PostRepository postRepository;
@@ -149,9 +145,6 @@ public class CommentControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        // Extraer ID del comentario creado (asumiendo que el response contiene el ID)
-        CommentDTO createdComment = objectMapper.readValue(response, CommentDTO.class);
-
         // Para el update, necesitamos usar el endpoint con ID en path
         CommentDTO updateDTO = CommentDTO.builder()
                 .message("Updated comment content")
@@ -175,7 +168,7 @@ public class CommentControllerTest {
                 .postId(testPost.getId())
                 .build();
 
-        String response = mockMvc.perform(post("/api/comments/create")
+        mockMvc.perform(post("/api/comments/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDTO)))
                 .andExpect(status().isOk())

@@ -48,12 +48,6 @@ public class SecurityConfiguration {
     @Value("${api-endpoint}")
     String endpoint;
 
-    @Value("${jwt-issuer}")
-    String issuer;
-
-    @Value("${jwt-audience}")
-    String audience;
-
     @Autowired
     JWTtoUserConverter jwtToUserConverter;
 
@@ -176,8 +170,4 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration(("/**"), configuration);
         return source;
     }
-    // @Bean
-    // PasswordEncoder passwordEncoder() {
-    // return new BCryptPasswordEncoder();
-    // }
 }

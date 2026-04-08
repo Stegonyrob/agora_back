@@ -172,13 +172,6 @@ public class PostImageServiceImpl implements IPostImageService {
     }
 
     // ========== MÉTODOS HELPER ==========
-    private String getFileExtension(String filename) {
-        if (filename == null || !filename.contains(".")) {
-            return "jpg";
-        }
-        return filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
-    }
-
     private PostImageDTO mapToDTO(PostImage postImage) {
         return PostImageDTO.builder()
                 .id(postImage.getId())

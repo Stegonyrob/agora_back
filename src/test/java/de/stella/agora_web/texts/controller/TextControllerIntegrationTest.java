@@ -25,10 +25,12 @@ import de.stella.agora_web.texts.repository.TextRepository;
 class TextControllerIntegrationTest {
 
     @Autowired
+    @SuppressWarnings("unused")
     private MockMvc mockMvc;
     @Autowired
     private TextRepository textItemRepository;
     @Autowired
+    @SuppressWarnings("unused")
     private ObjectMapper objectMapper;
 
     @BeforeEach

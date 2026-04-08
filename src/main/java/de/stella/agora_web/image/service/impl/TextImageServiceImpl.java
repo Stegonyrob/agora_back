@@ -176,17 +176,6 @@ public class TextImageServiceImpl implements ITextImageService {
     }
 
     /**
-     * Obtiene la extensión del archivo SRP: Responsabilidad única de extraer
-     * extensión OCP: Extensible para nuevos formatos
-     */
-    private String getFileExtension(String originalFilename) {
-        if (originalFilename == null || !originalFilename.contains(".")) {
-            return "jpg";
-        }
-        return originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
-    }
-
-    /**
      * Valida si un archivo es una imagen válida SRP: Responsabilidad única de
      * validación de archivos OCP: Extensible para nuevos criterios de
      * validación

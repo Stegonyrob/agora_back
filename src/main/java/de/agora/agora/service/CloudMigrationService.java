@@ -28,6 +28,7 @@ public class CloudMigrationService {
     @Value("${aws.s3.bucket-name:agora-images}")
     private String s3BucketName;
 
+    @SuppressWarnings("unused")
     private final ApplicationContext applicationContext;
 
     public CloudMigrationService(ApplicationContext applicationContext) {

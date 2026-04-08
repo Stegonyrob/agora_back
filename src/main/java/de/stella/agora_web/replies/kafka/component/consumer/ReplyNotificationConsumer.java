@@ -9,6 +9,7 @@ import de.stella.agora_web.moderation.service.impl.ModerationServiceImpl;
  * Consumidor de notificaciones de respuestas (replies) desde Kafka
  */
 // @Component // TEMPORALMENTE DESHABILITADO - Habilitar cuando Kafka esté configurado
+@SuppressWarnings("all")
 public class ReplyNotificationConsumer {
 
     // @Autowired // TEMPORALMENTE DESHABILITADO

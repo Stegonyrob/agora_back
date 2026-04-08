@@ -45,35 +45,4 @@ public class AvatarInitializer implements CommandLineRunner {
         }
     }
 
-    /**
-     * Crea un avatar precargado con ID fijo. Si ya existe, lo omite.
-     */
-    private void createPreloadedAvatar(Long id, String imageName, String displayName, boolean isDefault) {
-        if (id == null || imageName == null || displayName == null) {
-            log.error("Error al crear avatar precargado: parámetro nulo. ID: {}, nombre: {}, display name: {}", id, imageName, displayName);
-            return;
-        }
-
-        // Verificar si ya existe este avatar específico por ID o nombre
-        if (avatarRepository.existsById(id) || avatarRepository.existsByImageNameAndPreloadedTrue(imageName)) {
-            log.debug("Avatar precargado '{}' ya existe (ID: {}), omitiendo...", imageName, id);
-            return;
-        }
-
-        try {
-            Avatar avatar = Avatar.builder()
-                    .id(id)
-                    .imageName(imageName)
-                    .displayName(displayName)
-                    .preloaded(true)
-                    .isDefault(isDefault)
-                    .imageData(null) // Los avatares precargados no almacenan datos binarios
-                    .build();
-
-            avatarRepository.save(avatar);
-            log.debug("Avatar precargado creado: {} ({}) [ID: {}]", displayName, imageName, id);
-        } catch (Exception e) {
-            log.error("Error al crear avatar precargado: {}", e.getMessage(), e);
-        }
-    }
 }
