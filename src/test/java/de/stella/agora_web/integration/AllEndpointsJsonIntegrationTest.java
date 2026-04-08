@@ -1,5 +1,8 @@
 package de.stella.agora_web.integration;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,9 +13,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -96,7 +96,7 @@ public class AllEndpointsJsonIntegrationTest {
             }
 
             // Análisis de campos problemáticos
-            analyzeProblematicFields(rootNode, description);
+            analyzeProblematicFields(rootNode);
 
         } catch (Exception e) {
             System.out.println("❌ ERROR en endpoint: " + e.getMessage());
@@ -149,7 +149,7 @@ public class AllEndpointsJsonIntegrationTest {
         }
     }
 
-    private void analyzeProblematicFields(JsonNode node, String description) {
+    private void analyzeProblematicFields(JsonNode node) {
         System.out.println("🔍 Analizando campos problemáticos...");
 
         boolean hasProblems = false;
@@ -185,13 +185,11 @@ public class AllEndpointsJsonIntegrationTest {
                 // Referencias circulares potenciales
                 if ((fieldName.equals("posts") || fieldName.equals("events")
                         || fieldName.equals("user") || fieldName.equals("comments")
-                        || fieldName.equals("replies")) && fieldValue.isArray()) {
-
-                    if (fieldValue.size() > 0 && fieldValue.get(0).isObject()) {
-                        JsonNode firstItem = fieldValue.get(0);
-                        if (firstItem.size() > 10) { // Objeto muy grande
-                            System.out.println("⚠️  Objeto anidado muy grande en: " + currentPath);
-                        }
+                        || fieldName.equals("replies")) && fieldValue.isArray()
+                        && fieldValue.size() > 0 && fieldValue.get(0).isObject()) {
+                    JsonNode firstItem = fieldValue.get(0);
+                    if (firstItem.size() > 10) { // Objeto muy grande
+                        System.out.println("⚠️  Objeto anidado muy grande en: " + currentPath);
                     }
                 }
 

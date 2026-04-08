@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.comment.repository.CommentRepository;
@@ -39,16 +38,15 @@ public class TagServiceImpl implements ITagService {
         return createdTags;
     }
 
-    @Autowired
     private TagRepository tagRepository;
-    @Autowired
+
     private PostRepository postRepository;
-    @Autowired
+
     private EventRepository eventRepository;
-    @Autowired
+
     @SuppressWarnings("unused")
     private ReplyRepository replyRepository;
-    @Autowired
+
     @SuppressWarnings("unused")
     private CommentRepository commentRepository;
 
@@ -221,7 +219,7 @@ public class TagServiceImpl implements ITagService {
     private EventSummaryDTO convertToEventSummaryDTO(Event event) {
         List<TagSummaryDTO> tagDTOs = event.getTags().stream()
                 .map(this::convertToTagSummaryDTO)
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
 
         return new EventSummaryDTO(
                 event.getId(),
@@ -236,7 +234,7 @@ public class TagServiceImpl implements ITagService {
     private PostSummaryDTO convertToPostSummaryDTO(Post post) {
         List<TagSummaryDTO> tagDTOs = post.getTags().stream()
                 .map(this::convertToTagSummaryDTO)
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
 
         String username = post.getUser() != null ? post.getUser().getUsername() : "Usuario Anónimo";
 
@@ -252,24 +250,26 @@ public class TagServiceImpl implements ITagService {
     }
 
     // ========== MÉTODOS OPTIMIZADOS PARA CONTROLADORES ==========
+    @Override
     public List<TagSummaryDTO> getAllTagsSummary() {
         return tagRepository.findAll().stream()
                 .filter(java.util.Objects::nonNull) // Añadir filtro para evitar NullPointerException
                 .map(this::convertToTagSummaryDTO)
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
     }
 
+    @Override
     public List<EventSummaryDTO> getEventsSummaryByTagName(String tagName) {
         return eventRepository.findByTagsName(tagName).stream()
                 .map(this::convertToEventSummaryDTO)
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<PostSummaryDTO> getPostsSummaryByTagName(String tagName) {
         return postRepository.findByTagsName(tagName).stream()
                 .map(this::convertToPostSummaryDTO)
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
     }
 
     // ========== MÉTODOS PARA OBTENER TAGS POR ENTIDAD ==========
@@ -277,23 +277,23 @@ public class TagServiceImpl implements ITagService {
     public List<TagSummaryDTO> getTagsByPostId(Long postId) {
         // Verificar que el post existe sin cargar toda la entidad
         if (!postRepository.existsById(postId)) {
-            throw new RuntimeException("Post not found with id: " + postId);
+            throw new IllegalArgumentException("Post not found with id: " + postId);
         }
         // Usar consulta directa para evitar problemas de serialización circular
         return tagRepository.findByPostId(postId).stream()
                 .map(this::convertToTagSummaryDTO)
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<TagSummaryDTO> getTagsByEventId(Long eventId) {
         // Verificar que el evento existe sin cargar toda la entidad
         if (!eventRepository.existsById(eventId)) {
-            throw new RuntimeException("Event not found with id: " + eventId);
+            throw new IllegalArgumentException("Event not found with id: " + eventId);
         }
         // Usar consulta directa para evitar problemas de serialización circular
         return tagRepository.findByEventId(eventId).stream()
                 .map(this::convertToTagSummaryDTO)
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
     }
 }

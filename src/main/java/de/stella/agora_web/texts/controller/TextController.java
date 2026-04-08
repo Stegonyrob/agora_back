@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,10 +29,8 @@ import jakarta.validation.Valid;
 
 public class TextController {
 
-    @Autowired
     private ITextService textItemService;
 
-    @Autowired
     @SuppressWarnings("unused")
     private ITextImageService textImageService;
 
@@ -131,7 +128,7 @@ public class TextController {
      */
     @PatchMapping("/{id}/archive")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> archiveText(@PathVariable Long id, @RequestParam Boolean archive) {
+    public ResponseEntity<Void> archiveText(@PathVariable Long id, @RequestParam boolean archive) {
         try {
             if (archive) {
                 textItemService.archiveText(id);

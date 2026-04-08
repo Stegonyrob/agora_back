@@ -2,8 +2,6 @@ package de.stella.agora_web.config;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -45,22 +43,22 @@ import de.stella.agora_web.security.JpaUserDetailsService;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
 
+    private static final String ADMIN = "ADMIN";
+    private static final String COMMENTS_PATH = "/comments/**";
+
     @Value("${api-endpoint}")
     String endpoint;
 
-    @Autowired
-    JWTtoUserConverter jwtToUserConverter;
+    private final JWTtoUserConverter jwtToUserConverter;
+    private final KeyUtils keyUtils;
+    private final JpaUserDetailsService jpaUserDetailsService;
 
-    @Autowired
-    KeyUtils keyUtils;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    JpaUserDetailsService jpaUserDetailsService;
-
-    public SecurityConfiguration(JpaUserDetailsService jpaUserDetailsService) {
+    public SecurityConfiguration(JpaUserDetailsService jpaUserDetailsService,
+            JWTtoUserConverter jwtToUserConverter,
+            KeyUtils keyUtils) {
         this.jpaUserDetailsService = jpaUserDetailsService;
+        this.jwtToUserConverter = jwtToUserConverter;
+        this.keyUtils = keyUtils;
     }
 
     @Bean
@@ -73,30 +71,30 @@ public class SecurityConfiguration {
                 .requestMatchers(endpoint + "/all/**").permitAll()
                 .requestMatchers(endpoint + "/public/**").permitAll() // ✅ PERMITIR ACCESO PÚBLICO A ENDPOINTS PÚBLICOS
                 .requestMatchers(endpoint + "/any/user/settings/**").permitAll() // ✅ PERMITIR ACCESO PÚBLICO A SETTINGS
-                .requestMatchers(HttpMethod.GET, "/posts/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/posts/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/replies/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/replies/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/comments/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers(HttpMethod.PUT, "/comments/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/comments/**").hasRole("ADMIN")
-                .requestMatchers(endpoint + "/any/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers(endpoint + "/admin/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/posts/**").hasAnyRole("USER", ADMIN)
+                .requestMatchers("/posts/**").hasRole(ADMIN)
+                .requestMatchers(HttpMethod.GET, "/replies/**").hasAnyRole("USER", ADMIN)
+                .requestMatchers("/replies/**").hasRole(ADMIN)
+                .requestMatchers(HttpMethod.GET, COMMENTS_PATH).hasAnyRole(ADMIN, "USER")
+                .requestMatchers(HttpMethod.PUT, COMMENTS_PATH).hasAnyRole(ADMIN, "USER")
+                .requestMatchers(COMMENTS_PATH).hasRole(ADMIN)
+                .requestMatchers(endpoint + "/any/**").hasAnyRole(ADMIN, "USER")
+                .requestMatchers(endpoint + "/admin/**").hasRole(ADMIN)
                 .requestMatchers(endpoint + "/user/**").hasRole("USER")
                 .requestMatchers(HttpMethod.GET, "/legal/**").hasRole("USER") // <-- aquí
-                .requestMatchers("/legal/**").hasRole("ADMIN") // <-- aquí
+                .requestMatchers("/legal/**").hasRole(ADMIN) // <-- aquí
                 // ========== CONFIGURACIÓN DE IMÁGENES ESTÁTICAS ==========
                 .requestMatchers(HttpMethod.GET, "/temp_images/**").permitAll() // Allow public access to static images
                 // ========== CONFIGURACIÓN DE ENDPOINTS DE IMÁGENES - REPLICANDO PATRÓN TEXT-IMAGES ==========
                 // Event-images: GET públicos (igual que text-images), resto ADMIN
                 .requestMatchers(HttpMethod.GET, endpoint + "/event-images/**").permitAll()
-                .requestMatchers(endpoint + "/event-images/**").hasRole("ADMIN")
+                .requestMatchers(endpoint + "/event-images/**").hasRole(ADMIN)
                 // Post-images: GET requiere autenticación USER/ADMIN (posts privados), resto ADMIN  
-                .requestMatchers(HttpMethod.GET, endpoint + "/post-images/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers(endpoint + "/post-images/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, endpoint + "/post-images/**").hasAnyRole("USER", ADMIN)
+                .requestMatchers(endpoint + "/post-images/**").hasRole(ADMIN)
                 // Text-images: GET públicos (ya configurado implícitamente), resto ADMIN
                 .requestMatchers(HttpMethod.GET, endpoint + "/text-images/**").permitAll()
-                .requestMatchers(endpoint + "/text-images/**").hasRole("ADMIN")
+                .requestMatchers(endpoint + "/text-images/**").hasRole(ADMIN)
                 .anyRequest().permitAll()
                 )
                 .userDetailsService(jpaUserDetailsService).httpBasic(basic -> basic.disable())
@@ -126,13 +124,11 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Qualifier("jwtRefreshTokenDecoder")
     JwtDecoder jwtRefreshTokenDecoder() {
         return NimbusJwtDecoder.withPublicKey(keyUtils.getRefreshTokenPublicKey()).build();
     }
 
     @Bean
-    @Qualifier("jwtRefreshTokenEncoder")
     @SuppressWarnings("unused")
     JwtEncoder jwtRefreshTokenEncoder() {
         JWK jwk = new RSAKey.Builder(keyUtils.getRefreshTokenPublicKey()).privateKey(keyUtils.getRefreshTokenPrivateKey())
@@ -142,7 +138,6 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Qualifier("jwtRefreshTokenAuthProvider")
     JwtAuthenticationProvider jwtRefreshTokenAuthProvider() {
         JwtAuthenticationProvider provider = new JwtAuthenticationProvider(jwtRefreshTokenDecoder());
         provider.setJwtAuthenticationConverter(jwtToUserConverter);
@@ -150,7 +145,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    DaoAuthenticationProvider daoAuthenticationProvider() {
+    DaoAuthenticationProvider daoAuthenticationProvider(PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(jpaUserDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
         return provider;

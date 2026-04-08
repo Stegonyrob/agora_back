@@ -2,7 +2,6 @@ package de.stella.agora_web.replies.kafka.component.consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -20,18 +19,14 @@ public class ReplyNotificationConsumerEnabled {
 
     private static final Logger log = LoggerFactory.getLogger(ReplyNotificationConsumerEnabled.class);
 
-    @Autowired // Habilitado para trabajar con Kafka
     private IEmailService emailService;
 
-    @Autowired // Habilitado para trabajar con Kafka
     @SuppressWarnings("unused")
     private CensuredCommentServiceImpl censuredCommentService;
 
-    @Autowired // Habilitado para trabajar con Kafka
     @SuppressWarnings("unused")
     private ModerationServiceImpl moderationService;
 
-    @Autowired // Habilitado para trabajar con Kafka
     private IPushNotificationService pushNotificationService;
 
     @KafkaListener(topics = "replies") // Habilitado para trabajar con Kafka

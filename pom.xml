@@ -15,7 +15,7 @@
 	<name>agora_web</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>21</java.version>
+		<java.version>25</java.version>
 		<djl.version>0.36.0</djl.version>
 		<guava.version>33.5.0-jre</guava.version>
 		<sparkjava.version>2.9.4</sparkjava.version>

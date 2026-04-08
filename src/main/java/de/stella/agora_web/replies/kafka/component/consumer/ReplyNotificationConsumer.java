@@ -12,16 +12,12 @@ import de.stella.agora_web.moderation.service.impl.ModerationServiceImpl;
 @SuppressWarnings("all")
 public class ReplyNotificationConsumer {
 
-    // @Autowired // TEMPORALMENTE DESHABILITADO
     private IEmailService emailService;
 
-    // @Autowired // TEMPORALMENTE DESHABILITADO
     private CensuredCommentServiceImpl censuredCommentService;
 
-    // @Autowired // TEMPORALMENTE DESHABILITADO
     private ModerationServiceImpl moderationService;
 
-    // @Autowired // TEMPORALMENTE DESHABILITADO
     private IPushNotificationService pushNotificationService;
 
     // @KafkaListener(topics = "replies") // TEMPORALMENTE DESHABILITADO - Habilitar cuando Kafka esté configurado

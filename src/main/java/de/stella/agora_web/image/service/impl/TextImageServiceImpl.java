@@ -2,7 +2,6 @@ package de.stella.agora_web.image.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,8 @@ public class TextImageServiceImpl implements ITextImageService {
 
     private static final Logger log = LoggerFactory.getLogger(TextImageServiceImpl.class);
     private static final int MAX_IMAGES_PER_TEXT = 10;
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+    private static final long MAX_FILE_SIZE = 5L * 1024 * 1024; // 5 MB
+    private static final String TEXT_IMAGE_NOT_FOUND = "TextImage not found with id ";
     private static final java.util.Set<String> ALLOWED_CONTENT_TYPES = java.util.Set.of(
             "image/jpeg", "image/png", "image/gif", "image/bmp", "image/webp"
     );
@@ -44,21 +44,21 @@ public class TextImageServiceImpl implements ITextImageService {
     public List<TextImageDTO> getAllTextImages() {
         return textImageRepository.findAll().stream()
                 .map(this::mapToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<TextImageDTO> getImagesByTextId(Long textId) {
         return textImageRepository.findByTextId(textId).stream()
                 .map(this::mapToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public TextImageDTO getTextImageById(Long id) {
         return textImageRepository.findById(id)
                 .map(this::mapToDTO)
-                .orElseThrow(() -> new RuntimeException("TextImage not found with id " + id));
+                .orElseThrow(() -> new IllegalArgumentException(TEXT_IMAGE_NOT_FOUND + id));
     }
 
     @Override
@@ -108,7 +108,7 @@ public class TextImageServiceImpl implements ITextImageService {
                     savedImages.add(mapToDTO(savedImage));
 
                 } catch (RuntimeException e) {
-                    throw new RuntimeException("Error al procesar imagen: " + file.getOriginalFilename(), e);
+                    throw new IllegalStateException("Error al procesar imagen: " + file.getOriginalFilename(), e);
                 }
             }
         }
@@ -134,7 +134,7 @@ public class TextImageServiceImpl implements ITextImageService {
     @Override
     public TextImageDTO updateTextImage(Long id, TextImageDTO dto) {
         TextImage existingImage = textImageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("TextImage not found with id " + id));
+                .orElseThrow(() -> new IllegalArgumentException(TEXT_IMAGE_NOT_FOUND + id));
 
         if (dto.getImageName() != null) {
             existingImage.setImageName(dto.getImageName());
@@ -158,7 +158,7 @@ public class TextImageServiceImpl implements ITextImageService {
     public String getTextImagePath(Long id) {
         return textImageRepository.findById(id)
                 .map(TextImage::getImagePath)
-                .orElseThrow(() -> new RuntimeException("TextImage not found with id " + id));
+                .orElseThrow(() -> new IllegalArgumentException(TEXT_IMAGE_NOT_FOUND + id));
     }
 
     // ========== MÉTODOS HELPER (SRP) ==========
@@ -205,7 +205,7 @@ public class TextImageServiceImpl implements ITextImageService {
     @Override
     public byte[] getTextImageData(Long id) {
         TextImage textImage = textImageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("TextImage not found with id " + id));
+                .orElseThrow(() -> new IllegalArgumentException(TEXT_IMAGE_NOT_FOUND + id));
         return imageStorageService.loadImage(textImage.getImagePath());
     }
 

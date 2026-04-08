@@ -1,8 +1,7 @@
 package de.stella.agora_web.integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +52,7 @@ class CommentModerationIntegrationTest {
     private UserRepository userRepository;
 
     @MockitoBean
+    @SuppressWarnings("unused")
     private KafkaTemplate<String, String> kafkaTemplate;
 
     private User testUser;
@@ -98,9 +98,6 @@ class CommentModerationIntegrationTest {
         assertNotNull(savedComment.getId());
         assertEquals("Este es un comentario que debe generar notificación de moderación", savedComment.getMessage());
 
-        // TODO: Verificar que se envió mensaje a Kafka cuando implementemos el listener
-        // verify(kafkaTemplate, times(1))
-        //     .send(eq("comment-moderation"), anyString(), contains("NEW_COMMENT"));
     }
 
     @Test
@@ -119,9 +116,6 @@ class CommentModerationIntegrationTest {
         assertNotNull(savedReply.getId());
         assertEquals("Esta es una respuesta que debe generar notificación de moderación", savedReply.getMessage());
 
-        // TODO: Verificar que se envió mensaje a Kafka
-        // verify(kafkaTemplate, times(1))
-        //     .send(eq("reply-moderation"), anyString(), contains("NEW_REPLY"));
     }
 
     @Test
@@ -129,8 +123,6 @@ class CommentModerationIntegrationTest {
         // Este test verifica el formato del mensaje que se debe enviar
         // cuando se crea un nuevo comentario
 
-        // TODO: Implementar cuando tengamos el servicio real
-        // assertTrue(actualMessage.matches(expectedMessagePattern));
         assertTrue(true); // Placeholder hasta implementar
     }
 
@@ -139,7 +131,6 @@ class CommentModerationIntegrationTest {
         // Este test verifica el formato del mensaje que se debe enviar
         // cuando se crea una nueva respuesta
 
-        // TODO: Implementar cuando tengamos el servicio real
         assertTrue(true); // Placeholder hasta implementar
     }
 
@@ -156,9 +147,6 @@ class CommentModerationIntegrationTest {
             commentRepository.save(comment);
         }
 
-        // TODO: Verificar que se enviaron 3 mensajes a Kafka
-        // verify(kafkaTemplate, times(3))
-        //     .send(eq("comment-moderation"), anyString(), anyString());
         assertTrue(true); // Placeholder hasta implementar
     }
 
@@ -173,15 +161,6 @@ class CommentModerationIntegrationTest {
 
         Comment savedComment = commentRepository.save(comment);
 
-        // TODO: Verificar que el mensaje incluye:
-        // - ID del comentario: savedComment.getId()
-        // - Nombre del autor: savedComment.getUser().getUsername()
-        // - Contenido del comentario: savedComment.getMessage()
-        // - ID del post padre: savedComment.getPost().getId()
-        // - Título del post padre: savedComment.getPost().getTitle()
-        // - Timestamp: savedComment.getCreatedAt() o System.currentTimeMillis()
-        // - URL para moderación directa: "/admin/moderation/comment/" + savedComment.getId()
-        // Verificaciones temporales hasta implementar Kafka
         assertNotNull(savedComment.getId());
         assertEquals("Comentario con contexto para verificar información completa", savedComment.getMessage());
         assertEquals(testUser.getUsername(), savedComment.getUser().getUsername());

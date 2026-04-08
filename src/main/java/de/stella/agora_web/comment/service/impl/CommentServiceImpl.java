@@ -3,7 +3,6 @@ package de.stella.agora_web.comment.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,22 +26,24 @@ import de.stella.agora_web.user.repository.UserRepository;
 @Service
 public class CommentServiceImpl implements ICommentService {
 
-    @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private IMessageQueueService messageQueue;
-    @Autowired // Siempre disponible (real o dummy según kafka.enabled)
+    private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final IMessageQueueService messageQueue;
     @SuppressWarnings("unused")
-    private CommentKafkaProducer kafkaProducer;
+    private final CommentKafkaProducer kafkaProducer;
+    private final IModerationService moderationService;
 
-    @Autowired
-    private IModerationService moderationService;
+    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository,
+            UserRepository userRepository, IMessageQueueService messageQueue,
+            CommentKafkaProducer kafkaProducer, IModerationService moderationService) {
+        this.commentRepository = commentRepository;
+        this.postRepository = postRepository;
+        this.userRepository = userRepository;
+        this.messageQueue = messageQueue;
+        this.kafkaProducer = kafkaProducer;
+        this.moderationService = moderationService;
+    }
 
     @Override
     public List<Comment> getCommentsByPostId(Long postId) {

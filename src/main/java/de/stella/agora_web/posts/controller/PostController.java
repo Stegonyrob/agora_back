@@ -87,7 +87,7 @@ public class PostController {
     }
 
     @PatchMapping("/posts/{id}/archive")
-    public ResponseEntity<Void> archivePost(@PathVariable Long id, @RequestParam Boolean archive) {
+    public ResponseEntity<Void> archivePost(@PathVariable Long id, @RequestParam boolean archive) {
         try {
             Post post = postService.getById(id);
             if (post == null) {
@@ -99,9 +99,9 @@ public class PostController {
                 postService.unArchivePost(id);
             }
             return ResponseEntity.noContent().build();
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException _) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
+        } catch (Exception _) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

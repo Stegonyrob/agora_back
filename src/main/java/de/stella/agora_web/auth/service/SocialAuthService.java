@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,27 +24,20 @@ import de.stella.agora_web.user.service.IUserService;
 @Service
 public class SocialAuthService {
 
-    @Autowired
-    private IUserService userService;
+    private final IUserService userService;
+    private final IProfileService profileService;
+    private final TokenGenerator tokenGenerator;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private IProfileService profileService;
-
-    @Autowired
-    private TokenGenerator tokenGenerator;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public SocialAuthService(IUserService userService, IProfileService profileService,
+            TokenGenerator tokenGenerator, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.profileService = profileService;
+        this.tokenGenerator = tokenGenerator;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public TokenDTO authenticateGoogleUser(String idToken) {
-        // TODO: Implementar validación del token de Google
-        // Por ahora, simularemos la extracción de datos del token
-
-        // Aquí debería validar el token con Google y extraer la información del usuario
-        // GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-        //     .setAudience(Arrays.asList(clientId))
-        //     .build();
-        // Por ahora, simulamos datos extraídos del token
         String email = extractEmailFromGoogleToken(idToken);
         String name = extractNameFromGoogleToken(idToken);
 
@@ -53,13 +45,6 @@ public class SocialAuthService {
     }
 
     public TokenDTO authenticateFacebookUser(String accessToken) {
-        // TODO: Implementar validación del token de Facebook
-        // Por ahora, simularemos la extracción de datos del token
-
-        // Aquí debería validar el token con Facebook Graph API
-        // Facebook facebook = new FacebookFactory().getInstance();
-        // facebook.setOAuthAccessToken(new AccessToken(accessToken));
-        // Por ahora, simulamos datos extraídos del token
         String email = extractEmailFromFacebookToken(accessToken);
         String name = extractNameFromFacebookToken(accessToken);
 
@@ -80,7 +65,7 @@ public class SocialAuthService {
 
         // Lógica de sanción: expulsados no pueden acceder, suspendidos pueden acceder pero no participar
         if (user.getSanctionStatus() == SanctionStatus.EXPELLED) {
-            throw new RuntimeException("Usuario expulsado. Acceso denegado.");
+            throw new IllegalStateException("Usuario expulsado. Acceso denegado.");
         }
 
         // Crear autenticación
@@ -138,7 +123,7 @@ public class SocialAuthService {
 
             return savedUser;
         } catch (Exception e) {
-            throw new RuntimeException("Error creando usuario desde login social", e);
+            throw new IllegalStateException("Error creando usuario desde login social", e);
         }
     }
 

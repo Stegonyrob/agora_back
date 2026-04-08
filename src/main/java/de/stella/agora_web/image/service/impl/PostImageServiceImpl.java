@@ -2,7 +2,6 @@ package de.stella.agora_web.image.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +33,7 @@ public class PostImageServiceImpl implements IPostImageService {
     private static final List<String> ALLOWED_CONTENT_TYPES = List.of(
             "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"
     );
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    private static final long MAX_FILE_SIZE = 5L * 1024 * 1024; // 5MB
     private static final int MAX_IMAGES_PER_POST = 10;
 
     public PostImageServiceImpl(PostImageRepository postImageRepository, PostRepository postRepository, ImageStorageService imageStorageService) {
@@ -46,7 +45,7 @@ public class PostImageServiceImpl implements IPostImageService {
     @Override
     public PostImageDTO createPostImage(PostImageDTO postImageDTO) {
         Post post = postRepository.findById(postImageDTO.getPostId())
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
         PostImage postImage = PostImage.builder().imageName(postImageDTO.getImageName())
                 .isMainImage(postImageDTO.isMainImage()).post(post).build();
@@ -58,7 +57,7 @@ public class PostImageServiceImpl implements IPostImageService {
     @Override
     public PostImageDTO updatePostImage(Long id, PostImageDTO postImageDTO) {
         PostImage postImage = postImageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("PostImage not found"));
+                .orElseThrow(() -> new IllegalArgumentException("PostImage not found"));
 
         postImage.setImageName(postImageDTO.getImageName());
         postImage.setMainImage(postImageDTO.isMainImage());
@@ -74,14 +73,14 @@ public class PostImageServiceImpl implements IPostImageService {
 
     @Override
     public List<PostImageDTO> getImagesByPostId(Long postId) {
-        return postImageRepository.findByPostId(postId).stream().map(this::mapToDTO).collect(Collectors.toList());
+        return postImageRepository.findByPostId(postId).stream().map(this::mapToDTO).toList();
     }
 
     // NUEVO: Obtener información de imagen por ID
     @Override
     public PostImageDTO getPostImageById(Long id) {
         PostImage postImage = postImageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("PostImage not found"));
+                .orElseThrow(() -> new IllegalArgumentException("PostImage not found"));
         return mapToDTO(postImage);
     }
 
@@ -137,7 +136,7 @@ public class PostImageServiceImpl implements IPostImageService {
 
                 } catch (RuntimeException e) {
                     log.error("Error al procesar imagen: {}", file.getOriginalFilename(), e);
-                    throw new RuntimeException("Error al procesar imagen: " + file.getOriginalFilename(), e);
+                    throw new IllegalStateException("Error al procesar imagen: " + file.getOriginalFilename(), e);
                 }
             }
         }
@@ -192,7 +191,7 @@ public class PostImageServiceImpl implements IPostImageService {
     @Override
     public byte[] getPostImageData(Long id) {
         PostImage postImage = postImageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("PostImage not found with id " + id));
+                .orElseThrow(() -> new IllegalArgumentException("PostImage not found with id " + id));
 
         return imageStorageService.loadImage(postImage.getImagePath());
     }

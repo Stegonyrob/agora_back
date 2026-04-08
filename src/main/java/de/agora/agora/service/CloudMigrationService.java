@@ -1,5 +1,7 @@
 package de.agora.agora.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Service;
 @Order(2) // Se ejecuta después de ImageLoaderService
 public class CloudMigrationService {
 
+    private static final Logger log = LoggerFactory.getLogger(CloudMigrationService.class);
+
     @Value("${app.environment:dev}")
     private String environment;
 
@@ -26,6 +30,7 @@ public class CloudMigrationService {
     private boolean cloudStorageEnabled;
 
     @Value("${aws.s3.bucket-name:agora-images}")
+    @SuppressWarnings("unused")
     private String s3BucketName;
 
     @SuppressWarnings("unused")
@@ -40,10 +45,10 @@ public class CloudMigrationService {
      */
     public void checkAndMigrate() {
         if (isCloudEnvironment() && cloudStorageEnabled) {
-            System.out.println("🚀 Entorno cloud detectado - Iniciando migración a S3...");
+            log.info("Entorno cloud detectado - Iniciando migración a S3...");
             migrateBlobToS3();
         } else {
-            System.out.println("💻 Entorno local - Manteniendo BLOB storage");
+            log.info("Entorno local - Manteniendo BLOB storage");
         }
     }
 
@@ -67,19 +72,19 @@ public class CloudMigrationService {
      */
     private void migrateBlobToS3() {
         try {
-            System.out.println("📊 Analizando imágenes para migración...");
+            log.info("Analizando imágenes para migración...");
 
             // TODO: Implementar migración real con AWS SDK
             // 1. Obtener imágenes BLOB de text_images
             // 2. Subir cada imagen a S3
             // 3. Actualizar text_images.image_url con S3 URL
             // 4. Limpiar image_data (BLOB)
-            System.out.println("✅ Migración a S3 completada");
-            System.out.println("🌍 URLs ahora apuntan a CloudFront/S3");
+            log.info("Migración a S3 completada");
+            log.info("URLs ahora apuntan a CloudFront/S3");
 
         } catch (Exception e) {
-            System.err.println("❌ Error en migración: " + e.getMessage());
-            System.err.println("💾 Fallback: Manteniendo BLOB storage");
+            log.error("Error en migración: {}", e.getMessage(), e);
+            log.error("Fallback: Manteniendo BLOB storage");
         }
     }
 }
