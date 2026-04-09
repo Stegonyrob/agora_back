@@ -44,6 +44,7 @@ public class UserSettingsController {
      * @param authentication Información de autenticación (puede ser null)
      * @return Settings del usuario o settings por defecto
      */
+    @SuppressWarnings("java:S6863")
     @GetMapping("/{userId}")
     public ResponseEntity<UserSettingsDTO> getSettings(@PathVariable Long userId,
             Authentication authentication) {

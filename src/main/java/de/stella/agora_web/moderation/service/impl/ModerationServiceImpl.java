@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.censured.model.CensuredComment;
@@ -21,14 +20,17 @@ public class ModerationServiceImpl implements IModerationService {
 
     private static final Logger logger = LoggerFactory.getLogger(ModerationServiceImpl.class);
 
-    @Autowired
-    private CensuredCommentRepository censuredCommentRepository;
+    private final CensuredCommentRepository censuredCommentRepository;
+    private final ISentimentAnalysisService sentimentAnalysisService;
+    private final IUserViolationService userViolationService;
 
-    @Autowired
-    private ISentimentAnalysisService sentimentAnalysisService;
-
-    @Autowired
-    private IUserViolationService userViolationService;
+    public ModerationServiceImpl(CensuredCommentRepository censuredCommentRepository,
+            ISentimentAnalysisService sentimentAnalysisService,
+            IUserViolationService userViolationService) {
+        this.censuredCommentRepository = censuredCommentRepository;
+        this.sentimentAnalysisService = sentimentAnalysisService;
+        this.userViolationService = userViolationService;
+    }
 
     @Override
     public CensuredComment moderateComment(ModeratableContent content) {

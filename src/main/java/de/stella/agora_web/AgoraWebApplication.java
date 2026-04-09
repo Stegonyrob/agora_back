@@ -10,8 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class AgoraWebApplication {
 
     @Bean
-    @SuppressWarnings("unused")
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

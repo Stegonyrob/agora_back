@@ -110,15 +110,13 @@ public class SecurityConfiguration {
 
     @Bean
     @Primary
-    @SuppressWarnings("unused")
-    JwtDecoder jwtAccessTokenDecoder() {
+    public JwtDecoder jwtAccessTokenDecoder() {
         return NimbusJwtDecoder.withPublicKey(keyUtils.getAccessTokenPublicKey()).build();
     }
 
     @Bean
     @Primary
-    @SuppressWarnings("unused")
-    JwtEncoder jwtAccessTokenEncoder() {
+    public JwtEncoder jwtAccessTokenEncoder() {
         JWK jwk = new RSAKey.Builder(keyUtils.getAccessTokenPublicKey()).privateKey(keyUtils.getAccessTokenPrivateKey())
                 .build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
@@ -131,8 +129,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @SuppressWarnings("unused")
-    JwtEncoder jwtRefreshTokenEncoder() {
+    public JwtEncoder jwtRefreshTokenEncoder() {
         JWK jwk = new RSAKey.Builder(keyUtils.getRefreshTokenPublicKey()).privateKey(keyUtils.getRefreshTokenPrivateKey())
                 .build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
@@ -140,24 +137,21 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @SuppressWarnings("unused")
-    JwtAuthenticationProvider jwtRefreshTokenAuthProvider() {
+    public JwtAuthenticationProvider jwtRefreshTokenAuthProvider() {
         JwtAuthenticationProvider provider = new JwtAuthenticationProvider(jwtRefreshTokenDecoder());
         provider.setJwtAuthenticationConverter(jwtToUserConverter);
         return provider;
     }
 
     @Bean
-    @SuppressWarnings("unused")
-    DaoAuthenticationProvider daoAuthenticationProvider(PasswordEncoder passwordEncoder) {
+    public DaoAuthenticationProvider daoAuthenticationProvider(PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(jpaUserDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
 
     @Bean
-    @SuppressWarnings("unused")
-    CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
 

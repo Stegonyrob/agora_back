@@ -19,9 +19,6 @@ import lombok.Setter;
 @Table(name = "censured_comments")
 public class CensuredComment {
 
-    public CensuredComment(Long long1, Long userId) {
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

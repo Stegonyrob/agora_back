@@ -30,7 +30,7 @@ public class TagController {
     }
 
     // Asociar múltiples tags a un post - ACEPTA AMBOS FORMATOS
-    @SuppressWarnings("java:S3776")
+    @SuppressWarnings({"java:S3776", "java:S6863"})
     @PostMapping("/posts/{postId}/tags")
     public ResponseEntity<String> addTagsToPost(@PathVariable Long postId, @RequestBody Object requestBody) {
         try {
@@ -58,15 +58,19 @@ public class TagController {
                     }
 
                     tagsList.forEach(tagObj -> {
-                        if (tagObj instanceof String tagStr) {
-                            tagService.addTagToPost(postId, tagStr);
-                        } else if (tagObj instanceof java.util.Map<?, ?> rawTagMap) {
-                            @SuppressWarnings("unchecked")
-                            java.util.Map<String, Object> tagMap = (java.util.Map<String, Object>) rawTagMap;
-                            String tagName = (String) tagMap.get("name");
-                            if (tagName != null) {
-                                tagService.addTagToPost(postId, tagName);
+                        switch (tagObj) {
+                            case String tagStr ->
+                                tagService.addTagToPost(postId, tagStr);
+                            case java.util.Map<?, ?> rawTagMap -> {
+                                @SuppressWarnings("unchecked")
+                                java.util.Map<String, Object> tagMap = (java.util.Map<String, Object>) rawTagMap;
+                                String tagName = (String) tagMap.get("name");
+                                if (tagName != null) {
+                                    tagService.addTagToPost(postId, tagName);
+                                }
                             }
+                            default -> {
+                                /* ignore unknown types */ }
                         }
                     });
                     return ResponseEntity.ok("Tags asociados correctamente al post " + postId);

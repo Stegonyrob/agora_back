@@ -1,9 +1,6 @@
 package de.stella.agora_web.replies.kafka.dto;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import de.stella.agora_web.comment.model.Comment;
-import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.replies.model.Reply;
 import de.stella.agora_web.user.model.User;
 
@@ -16,9 +13,7 @@ public class ReplyNotificationDTO {
     private Long commentId;
     private String author;
     private String message;
-
-    @Autowired
-    private CommentRepository commentRepository;
+    private String postTitle;
 
     public ReplyNotificationDTO() {
     }
@@ -63,29 +58,12 @@ public class ReplyNotificationDTO {
         this.message = message;
     }
 
-    /**
-     * Obtiene el título del post asociado al comentario de esta respuesta
-     */
     public String getPostTitle() {
-        if (this.commentId == null) {
-            throw new IllegalArgumentException("commentId is null");
-        }
-
-        Comment comment = commentRepository.findById(this.commentId).orElse(null);
-        if (comment == null) {
-            throw new IllegalArgumentException("Comment not found with id: " + this.commentId);
-        }
-
-        if (comment.getPost() == null) {
-            throw new IllegalArgumentException("Post is null for comment: " + this.commentId);
-        }
-
-        String postTitle = comment.getPost().getTitle();
-        if (postTitle == null) {
-            throw new IllegalArgumentException("Post title is null");
-        }
-
         return postTitle;
+    }
+
+    public void setPostTitle(String postTitle) {
+        this.postTitle = postTitle;
     }
 
     /**

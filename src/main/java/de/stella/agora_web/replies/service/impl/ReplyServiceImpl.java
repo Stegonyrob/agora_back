@@ -3,7 +3,6 @@ package de.stella.agora_web.replies.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.stella.agora_web.comment.repository.CommentRepository;
@@ -21,20 +20,23 @@ import de.stella.agora_web.user.repository.UserRepository;
 @Service
 public class ReplyServiceImpl implements IReplyService {
 
-    @Autowired
-    private ReplyRepository replyRepository;
+    private final ReplyRepository replyRepository;
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final ReplyKafkaProducer kafkaProducer;
+    private final IModerationService moderationService;
 
-    @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired // Siempre disponible (real o dummy según kafka.enabled)
-    private ReplyKafkaProducer kafkaProducer;
-
-    @Autowired
-    private IModerationService moderationService;
+    public ReplyServiceImpl(ReplyRepository replyRepository,
+            CommentRepository commentRepository,
+            UserRepository userRepository,
+            ReplyKafkaProducer kafkaProducer,
+            IModerationService moderationService) {
+        this.replyRepository = replyRepository;
+        this.commentRepository = commentRepository;
+        this.userRepository = userRepository;
+        this.kafkaProducer = kafkaProducer;
+        this.moderationService = moderationService;
+    }
 
     @Override
     public List<Reply> getAllReplies() {
@@ -75,6 +77,9 @@ public class ReplyServiceImpl implements IReplyService {
         notification.setCommentId(savedReply.getComment().getId());
         notification.setAuthor(user.getUsername());
         notification.setMessage(savedReply.getMessage());
+        if (savedReply.getComment().getPost() != null) {
+            notification.setPostTitle(savedReply.getComment().getPost().getTitle());
+        }
 
         kafkaProducer.sendReplyNotification(notification);
 

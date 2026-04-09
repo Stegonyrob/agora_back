@@ -3,7 +3,6 @@ package de.stella.agora_web.replies.model;
 import java.time.LocalDateTime;
 
 import de.stella.agora_web.comment.model.Comment;
-import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,7 +51,7 @@ public class Reply {
     public Reply() {
     }
 
-    public Reply(Long id, String message, LocalDateTime creationDate, User user, Post post) {
+    public Reply(Long id, String message, LocalDateTime creationDate, User user) {
         this.id = id;
         this.archived = false; // Por defecto, no está archivado
         this.message = message;

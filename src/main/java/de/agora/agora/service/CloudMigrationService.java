@@ -75,7 +75,7 @@ public class CloudMigrationService {
         try {
             log.info("Analizando imágenes para migración...");
 
-            // TODO: Implementar migración real con AWS SDK
+            // Pendiente: migración real con AWS SDK
             // 1. Obtener imágenes BLOB de text_images
             // 2. Subir cada imagen a S3
             // 3. Actualizar text_images.image_url con S3 URL

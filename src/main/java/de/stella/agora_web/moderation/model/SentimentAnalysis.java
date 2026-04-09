@@ -45,48 +45,51 @@ public class SentimentAnalysis {
         if (comment == null || comment.trim().isEmpty()) {
             return NEUTRAL;
         }
-
         String lowerComment = comment.toLowerCase().trim();
-
-        // Check for safe greetings first
-        for (String greeting : SAFE_GREETINGS) {
-            if (lowerComment.equals(greeting) || lowerComment.startsWith(greeting + " ")) {
-                return POSITIVE;
-            }
-        }
-
-        // Check for offensive content
-        for (String offensiveWord : OFFENSIVE_WORDS) {
-            if (lowerComment.contains(offensiveWord)) {
-                return OFFENSIVE;
-            }
-        }
-
-        // Check for positive content
-        int positiveScore = 0;
-        for (String positiveWord : POSITIVE_WORDS) {
-            if (lowerComment.contains(positiveWord)) {
-                positiveScore++;
-            }
-        }
-
-        // Simple scoring system
-        if (positiveScore > 0) {
+        if (isKnownGreeting(lowerComment)) {
             return POSITIVE;
         }
-
-        // Check for question patterns (usually neutral/positive intent)
+        if (containsOffensiveWord(lowerComment)) {
+            return OFFENSIVE;
+        }
+        if (countPositiveWords(lowerComment) > 0) {
+            return POSITIVE;
+        }
         if (lowerComment.contains("?") || lowerComment.startsWith("¿")) {
             return NEUTRAL;
         }
-
-        // Check for thank you patterns
         if (lowerComment.contains("gracias") || lowerComment.contains("thank")) {
             return POSITIVE;
         }
-
-        // Default to neutral for unknown content
         return NEUTRAL;
+    }
+
+    private boolean isKnownGreeting(String lowerComment) {
+        for (String greeting : SAFE_GREETINGS) {
+            if (lowerComment.equals(greeting) || lowerComment.startsWith(greeting + " ")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean containsOffensiveWord(String lowerComment) {
+        for (String word : OFFENSIVE_WORDS) {
+            if (lowerComment.contains(word)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int countPositiveWords(String lowerComment) {
+        int score = 0;
+        for (String word : POSITIVE_WORDS) {
+            if (lowerComment.contains(word)) {
+                score++;
+            }
+        }
+        return score;
     }
 
     /**
