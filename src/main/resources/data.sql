@@ -1123,13 +1123,45 @@ VALUES
   (
     'cookies',
     'Política de Cookies',
-    '<h1>Política de Cookies</h1>
-  <p>
-    Actualmente, este sitio web <strong>no utiliza cookies propias ni de terceros</strong> para recoger información personal del usuario, salvo aquellas estrictamente necesarias para el funcionamiento técnico de la página (por ejemplo, para el correcto funcionamiento del login y la navegación).<br><br>
-    No se emplean herramientas de analítica, publicidad, ni servicios de terceros que instalen cookies en el navegador del usuario.<br><br>
-    En caso de que en el futuro se implementen nuevas funcionalidades que requieran el uso de cookies, esta política será actualizada para informar detalladamente sobre el tipo de cookies utilizadas, su finalidad y la forma de gestionarlas.<br><br>
-    Si tienes cualquier duda sobre nuestra política de cookies, puedes contactar con nosotros en centroeducativoagora@gmail.com.
-  </p>',
+    '<h2>Política de Cookies</h2>
+
+<p>Este sitio web utiliza tecnologías de almacenamiento para garantizar su correcto funcionamiento. A continuación te explicamos qué cookies y servicios de terceros se utilizan y con qué finalidad.</p>
+
+<h3>1. ¿Qué son las cookies?</h3>
+<p>Las cookies son pequeños archivos de texto que los sitios web almacenan en tu dispositivo. Otros mecanismos similares como <strong>sessionStorage</strong> cumplen la misma función pero se eliminan al cerrar el navegador.</p>
+
+<h3>2. Cookies propias</h3>
+<p>Ágora Centro Educativo <strong>no almacena cookies propias persistentes</strong>. La sesión de usuario (identificador, token de acceso, rol) se gestiona exclusivamente mediante <strong>sessionStorage</strong>, que se elimina automáticamente al cerrar el navegador y no es accesible por terceros.</p>
+
+<h3>3. Cookies y servicios de terceros</h3>
+<p>Para ofrecer ciertas funcionalidades, este sitio carga servicios externos que pueden establecer sus propias cookies:</p>
+
+<h4>3.1 Google OAuth 2.0 (Inicio de sesión con Google)</h4>
+<p>Utilizamos el SDK de Google Identity Services (<code>accounts.google.com</code>) para permitir el inicio de sesión con tu cuenta de Google. Este servicio puede establecer cookies de sesión de autenticación en tu navegador (<code>G_AUTHUSER_H</code>, <code>OSID</code>, <code>__Secure-1PSID</code>). Consulta la <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de Privacidad de Google</a>.</p>
+
+<h4>3.2 Google Maps (visor de ubicaciones)</h4>
+<p>En determinadas páginas del sitio se muestra un mapa integrado de Google Maps para indicar nuestra ubicación física. Este mapa se carga como contenido embebido desde <code>google.com</code> y puede establecer cookies de preferencias y consentimiento (<code>CONSENT</code>, <code>SOCS</code>, <code>NID</code>). Consulta la <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de Privacidad de Google</a>.</p>
+
+<h4>3.3 Font Awesome (Cloudflare CDN)</h4>
+<p>Los iconos del sitio se sirven desde la CDN de Cloudflare (<code>cdnjs.cloudflare.com</code>). Cloudflare puede establecer la cookie técnica <code>__cf_bm</code> con fines de seguridad y gestión de tráfico (bot management). No se utiliza para rastreo publicitario. Consulta la <a href="https://www.cloudflare.com/es-es/privacypolicy/" target="_blank" rel="noopener noreferrer">Política de Privacidad de Cloudflare</a>.</p>
+
+<h3>4. Verificación antispam</h3>
+<p>La verificación antispam de los formularios del sitio se realiza mediante un sistema propio de desafíos matemáticos y lógicos, sin intervención de servicios externos ni instalación de cookies.</p>
+
+<h3>5. Cookies analíticas o publicitarias</h3>
+<p>Este sitio web <strong>no utiliza cookies analíticas ni publicitarias</strong>. No hay integración con Google Analytics, Facebook Pixel ni ningún otro sistema de seguimiento de usuarios.</p>
+
+<h3>6. ¿Cómo controlar las cookies?</h3>
+<p>Puedes configurar tu navegador para bloquear o eliminar cookies en cualquier momento. Ten en cuenta que bloquear las cookies de servicios como Google OAuth puede impedir el inicio de sesión con Google.</p>
+<ul>
+  <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer">Google Chrome</a></li>
+  <li><a href="https://support.mozilla.org/es/kb/habilitar-y-deshabilitar-cookies-sitios-web-rastrear-preferencias" target="_blank" rel="noopener noreferrer">Mozilla Firefox</a></li>
+  <li><a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" target="_blank" rel="noopener noreferrer">Safari</a></li>
+  <li><a href="https://support.microsoft.com/es-es/microsoft-edge/eliminar-las-cookies-en-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer">Microsoft Edge</a></li>
+</ul>
+
+<h3>7. Contacto</h3>
+<p>Para consultas sobre nuestra política de cookies: <a href="mailto:centroeducativoagora@gmail.com">centroeducativoagora@gmail.com</a></p>',
     NOW()
   );
 

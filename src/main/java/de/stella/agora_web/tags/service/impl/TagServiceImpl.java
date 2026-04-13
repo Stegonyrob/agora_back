@@ -7,12 +7,10 @@ import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
-import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.events.model.Event;
 import de.stella.agora_web.events.repository.EventRepository;
 import de.stella.agora_web.posts.model.Post;
 import de.stella.agora_web.posts.repository.PostRepository;
-import de.stella.agora_web.replies.repository.ReplyRepository;
 import de.stella.agora_web.tags.dto.EventSummaryDTO;
 import de.stella.agora_web.tags.dto.PostSummaryDTO;
 import de.stella.agora_web.tags.dto.TagSummaryDTO;
@@ -38,17 +36,16 @@ public class TagServiceImpl implements ITagService {
         return createdTags;
     }
 
-    private TagRepository tagRepository;
+    private final TagRepository tagRepository;
+    private final PostRepository postRepository;
+    private final EventRepository eventRepository;
 
-    private PostRepository postRepository;
-
-    private EventRepository eventRepository;
-
-    @SuppressWarnings("unused")
-    private ReplyRepository replyRepository;
-
-    @SuppressWarnings("unused")
-    private CommentRepository commentRepository;
+    public TagServiceImpl(TagRepository tagRepository, PostRepository postRepository,
+            EventRepository eventRepository) {
+        this.tagRepository = tagRepository;
+        this.postRepository = postRepository;
+        this.eventRepository = eventRepository;
+    }
 
     @Override
     public List<Tag> getAllTags() {

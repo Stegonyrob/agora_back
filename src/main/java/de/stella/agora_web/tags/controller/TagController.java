@@ -34,14 +34,27 @@ public class TagController {
     @PostMapping("/posts/{postId}/tags")
     public ResponseEntity<String> addTagsToPost(@PathVariable Long postId, @RequestBody Object requestBody) {
         try {
-            // Intentar como array simple de strings
-            if (requestBody instanceof List<?>) {
-                @SuppressWarnings("unchecked")
-                List<String> tagNames = (List<String>) requestBody;
-                if (tagNames.isEmpty()) {
+            // Array de strings u objetos: ["tag1"] o [{id, name, archived}, ...]
+            if (requestBody instanceof List<?> rawList) {
+                if (rawList.isEmpty()) {
                     return ResponseEntity.badRequest().body(NO_TAGS_ERROR);
                 }
-                tagNames.forEach(tagName -> tagService.addTagToPost(postId, tagName));
+                rawList.forEach(item -> {
+                    switch (item) {
+                        case String tagStr ->
+                            tagService.addTagToPost(postId, tagStr);
+                        case java.util.Map<?, ?> rawTagMap -> {
+                            @SuppressWarnings("unchecked")
+                            java.util.Map<String, Object> tagMap = (java.util.Map<String, Object>) rawTagMap;
+                            String tagName = (String) tagMap.get("name");
+                            if (tagName != null) {
+                                tagService.addTagToPost(postId, tagName);
+                            }
+                        }
+                        default -> {
+                            /* ignorar tipos desconocidos */ }
+                    }
+                });
                 return ResponseEntity.ok("Tags asociados correctamente al post " + postId);
             }
 
@@ -105,14 +118,70 @@ public class TagController {
         }
     }
 
-    // Asociar múltiples tags a un evento
+    // Asociar múltiples tags a un evento - ACEPTA AMBOS FORMATOS
+    @SuppressWarnings({"java:S3776", "java:S6863"})
     @PostMapping("/events/{eventId}/tags")
-    public ResponseEntity<String> addTagsToEvent(@PathVariable Long eventId, @RequestBody de.stella.agora_web.tags.dto.TagListDTO tagListDTO) {
-        if (tagListDTO.getTags() == null || tagListDTO.getTags().isEmpty()) {
-            return ResponseEntity.badRequest().body(NO_TAGS_ERROR);
+    public ResponseEntity<String> addTagsToEvent(@PathVariable Long eventId, @RequestBody Object requestBody) {
+        try {
+            // Array de strings u objetos: ["tag1"] o [{id, name, archived}, ...]
+            if (requestBody instanceof List<?> rawList) {
+                if (rawList.isEmpty()) {
+                    return ResponseEntity.badRequest().body(NO_TAGS_ERROR);
+                }
+                rawList.forEach(item -> {
+                    switch (item) {
+                        case String tagStr ->
+                            tagService.addTagToEvent(eventId, tagStr);
+                        case java.util.Map<?, ?> rawTagMap -> {
+                            @SuppressWarnings("unchecked")
+                            java.util.Map<String, Object> tagMap = (java.util.Map<String, Object>) rawTagMap;
+                            String tagName = (String) tagMap.get("name");
+                            if (tagName != null) {
+                                tagService.addTagToEvent(eventId, tagName);
+                            }
+                        }
+                        default -> {
+                            /* ignorar tipos desconocidos */ }
+                    }
+                });
+                return ResponseEntity.ok("Tags asociados correctamente al evento " + eventId);
+            }
+
+            // Objeto TagListDTO: {"tags": [...]}
+            if (requestBody instanceof java.util.Map) {
+                @SuppressWarnings("unchecked")
+                java.util.Map<String, Object> map = (java.util.Map<String, Object>) requestBody;
+                Object tagsObj = map.get("tags");
+                if (tagsObj instanceof List<?>) {
+                    @SuppressWarnings("unchecked")
+                    List<Object> tagsList = (List<Object>) tagsObj;
+                    if (tagsList.isEmpty()) {
+                        return ResponseEntity.badRequest().body(NO_TAGS_ERROR);
+                    }
+                    tagsList.forEach(tagObj -> {
+                        switch (tagObj) {
+                            case String tagStr ->
+                                tagService.addTagToEvent(eventId, tagStr);
+                            case java.util.Map<?, ?> rawTagMap -> {
+                                @SuppressWarnings("unchecked")
+                                java.util.Map<String, Object> tagMap = (java.util.Map<String, Object>) rawTagMap;
+                                String tagName = (String) tagMap.get("name");
+                                if (tagName != null) {
+                                    tagService.addTagToEvent(eventId, tagName);
+                                }
+                            }
+                            default -> {
+                                /* ignorar tipos desconocidos */ }
+                        }
+                    });
+                    return ResponseEntity.ok("Tags asociados correctamente al evento " + eventId);
+                }
+            }
+
+            return ResponseEntity.badRequest().body("Formato de datos no válido");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error procesando tags: " + e.getMessage());
         }
-        tagListDTO.getTags().forEach(tagDto -> tagService.addTagToEvent(eventId, tagDto.getName()));
-        return ResponseEntity.ok("Tags asociados correctamente al evento " + eventId);
     }
 
     // ========== ENDPOINTS DE LECTURA PRIVADOS ==========
