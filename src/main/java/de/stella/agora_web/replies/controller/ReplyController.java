@@ -1,12 +1,13 @@
 package de.stella.agora_web.replies.controller;
 
-import de.stella.agora_web.replies.controller.dto.ReplyDTO;
-import de.stella.agora_web.replies.model.Reply;
-import de.stella.agora_web.replies.services.IReplyService;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,65 +17,141 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-//separar dos controlladores de replies uno admin y otro user
+import de.stella.agora_web.common.dto.SanctionInfoResponse;
+import de.stella.agora_web.replies.controller.dto.ReplyDTO;
+import de.stella.agora_web.replies.model.Reply;
+import de.stella.agora_web.replies.service.IReplyService;
+import de.stella.agora_web.user.model.User;
+import de.stella.agora_web.user.model.User.SanctionStatus;
+
 @RestController
-@RequestMapping(path = "${api-endpoint}/all")
+@RequestMapping(path = "${api-endpoint}/any")
 public class ReplyController {
 
-  private final IReplyService replyService;
+    private static final Logger auditLogger = LoggerFactory.getLogger("AuditLogger");
 
-  public ReplyController(IReplyService replyService) {
-    this.replyService = replyService;
-  }
+    private final IReplyService replyService;
 
-  //(Get, endpoint/replies).hasAnyRoles(user,admin)
-  //respuesta a un comentario el cual debera esta asignado a un post y a un comentario refactorizar reolies para que sean
-  //las respuestas del admin crear entidad de comenta para usuarios
+    public ReplyController(IReplyService replyService) {
+        this.replyService = replyService;
+    }
 
-  //censurar controllador unico
+    @PostMapping("/replies/create")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<Object> createReply(
+            @RequestBody ReplyDTO replyDTO,
+            @AuthenticationPrincipal User user
+    ) {
+        if (user.getSanctionStatus() == SanctionStatus.EXPELLED) {
+            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó crear respuesta", user.getId());
+            auditLogger.warn(msg);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes participar porque has sido expulsado. Contacta a soporte si crees que es un error."
+            );
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
+        }
+        if (user.getSanctionStatus() == SanctionStatus.SUSPENDED) {
+            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó crear respuesta", user.getId());
+            auditLogger.warn(msg);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes participar porque estás suspendido hasta la fecha indicada."
+            );
+            return ResponseEntity.status(HttpStatus.LOCKED).body(sanctionInfo);
+        }
+        Reply reply = replyService.createReply(replyDTO, user);
+        ReplyDTO responseDTO = ReplyDTO.fromEntity(reply);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
 
-  @PostMapping("/replies/create")
-  @PreAuthorize("hasRole('USER','ADMIN')")
-  public ResponseEntity<Reply> createReply(
-    @SuppressWarnings("rawtypes") @RequestBody ReplyDTO replyDTO
-  ) {
-    Reply reply = replyService.createReply(replyDTO, null);
-    return ResponseEntity.status(HttpStatus.CREATED).body(reply);
-  }
+    @GetMapping("/replies/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<ReplyDTO> show(@PathVariable Long id) {
+        Reply reply = replyService.getReplyById(id);
+        ReplyDTO dto = ReplyDTO.fromEntity(reply);
+        return ResponseEntity.ok(dto);
+    }
 
-  @GetMapping("/replies/{id}")
-  public ResponseEntity<Reply> show(@PathVariable Long id) {
-    Reply reply = replyService.getReplyById(id);
-    return ResponseEntity.ok(reply);
-  }
+    @GetMapping("/replies/comment/{commentId}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public List<ReplyDTO> getRepliesByCommentId(@PathVariable Long commentId) {
+        return replyService.getRepliesByCommentId(commentId)
+                .stream()
+                .map(ReplyDTO::fromEntity)
+                .toList();
+    }
 
-  @GetMapping("/replies/post/{postId}")
-  public List<Reply> getRepliesByPostId(@PathVariable Long postId) {
-    return replyService.getRepliesByPostId(postId);
-  }
+    @GetMapping("/replies/user/{userId}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public List<ReplyDTO> getRepliesByUserId(@PathVariable Long userId) {
+        return replyService.getRepliesByUserId(userId)
+                .stream()
+                .map(ReplyDTO::fromEntity)
+                .toList();
+    }
 
-  @GetMapping("/replies/tags/{tagName}")
-  public List<Reply> getRepliesByTagName(@PathVariable String tagName) {
-    return replyService.getRepliesByTagName(tagName);
-  }
+    @PutMapping("/replies/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<Object> update(
+            @PathVariable Long id,
+            @RequestBody ReplyDTO replyDTO,
+            @AuthenticationPrincipal User user
+    ) {
+        if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
+            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó editar respuesta %d", user.getId(), id);
+            auditLogger.warn(msg);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes editar respuestas porque has sido expulsado. Contacta a soporte si crees que es un error."
+            );
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
+        }
+        if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
+            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó editar respuesta %d", user.getId(), id);
+            auditLogger.warn(msg);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes editar respuestas porque estás suspendido hasta la fecha indicada."
+            );
+            return ResponseEntity.status(HttpStatus.LOCKED).body(sanctionInfo);
+        }
+        Reply reply = replyService.updateReply(id, replyDTO);
+        ReplyDTO dto = ReplyDTO.fromEntity(reply);
+        return ResponseEntity.accepted().body(dto);
+    }
 
-  @GetMapping("/replies/user/{userId}")
-  public List<Reply> getRepliesByUserId(@PathVariable Long userId) {
-    return replyService.getRepliesByUserId(userId);
-  }
-
-  @DeleteMapping("/replies/{id}")
-  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-    replyService.deleteReply(id);
-    return ResponseEntity.noContent().build();
-  }
-
-  @PutMapping("/replies/{id}")
-  public ResponseEntity<Reply> update(
-    @PathVariable Long id,
-    @SuppressWarnings("rawtypes") @RequestBody ReplyDTO replyDTO
-  ) {
-    Reply reply = replyService.updateReply(id, replyDTO);
-    return ResponseEntity.accepted().body(reply);
-  }
+    @DeleteMapping("/replies/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<Object> deleteReply(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user
+    ) {
+        if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
+            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó borrar respuesta %d", user.getId(), id);
+            auditLogger.warn(msg);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes borrar respuestas porque has sido expulsado. Contacta a soporte si crees que es un error."
+            );
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
+        }
+        if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
+            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó borrar respuesta %d", user.getId(), id);
+            auditLogger.warn(msg);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes borrar respuestas porque estás suspendido hasta la fecha indicada."
+            );
+            return ResponseEntity.status(HttpStatus.LOCKED).body(sanctionInfo);
+        }
+        replyService.deleteReply(id);
+        return ResponseEntity.noContent().build();
+    }
 }

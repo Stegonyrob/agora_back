@@ -1,50 +1,167 @@
 package de.stella.agora_web.moderation.model;
 
-import ai.djl.Model;
-import ai.djl.ModelException;
-import ai.djl.ndarray.NDList;
-import ai.djl.translate.TranslateException;
+import java.util.Arrays;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SentimentAnalysis {
 
-    private final Model model;
+    private static final Logger log = LoggerFactory.getLogger(SentimentAnalysis.class);
 
-    public SentimentAnalysis() throws ModelException {
-        model = Model.newInstance("xlm-roberta-large-finetuned-conll02-spanish");
+    private static final String NEUTRAL = "neutral";
+    private static final String POSITIVE = "positive";
+    private static final String OFFENSIVE = "offensive";
+
+    // Lists of offensive and positive words for basic sentiment analysis
+    private static final List<String> OFFENSIVE_WORDS = Arrays.asList(
+            "estúpido", "estupido", "tonto", "idiota", "imbécil", "imbecil",
+            "pendejo", "gilipollas", "cabron", "cabrón", "hijo de puta",
+            "jodete", "jódete", "vete a la mierda", "que te jodan",
+            "maricón", "maricon", "basura", "inútil", "inutil",
+            "retrasado", "mongólico", "mongolico", "autista",
+            "stupid", "idiot", "moron", "loser", "worthless", "shit", "fuck"
+    );
+
+    private static final List<String> POSITIVE_WORDS = Arrays.asList(
+            "gracias", "excelente", "genial", "perfecto", "bueno", "bien",
+            "me gusta", "increíble", "fantástico", "maravilloso",
+            "thank you", "excellent", "great", "perfect", "good", "well",
+            "amazing", "fantastic", "wonderful", "love"
+    );
+
+    private static final List<String> SAFE_GREETINGS = Arrays.asList(
+            "hola", "hello", "buenos días", "buenas tardes", "buenas noches",
+            "good morning", "good afternoon", "good evening", "hi", "hey"
+    );
+
+    public SentimentAnalysis() {
+        // Basic implementation without external model for now
+        // In future, this could be enhanced with actual ML models
     }
 
-    public String analyzeComment(String comment) throws TranslateException {
-        if (comment == null) {
-            throw new NullPointerException("Comment is null");
+    public String analyzeComment(String comment) {
+        if (comment == null || comment.trim().isEmpty()) {
+            return NEUTRAL;
         }
-        NDList input = preprocess(comment);
-        if (input == null) {
-            throw new NullPointerException("Input from preprocess is null");
+        String lowerComment = comment.toLowerCase().trim();
+        if (isKnownGreeting(lowerComment)) {
+            return POSITIVE;
         }
-        Object output = model.newPredictor(null, null).predict(input);
-        if (output == null) {
-            throw new NullPointerException("Output from model is null");
+        if (containsOffensiveWord(lowerComment)) {
+            return OFFENSIVE;
         }
-        return interpretOutput(output);
+        if (countPositiveWords(lowerComment) > 0) {
+            return POSITIVE;
+        }
+        if (lowerComment.contains("?") || lowerComment.startsWith("¿")) {
+            return NEUTRAL;
+        }
+        if (lowerComment.contains("gracias") || lowerComment.contains("thank")) {
+            return POSITIVE;
+        }
+        return NEUTRAL;
     }
 
-    private NDList preprocess(String text) {
-        // Implementa la lógica de preprocesamiento aquí
-        return new NDList(); // Devuelve el NDList adecuado
+    private boolean isKnownGreeting(String lowerComment) {
+        for (String greeting : SAFE_GREETINGS) {
+            if (lowerComment.equals(greeting) || lowerComment.startsWith(greeting + " ")) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private String interpretOutput(Object output) {
-        // Lógica para interpretar la salida del modelo
-        return "resultado"; // Devuelve el resultado
+    private boolean containsOffensiveWord(String lowerComment) {
+        for (String word : OFFENSIVE_WORDS) {
+            if (lowerComment.contains(word)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public static void main(String[] args) throws TranslateException {
-        try {
-            SentimentAnalysis sentimentAnalysis = new SentimentAnalysis();
-            String result = sentimentAnalysis.analyzeComment("Tu comentario aquí");
-            System.out.println("Sentimiento: " + result);
-        } catch (ModelException e) {
-            e.printStackTrace();
+    private int countPositiveWords(String lowerComment) {
+        int score = 0;
+        for (String word : POSITIVE_WORDS) {
+            if (lowerComment.contains(word)) {
+                score++;
+            }
+        }
+        return score;
+    }
+
+    /**
+     * Enhanced analysis that considers context and patterns
+     */
+    public boolean isLikelyOffensive(String comment) {
+        if (comment == null || comment.trim().isEmpty()) {
+            return false;
+        }
+
+        String lowerComment = comment.toLowerCase().trim();
+
+        // Immediate offensive word detection
+        for (String offensiveWord : OFFENSIVE_WORDS) {
+            if (lowerComment.contains(offensiveWord)) {
+                return true;
+            }
+        }
+
+        // Pattern detection for spam (excessive repetition)
+        if (isSpamPattern(lowerComment)) {
+            return true;
+        }
+
+        // Aggressive capitalization (all caps with length > 10)
+        return comment.length() > 10 && comment.equals(comment.toUpperCase())
+                && !comment.matches(".*\\d.*"); // Not if it contains numbers
+    }
+
+    private boolean isSpamPattern(String comment) {
+        // Check for excessive repetition of characters
+        if (comment.matches(".*([a-z])\\1{4,}.*")) {
+            return true;
+        }
+
+        // Check for excessive repetition of words
+        String[] words = comment.split("\\s+");
+        if (words.length > 3) {
+            String firstWord = words[0];
+            int repetitions = 0;
+            for (String word : words) {
+                if (word.equals(firstWord)) {
+                    repetitions++;
+                }
+            }
+            if (repetitions > words.length / 2) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @SuppressWarnings("java:S1172")
+    public static void main(String[] args) {
+        SentimentAnalysis sentimentAnalysis = new SentimentAnalysis();
+
+        // Test cases
+        String[] testCases = {
+            "hola",
+            "buenos días",
+            "gracias por tu ayuda",
+            "estúpido",
+            "eres un idiota",
+            "me gusta esta explicación",
+            "¿puedes ayudarme?",
+            "excelente trabajo"
+        };
+
+        for (String test : testCases) {
+            String result = sentimentAnalysis.analyzeComment(test);
+            log.info("'{}' -> {}", test, result);
         }
     }
 }

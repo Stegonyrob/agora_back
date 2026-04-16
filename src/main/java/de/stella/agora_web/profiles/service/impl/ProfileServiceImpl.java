@@ -3,200 +3,214 @@ package de.stella.agora_web.profiles.service.impl;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import de.stella.agora_web.avatar.repository.AvatarRepository;
+import de.stella.agora_web.posts.model.Post;
+import de.stella.agora_web.posts.model.PostLove;
+import de.stella.agora_web.posts.repository.PostLoveRepository;
+import de.stella.agora_web.posts.repository.PostRepository;
 import de.stella.agora_web.profiles.controller.dto.ProfileDTO;
+import de.stella.agora_web.profiles.exceptions.ProfileNotFoundException;
 import de.stella.agora_web.profiles.model.Profile;
-import de.stella.agora_web.profiles.persistence.IProfileDAO;
+import de.stella.agora_web.profiles.repository.ProfileRepository;
 import de.stella.agora_web.profiles.service.IProfileService;
+import de.stella.agora_web.user.model.User;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 
 @Service
+@AllArgsConstructor
 public class ProfileServiceImpl implements IProfileService {
 
-    private final IProfileDAO profileDAO;
+    private final ProfileRepository repository;
+    private final PostRepository postRepository;
+    private final PostLoveRepository postLoveRepository;
+    private final AvatarRepository avatarRepository;
 
-    public ProfileServiceImpl(IProfileDAO profileDAO) {
-        this.profileDAO = profileDAO;
+    public Profile createProfileForUser(User user, ProfileDTO profileDTO) {
+        Profile profile = new Profile();
+        profile.setId(user.getId()); // Igualar IDs
+        profile.setUser(user);
+        profile.setFirstName(profileDTO.getFirstName());
+        profile.setLastName1(profileDTO.getLastName1());
+        profile.setLastName2(profileDTO.getLastName2());
+        profile.setUsername(profileDTO.getUsername());
+        profile.setRelationship(profileDTO.getRelationship());
+        profile.setEmail(profileDTO.getEmail());
+        profile.setPassword(profileDTO.getPassword());
+        profile.setConfirmPassword(profileDTO.getConfirmPassword());
+        profile.setCity(profileDTO.getCity());
+        profile.setCountry(profileDTO.getCountry());
+        profile.setPhone(profileDTO.getPhone());
+
+        // Asignar avatar si existe
+        if (profileDTO.getAvatarId() != null) {
+            avatarRepository.findById(profileDTO.getAvatarId())
+                    .ifPresentOrElse(
+                            profile::setAvatar,
+                            () -> {
+                                throw new RuntimeException("Avatar no encontrado con ID: " + profileDTO.getAvatarId());
+                            }
+                    );
+        } else {
+            avatarRepository.findDefaultAvatar().ifPresent(profile::setAvatar);
+        }
+
+        return repository.save(profile);
     }
 
     @Override
-    @Transactional
-    public Optional<Profile> findProfileById(Long profileId) {
-        return profileDAO.findById(profileId);
+    public Profile getById(@NonNull Long id) throws ProfileNotFoundException {
+        // Usar consulta optimizada que incluye User y Roles en una sola consulta
+        return repository.findByIdWithUserAndRoles(id)
+                .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
     }
 
     @Override
-    @Transactional
+    public Profile getByEmail(@NonNull String email) throws ProfileNotFoundException {
+        return repository.findByEmail(email).orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
+    }
+
+    @Override
+    public Profile updateProfile(ProfileDTO profileDTO, Long id) throws ProfileNotFoundException {
+        // Usar consulta optimizada solo con datos de User básicos (sin roles innecesarios para update)
+        Profile profile = repository.findByIdWithUser(id)
+                .orElseThrow(() -> new ProfileNotFoundException("Profile Not Found"));
+
+        profile.setFirstName(profileDTO.getFirstName());
+        profile.setLastName1(profileDTO.getLastName1());
+        profile.setLastName2(profileDTO.getLastName2());
+        profile.setUsername(profileDTO.getUsername());
+        profile.setRelationship(profileDTO.getRelationship());
+        profile.setCity(profileDTO.getCity());
+        profile.setCountry(profileDTO.getCountry());
+        profile.setEmail(profileDTO.getEmail());
+        profile.setPhone(profileDTO.getPhone());
+
+        // Manejar actualización del avatar
+        if (profileDTO.getAvatarId() != null) {
+            avatarRepository.findById(profileDTO.getAvatarId())
+                    .ifPresentOrElse(
+                            avatar -> {
+                                profile.setAvatar(avatar);
+                                System.out.println("Avatar actualizado: ID=" + avatar.getId() + ", imageName=" + avatar.getImageName());
+                            },
+                            () -> System.out.println("Avatar no encontrado con ID: " + profileDTO.getAvatarId())
+                    );
+        } else {
+            // Si no se proporciona avatarId, mantener el avatar actual o usar el default
+            if (profile.getAvatar() == null) {
+                avatarRepository.findDefaultAvatar()
+                        .ifPresent(defaultAvatar -> {
+                            profile.setAvatar(defaultAvatar);
+                            System.out.println("Asignado avatar por defecto: " + defaultAvatar.getImageName());
+                        });
+            }
+        }
+
+        Profile savedProfile = repository.save(profile);
+        System.out.println("Perfil guardado con avatar ID: "
+                + (savedProfile.getAvatar() != null ? savedProfile.getAvatar().getId() : "null"));
+
+        return savedProfile;
+    }
+
+    @Override
     public List<Profile> findAllProfiles() {
-        return profileDAO.findAll();
+        return repository.findAll();
     }
 
     @Override
-    @Transactional
-    public Profile saveProfile(Profile profile) {
-        return profileDAO.save(profile);
+    public Optional<Profile> findById(Long id) {
+        return repository.findById(id);
+    }
+
+    // Favoritos de posts
+    @Override
+    public String addFavoritePost(Long profileId, Long postId) {
+        Profile profile = repository.findById(profileId)
+                .orElseThrow(() -> new ProfileNotFoundException("Profile not found with ID: " + profileId));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found with ID: " + postId));
+
+        boolean exists = postLoveRepository.existsByProfileAndPost(profile, post);
+        if (exists) {
+            return "Post is already in favorites";
+        }
+        PostLove postLove = new PostLove();
+        postLove.setProfile(profile);
+        postLove.setPost(post);
+        postLoveRepository.save(postLove);
+        return "Post is added to favorites";
     }
 
     @Override
-    @Transactional
-    public void deleteProfileById(Long id) {
-        profileDAO.deleteById(id);
+    public String deleteFavoritePost(Long profileId, Long postId) {
+        Profile profile = repository.findById(profileId)
+                .orElseThrow(() -> new ProfileNotFoundException("Profile not found with ID: " + profileId));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found with ID: " + postId));
+
+        Optional<PostLove> postLoveOpt = postLoveRepository.findByProfileAndPost(profile, post);
+        if (postLoveOpt.isPresent()) {
+            postLoveRepository.delete(postLoveOpt.get());
+            return "Post is removed from favorites";
+        } else {
+            return "Post not found in favorites";
+        }
+    }
+    // Actualiza el perfil
+
+    public Profile update(ProfileDTO profileDTO, Long id) throws ProfileNotFoundException {
+        return updateProfile(profileDTO, id);
     }
 
-    @Override
-    @Transactional
-    public Optional<Profile> findProfileByUsernameAndPassword(String username, String password) {
-        return profileDAO.findByUsernameAndPassword(username, password);
+    // Añade o elimina un post de favoritos (toggle)
+    public String updateFavorites(Long postId) {
+        // Obtén el usuario autenticado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        // Usar findByEmail normal ya que no necesitamos User/Roles para esta operación
+        Profile profile = repository.findByEmail(auth.getName())
+                .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found with ID: " + postId));
+
+        Optional<PostLove> postLoveOpt = postLoveRepository.findByProfileAndPost(profile, post);
+        if (postLoveOpt.isPresent()) {
+            postLoveRepository.delete(postLoveOpt.get());
+            return "Post is removed from favorites";
+        } else {
+            PostLove postLove = new PostLove();
+            postLove.setProfile(profile);
+            postLove.setPost(post);
+            postLoveRepository.save(postLove);
+            return "Post is added to favorites";
+        }
     }
 
-    @Override
-    @Transactional
-    public boolean checkProfileUserRole(String username, String role) {
-        return profileDAO.findByUsername(username).map(profile -> profile.hasRole(role)).orElse(false);
+    // Devuelve el perfil con sus posts favoritos
+    public Profile getFavorites(Long id) throws ProfileNotFoundException {
+        Profile profile = repository.findById(id)
+                .orElseThrow(() -> new ProfileNotFoundException("Profile not found with ID: " + id));
+        // Los favoritos se acceden con profile.getPostLoves() o un método utilitario
+        return profile;
     }
 
-    @Override
-    @Transactional
-    public Profile updateProfile(Profile profile, Profile updatedProfile) {
-        return profileDAO.update(profile, updatedProfile);
+    // Elimina el perfil (derecho al olvido)
+    public String delete(Long id) {
+        if (id == null) {
+            throw new NullPointerException("Profile ID cannot be null");
+        }
+        try {
+            repository.deleteById(id);
+            return "Profile deleted";
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting profile with ID: " + id, e);
+        }
     }
 
-    @Override
-    @Transactional
-    public List<Profile> getProfilesById(List<Long> ids) {
-        return profileDAO.findAllById(ids);
-    }
-
-    @Override
-    @Transactional
-    public Optional<Profile> findProfileByUsername(String username) {
-        return profileDAO.findByUsername(username);
-    }
-
-    @Transactional
-    public Profile getById(Long id) {
-        return profileDAO.findById(id).orElseThrow(() -> new RuntimeException("Profile not found"));
-    }
-
-    @Transactional
-    public Profile getByEmail(String email) {
-        return profileDAO.findByEmail(email).orElseThrow(() -> new RuntimeException("Profile not found"));
-    }
-
-    @Transactional
-    public Profile update(ProfileDTO profileDTO, Long id) {
-        Profile existingProfile = getById(id);
-        existingProfile.setFirstName(profileDTO.getFirstName());
-        existingProfile.setLastName1(profileDTO.getLastName1());
-        existingProfile.setLastName2(profileDTO.getLastName2());
-        existingProfile.setUsername(profileDTO.getUsername());
-        existingProfile.setRelationship(profileDTO.getRelationship());
-        existingProfile.setEmail(profileDTO.getEmail());
-        existingProfile.setPassword(profileDTO.getPassword());
-        existingProfile.setConfirmPassword(profileDTO.getConfirmPassword());
-        existingProfile.setCity(profileDTO.getCity());
-        return profileDAO.save(existingProfile);
-    }
-
-    @Transactional
-    public String updateFavorites(Long id) {
-        Profile profile = getById(id);
-        profile.setFavorite(!profile.isFavorite());
-        Profile updatedProfile = profileDAO.save(profile);
-        return updatedProfile.isFavorite() ? "Added to favorites" : "Removed from favorites";
-    }
-
-    @Override
-    @Transactional
-    public Profile registerProfile(ProfileDTO profileDTO) {
-        return profileDAO.save(new Profile());
-    }
-
-    @SuppressWarnings("unused")
-    private String hashPassword(String password) {
-        // Implement password hashing logic here
-        return BCrypt.hashpw(password, BCrypt.gensalt());
-    }
-
-    @Override
-    public List<Profile> getAllProfiles() {
-        return profileDAO.findAll();
-    }
 }
-
-// package dev.mark.jewelsstorebackend.profiles;
-// import java.util.Set;
-// import org.springframework.lang.NonNull;
-// import org.springframework.security.access.prepost.PreAuthorize;
-// import org.springframework.security.core.Authentication;
-// import org.springframework.security.core.context.SecurityContext;
-// import org.springframework.security.core.context.SecurityContextHolder;
-// import org.springframework.stereotype.Service;
-// import dev.mark.jewelsstorebackend.interfaces.IGenericGetService;
-// import dev.mark.jewelsstorebackend.interfaces.IGenericUpdateService;
-// import dev.mark.jewelsstorebackend.products.Product;
-// import dev.mark.jewelsstorebackend.products.ProductNotFoundException;
-// import dev.mark.jewelsstorebackend.products.ProductRepository;
-// import lombok.AllArgsConstructor;
-// @Service
-// @AllArgsConstructor
-// public class ProfileService implements IGenericUpdateService<ProfileDTO,
-// Profile>, IGenericGetService<Profile> {
-// ProfileRepository repository;
-// ProductRepository productRepository;
-// @PreAuthorize("hasRole('USER')")
-// public Profile getById(@NonNull Long id)throws Exception{
-// Profile profile = repository.findById(id).orElseThrow(() -> new
-// ProfileNotFoundException("Profile not found"));
-// return profile;
-// }
-// @PreAuthorize("hasRole('USER')")
-// public Profile getByEmail(@NonNull String email)throws Exception{
-// Profile profile = repository.findByEmail(email).orElseThrow(() -> new
-// ProfileNotFoundException("Profile not found"));
-// return profile;
-// }
-// @PreAuthorize("hasRole('USER')")
-// @Override
-// public Profile update(ProfileDTO profileDTO, Long id) {
-// Profile profile = repository.findById(id).orElseThrow(()-> new
-// ProfileNotFoundException("Profile Not Found"));
-// profile.setFirstName(profileDTO.getFirstName());
-// profile.setLastName(profileDTO.getLastName());
-// profile.setAddress(profileDTO.getAddress());
-// profile.setNumberPhone(profileDTO.getNumberPhone());
-// profile.setPostalCode(profileDTO.getPostalCode());
-// profile.setCity(profileDTO.getCity());
-// profile.setProvince(profileDTO.getProvince());
-// return repository.save(profile);
-// }
-
-// @PreAuthorize("hasRole('USER')")
-// public String updateFavorites(Long productId) throws Exception {
-
-// SecurityContext contextHolder = SecurityContextHolder.getContext();
-// Authentication auth = contextHolder.getAuthentication();
-
-// Profile updatingProfile =
-// repository.findByEmail(auth.getName()).orElseThrow(() -> new
-// ProfileNotFoundException("Profile not found"));
-// Product newProduct = productRepository.findById(productId).orElseThrow(() ->
-// new ProductNotFoundException("Product not found"));
-// Set<Product> favoriteProducts = updatingProfile.getFavorites();
-// String message = "";
-// if (favoriteProducts.contains(newProduct)) {
-// favoriteProducts.remove(newProduct);
-// message = "Product is removed from favorites";
-// } else {
-// favoriteProducts.add(newProduct);
-// message = "Product is added to favorites";
-// }
-// updatingProfile.setFavorites(favoriteProducts);
-// repository.save(updatingProfile);
-
-// return message;
-// }
-
-// }

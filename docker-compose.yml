@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_agora
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: agora_db
+      MYSQL_USER: agora_user
+      MYSQL_PASSWORD: agora_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - agora_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agora_app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/agora_db
+      SPRING_DATASOURCE_USERNAME: agora_user
+      SPRING_DATASOURCE_PASSWORD: agora_password
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - agora_network
+
+volumes:
+  db_data:
+
+networks:
+  agora_network:
+   

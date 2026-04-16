@@ -1,81 +1,192 @@
 package de.stella.agora_web.comment.controller;
 
-import de.stella.agora_web.comment.controller.dto.CommentDTO;
-import de.stella.agora_web.comment.model.Comment;
-import de.stella.agora_web.comment.services.ICommentService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import java.util.List;
-import lombok.NonNull;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import de.stella.agora_web.comment.controller.dto.CommentDTO;
+import de.stella.agora_web.comment.controller.dto.CommentWithRepliesDTO;
+import de.stella.agora_web.comment.model.Comment;
+import de.stella.agora_web.comment.service.ICommentService;
+import de.stella.agora_web.common.dto.SanctionInfoResponse;
+import de.stella.agora_web.replies.controller.dto.ReplyDTO;
+import de.stella.agora_web.replies.model.Reply;
+import de.stella.agora_web.replies.service.IReplyService;
+import de.stella.agora_web.user.model.User;
+import de.stella.agora_web.user.model.User.SanctionStatus;
+import de.stella.agora_web.user.repository.UserRepository;
 
 @RestController
 @RequestMapping(path = "${api-endpoint}/")
 public class CommentController {
 
-  private final ICommentService CommentService;
+    private static final Logger auditLogger = LoggerFactory.getLogger("AuditLogger");
 
-  public CommentController(ICommentService CommentService) {
-    this.CommentService = CommentService;
-  }
+    @Autowired
+    private ICommentService commentService;
 
-  //(Get, endpoint/comments).hasAnyRoles(user,admin)
-  //respuesta a un comentario el cual debera esta asignado a un post y a un comentario refactorizar reolies para que sean
-  //las respuestas del admin crear entidad de comenta para usuarios
+    @Autowired
+    private IReplyService replyService;
 
-  //censurar controllador unico
+    @SuppressWarnings("unused")
+    @Autowired
+    private UserRepository userRepository;
 
-  @PostMapping("/comments/create")
-  @PreAuthorize("hasRole('USER','ADMIN')")
-  public ResponseEntity<Comment> createComment(
-    @RequestBody CommentDTO CommentDTO
-  ) {
-    Comment Comment = CommentService.createComment(CommentDTO, null);
-    return ResponseEntity.status(HttpStatus.CREATED).body(Comment);
-  }
+    @PostMapping("/comments/create")
+    public ResponseEntity<?> createComment(
+            @RequestBody CommentDTO commentDTO,
+            @AuthenticationPrincipal de.stella.agora_web.security.SecurityUser principal) {
 
-  @GetMapping("/comments/{id}")
-  public ResponseEntity<Comment> show(@NonNull @PathVariable Long id) {
-    Comment Comment = CommentService.getCommentById(id);
-    return ResponseEntity.status(HttpStatus.OK).body(Comment);
-  }
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-  @SuppressWarnings("unchecked")
-  @GetMapping("/comments/post/{postId}")
-  public List<Comment> getCommentsByPostId(@PathVariable Long postId) {
-    return (List<Comment>) CommentService.getCommentsByPostId(postId);
-  }
+        User user = principal.getUser();
+        if (user.getSanctionStatus() == SanctionStatus.EXPELLED) {
+            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó crear comentario", user.getId());
+            auditLogger.warn(msg);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes participar porque has sido expulsado. Contacta a soporte si crees que es un error."
+            );
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
+        }
+        if (user.getSanctionStatus() == SanctionStatus.SUSPENDED) {
+            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó crear comentario", user.getId());
+            auditLogger.warn(msg);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes participar porque estás suspendido hasta la fecha indicada."
+            );
+            return ResponseEntity.status(HttpStatus.LOCKED).body(sanctionInfo);
+        }
+        Comment comment = commentService.createComment(commentDTO, user);
+        // Construir el DTO seguro (sin replies al crear)
+        CommentWithRepliesDTO dto = new CommentWithRepliesDTO(
+                comment.getId(),
+                comment.getMessage(),
+                comment.getCreationDate(),
+                comment.getUser() != null ? comment.getUser().getId() : null,
+                List.of() // replies vacío al crear
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    }
 
-  @GetMapping("/comments/tags/{tagName}")
-  public List<Comment> getCommentsByTagName(String tagName) {
-    return (List<Comment>) CommentService.getCommentsByTagName(tagName);
-  }
+    @PutMapping("/comments/{id}")
+    public ResponseEntity<?> update(
+            @PathVariable Long id,
+            @RequestBody CommentDTO commentDTO,
+            @AuthenticationPrincipal de.stella.agora_web.security.SecurityUser principal) {
 
-  @GetMapping("/comments/user/{userId}")
-  public List<Comment> getCommentsByUserId(@PathVariable Long userId) {
-    return (List<Comment>) CommentService.getCommentsByUserId(userId);
-  }
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-  @DeleteMapping("/comments/{id}")
-  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-    CommentService.deleteComment(id);
-    return ResponseEntity.noContent().build();
-  }
+        User user = principal.getUser();
+        if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
+            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó editar comentario %d", user.getId(), id);
+            auditLogger.warn(msg);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes editar comentarios porque has sido expulsado. Contacta a soporte si crees que es un error."
+            );
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
+        }
+        if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
+            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó editar comentario %d", user.getId(), id);
+            auditLogger.warn(msg);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes editar comentarios porque estás suspendido hasta la fecha indicada."
+            );
+            return ResponseEntity.status(HttpStatus.LOCKED).body(sanctionInfo);
+        }
+        Comment comment = commentService.getCommentById(id);
+        // Solo el dueño o admin puede modificar
+        if (!comment.getUser().getId().equals(user.getId()) && !principal.getRoles().contains("ROLE_ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        Comment updated = commentService.updateComment(id, commentDTO, user);
+        return ResponseEntity.accepted().body(updated);
+    }
 
-  @PutMapping("/comments/{id}")
-  public ResponseEntity<Comment> update(
-    @PathVariable Long id,
-    @RequestBody CommentDTO CommentDTO
-  ) {
-    Comment Comment = CommentService.updateComment(id, CommentDTO);
-    return ResponseEntity.accepted().body(Comment);
-  }
+    @DeleteMapping("/comments/{id}")
+    public ResponseEntity<?> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal de.stella.agora_web.security.SecurityUser principal) {
+
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        User user = principal.getUser();
+        if (user.getSanctionStatus() == User.SanctionStatus.EXPELLED) {
+            String msg = String.format("Intento bloqueado: usuario %d expulsado intentó borrar comentario %d", user.getId(), id);
+            auditLogger.warn(msg);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes borrar comentarios porque has sido expulsado. Contacta a soporte si crees que es un error."
+            );
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sanctionInfo);
+        }
+        if (user.getSanctionStatus() == User.SanctionStatus.SUSPENDED) {
+            String msg = String.format("Intento bloqueado: usuario %d suspendido intentó borrar comentario %d", user.getId(), id);
+            auditLogger.warn(msg);
+            SanctionInfoResponse sanctionInfo = new SanctionInfoResponse(
+                    user.getSanctionType().name(),
+                    user.getSanctionExpiration() != null ? user.getSanctionExpiration().toString() : null,
+                    "No puedes borrar comentarios porque estás suspendido hasta la fecha indicada."
+            );
+            return ResponseEntity.status(HttpStatus.LOCKED).body(sanctionInfo);
+        }
+        Comment comment = commentService.getCommentById(id);
+        // Solo el dueño o admin puede borrar
+        if (!comment.getUser().getId().equals(user.getId()) && !principal.getRoles().contains("ROLE_ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        commentService.deleteComment(id, user);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/comments/post/{postId}/with-replies")
+    public ResponseEntity<Page<CommentWithRepliesDTO>> getCommentsWithReplies(
+            @PathVariable Long postId,
+            Pageable pageable) {
+        Page<Comment> comments = commentService.getCommentsByPostId(postId, pageable);
+        Page<CommentWithRepliesDTO> dtos = comments.map(comment -> {
+            List<Reply> replies = replyService.getRepliesByCommentId(comment.getId());
+            List<ReplyDTO> replyDTOs = replies.stream()
+                    .map(ReplyDTO::fromEntity)
+                    .toList();
+            return new CommentWithRepliesDTO(
+                    comment.getId(),
+                    comment.getMessage(),
+                    comment.getCreationDate(),
+                    comment.getUser().getId(),
+                    replyDTOs
+            );
+        });
+        return ResponseEntity.ok(dtos);
+    }
+
 }

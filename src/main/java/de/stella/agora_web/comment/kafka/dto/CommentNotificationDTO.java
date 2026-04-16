@@ -1,75 +1,82 @@
 package de.stella.agora_web.comment.kafka.dto;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import de.stella.agora_web.comment.model.Comment;
-import de.stella.agora_web.comment.repository.CommentRepository;
 import de.stella.agora_web.user.model.User;
 
+/**
+ * DTO para transportar datos de notificación de comentario a través de Kafka.
+ * Es un POJO puro — no tiene dependencias de Spring ni repositorios.
+ */
 public class CommentNotificationDTO {
 
     private Long commentId;
     private String author;
+    private String authorEmail;
     private String message;
-    @Autowired
-    private CommentRepository commentRepository;
+    private String postTitle;
 
-    public void setCommentId(Long id) {
-        this.commentId = id;
+    public Long getCommentId() {
+        return commentId;
     }
 
-    public void setAuthor(String username) {
-        this.author = username;
-    }
-
-    public void setMessage(String message2) {
-        this.message = message2;
-    }
-
-    public String getMessage() {
-        return this.message;
+    public void setCommentId(Long commentId) {
+        this.commentId = commentId;
     }
 
     public String getAuthor() {
-        return this.author;
+        return author;
     }
 
-    public Comment getComment() {
-        Comment comment = new Comment();
-        comment.setId(this.commentId);
-        comment.setUser(new User(commentId, this.author, author, author, null, null, null));
-        comment.setMessage(this.message);
-        return comment;
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getAuthorEmail() {
+        return authorEmail;
+    }
+
+    public void setAuthorEmail(String authorEmail) {
+        this.authorEmail = authorEmail;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getPostTitle() {
-        // Get the post title from the database
-        // Check for invalid commentId
-        if (this.commentId == null) {
-            throw new IllegalArgumentException("commentId is null");
-        }
-
-        // Get the comment from the database
-        Comment comment = commentRepository.findById(this.commentId).orElse(null);
-
-        // Check if comment doesn't exist
-        if (comment == null) {
-            throw new IllegalArgumentException("commentId is invalid");
-        }
-
-        // Check if post doesn't exist
-        if (comment.getPost() == null) {
-            throw new IllegalArgumentException("post is null");
-        }
-
-        // Get the post title
-        String postTitle = comment.getPost().getTitle();
-
-        // Check if post title is null
-        if (postTitle == null) {
-            throw new IllegalArgumentException("post title is null");
-        }
-
         return postTitle;
+    }
+
+    public void setPostTitle(String postTitle) {
+        this.postTitle = postTitle;
+    }
+
+    /**
+     * Construye un Comment mínimo para pasar al servicio de moderación. Solo
+     * contiene los campos necesarios para la moderación de contenido.
+     */
+    public Comment getComment() {
+        if (this.commentId == null) {
+            throw new IllegalArgumentException("commentId es null");
+        }
+        if (this.author == null) {
+            throw new IllegalArgumentException("author es null");
+        }
+        if (this.message == null) {
+            throw new IllegalArgumentException("message es null");
+        }
+
+        Comment comment = new Comment();
+        comment.setId(this.commentId);
+        User user = new User();
+        user.setId(commentId);
+        user.setUsername(this.author);
+        comment.setUser(user);
+        comment.setMessage(this.message);
+        return comment;
     }
 }

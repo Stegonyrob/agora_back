@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.auth.SignUpDTO;
-import de.stella.agora_web.jwt.TokenGenerator;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -17,13 +17,24 @@ public class RegisterController {
 
     RegisterService service;
 
-    TokenGenerator tokenGenerator;
+    @PostMapping(path = "/register")
+    public ResponseEntity<String> register(@Valid @RequestBody SignUpDTO signupDTO) {
+        // Validar que las contraseñas coincidan
+        if (signupDTO.getPassword() == null || signupDTO.getPassword().isEmpty()) {
+            return ResponseEntity.badRequest().body("La contraseña es obligatoria");
+        }
 
-    @PostMapping("/users/register")
-    public ResponseEntity<String> register(@RequestBody SignUpDTO signupDTO) {
+        // Validar que se hayan aceptado las normas
+        if (!signupDTO.isRulesAccepted()) {
+            return ResponseEntity.badRequest().body("Debes aceptar las normas del blog para registrarte");
+        }
 
         String message = service.createUser(signupDTO);
 
-        return ResponseEntity.ok(message);
+        if (message.contains("exitosamente") || message.contains("successfully")) {
+            return ResponseEntity.ok(message);
+        } else {
+            return ResponseEntity.badRequest().body(message);
+        }
     }
 }

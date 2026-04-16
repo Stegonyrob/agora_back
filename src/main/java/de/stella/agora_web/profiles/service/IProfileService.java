@@ -6,20 +6,22 @@ import java.util.Optional;
 import de.stella.agora_web.profiles.controller.dto.ProfileDTO;
 import de.stella.agora_web.profiles.model.Profile;
 
-
-
-    
 public interface IProfileService {
 
-  List<Profile> findAllProfiles();
-  Optional<Profile> findProfileById(Long id);
-  Profile saveProfile(Profile profile);
-  void deleteProfileById(Long id);
-  Optional<Profile> findProfileByUsernameAndPassword(String username, String password);
-  boolean checkProfileUserRole(String username, String role);
-  Object updateProfile(Profile profile, Profile updatedProfile);
-  List<Profile> getAllProfiles();
-  Profile registerProfile(ProfileDTO profileDTO);
-  List<Profile> getProfilesById(List<Long> ids);
-  Optional<Profile> findProfileByUsername(String username);
+    Profile getById(Long id) throws Exception;
+
+    Profile getByEmail(String email) throws Exception;
+
+    Profile updateProfile(ProfileDTO profileDTO, Long id) throws Exception;
+
+    List<Profile> findAllProfiles();
+
+    Optional<Profile> findById(Long id);
+
+    // Favoritos de posts
+    String addFavoritePost(Long profileId, Long postId);
+
+    String deleteFavoritePost(Long profileId, Long postId);
+
+    // Puedes dejar los métodos de comentarios si los necesitas
 }

@@ -3,6 +3,8 @@ package de.stella.agora_web.comment.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,17 +13,17 @@ import de.stella.agora_web.comment.model.Comment;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-  @Override
-  List<Comment> findAll();
+    @Override
+    List<Comment> findAll();
 
-  @Override
-  Optional<Comment> findById(Long id);
+    @Override
+    Optional<Comment> findById(Long id);
 
-  public List<Comment> findByTagsName(String tagName);
+    public List<Comment> findByUserId(Long userId);
 
-  public List<Comment> findByUserId(Long userId);
+    public List<Comment> findByPostId(Long postId);
 
-  public Object findByPostId(Long postId);
+    List<Comment> findAllByOrderByCreationDateAsc();
 
-  List<Comment> findAllByOrderByCreationDateAsc();
+    Page<Comment> findByPostId(Long postId, Pageable pageable);
 }

@@ -1,12 +1,16 @@
 package de.stella.agora_web.posts.persistence;
 
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import de.stella.agora_web.user.model.User;
 
 @Component
 public interface IPostDAO {
         void deleteById(Long id);
-        // Optional<User> findByUsernameAndPassword(String username, String password);
-        // Object update(User user, User updatedUser);
+
+        Optional<User> findByUsernameAndPassword(String username, String password);
+
+        Object update(User user, User updatedUser);
 }

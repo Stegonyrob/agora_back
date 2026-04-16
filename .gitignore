@@ -6,7 +6,11 @@ target/
 
 ### Keys ###
 
-src/main/java/de/stella/agora_web/auth/keys/
+
+src/main/java/de/stella/agora_web/auth/keys/access-token-private.key
+src/main/java/de/stella/agora_web/auth/keys/access-token-public.key
+src/main/java/de/stella/agora_web/auth/keys/refresh-token-private.key
+src/main/java/de/stella/agora_web/auth/keys/refresh-token-public.key
 ### STS ###
 .apt_generated
 .classpath
@@ -38,3 +42,26 @@ build/
 src/main/java/de/stella/agora_web/nlp_moderation/model/OpenJDK-21/
 nlp_moderation
 src/main/resources/stanford-corenlp-4.5.7
+src/main/resources/stanford-corenlp-4.5.7.zip
+scr/main/resources/aplicacion.properties
+src/main/resources/client_secret.json
+src/main/resources/credentials.json
+
+### Logs & temp outputs ###
+*.txt
+startup_out.txt
+
+### Backups & DB dumps ###
+*.sql
+data-backup-*.sql
+
+### Temp uploads ###
+temp_images/*
+!temp_images/.gitkeep
+
+### Node (accidental) ###
+package-lock.json
+node_modules/
+
+### Classpath leftovers ###
+classpath

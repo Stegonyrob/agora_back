@@ -1,27 +1,65 @@
 package de.stella.agora_web.tags.service;
 
-import de.stella.agora_web.tags.model.Tag;
 import java.util.List;
 
+import de.stella.agora_web.events.model.Event;
+import de.stella.agora_web.posts.model.Post;
+import de.stella.agora_web.tags.dto.EventSummaryDTO;
+import de.stella.agora_web.tags.dto.PostSummaryDTO;
+import de.stella.agora_web.tags.dto.TagSummaryDTO;
+import de.stella.agora_web.tags.model.Tag;
+
 public interface ITagService {
-  List<Tag> getAllTags();
 
-  Tag getTagById(Long id);
+    /**
+     * Crea múltiples tags a partir de un TagListDTO.
+     *
+     * @param tagListDTO lista de tags a crear
+     * @return lista de tags creados
+     */
+    List<Tag> createTagsBulk(de.stella.agora_web.tags.dto.TagListDTO tagListDTO);
 
-  Tag createTag(String name);
+    List<Tag> getAllTags();
 
-  void addTagToPost(Long postId, Long tagId);
+    Tag getTagById(Long id);
 
-  void removeTagFromPost(Long postId, Long tagId);
+    Tag getTagByName(String name);
 
-  Tag getTagByName(String tagName);
+    Tag getOrCreateTagByName(String name);
 
-  void addTagToReply(Long replyId, Long tagId); // added
+    List<String> extractHashtags(String text);
 
-  void removeTagFromReply(Long replyId, Long tagId); // added
+    void addTagToPost(Long postId, String tagName);
 
-  void addTagToComment(Long commentId, Long tagId); // added
+    void removeTagFromPost(Long postId, String tagName);
 
-  void removeTagFromComment(Long commentId, Long tagId); // added
-  List<String> extractHashtags(String message);
+    void removeAllTagsFromPost(Long postId);
+
+    // Métodos para gestionar tags de eventos
+    void addTagToEvent(Long eventId, String tagName);
+
+    void removeTagFromEvent(Long eventId, String tagName);
+
+    void removeAllTagsFromEvent(Long eventId);
+
+    void addTagToEvent(Long eventId, Long tagId);
+
+    void removeTagFromEvent(Long eventId, Long tagId);
+
+    Tag createTag(String tagName);
+
+    List<Post> getPostsByTagName(String tagName);
+
+    List<Event> getEventsByTagName(String tagName);
+
+    public List<PostSummaryDTO> getPostsSummaryByTagName(String tagName);
+
+    List<EventSummaryDTO> getEventsSummaryByTagName(String tagName);
+
+    List<TagSummaryDTO> getAllTagsSummary();
+
+    // Métodos para obtener tags por entidad (REQUERIDOS POR FRONTEND)
+    List<TagSummaryDTO> getTagsByPostId(Long postId);
+
+    List<TagSummaryDTO> getTagsByEventId(Long eventId);
 }

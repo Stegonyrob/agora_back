@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-
-    public interface IGenericRepository<T, ID extends Serializable> {
+public interface IGenericRepository<T, ID extends Serializable> {
 
     List<T> findAllByIdIn(Collection<ID> ids);
 
-    
+    List<T> findByEventId(Long id);
+
 }

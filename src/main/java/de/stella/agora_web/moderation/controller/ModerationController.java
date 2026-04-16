@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.stella.agora_web.censured.model.CensuredComment;
 import de.stella.agora_web.comment.model.Comment;
-import de.stella.agora_web.moderation.services.IModerationService;
+import de.stella.agora_web.moderation.service.IModerationService;
 
 @RestController
-@RequestMapping("/moderation")
+@RequestMapping("${api-endpoint}/moderation")
 public class ModerationController {
 
     @Autowired
