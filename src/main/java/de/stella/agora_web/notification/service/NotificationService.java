@@ -25,6 +25,9 @@ public class NotificationService {
     @Value("${kafka.enabled:false}")
     private boolean kafkaEnabled;
 
+    @Value("${app.admin.email:admin@agora.es}")
+    private String adminEmail;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
@@ -61,7 +64,7 @@ public class NotificationService {
                 Por favor, revisa el panel de administración para moderar este contenido."""
                 .formatted(postTitle, commentContent, authorEmail);
 
-        sendEmailNotification("admin@agora-educativo.com", subject, body);
+        sendEmailNotification(adminEmail, subject, body);
     }
 
     /**
@@ -81,7 +84,7 @@ public class NotificationService {
                 Por favor, revisa el panel de administración para moderar este contenido."""
                 .formatted(postTitle, commentContent, replyContent, authorEmail);
 
-        sendEmailNotification("admin@agora-educativo.com", subject, body);
+        sendEmailNotification(adminEmail, subject, body);
     }
 
     /**

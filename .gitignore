@@ -46,3 +46,22 @@ src/main/resources/stanford-corenlp-4.5.7.zip
 scr/main/resources/aplicacion.properties
 src/main/resources/client_secret.json
 src/main/resources/credentials.json
+
+### Logs & temp outputs ###
+*.txt
+startup_out.txt
+
+### Backups & DB dumps ###
+*.sql
+data-backup-*.sql
+
+### Temp uploads ###
+temp_images/*
+!temp_images/.gitkeep
+
+### Node (accidental) ###
+package-lock.json
+node_modules/
+
+### Classpath leftovers ###
+classpath

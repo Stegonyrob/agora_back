@@ -66,8 +66,7 @@ public class ReplyControllerTest {
     private Comment testComment;
 
     @BeforeEach
-    @SuppressWarnings("unused")
-    void setUp() {
+    public void setUp() {
         // Crear usuario de prueba
         testUser = new User();
         testUser.setUsername("testuser");

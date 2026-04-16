@@ -1,252 +1,292 @@
-# Agora Web - Educational Platform Backend
+# Ágora — Community Blog Platform · Backend
 
-## 🎓 Overview
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-25-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" />
+  <img src="https://img.shields.io/badge/Spring_Boot-3.5.13-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" />
+  <img src="https://img.shields.io/badge/Apache_Kafka-231F20?style=for-the-badge&logo=apache-kafka&logoColor=white" />
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" />
+</p>
 
-Agora Web is a comprehensive educational platform backend built with Java Spring Boot, featuring a robust content management system with real-time moderation, user-generated content, and advanced notification capabilities. The platform supports both preloaded and custom user avatars, dynamic legal text management, and a complete Kafka-based event-driven architecture.
+> **Portfolio repository.** This is the public showcase version of the Ágora backend.  
+> Credentials, secrets and production endpoints are managed via environment variables and are not stored here.
+
+---
+
+## What is Ágora?
+
+Ágora is a full-stack community blog platform where users can publish posts, comment, reply, and interact under a moderated environment. The backend is a production-grade REST API built with Spring Boot 3 and Java 25, featuring an event-driven content moderation pipeline, GDPR compliance, and multi-channel notification delivery.
+
+This repository covers **the entire backend**: authentication, content lifecycle, automated NLP moderation via Apache Kafka, SMTP email notifications, GDPR right-to-erasure, and a full audit trail.
+
+---
+
+## Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        REST API (HTTPS)                      │
+│              Spring Security · JWT · OAuth2 (Google)         │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+          ┌────────────────▼────────────────┐
+          │           Service Layer          │
+          │   Posts · Comments · Replies     │
+          │   Users · Profiles · Settings    │
+          └────────────┬───────────┬─────────┘
+                       │           │
+          ┌────────────▼──┐  ┌─────▼──────────────────┐
+          │  MySQL / H2   │  │    Apache Kafka         │
+          │  (JPA + ORM)  │  │                         │
+          └───────────────┘  │  topic: "comments"      │
+                             │  topic: "replies"        │
+                             └─────────┬───────────────┘
+                                       │
+                          ┌────────────▼──────────────┐
+                          │   Moderation Pipeline       │
+                          │  NLP Sentiment Analysis     │
+                          │  (custom + OpenNLP model)   │
+                          └────────────┬───────────────┘
+                                       │
+                     ┌─────────────────▼──────────────────┐
+                     │       Notification Dispatch          │
+                     │  ┌──────────────────────────────┐  │
+                     │  │  JavaMailSender (SMTP / SES)  │  │
+                     │  │  Push Notifications           │  │
+                     │  └──────────────────────────────┘  │
+                     │  → Author: approved / rejected      │
+                     │  → Admin:  review queue alert       │
+                     │  → Replier's target: new reply!     │
+                     └────────────────────────────────────┘
+```
+
+---
 
 ## ✨ Key Features
 
-### Core Platform Features
-- **User Management**: Complete authentication and authorization system with Spring Security
-- **Content Creation**: Users can create posts, comments, and replies with rich text support
-- **Hybrid Avatar System**: Support for both preloaded system avatars and custom user uploads
-- **Profile Management**: Comprehensive user profile system with avatar integration
-- **Legal Text Management**: Dynamic management of terms of service, privacy policies, etc.
+### Authentication & Security
+- **JWT authentication** with refresh-token support (Spring Security 6)
+- **OAuth2 / Google Sign-In** — server-side token verification via `GoogleIdTokenVerifier`
+- **Role-based access control** — `ADMIN`, `USER`, `MODERATOR` roles
+- **BCrypt** password hashing, brute-force mitigation
 
-### Advanced Features
-- **Real-time Moderation**: Automated content moderation with Kafka-based event processing
-- **Notification System**: Multi-channel notifications (email, push) for user engagement
-- **Audit System**: Complete audit trail for all user actions and system events
-- **RESTful API**: Comprehensive API with OpenAPI documentation
-- **Multi-environment Support**: Development, testing, and production configurations
+### Content & Community
+- **Posts, Comments, Replies** — full CRUD with pagination
+- **Hybrid avatar system** — preloaded system avatars + custom user uploads (stored in filesystem / S3-ready)
+- **User profiles & settings** — bio, social links, notification preferences
+- **Tags & categories** for post organisation
+- **Legal text management** — dynamic terms of service, privacy policy (admin-editable)
 
-## 🏗️ Technical Architecture
+### Event-Driven Moderation Pipeline
+- **Apache Kafka** topics: `comments`, `replies`
+- **NLP sentiment analysis** (custom multilingual classifier + OpenNLP model) — auto-detects offensive language
+- **Dual outcome dispatch** per Kafka event:
+  - _Censored_ → email author with rejection reason + alert admin for manual override
+  - _Approved_ → email author confirmation + alert admin (new content) + push notification
+- **Reply chain notification** — the original commenter is notified when someone replies
 
-### Event-Driven Architecture
-```
-User Action → Service Layer → Database → Kafka Event → 
-Moderation Pipeline → Notification Dispatch → Admin Alerts
-```
+### Notifications
+- **Email** via `JavaMailSender` (dev: WARN if SMTP unconfigured; prod: AWS SES)
+- **Push notifications** — server-side push dispatch
+- **Admin review queue** — auto-moderated content flagged to admin with full context
 
-### Core Technologies
-- **Java 17+**: Modern Java with latest features
-- **Spring Boot 3.x**: Comprehensive framework for rapid development
-- **Spring Data JPA**: Simplified data access layer
-- **Spring Security**: Enterprise-grade security framework
-- **Apache Kafka**: Event streaming platform for real-time processing
-- **MySQL/H2**: Flexible database support for different environments
-- **Lombok**: Reduces boilerplate code
-- **Springdoc OpenAPI**: Automatic API documentation generation
+### GDPR & Compliance
+- **Right to erasure** (`GdprService`) — cascading deletion across all user content and associated data
+- **Data export** endpoint — users can download their data
+- **Audit trail** — full event log for all sensitive operations
+- **Legal text versioning** — each legal document update is tracked
 
-### Kafka Integration
-- **Event Streaming**: Real-time processing of user actions
-- **Topic Management**: Separate topics for comments, replies, emails, and notifications
-- **Dual Configuration**: Supports both Kafka-enabled and disabled modes
-- **Message Durability**: Guaranteed message delivery with retry mechanisms
+### Developer Experience
+- **OpenAPI / Swagger UI** at `/swagger-ui.html`
+- **Multi-environment config**: `dev` (H2), `mysql`, `staging`, `prod`
+- **Docker + docker-compose** for local infrastructure (Kafka + MySQL)
+- **`kafka.enabled`** flag — run the full stack without Kafka locally
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technology |
+|---|---|
+| Language | Java 25 |
+| Framework | Spring Boot 3.5.13 |
+| Security | Spring Security 6, JWT, OAuth2 (Google) |
+| Persistence | Spring Data JPA, Hibernate, MySQL 8 / H2 |
+| Messaging | Apache Kafka (Spring Kafka) |
+| NLP | Custom sentiment classifier + Apache OpenNLP model |
+| Email | Spring Mail → JavaMailSender (AWS SES in prod) |
+| API Docs | Springdoc OpenAPI 2.8 (Swagger UI) |
+| Build | Maven, Java 25 |
+| Containers | Docker, docker-compose |
+| Testing | JUnit 5, Mockito, Spring Boot Test |
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Java 17 or higher
-- Maven 3.6+ for dependency management
-- MySQL 8.0+ (or H2 for development)
-- Apache Kafka 2.8+ (optional, for full features)
 
-### Installation
-1. Clone the repository
-2. Configure database connection in `application.properties`
-3. Run `mvn clean install` to build the project
-4. Start the application with `java -jar target/agora_web-0.0.1-SNAPSHOT.jar`
+- **Java 25** — [Download JDK 25](https://jdk.java.net/25/) and set `JAVA_HOME`
+- **Maven 3.9+** — included as `./mvnw` wrapper, no install needed
+- **RSA key pair** — required for JWT signing (one-time setup, see below)
+- **Docker Desktop** — only needed for the full stack (MySQL + Kafka)
 
-### Development Scripts
-- `start-dev.bat` - Development mode with H2 database
-- `start-mysql.bat` - Production mode with MySQL
-- `start-with-notifications.bat` - Full mode with Kafka notifications
+### 1. Generate RSA keys (first time only)
 
-## 📋 API Endpoints
+JWT signing requires a key pair. Run once from the project root:
 
-### Avatar Management
-- `GET /api/v1/any/avatars` - List all available avatars
-- `GET /api/v1/any/avatars/{id}` - Get specific avatar
-- `POST /api/v1/any/avatars/upload` - Upload custom avatar
-- `DELETE /api/v1/any/avatars/{id}` - Delete custom avatar
-
-### Profile Management
-- `PUT /api/v1/profiles/{id}` - Update user profile
-- `GET /api/v1/profiles/{id}` - Get user profile with avatar
-
-### Content Management
-- `POST /api/v1/posts` - Create new post
-- `POST /api/v1/comments` - Create comment on post
-- `POST /api/v1/replies` - Create reply to comment
-
-### Legal Text Management
-- `GET /api/v1/legal-texts/{type}` - Get legal text by type
-- `PUT /api/v1/legal-texts/{type}` - Update legal text
-
-## 🧪 Testing
-
-### Test Categories
-- **Unit Tests**: Individual component testing
-- **Integration Tests**: End-to-end workflow validation
-- **Kafka Tests**: Message flow and processing verification
-- **Audit Tests**: System health and compliance checks
-
-### Running Tests
 ```bash
-# Run all tests
-mvn test
+# Windows (PowerShell)
+mkdir src\main\java\de\stella\agora_web\auth\keys
+cd src\main\java\de\stella\agora_web\auth\keys
 
-# Run specific test categories
-mvn test -Dtest="**/*KafkaTest"
-mvn test -Dtest="**/*IntegrationTest"
-mvn test -Dtest="**/*AuditTest"
+openssl genrsa -out access-token-private.key 2048
+openssl rsa -in access-token-private.key -pubout -out access-token-public.key
+openssl genrsa -out refresh-token-private.key 2048
+openssl rsa -in refresh-token-private.key -pubout -out refresh-token-public.key
 ```
 
-## 📊 Monitoring & Observability
+> These files are in `.gitignore` — they are never committed.
 
-### Logging
-- Structured JSON logging for production environments
-- Comprehensive error tracking and debugging information
-- Request correlation IDs for distributed tracing
+### 2. Run in dev mode — H2 in-memory DB, no Kafka needed
 
-### Health Checks
-- Application health endpoints
-- Database connectivity monitoring
-- Kafka connection status (when enabled)
-
-## 🔒 Security Features
-
-### Authentication & Authorization
-- JWT-based authentication system
-- Role-based access control (RBAC)
-- Secure password hashing with BCrypt
-- Session management and timeout controls
-
-### Data Protection
-- Input validation and sanitization
-- XSS and SQL injection protection
-- CORS configuration for frontend integration
-- Audit logging for all sensitive operations
-
-## 📈 Performance & Scalability
-
-### Optimization Features
-- Asynchronous processing with Kafka
-- Efficient database queries with JPA
-- Lazy loading for related entities
-- Connection pooling for database access
-
-### Scalability Design
-- Horizontal scaling support with Kafka partitioning
-- Stateless service architecture
-- Microservice-ready modular design
-- Container deployment support
-
-## 🔧 Configuration
-
-### Application Properties
-```properties
-# Database Configuration
-spring.datasource.url=jdbc:mysql://localhost:3306/agora_db
-spring.datasource.username=your_username
-spring.datasource.password=your_password
-
-# Kafka Configuration (optional)
-kafka.enabled=true
-spring.kafka.bootstrap-servers=localhost:9092
-spring.kafka.consumer.group-id=agora-comment-group
-
-# Security Configuration
-jwt.secret=your-secret-key
-jwt.expiration=86400000
+```bash
+git clone https://github.com/Stegonyrob/agora_back.git
+cd agora_back
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-## 📚 Documentation
+- App: `http://localhost:8080`
+- Swagger UI: `http://localhost:8080/swagger-ui.html`
+- H2 Console: `http://localhost:8080/h2-console` (JDBC URL: `jdbc:h2:mem:testdb`, user: `sa`, pass: `password`)
 
-### Additional Resources
-- [`KAFKA_IMPLEMENTATION_COMPLETE.md`](KAFKA_IMPLEMENTATION_COMPLETE.md) - Detailed Kafka implementation guide
-- [`IMPLEMENTATION_SUMMARY.md`](IMPLEMENTATION_SUMMARY.md) - Complete implementation overview
-- [`AVATAR_SYSTEM.md`](AVATAR_SYSTEM.md) - Avatar system documentation
-- [`SECURITY.md`](SECURITY.md) - Security implementation details
+**The dev profile seeds the database automatically with test users:**
 
-### API Documentation
-- OpenAPI documentation available at `/swagger-ui.html` when running
-- Comprehensive endpoint documentation with examples
-- Request/response schemas and validation rules
+| Username | Password | Role |
+|---|---|---|
+| `admin` | `admin` | ADMIN |
+| `user1` | `user1` | USER |
+| `user2` | `user2` | USER |
+| `user3` | `user3` | USER |
 
-## 🎯 Development Status
+> Passwords are BCrypt-hashed in `data.sql`. These users only exist in the H2 in-memory database and are reset on every restart.
 
-### ✅ Completed Features
-- [x] User authentication and authorization
-- [x] Post, comment, and reply management
-- [x] Hybrid avatar system (preloaded + custom)
-- [x] Profile management with avatar integration
-- [x] Legal text management system
-- [x] Kafka-based event processing
-- [x] Email and push notification system
-- [x] Comprehensive testing framework
-- [x] Security implementation
-- [x] API documentation
+### 3. Run with Docker — full stack (MySQL + Kafka)
 
-### 🔄 Ongoing Enhancements
-- [ ] Real-time WebSocket integration
-- [ ] Advanced analytics dashboard
-- [ ] Mobile API optimization
-- [ ] Multi-language support
+```bash
+docker-compose up -d
+./mvnw spring-boot:run -Dspring-boot.run.profiles=mysql
+```
 
-## 👥 Contributing
+> Copy `application-mysql.properties` and set your local DB credentials, or set the env vars below.
 
-### Development Guidelines
-1. Follow Spring Boot best practices
-2. Maintain comprehensive test coverage
-3. Document all public APIs
-4. Use conventional commit messages
-5. Ensure security compliance
+### 4. Environment variables (production)
 
-### Code Style
-- Java 17+ features encouraged
-- Clean Architecture principles
-- SOLID design principles
-- Comprehensive error handling
+| Variable | Description | Default (dev) |
+|---|---|---|
+| `DATABASE_URL` | `jdbc:mysql://host:3306/agora_db` | H2 in-memory |
+| `DATABASE_USER` | DB username | `sa` |
+| `DATABASE_PASSWORD` | DB password | `password` |
+| `KAFKA_BOOTSTRAP_SERVERS` | Kafka broker | `localhost:9092` |
+| `ADMIN_EMAIL` | Receives moderation alerts | `admin@agora.es` |
+| `SES_SMTP_USERNAME` | AWS SES SMTP username | _(optional in dev)_ |
+| `SES_SMTP_PASSWORD` | AWS SES SMTP password | _(optional in dev)_ |
+| `GOOGLE_CLIENT_ID` | Google OAuth2 client ID | _(optional in dev)_ |
 
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 📞 Support
-
-For technical support or questions:
-- Review the documentation in this repository
-- Check the issues page for common problems
-- Contact the development team for assistance
+> In dev mode all optional vars have safe defaults — the app starts and works without them.
 
 ---
 
-**Status**: ✅ Production Ready  
-**Version**: 1.0.0  
-**Last Updated**: July 1, 2025
-MySQL para la base de datos.
-Instalación y Ejecución
-Clonar el repositorio:
-   git clone https://github.com/tu_usuario/agora_web.git
-Configurar la base de datos: Asegúrate de tener una instancia de MySQL en ejecución y configurada con las credenciales correctas en el archivo application.properties.
-Construir y ejecutar la aplicación:
-   mvn clean install
-   mvn spring-boot:run
-Documentación de la API
-La documentación de la API generada por Springdoc OpenAPI está disponible en la ruta /swagger-ui.html de la aplicación.
+## 📋 Main API Endpoints
 
-Contribuciones
-Las contribuciones son bienvenidas. Por favor, lee el archivo CONTRIBUTING.md para obtener más detalles sobre cómo contribuir al proyecto.
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/api/v1/auth/register` | Register with email/password |
+| `POST` | `/api/v1/auth/login` | Login — returns JWT |
+| `POST` | `/api/v1/auth/google` | Google OAuth2 token exchange |
+| `GET` | `/api/v1/posts` | List posts (public, paginated) |
+| `POST` | `/api/v1/posts` | Create post (authenticated) |
+| `POST` | `/api/v1/comments` | Comment on a post → triggers moderation pipeline |
+| `POST` | `/api/v1/replies` | Reply to a comment → triggers moderation pipeline |
+| `GET` | `/api/v1/profiles/{id}` | Get user profile |
+| `PUT` | `/api/v1/profiles/{id}` | Update profile + avatar |
+| `GET` | `/api/v1/avatars` | List available avatars |
+| `POST` | `/api/v1/gdpr/delete` | GDPR right-to-erasure request |
+| `GET` | `/api/v1/gdpr/export` | Export own data |
+| `GET` | `/api/v1/admin/moderation` | Moderation queue (ADMIN only) |
+| `GET` | `/api/v1/legal-texts/{type}` | Get legal document by type |
+| `GET` | `/swagger-ui.html` | Full interactive API docs |
 
-Uername Y password 
-Username administrador: admin
-Password administrador: admin
-Username user1: user1
-Password user1: user1
-Username user2: user2
-Password user2: user2
-Username user3: user3
-Password user3: user3
+---
+
+## 🧪 Testing
+
+```bash
+# All tests
+./mvnw test
+
+# Specific suite
+./mvnw test -Dtest="*CommentServiceTest"
+./mvnw test -Dtest="*ModerationTest"
+```
+
+---
+
+## 🔒 Security Notes (Portfolio Repo)
+
+This is the **public showcase version**. The following are intentionally absent:
+
+- No real credentials anywhere (all via env vars)
+- `client_secret.json` referenced in `.gitignore` — must be provided at deploy time
+- RSA keys for JWT signing loaded from env, not committed
+- CORS origins set via `CORS_ALLOWED_ORIGINS` env var
+
+For production deployment see `application-prod.properties` which references all secrets as `${ENV_VAR}`.
+
+---
+
+## 📁 Project Structure
+
+```
+src/main/java/de/stella/agora_web/
+├── auth/           # JWT + OAuth2 (Google) authentication
+├── comment/        # Comments: service, Kafka producer/consumer, DTO, NLP pipeline
+├── replies/        # Replies: same pipeline as comments
+├── moderation/     # NLP sentiment analysis + moderation service
+├── posts/          # Post CRUD + tagging
+├── user/           # User entity, registration, management
+├── profiles/       # User profiles + avatar management
+├── avatar/         # Avatar upload and system avatars
+├── notification/   # Push notification dispatch
+├── gdpr/           # Right-to-erasure + data export
+├── audit/          # Audit trail for sensitive operations
+├── security/       # SecurityConfig, JWT filter chain
+├── config/         # Kafka, Mail, CORS, OpenAPI config
+├── legal_text/     # Dynamic legal document management
+├── export/         # Data export service
+└── exception/      # Global exception handler (RFC 7807 Problem Details)
+```
+
+---
+
+## 🗺️ Roadmap / Production Checklist
+
+- [x] Event-driven moderation pipeline (Kafka)
+- [x] NLP auto-moderation with admin override alerts
+- [x] Multi-scenario email notifications (SMTP / AWS SES)
+- [x] GDPR right to erasure
+- [x] Google OAuth2 sign-in
+- [x] OpenAPI documentation
+- [x] Docker compose for local dev
+- [ ] Frontend integration (separate repo)
+- [ ] CI/CD pipeline (GitHub Actions)
+- [ ] Horizontal Kafka consumer scaling
+- [ ] Redis caching layer
+
+---
+
+## 📄 License
+
+MIT © Ágora Project — see [LICENSE](LICENSE) for details.
 

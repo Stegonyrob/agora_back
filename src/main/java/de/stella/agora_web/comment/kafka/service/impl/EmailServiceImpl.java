@@ -2,37 +2,54 @@ package de.stella.agora_web.comment.kafka.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.stella.agora_web.comment.kafka.service.IEmailService;
-import de.stella.agora_web.messages.EmailMessage;
 
-@Service // Habilitado para trabajar con Kafka
+/**
+ * Implementación de envío de email usando JavaMailSender (SMTP / AWS SES).
+ * Cuando SMTP no está configurado (entorno local/dev), registra el email como
+ * WARN en lugar de fallar, para no bloquear el flujo de la aplicación.
+ */
+@Service
 public class EmailServiceImpl implements IEmailService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final JavaMailSender mailSender;
 
-    public EmailServiceImpl(KafkaTemplate<String, String> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
+    @Value("${spring.mail.username:noreply@agora.es}")
+    private String fromAddress;
+
+    public EmailServiceImpl(@Autowired(required = false) JavaMailSender mailSender) {
+        this.mailSender = mailSender;
     }
 
     @Override
     public void sendEmail(String toAddress, String subject, String body) {
-        // Crear un mensaje de email y enviarlo a través de Kafka
-        EmailMessage emailMessage = new EmailMessage(toAddress, subject, body);
+        if (mailSender == null) {
+            log.warn("SMTP no configurado — email no enviado a '{}'. Asunto: '{}'", toAddress, subject);
+            return;
+        }
+        if (toAddress == null || toAddress.isBlank()) {
+            log.warn("Dirección de destino vacía — email descartado. Asunto: '{}'", subject);
+            return;
+        }
         try {
-            String emailMessageJson = objectMapper.writeValueAsString(emailMessage);
-            kafkaTemplate.send("emails", emailMessageJson);
-            log.info("Email notification sent to Kafka topic 'emails': {}", emailMessageJson);
-        } catch (JsonProcessingException e) {
-            log.error("Error serializing email message: {}", e.getMessage(), e);
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromAddress);
+            message.setTo(toAddress);
+            message.setSubject(subject);
+            message.setText(body);
+            mailSender.send(message);
+            log.info("Email enviado a '{}': {}", toAddress, subject);
+        } catch (MailException e) {
+            log.error("Error enviando email a '{}': {}", toAddress, e.getMessage(), e);
         }
     }
 }

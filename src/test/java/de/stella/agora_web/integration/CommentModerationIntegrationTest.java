@@ -1,9 +1,11 @@
 package de.stella.agora_web.integration;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.verifyNoInteractions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -52,7 +54,6 @@ class CommentModerationIntegrationTest {
     private UserRepository userRepository;
 
     @MockitoBean
-    @SuppressWarnings("unused")
     private KafkaTemplate<String, String> kafkaTemplate;
 
     private User testUser;
@@ -60,8 +61,7 @@ class CommentModerationIntegrationTest {
     private Comment testComment;
 
     @BeforeEach
-    @SuppressWarnings("unused")
-    void setUp() {
+    public void setUp() {
         testUser.setUsername("testuser");
         testUser.setEmail("test@example.com");
         testUser.setPassword("password");
@@ -119,9 +119,9 @@ class CommentModerationIntegrationTest {
 
     @Test
     void testKafkaMessageFormatForCommentModeration() {
-        // Este test verifica el formato del mensaje que se debe enviar
-        // cuando se crea un nuevo comentario
-
+        // Los tests de repositorio no pasan por la capa de servicio,
+        // por lo que Kafka no debe ser invocado directamente
+        verifyNoInteractions(kafkaTemplate);
         assertTrue(true); // Placeholder hasta implementar
     }
 

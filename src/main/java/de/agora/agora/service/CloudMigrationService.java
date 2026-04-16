@@ -3,7 +3,6 @@ package de.agora.agora.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
@@ -29,15 +28,8 @@ public class CloudMigrationService {
     @Value("${cloud.storage.enabled:false}")
     private boolean cloudStorageEnabled;
 
-    @Value("${aws.s3.bucket-name:agora-images}")
-    @SuppressWarnings("unused")
-    private String s3BucketName;
-
-    @SuppressWarnings("unused")
-    private final ApplicationContext applicationContext;
-
-    public CloudMigrationService(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public CloudMigrationService() {
+        // No dependencies required
     }
 
     /**

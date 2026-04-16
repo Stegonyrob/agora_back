@@ -30,7 +30,6 @@ public class CommentServiceImpl implements ICommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final IMessageQueueService messageQueue;
-    @SuppressWarnings("unused")
     private final CommentKafkaProducer kafkaProducer;
     private final IModerationService moderationService;
 
@@ -84,12 +83,16 @@ public class CommentServiceImpl implements ICommentService {
             // Guardar el comentario
             commentRepository.save(newComment);
 
-            // Notificación Kafka - Siempre disponible (dummy si kafka está deshabilitado)
+            // Notificación Kafka - enriquecida con postTitle y authorEmail
             CommentNotificationDTO notification = new CommentNotificationDTO();
             notification.setCommentId(newComment.getId());
             notification.setAuthor(user.getUsername());
+            notification.setAuthorEmail(user.getEmail());
             notification.setMessage(newComment.getMessage());
-            // kafkaProducer.sendCommentNotification(notification); // Comentado temporalmente para aislar problema de bloqueo
+            if (post != null) {
+                notification.setPostTitle(post.getTitle());
+            }
+            kafkaProducer.sendCommentNotification(notification);
 
             return newComment;
         }

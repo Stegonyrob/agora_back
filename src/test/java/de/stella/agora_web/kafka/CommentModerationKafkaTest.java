@@ -1,14 +1,19 @@
 package de.stella.agora_web.kafka;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
 import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 
@@ -20,6 +25,7 @@ import org.springframework.kafka.support.SendResult;
  * contenido, timestamp 3. El topic debe ser "comment-moderation" 4. Debe
  * incluir metadatos para que el admin pueda revisar
  */
+@ExtendWith(MockitoExtension.class)
 class CommentModerationKafkaTest {
 
     @Mock
@@ -31,9 +37,7 @@ class CommentModerationKafkaTest {
     private CommentModerationService commentModerationService;
 
     @BeforeEach
-    @SuppressWarnings("unused")
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    public void setUp() {
         commentModerationService = new CommentModerationService(kafkaTemplate);
     }
 

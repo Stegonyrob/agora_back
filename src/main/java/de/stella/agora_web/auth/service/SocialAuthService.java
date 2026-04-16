@@ -192,8 +192,10 @@ public class SocialAuthService {
                     .GET()
                     .build();
 
-            HttpResponse<String> response = HttpClient.newHttpClient()
-                    .send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response;
+            try (HttpClient httpClient = HttpClient.newHttpClient()) {
+                response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            }
 
             JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
 
