@@ -32,6 +32,13 @@ public class TextServiceImpl implements ITextService {
     }
 
     @Override
+    public List<TextDTO> getTextsByCategory(String category) {
+        return textRepository.findByCategoryAndArchivedFalse(category).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public TextDTO createText(TextDTO textDTO) {
         Text text = convertToEntity(textDTO);
         Text savedText = textRepository.save(text);
