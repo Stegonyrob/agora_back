@@ -52,6 +52,18 @@ public class TextController {
     }
 
     /**
+     * Obtiene textos filtrados por categoría (público). Categorías disponibles:
+     * agora, services, team, neurodiversity, cea, tda_tdh,
+     * learning_difficulties, development_conditions, communication, faq
+     */
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<TextDTO>> getTextsByCategory(@PathVariable String category) {
+        LOGGER.info("Retrieving texts for category '{}'", category);
+        List<TextDTO> texts = textItemService.getTextsByCategory(category);
+        return ResponseEntity.ok(texts);
+    }
+
+    /**
      * Obtiene un texto por ID (público).
      */
     @GetMapping("/{id}")

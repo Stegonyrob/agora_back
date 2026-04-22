@@ -10,6 +10,8 @@ public interface ITextService {
 
     TextDTO getTextById(Long id);
 
+    List<TextDTO> getTextsByCategory(String category);
+
     TextDTO createText(TextDTO textDTO);
 
     TextDTO updateText(Long id, TextDTO textDTO);

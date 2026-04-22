@@ -875,6 +875,81 @@ Entendemos que el tratamiento debe ser integral y que el éxito se mide por la m
     false
   );
 
+-- 9b. Preguntas Frecuentes (FAQ)
+INSERT INTO
+  texts (category, title, message, created_at, archived)
+VALUES
+  (
+    'faq',
+    '¿A quién van dirigidos vuestros servicios?',
+    'Nuestros servicios están dirigidos a niños, adolescentes y adultos que presentan necesidades educativas especiales (NEE), necesidades específicas de apoyo educativo (NEAE) o cualquier condición del neurodesarrollo como el Trastorno del Espectro Autista (CEA), el TDAH, el TDA, la dislexia, la disgrafía, la discalculia u otras dificultades del aprendizaje. También atendemos a familias que necesitan orientación y acompañamiento en el proceso educativo de sus hijos.',
+    NOW(),
+    false
+  ),
+  (
+    'faq',
+    '¿Necesito un diagnóstico previo para acceder a vuestros servicios?',
+    'No es imprescindible tener un diagnóstico formal para comenzar a trabajar con nosotros. Realizamos una evaluación funcional inicial para comprender las fortalezas y necesidades de cada persona. Si durante el proceso consideramos que un diagnóstico oficial puede ser beneficioso, te orientamos sobre los pasos a seguir y los profesionales o entidades a los que puedes acudir.',
+    NOW(),
+    false
+  ),
+  (
+    'faq',
+    '¿Cómo es la primera toma de contacto?',
+    'El primer paso es contactarnos por teléfono (+34 693 54 59 93) o por email (contacto@agoraeducativo.es) para concertar una reunión inicial sin compromiso. En esa primera sesión conocemos al estudiante y a la familia, recogemos información sobre la situación actual y explicamos en detalle cómo trabajamos. A partir de ahí, diseñamos un plan de intervención personalizado.',
+    NOW(),
+    false
+  ),
+  (
+    'faq',
+    '¿Dónde estáis ubicados y cuál es vuestro horario?',
+    'Nos encontramos en Calle Nicaragua 16, La Calzada, zona Oeste de Gijón (33213, Asturias). Nuestro horario de atención durante el curso escolar (septiembre a junio) es de lunes a viernes de 16:00 a 21:00 y los sábados de 10:00 a 14:00. En periodo de verano atendemos de lunes a viernes de 9:00 a 14:00 y los sábados de 10:00 a 14:00. Los domingos permanecemos cerrados.',
+    NOW(),
+    false
+  ),
+  (
+    'faq',
+    '¿Cuánto duran las sesiones y con qué frecuencia se realizan?',
+    'La duración y frecuencia de las sesiones se establecen de forma individualizada en función de las necesidades de cada persona y del tipo de servicio. Las sesiones individuales tienen una duración habitual de entre 45 y 60 minutos. La frecuencia más común es de una a tres sesiones semanales, aunque lo ajustamos según el plan de intervención acordado con la familia.',
+    NOW(),
+    false
+  ),
+  (
+    'faq',
+    '¿Trabajáis con el colegio o instituto del alumno?',
+    'Sí. La coordinación multidisciplinar es uno de los pilares de nuestra metodología. Mantenemos comunicación activa con los centros educativos, tutores y otros profesionales (logopedas, psicólogos, médicos) que trabajen con el alumno, siempre con el consentimiento de la familia. El objetivo es garantizar una visión unificada y coherente que favorezca el progreso del estudiante en todos sus entornos.',
+    NOW(),
+    false
+  ),
+  (
+    'faq',
+    '¿Aplicáis técnicas ABA?',
+    'No. Como principio ético fundacional, no aplicamos el Análisis de Comportamiento Aplicado (ABA) en su modalidad conductual intensiva. Nuestra metodología se basa en el respeto a la identidad y la neurodiversidad de cada persona, priorizando la autorregulación interna, la autonomía y la autodeterminación. Rechazamos cualquier enfoque que busque "normalizar" o enmascarar los rasgos naturales de la persona.',
+    NOW(),
+    false
+  ),
+  (
+    'faq',
+    '¿Contáis con becas o ayudas para sufragar el coste de los servicios?',
+    'Sí. Somos beneficiarios de las becas de reeducación pedagógica para alumnos con NEAE y NEE que ofrece el Gobierno del Principado de Asturias. Si tu hijo o hija tiene reconocida una necesidad educativa especial o específica de apoyo educativo, es posible que parte del coste de nuestros servicios esté cubierto por estas ayudas. Te orientamos y acompañamos en el proceso de solicitud.',
+    NOW(),
+    false
+  ),
+  (
+    'faq',
+    '¿Ofrecéis atención a domicilio?',
+    'Sí. Disponemos de un servicio de intervención educativa en el hogar para aquellos casos en que la atención en el propio entorno del alumno sea más beneficiosa o necesaria. Este servicio facilita la generalización de las habilidades trabajadas en el centro al contexto familiar y cotidiano del estudiante.',
+    NOW(),
+    false
+  ),
+  (
+    'faq',
+    '¿Cómo se mide el progreso del alumno?',
+    'Realizamos una evaluación continua a lo largo de todo el proceso de intervención. Empleamos herramientas de observación directa, registros de seguimiento y reuniones periódicas con la familia para compartir los avances, revisar los objetivos y ajustar el plan si es necesario. Nuestro concepto de progreso va más allá de las notas académicas: valoramos el desarrollo de la autonomía, la autoestima, las habilidades sociales y el bienestar general de la persona.',
+    NOW(),
+    false
+  );
+
 -- 10. Inserciones en la tabla 'events'
 INSERT INTO
   events (
@@ -935,7 +1010,7 @@ Todos los avisos pueden ser revisados en cualquier momento por el usuario a trav
 <li><strong>Razón social:</strong> Centro de Apoyo Educativo Especializado Ágora</li>
 <li><strong>Teléfonos:</strong> +34 693 54 59 93</li>
 <li><strong>E-mail:</strong> contacto@agoraeducativo.es</li>
-<li><strong>Domicilio:</strong> Calle Nicagua 16 Gijón- Oeste , 33213, Gijón, ASTURIAS</li>
+<li><strong>Domicilio:</strong> Calle Nicaragua 16 Gijón- Oeste , 33213, Gijón, ASTURIAS</li>
 <li><strong>C.I.F:</strong> ........</li>
 <li><strong>Datos Registrales:</strong> Inscrito como cetro en ..........</li>
 </ul>
